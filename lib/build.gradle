@@ -9,6 +9,9 @@
 plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
+    id "org.openapi.generator" version "6.0.1"
+    id 'org.springframework.boot' version '2.7.2'
+    id 'io.spring.dependency-management' version '1.0.12.RELEASE'
 }
 
 repositories {
@@ -25,8 +28,17 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:31.0.1-jre'
+
+    // for open api generator
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation "javax.validation:validation-api:2.0.1.Final"
+    implementation "io.swagger.core.v3:swagger-annotations:2.1.7"
+    implementation 'io.swagger.core.v3:swagger-models:2.2.2'
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     implementation "com.fasterxml.jackson.core:jackson-annotations:2.9.10"
+    implementation "org.openapitools:jackson-databind-nullable:0.2.1"
+
 }
 
 tasks.named('test') {
@@ -46,6 +58,6 @@ openApiGenerate {
     modelPackage = "iwf.models"
 }
 
-//compileJava.dependsOn tasks.openApiGenerate
+compileJava.dependsOn tasks.openApiGenerate
 
 sourceSets.main.java.srcDirs += "$buildDir/generated/src/main/java"
