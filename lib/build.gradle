@@ -25,9 +25,27 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:31.0.1-jre'
+    implementation "javax.validation:validation-api:2.0.1.Final"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:2.9.10"
 }
 
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
+openApiValidate {
+    inputSpec = "$rootDir/iwf-idl/workflowState.yaml".toString()
+}
+
+openApiGenerate {
+    generatorName = "spring"
+    inputSpec = "$rootDir/iwf-idl/workflowState.yaml".toString()
+    outputDir = "$buildDir/generated".toString()
+    apiPackage = "iwf"
+    modelPackage = "iwf.models"
+}
+
+//compileJava.dependsOn tasks.openApiGenerate
+
+sourceSets.main.java.srcDirs += "$buildDir/generated/src/main/java"
