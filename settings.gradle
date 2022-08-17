@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'iwf-java'
-include('lib')
+include('core')
