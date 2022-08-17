@@ -36,7 +36,9 @@ dependencies {
     implementation "io.swagger.core.v3:swagger-annotations:2.1.7"
     implementation 'io.swagger.core.v3:swagger-models:2.2.2'
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
-    implementation "com.fasterxml.jackson.core:jackson-annotations:2.9.10"
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.3'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.3'
     implementation "org.openapitools:jackson-databind-nullable:0.2.1"
 
 }
@@ -59,7 +61,8 @@ openApiGenerate {
     invokerPackage = "iwf.gen.api"
     configOptions = [
             configPackage : "iwf.gen.configuration",
-            basePackage : "iwf.gen"
+            basePackage : "iwf.gen",
+            interfaceOnly : "true"
     ]
 
 }

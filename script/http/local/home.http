@@ -1,0 +1,9 @@
+POST http://localhost:8080/api/v1/workflowState/start
+Content-Type: application/json
+
+{
+  "workflowType": "test-wf-type"
+}
+
+### test get
+GET http://localhost:8080/
