@@ -54,8 +54,14 @@ openApiGenerate {
     generatorName = "spring"
     inputSpec = "$rootDir/iwf-idl/workflowState.yaml".toString()
     outputDir = "$buildDir/generated".toString()
-    apiPackage = "iwf"
-    modelPackage = "iwf.models"
+    apiPackage = "iwf.gen.api"
+    modelPackage = "iwf.gen.models"
+    invokerPackage = "iwf.gen.api"
+    configOptions = [
+            configPackage : "iwf.gen.configuration",
+            basePackage : "iwf.gen"
+    ]
+
 }
 
 compileJava.dependsOn tasks.openApiGenerate
