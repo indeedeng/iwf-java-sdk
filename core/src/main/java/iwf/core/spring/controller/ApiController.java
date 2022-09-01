@@ -23,6 +23,7 @@ public class ApiController implements ApiApi {
     public ResponseEntity<WorkflowStateStartResponse> apiV1WorkflowStateStartPost(
              final WorkflowStateStartRequest workflowStateStartRequest
     ) {
+        System.out.println("this is a test log"+ workflowStateStartRequest.toString());
         return null;
     }
 
