@@ -71,14 +71,14 @@ publishing {
 
                 developers {
                     developer {
-                        id = ''
-                        name = ''
-                        email = ''
+                        id = 'longquanzheng'
+                        name = 'Quanzheng Long'
+                        email = 'qlong.seattle@gmail.com'
                     }
                     developer {
-                        id = ''
-                        name = ''
-                        email = ''
+                        id = 'duoertai'
+                        name = 'Ertai Duo'
+                        email = 'duoertai@gmail.com'
                     }
                 }
 
