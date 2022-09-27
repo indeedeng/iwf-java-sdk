@@ -1,46 +1,45 @@
 package iwf.core.command;
 
+import org.immutables.value.Value;
+
 import java.util.List;
 
 /**
  * This is the container of all requested commands' results/statuses
  */
-public class CommandResults {
+@Value.Immutable
+public interface CommandResults {
 
-    public List<LongRunningActivityCommandResult> getAllLongRunningActivityCommandResults() {
-        return null;
-    }
+    List<LongRunningActivityCommandResult> getAllLongRunningActivityCommandResults();
 
-    public List<SignalCommandResult> getAllSignalCommandResults() {
-        return null;
-    }
+    List<SignalCommandResult> getAllSignalCommandResults();
 
-    public List<TimerCommandResult> getAllTimerCommandResults() {
-        return null;
-    }
+    List<TimerCommandResult> getAllTimerCommandResults();
 
-    public <T> T getActivityOutputByIndex(int idx) {
-        return null;
-    }
+    class helper {
+        public <T> T getActivityOutputByIndex(int idx) {
+            throw new RuntimeException("TODO");
+        }
 
-    public <T> T getActivityOutputById(String commandId) {
-        return null;
-    }
+        public <T> T getActivityOutputById(String commandId) {
+            throw new RuntimeException("TODO");
+        }
 
-    public LongRunningActivityCommandResult getActivityCommandResultByIndex(int idx) {
-        return null;
-    }
+        public LongRunningActivityCommandResult getActivityCommandResultByIndex(int idx) {
+            throw new RuntimeException("TODO");
+        }
 
-    public LongRunningActivityCommandResult getActivityCommandResultById(String commandId) {
-        return null;
-    }
+        public LongRunningActivityCommandResult getActivityCommandResultById(String commandId) {
+            throw new RuntimeException("TODO");
+        }
 
-    public <T> T getSignalValueByIndex(int idx) {
-        return null;
-    }
+        public <T> T getSignalValueByIndex(int idx) {
+            throw new RuntimeException("TODO");
+        }
 
-    public <T> T getSignalValueById(String commandId) {
-        return null;
+        public <T> T getSignalValueById(String commandId) {
+            throw new RuntimeException("TODO");
+        }
     }
 
 }

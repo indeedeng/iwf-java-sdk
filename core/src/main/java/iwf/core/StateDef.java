@@ -1,26 +1,15 @@
 package iwf.core;
 
+import org.immutables.value.Value;
+
 /**
  * A holder class for {@link WorkflowState} and it's metadata
  */
-public final class StateDef {
-    private final WorkflowState workflowState;
-    private final boolean canStartWorkflow;
+@Value.Immutable
+public interface StateDef {
 
-    /**
-     * @param workflowState the state
-     * @param canStartWorkflow     this indicates whether this state can be used to start the workflow
-     */
-    public StateDef(final WorkflowState workflowState, final boolean canStartWorkflow) {
-        this.workflowState = workflowState;
-        this.canStartWorkflow = canStartWorkflow;
-    }
+    WorkflowState getWorkflowState();
 
-    public WorkflowState getWorkflowState() {
-        return workflowState;
-    }
-
-    public boolean canStartWorkflow() {
-        return canStartWorkflow;
-    }
+    // indicates if this state can be used to start a workflow
+    boolean canStartWorkflow();
 }

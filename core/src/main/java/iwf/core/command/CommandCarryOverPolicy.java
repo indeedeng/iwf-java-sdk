@@ -1,17 +1,11 @@
 package iwf.core.command;
 
-public class CommandCarryOverPolicy {
-    private final CommandCarryOverType commandCarryOverType;
+import org.immutables.value.Value;
 
-    public static CommandCarryOverPolicy none() {
-        return new CommandCarryOverPolicy(CommandCarryOverType.NONE);
-    }
-    
-    public CommandCarryOverPolicy(final CommandCarryOverType commandCarryOverType) {
-        this.commandCarryOverType = commandCarryOverType;
-    }
+@Value.Immutable
+public interface CommandCarryOverPolicy {
 
-    public CommandCarryOverType getCommandCarryOverType() {
-        return commandCarryOverType;
-    }
+    CommandCarryOverType getCommandCarryOverType();
+
+    CommandCarryOverPolicy none = ImmutableCommandCarryOverPolicy.builder().commandCarryOverType(CommandCarryOverType.NONE).build();
 }

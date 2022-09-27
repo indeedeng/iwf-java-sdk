@@ -20,9 +20,11 @@ public interface WorkflowState<I> {
      * Default options should work well for most cases
      */
     default StateOptions getStateOptions() {
-        return new StateOptions(AttributeLoadingPolicy.getLoadAllWithoutLocking(),
-                AttributeLoadingPolicy.getLoadAllWithoutLocking(),
-                CommandCarryOverPolicy.none());
+        return ImmutableStateOptions.builder()
+                .queryAttributesLoadingPolicy(AttributeLoadingPolicy.LoadAllWithoutLocking)
+                .searchAttributesLoadingPolicy(AttributeLoadingPolicy.LoadAllWithoutLocking)
+                .commandCarryOverPolicy(CommandCarryOverPolicy.none)
+                .build();
     }
 
     /**

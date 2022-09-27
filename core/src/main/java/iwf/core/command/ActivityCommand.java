@@ -1,28 +1,13 @@
 package iwf.core.command;
 
-public final class ActivityCommand extends BaseCommand {
+import org.immutables.value.Value;
 
-    // below are fields supplied by user code via constructor
-    private String activityType;
-    private Object[] input;
-    private ActivityOptions activityOptions;
+@Value.Immutable
+public interface ActivityCommand extends BaseCommand {
 
-    public ActivityCommand(final String activityType, final ActivityOptions options, final Object... input) {
-        super(options.getActivityCommandId());
-        this.activityType = activityType;
-        this.input = input;
-        this.activityOptions = options;
-    }
+    String getActivityType();
 
-    public String getActivityType() {
-        return activityType;
-    }
+    ActivityOptions getActivityOptions();
 
-    public ActivityOptions getActivityOptions() {
-        return activityOptions;
-    }
-
-    public Object[] getInput() {
-        return input;
-    }
+    Object[] getInput();
 }

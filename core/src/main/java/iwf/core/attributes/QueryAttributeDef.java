@@ -1,19 +1,10 @@
 package iwf.core.attributes;
 
-public final class QueryAttributeDef<T> {
-    private String key;
-    private Class<T> type;
+import org.immutables.value.Value;
 
-    public QueryAttributeDef(final String key, final Class<T> type) {
-        this.key = key;
-        this.type = type;
-    }
+@Value.Immutable
+public interface QueryAttributeDef<T> {
+    Class<T> getQueryAttributeType();
 
-    public Class<T> getQueryAttributeType() {
-        return type;
-    }
-
-    public String QueryAttributeKey() {
-        return key;
-    }
+    String getQueryAttributeKey();
 }
