@@ -57,16 +57,17 @@ openApiValidate {
 }
 
 openApiGenerate {
-    generatorName = "spring"
+    generatorName = "java"
     inputSpec = "$rootDir/iwf-idl/iwf.yaml".toString()
     outputDir = "$buildDir/generated".toString()
     apiPackage = "iwf.gen.api"
     modelPackage = "iwf.gen.models"
     invokerPackage = "iwf.gen.api"
     configOptions = [
-            configPackage : "iwf.gen.configuration",
-            basePackage : "iwf.gen",
-            interfaceOnly : "true"
+            configPackage: "iwf.gen.configuration",
+            basePackage  : "iwf.gen",
+            library      : "feign",
+            interfaceOnly: "true"
     ]
 
 }
