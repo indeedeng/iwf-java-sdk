@@ -49,12 +49,12 @@ tasks.named('test') {
 }
 
 openApiValidate {
-    inputSpec = "$rootDir/iwf-idl/workflowState.yaml".toString()
+    inputSpec = "$rootDir/iwf-idl/iwf.yaml".toString()
 }
 
 openApiGenerate {
     generatorName = "spring"
-    inputSpec = "$rootDir/iwf-idl/workflowState.yaml".toString()
+    inputSpec = "$rootDir/iwf-idl/iwf.yaml".toString()
     outputDir = "$buildDir/generated".toString()
     apiPackage = "iwf.gen.api"
     modelPackage = "iwf.gen.models"
