@@ -1,39 +1,17 @@
 package iwf.core.command;
 
-public final class LongRunningActivityCommandResult {
+import org.immutables.value.Value;
 
-    private final String activityType;
-    private final String activityCommandId;
+@Value.Immutable
+public interface LongRunningActivityCommandResult {
 
-    private final Object output;
-    private final ActivityStatus activityStatus;
-    private final ActivityTimeoutType activityTimeoutType;
+    String getActivityType();
 
-    public LongRunningActivityCommandResult(final String activityType, final String activityCommandId, final Object output, final ActivityStatus activityStatus, final ActivityTimeoutType activityTimeoutType) {
-        this.activityType = activityType;
-        this.activityCommandId = activityCommandId;
-        this.output = output;
-        this.activityStatus = activityStatus;
-        this.activityTimeoutType = activityTimeoutType;
-    }
+    Object getOutput();
 
-    public String getActivityType() {
-        return activityType;
-    }
+    ActivityTimeoutType getActivityTimeoutType();
 
-    public Object getOutput() {
-        return output;
-    }
+    ActivityStatus getActivityStatus();
 
-    public ActivityTimeoutType getActivityTimeoutType() {
-        return activityTimeoutType;
-    }
-
-    public ActivityStatus getActivityStatus() {
-        return activityStatus;
-    }
-
-    public String getActivityCommandId() {
-        return activityCommandId;
-    }
+    String getActivityCommandId();
 }

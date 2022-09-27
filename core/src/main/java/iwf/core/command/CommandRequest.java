@@ -1,29 +1,30 @@
 package iwf.core.command;
 
-import java.util.Arrays;
+import org.immutables.value.Value;
+
 import java.util.List;
 
-public class CommandRequest {
-    private final List<BaseCommand> commands;
-    private final DeciderTriggerType deciderTriggerType;
+@Value.Immutable
+public interface CommandRequest {
+    List<BaseCommand> getCommands();
 
-    private CommandRequest(final List<BaseCommand> commands, final DeciderTriggerType deciderTriggerType) {
-        this.commands = commands;
-        this.deciderTriggerType = deciderTriggerType;
-    }
+    DeciderTriggerType getDeciderTriggerType();
 
-    public static CommandRequest none(){
-        return new CommandRequest(null, DeciderTriggerType.ANY_COMMAND_COMPLETED);
-    }
-    public static CommandRequest forAllCommandCompleted(final BaseCommand... commands) {
-        return new CommandRequest(Arrays.asList(commands), DeciderTriggerType.ALL_COMMAND_COMPLETED);
-    }
+    // empty command request will jump to decide stage immediately.
+    // It doesn't matter whatever DeciderTriggerType is provided. But it's required so we have to put one.
+    CommandRequest empty = ImmutableCommandRequest.builder().deciderTriggerType(DeciderTriggerType.ALL_COMMAND_COMPLETED).build();
 
-    public static CommandRequest forAnyCommandsCompleted(final BaseCommand... commands) {
-        return new CommandRequest(Arrays.asList(commands), DeciderTriggerType.ANY_COMMAND_COMPLETED);
-    }
+    class helper {
+        public static CommandRequest forAllCommandCompleted(final Iterable<BaseCommand> commands) {
+            return ImmutableCommandRequest.builder().addAllCommands(commands).deciderTriggerType(DeciderTriggerType.ALL_COMMAND_COMPLETED).build();
+        }
 
-    public static CommandRequest forAnyCommandClosed(final BaseCommand... commands) {
-        return new CommandRequest(Arrays.asList(commands), DeciderTriggerType.ANY_COMMAND_CLOSED);
+        public static CommandRequest forAnyCommandsCompleted(final Iterable<BaseCommand> commands) {
+            return ImmutableCommandRequest.builder().addAllCommands(commands).deciderTriggerType(DeciderTriggerType.ANY_COMMAND_COMPLETED).build();
+        }
+
+        public static CommandRequest forAnyCommandClosed(final Iterable<BaseCommand> commands) {
+            return ImmutableCommandRequest.builder().addAllCommands(commands).deciderTriggerType(DeciderTriggerType.ANY_COMMAND_CLOSED).build();
+        }
     }
 }

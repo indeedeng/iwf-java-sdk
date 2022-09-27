@@ -1,22 +1,9 @@
 package iwf.core.command;
 
-public final class TimerCommand extends BaseCommand {
+import org.immutables.value.Value;
 
-    public TimerCommand(int firingUnixTimestampSeconds) {
-        super("");
-        this.firingUnixTimestampSeconds = firingUnixTimestampSeconds;
+@Value.Immutable
+public interface TimerCommand extends BaseCommand {
 
-    }
-
-    // note: commandId is needed when scheduling multiple timers in a state
-    public TimerCommand(String commandId, int firingUnixTimestampSeconds) {
-        super(commandId);
-        this.firingUnixTimestampSeconds = firingUnixTimestampSeconds;
-    }
-
-    private int firingUnixTimestampSeconds;
-
-    public int getFiringUnixTimestampSeconds() {
-        return firingUnixTimestampSeconds;
-    }
+    int getFiringUnixTimestampSeconds();
 }

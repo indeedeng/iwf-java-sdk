@@ -1,20 +1,11 @@
 package iwf.core.command;
 
-public final class TimerCommandResult {
+import org.immutables.value.Value;
 
-    private final String commandId;
-    private final TimerStatus timerStatus;
+@Value.Immutable
+public interface TimerCommandResult {
 
-    public TimerCommandResult(final String commandId, final TimerStatus timerStatus) {
-        this.commandId = commandId;
-        this.timerStatus = timerStatus;
-    }
+    TimerStatus getTimerStatus();
 
-    public TimerStatus getTimerStatus() {
-        return timerStatus;
-    }
-
-    public String getCommandId() {
-        return commandId;
-    }
+    String getCommandId();
 }

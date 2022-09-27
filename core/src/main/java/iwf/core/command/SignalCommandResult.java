@@ -1,31 +1,15 @@
 package iwf.core.command;
 
-public final class SignalCommandResult {
-    private final String commandId;
-    private final String signalName;
-    private final Object signalValue;
-    private final SignalStatus signalStatus;
+import org.immutables.value.Value;
 
-    public SignalCommandResult(final String commandId, final String signalName, final Object signalValue, final SignalStatus signalStatus) {
-        this.commandId = commandId;
-        this.signalName = signalName;
-        this.signalValue = signalValue;
-        this.signalStatus = signalStatus;
-    }
+@Value.Immutable
+public interface SignalCommandResult {
 
-    public String getCommandId() {
-        return commandId;
-    }
+    String getCommandId();
 
-    public String getSignalName() {
-        return signalName;
-    }
+    String getSignalName();
 
-    public Object getSignalValue() {
-        return signalValue;
-    }
+    Object getSignalValue();
 
-    public SignalStatus getSignalStatus() {
-        return signalStatus;
-    }
+    SignalStatus getSignalStatus();
 }

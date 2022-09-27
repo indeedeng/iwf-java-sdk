@@ -1,19 +1,11 @@
 package iwf.core.attributes;
 
-public final class SearchAttributeDef<T> {
-    private String key;
-    private Class<T> type;
+import org.immutables.value.Value;
 
-    public SearchAttributeDef(final String key, final Class<T> type) {
-        this.key = key;
-        this.type = type;
-    }
+@Value.Immutable
+public interface SearchAttributeDef<T> {
 
-    public Class<T> getSearchAttributeType() {
-        return type;
-    }
+    Class<T> getSearchAttributeType();
 
-    public String getSearchAttributeKey() {
-        return key;
-    }
+    String getSearchAttributeKey();
 }

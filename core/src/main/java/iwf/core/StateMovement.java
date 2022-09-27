@@ -1,32 +1,14 @@
 package iwf.core;
 
-public class StateMovement {
+import org.immutables.value.Value;
 
-    static StateMovement COMPLETING_WORKFLOW_MOVEMENT = new StateMovement("_SYS_COMPLETING_WORKFLOW", null);
-    static StateMovement FAILING_WORKFLOW_MOVEMENT = new StateMovement("_SYS_FAILING_WORKFLOW", null);
+@Value.Immutable
+public interface StateMovement {
 
-    private final String stateId;
-    private final Object nextStateInput;
+    String getStateId();
 
-    /**
-     * @param stateId        the stateId of the next state
-     * @param nextStateInput the input of next state.
-     *                       This must match the input type of next state otherwise a runtime exception will be thrown
-     */
-    public StateMovement(final String stateId, final Object nextStateInput) {
-        this.stateId = stateId;
-        this.nextStateInput = nextStateInput;
-    }
+    Object getNextStateInput();
 
-    public StateMovement(final String stateId) {
-        this(stateId, null);
-    }
-
-    public String getStateId() {
-        return stateId;
-    }
-
-    public Object getNextStateInput() {
-        return nextStateInput;
-    }
+    StateMovement COMPLETING_WORKFLOW_MOVEMENT = ImmutableStateMovement.builder().stateId("_SYS_COMPLETING_WORKFLOW").build();
+    StateMovement FAILING_WORKFLOW_MOVEMENT = ImmutableStateMovement.builder().stateId("_SYS_FAILING_WORKFLOW").build();
 }

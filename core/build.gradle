@@ -41,6 +41,10 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.3'
     implementation "org.openapitools:jackson-databind-nullable:0.2.1"
 
+    // immutable
+    compileOnly 'org.immutables:value:2.9.2'
+    annotationProcessor 'org.immutables:value:2.9.2'
+
 }
 
 tasks.named('test') {

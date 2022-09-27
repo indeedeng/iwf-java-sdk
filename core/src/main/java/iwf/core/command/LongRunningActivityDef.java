@@ -1,19 +1,11 @@
 package iwf.core.command;
 
-public final class LongRunningActivityDef<O> {
-    private String activityType;
-    private Class<O> outputType;
+import org.immutables.value.Value;
 
-    public LongRunningActivityDef(final String activityType, final Class<O> outputType) {
-        this.activityType = activityType;
-        this.outputType = outputType;
-    }
+@Value.Immutable
+public interface LongRunningActivityDef<O> {
 
-    public String getActivityType() {
-        return activityType;
-    }
+    String getActivityType();
 
-    public Class<O> getOutputType() {
-        return outputType;
-    }
+    Class<O> getOutputType();
 }

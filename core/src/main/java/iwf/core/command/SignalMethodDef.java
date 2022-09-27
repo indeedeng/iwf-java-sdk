@@ -1,19 +1,11 @@
 package iwf.core.command;
 
-public final class SignalMethodDef<T> {
-    private String signalName;
-    private Class<T> signalType;
+import org.immutables.value.Value;
 
-    public SignalMethodDef(final String signalName, final Class<T> signalType) {
-        this.signalName = signalName;
-        this.signalType = signalType;
-    }
+@Value.Immutable
+public interface SignalMethodDef<T> {
 
-    public Class<T> getSignalType() {
-        return signalType;
-    }
+    Class<T> getSignalType();
 
-    public String getSignalName() {
-        return signalName;
-    }
+    String getSignalName();
 }
