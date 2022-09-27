@@ -1,4 +1,4 @@
-package iwf.core.spring.configuration;
+package iwf.spring.configuration;
 
 import org.springframework.context.annotation.Configuration;
 
