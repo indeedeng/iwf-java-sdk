@@ -22,7 +22,6 @@ public class Client {
             final Object input,
             final String workflowId,
             final WorkflowStartOptions options){
-        // call iwf server to start the workflow using ApiClient from generated code
         WorkflowStartResponse workflowStartResponse = defaultApi.apiV1WorkflowStartPost(new WorkflowStartRequest()
                 .workflowId(workflowId)
                 .startStateId(startStateId));
