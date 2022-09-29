@@ -19,9 +19,17 @@ public class Client {
     public String StartWorkflow(
             final Workflow workflow,
             final String startStateId,
+            final String workflowId,
+            final WorkflowStartOptions options) {
+        return StartWorkflow(workflow, startStateId, null, workflowId, options);
+    }
+    
+    public String StartWorkflow(
+            final Workflow workflow,
+            final String startStateId,
             final Object input,
             final String workflowId,
-            final WorkflowStartOptions options){
+            final WorkflowStartOptions options) {
         WorkflowStartResponse workflowStartResponse = defaultApi.apiV1WorkflowStartPost(new WorkflowStartRequest()
                 .workflowId(workflowId)
                 .startStateId(startStateId));
