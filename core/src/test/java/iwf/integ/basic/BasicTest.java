@@ -1,7 +1,7 @@
 package iwf.integ.basic;
 
 import iwf.core.Client;
-import iwf.core.ImmutableClientOptions;
+import iwf.core.ClientOptions;
 import iwf.core.ImmutableWorkflowStartOptions;
 import iwf.core.Registry;
 import iwf.spring.TestSingletonWorkerService;
@@ -21,10 +21,7 @@ public class BasicTest {
         final BasicWorkflow wf = new BasicWorkflow();
         registry.addWorkflow(wf);
 
-        final Client client = new Client(registry, ImmutableClientOptions.builder()
-                .serverUrl("http://localhost:8801")
-                .workerUrl("http://localhost:8080")
-                .build());
+        final Client client = new Client(registry, ClientOptions.localDefault);
         client.StartWorkflow(BasicWorkflow.class, BasicWorkflowS1.StateId, "basic-test-id" + System.currentTimeMillis() / 1000,
                 ImmutableWorkflowStartOptions.builder().workflowTimeoutSeconds(10).build());
         // wait for workflow to finish
