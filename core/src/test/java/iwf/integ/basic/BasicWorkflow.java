@@ -1,4 +1,4 @@
-package iwf.integ;
+package iwf.integ.basic;
 
 import iwf.core.ImmutableStateDef;
 import iwf.core.StateDef;

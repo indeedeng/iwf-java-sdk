@@ -6,10 +6,11 @@ import iwf.gen.models.WorkflowStateDecideRequest;
 import iwf.gen.models.WorkflowStateDecideResponse;
 import iwf.gen.models.WorkflowStateStartRequest;
 import iwf.gen.models.WorkflowStateStartResponse;
-import iwf.integ.BasicWorkflow;
+import iwf.integ.basic.BasicWorkflow;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -30,14 +31,14 @@ public class ApiController {
 
     @PostMapping("/api/v1/workflowState/start")
     public ResponseEntity<WorkflowStateStartResponse> apiV1WorkflowStateStartPost(
-            final WorkflowStateStartRequest request
+            final @RequestBody WorkflowStateStartRequest request
     ) {
         return ResponseEntity.ok(workerService.handleWorkflowStateStart(request));
     }
 
     @PostMapping("/api/v1/workflowState/decide")
     public ResponseEntity<WorkflowStateDecideResponse> apiV1WorkflowStateDecidePost(
-            final WorkflowStateDecideRequest request
+            final @RequestBody WorkflowStateDecideRequest request
     ) {
         return ResponseEntity.ok(workerService.handleWorkflowStateDecide(request));
     }

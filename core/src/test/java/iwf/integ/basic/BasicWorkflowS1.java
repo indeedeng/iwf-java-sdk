@@ -1,4 +1,4 @@
-package iwf.integ;
+package iwf.integ.basic;
 
 import iwf.core.Context;
 import iwf.core.StateDecision;
@@ -11,9 +11,12 @@ import iwf.core.command.CommandRequest;
 import iwf.core.command.CommandResults;
 
 public class BasicWorkflowS1 implements WorkflowState {
+
+    public static final String StateId = "S1";
+
     @Override
     public String getStateId() {
-        return null;
+        return StateId;
     }
 
     @Override
@@ -23,11 +26,11 @@ public class BasicWorkflowS1 implements WorkflowState {
 
     @Override
     public CommandRequest start(final Context context, final Object input, final StateLocalAttributesW stateLocals, final SearchAttributesRW searchAttributes, final QueryAttributesRW queryAttributes) {
-        return null;
+        return CommandRequest.empty;
     }
 
     @Override
     public StateDecision decide(final Context context, final Object input, final CommandResults commandResults, final StateLocalAttributesR stateLocals, final SearchAttributesRW searchAttributes, final QueryAttributesRW queryAttributes) {
-        return null;
+        return StateDecision.COMPLETING_WORKFLOW;
     }
 }

@@ -9,29 +9,35 @@ public class Client {
     private final Registry registry;
     private final DefaultApi defaultApi;
 
-    public Client(final Registry registry, final String iwfServerUrl) {
+    private final ClientOptions clientOptions;
+
+    public Client(final Registry registry, final ClientOptions clientOptions) {
+        this.clientOptions = clientOptions;
         this.registry = registry;
         this.defaultApi = new ApiClient()
-                .setBasePath(iwfServerUrl)
+                .setBasePath(clientOptions.getServerUrl())
                 .buildClient(DefaultApi.class);
     }
 
     public String StartWorkflow(
-            final Workflow workflow,
+            final Class<? extends Workflow> workflowClass,
             final String startStateId,
             final String workflowId,
             final WorkflowStartOptions options) {
-        return StartWorkflow(workflow, startStateId, null, workflowId, options);
+        return StartWorkflow(workflowClass, startStateId, null, workflowId, options);
     }
     
     public String StartWorkflow(
-            final Workflow workflow,
+            final Class<? extends Workflow> workflowClass,
             final String startStateId,
             final Object input,
             final String workflowId,
             final WorkflowStartOptions options) {
         WorkflowStartResponse workflowStartResponse = defaultApi.apiV1WorkflowStartPost(new WorkflowStartRequest()
                 .workflowId(workflowId)
+                .iwfWorkerUrl(clientOptions.getWorkerUrl())
+                .iwfWorkflowType(workflowClass.getSimpleName())
+                .workflowTimeoutSeconds(options.getWorkflowTimeoutSeconds().intValue())
                 .startStateId(startStateId));
         return workflowStartResponse.getWorkflowRunId();
     }
