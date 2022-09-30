@@ -10,15 +10,15 @@ import static iwf.core.StateMovement.COMPLETING_WORKFLOW_MOVEMENT;
 import static iwf.core.StateMovement.FAILING_WORKFLOW_MOVEMENT;
 
 @Value.Immutable
-public interface StateDecision {
+public abstract class StateDecision {
 
-    Optional<List<StateMovement>> getNextStates();
+    public abstract Optional<List<StateMovement>> getNextStates();
 
-    Optional<Boolean> getWaitForMoreCommandResults();
+    public abstract Optional<Boolean> getWaitForMoreCommandResults();
 
-    StateDecision NO_NEXT = ImmutableStateDecision.builder().build();
-    StateDecision COMPLETING_WORKFLOW = ImmutableStateDecision.builder().nextStates(Arrays.asList(COMPLETING_WORKFLOW_MOVEMENT)).build();
-    StateDecision FAILING_WORKFLOW = ImmutableStateDecision.builder().nextStates(Arrays.asList(FAILING_WORKFLOW_MOVEMENT)).build();
+    public static final StateDecision DEAD_END = ImmutableStateDecision.builder().build();
+    public static final StateDecision COMPLETING_WORKFLOW = ImmutableStateDecision.builder().nextStates(Arrays.asList(COMPLETING_WORKFLOW_MOVEMENT)).build();
+    public static final StateDecision FAILING_WORKFLOW = ImmutableStateDecision.builder().nextStates(Arrays.asList(FAILING_WORKFLOW_MOVEMENT)).build();
 
-    StateDecision WAIT_FOR_MORE_RESULTS = ImmutableStateDecision.builder().waitForMoreCommandResults(true).build();
+    public static final StateDecision WAIT_FOR_MORE_RESULTS = ImmutableStateDecision.builder().waitForMoreCommandResults(true).build();
 }

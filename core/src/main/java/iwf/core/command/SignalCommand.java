@@ -3,7 +3,7 @@ package iwf.core.command;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface SignalCommand extends BaseCommand {
+public abstract class SignalCommand implements BaseCommand {
 
-    String getSignalName();
+    public abstract String getSignalName();
 }

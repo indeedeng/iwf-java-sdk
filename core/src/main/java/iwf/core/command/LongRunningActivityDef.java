@@ -3,9 +3,9 @@ package iwf.core.command;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface LongRunningActivityDef<O> {
+public abstract class LongRunningActivityDef<O> {
 
-    String getActivityType();
+    public abstract String getActivityType();
 
-    Class<O> getOutputType();
+    public abstract Class<O> getOutputType();
 }

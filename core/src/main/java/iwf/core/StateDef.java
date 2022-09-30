@@ -6,10 +6,10 @@ import org.immutables.value.Value;
  * A holder class for {@link WorkflowState} and it's metadata
  */
 @Value.Immutable
-public interface StateDef {
+public abstract class StateDef {
 
-    WorkflowState getWorkflowState();
+    public abstract WorkflowState getWorkflowState();
 
     // indicates if this state can be used to start a workflow
-    boolean canStartWorkflow();
+    public abstract boolean getCanStartWorkflow();
 }

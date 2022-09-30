@@ -3,12 +3,12 @@ package iwf.core;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface Context {
-    Integer getWorkflowStartTimestampSeconds();
+public abstract class Context {
+    public abstract Integer getWorkflowStartTimestampSeconds();
 
-    String getStateExecutionId();
+    public abstract String getStateExecutionId();
 
-    String getWorkflowRunId();
+    public abstract String getWorkflowRunId();
 
-    String getWorkflowId();
+    public abstract String getWorkflowId();
 }

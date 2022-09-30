@@ -3,7 +3,7 @@ package iwf.core.command;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface TimerCommand extends BaseCommand {
+public abstract class TimerCommand implements BaseCommand {
 
-    int getFiringUnixTimestampSeconds();
+    public abstract int getFiringUnixTimestampSeconds();
 }

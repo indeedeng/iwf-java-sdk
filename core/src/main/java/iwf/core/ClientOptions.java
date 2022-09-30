@@ -3,9 +3,9 @@ package iwf.core;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface ClientOptions {
-    String getServerUrl();
+public abstract class ClientOptions {
+    public abstract String getServerUrl();
 
-    String getWorkerUrl();
-    
+    public abstract String getWorkerUrl();
+
 }
