@@ -33,10 +33,15 @@ public class Client {
             final Object input,
             final String workflowId,
             final WorkflowStartOptions options) {
+        final String wfType = workflowClass.getSimpleName();
+        final StateDef stateDef = registry.getWorkflowState(wfType, startStateId);
+        if (stateDef == null || !stateDef.getCanStartWorkflow()) {
+            throw new RuntimeException("invalid start stateId " + startStateId);
+        }
         WorkflowStartResponse workflowStartResponse = defaultApi.apiV1WorkflowStartPost(new WorkflowStartRequest()
                 .workflowId(workflowId)
                 .iwfWorkerUrl(clientOptions.getWorkerUrl())
-                .iwfWorkflowType(workflowClass.getSimpleName())
+                .iwfWorkflowType(wfType)
                 .workflowTimeoutSeconds(options.getWorkflowTimeoutSeconds())
                 .startStateId(startStateId));
         return workflowStartResponse.getWorkflowRunId();
