@@ -25,7 +25,7 @@ public class BasicTest {
                 .serverUrl("http://localhost:8801")
                 .workerUrl("http://localhost:8080")
                 .build());
-        client.StartWorkflow(BasicWorkflow.class, BasicWorkflowS1.StateId, "test-id" + System.currentTimeMillis() / 1000,
+        client.StartWorkflow(BasicWorkflow.class, BasicWorkflowS1.StateId, "basic-test-id" + System.currentTimeMillis() / 1000,
                 ImmutableWorkflowStartOptions.builder().workflowTimeoutSeconds(10L).build());
         // wait for workflow to finish
         Thread.sleep(5 * 1000);
