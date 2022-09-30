@@ -37,7 +37,7 @@ public class Client {
                 .workflowId(workflowId)
                 .iwfWorkerUrl(clientOptions.getWorkerUrl())
                 .iwfWorkflowType(workflowClass.getSimpleName())
-                .workflowTimeoutSeconds(options.getWorkflowTimeoutSeconds().intValue())
+                .workflowTimeoutSeconds(options.getWorkflowTimeoutSeconds())
                 .startStateId(startStateId));
         return workflowStartResponse.getWorkflowRunId();
     }
