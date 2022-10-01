@@ -30,17 +30,23 @@ public interface Workflow {
     /**
      * defines all the signal methods supported by this workflow.
      */
-    List<SignalMethodDef<?>> getSignalMethods();
+    default List<SignalMethodDef<?>> getSignalMethods() {
+        return Collections.emptyList();
+    }
 
     /**
      * defines all the search attributes supported by this workflow.
      */
-    List<SearchAttributeDef<?>> getSearchAttributes();
+    default List<SearchAttributeDef<?>> getSearchAttributes() {
+        return Collections.emptyList();
+    }
 
     /**
      * defines all the query attributes supported by this workflow.
      */
-    List<QueryAttributeDef<?>> getQueryAttributes();
+    default List<QueryAttributeDef<?>> getQueryAttributes() {
+        return Collections.emptyList();
+    }
 
     /**
      * defines all the long running activity types supported by this workflow.

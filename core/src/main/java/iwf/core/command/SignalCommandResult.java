@@ -3,13 +3,13 @@ package iwf.core.command;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface SignalCommandResult {
+public abstract class SignalCommandResult {
 
-    String getCommandId();
+    public abstract String getCommandId();
 
-    String getSignalName();
+    public abstract String getSignalName();
 
-    Object getSignalValue();
+    public abstract Object getSignalValue();
 
-    SignalStatus getSignalStatus();
+    public abstract SignalStatus getSignalStatus();
 }

@@ -3,9 +3,9 @@ package iwf.core.command;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface TimerCommandResult {
+public abstract class TimerCommandResult {
 
-    TimerStatus getTimerStatus();
+    public abstract TimerStatus getTimerStatus();
 
-    String getCommandId();
+    public abstract String getCommandId();
 }

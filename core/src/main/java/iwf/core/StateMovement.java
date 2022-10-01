@@ -2,13 +2,15 @@ package iwf.core;
 
 import org.immutables.value.Value;
 
+import java.util.Optional;
+
 @Value.Immutable
-public interface StateMovement {
+public abstract class StateMovement {
 
-    String getStateId();
+    public abstract String getStateId();
 
-    Object getNextStateInput();
+    public abstract Optional<Object> getNextStateInput();
 
-    StateMovement COMPLETING_WORKFLOW_MOVEMENT = ImmutableStateMovement.builder().stateId("_SYS_COMPLETING_WORKFLOW").build();
-    StateMovement FAILING_WORKFLOW_MOVEMENT = ImmutableStateMovement.builder().stateId("_SYS_FAILING_WORKFLOW").build();
+    public static final StateMovement COMPLETING_WORKFLOW_MOVEMENT = ImmutableStateMovement.builder().stateId("_SYS_COMPLETING_WORKFLOW").build();
+    public static final StateMovement FAILING_WORKFLOW_MOVEMENT = ImmutableStateMovement.builder().stateId("_SYS_FAILING_WORKFLOW").build();
 }

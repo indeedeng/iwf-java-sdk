@@ -3,9 +3,9 @@ package iwf.core.command;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface SignalMethodDef<T> {
+public abstract class SignalMethodDef<T> {
 
-    Class<T> getSignalType();
+    public abstract Class<T> getSignalType();
 
-    String getSignalName();
+    public abstract String getSignalName();
 }

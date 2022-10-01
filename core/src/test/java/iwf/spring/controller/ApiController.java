@@ -1,31 +1,46 @@
 package iwf.spring.controller;
 
+import iwf.core.Registry;
+import iwf.core.WorkerService;
+import iwf.gen.models.WorkflowStateDecideRequest;
+import iwf.gen.models.WorkflowStateDecideResponse;
 import iwf.gen.models.WorkflowStateStartRequest;
 import iwf.gen.models.WorkflowStateStartResponse;
+import iwf.integ.basic.BasicWorkflow;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class ApiController {
+
+    private WorkerService workerService;
+
+    public ApiController() {
+        final Registry registry = new Registry();
+        registry.addWorkflow(new BasicWorkflow());
+        workerService = new WorkerService(registry);
+    }
 
     @RequestMapping("/")
     public ResponseEntity<String> index() {
         return ResponseEntity.ok("Hello, world!");
     }
 
-    @RequestMapping(
-            method = RequestMethod.POST,
-            value = "/api/v1/workflowState/start",
-            produces = {"application/json"},
-            consumes = {"application/json"}
-    )
+    @PostMapping("/api/v1/workflowState/start")
     public ResponseEntity<WorkflowStateStartResponse> apiV1WorkflowStateStartPost(
-            final WorkflowStateStartRequest workflowStateStartRequest
+            final @RequestBody WorkflowStateStartRequest request
     ) {
-        System.out.println("this is a test log" + workflowStateStartRequest.toString());
-        return null;
+        return ResponseEntity.ok(workerService.handleWorkflowStateStart(request));
+    }
+
+    @PostMapping("/api/v1/workflowState/decide")
+    public ResponseEntity<WorkflowStateDecideResponse> apiV1WorkflowStateDecidePost(
+            final @RequestBody WorkflowStateDecideRequest request
+    ) {
+        return ResponseEntity.ok(workerService.handleWorkflowStateDecide(request));
     }
 
 }

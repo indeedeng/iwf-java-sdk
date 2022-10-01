@@ -3,9 +3,9 @@ package iwf.core.attributes;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface SearchAttributeDef<T> {
+public abstract class SearchAttributeDef<T> {
 
-    Class<T> getSearchAttributeType();
+    public abstract Class<T> getSearchAttributeType();
 
-    String getSearchAttributeKey();
+    public abstract String getSearchAttributeKey();
 }

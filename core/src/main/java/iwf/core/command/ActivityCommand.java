@@ -3,11 +3,11 @@ package iwf.core.command;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface ActivityCommand extends BaseCommand {
+public abstract class ActivityCommand implements BaseCommand {
 
-    String getActivityType();
+    public abstract String getActivityType();
 
-    ActivityOptions getActivityOptions();
+    public abstract ActivityOptions getActivityOptions();
 
-    Object[] getInput();
+    public abstract Object[] getInput();
 }

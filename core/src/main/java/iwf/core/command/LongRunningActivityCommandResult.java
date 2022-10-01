@@ -3,15 +3,15 @@ package iwf.core.command;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface LongRunningActivityCommandResult {
+public abstract class LongRunningActivityCommandResult {
 
-    String getActivityType();
+    public abstract String getActivityType();
 
-    Object getOutput();
+    public abstract Object getOutput();
 
-    ActivityTimeoutType getActivityTimeoutType();
+    public abstract ActivityTimeoutType getActivityTimeoutType();
 
-    ActivityStatus getActivityStatus();
+    public abstract ActivityStatus getActivityStatus();
 
-    String getActivityCommandId();
+    public abstract String getActivityCommandId();
 }

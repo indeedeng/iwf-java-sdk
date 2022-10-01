@@ -3,9 +3,9 @@ package iwf.core.command;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface CommandCarryOverPolicy {
+public abstract class CommandCarryOverPolicy {
 
-    CommandCarryOverType getCommandCarryOverType();
+    public abstract CommandCarryOverType getCommandCarryOverType();
 
-    CommandCarryOverPolicy none = ImmutableCommandCarryOverPolicy.builder().commandCarryOverType(CommandCarryOverType.NONE).build();
+    public static final CommandCarryOverPolicy none = ImmutableCommandCarryOverPolicy.builder().commandCarryOverType(CommandCarryOverType.NONE).build();
 }

@@ -5,11 +5,11 @@ import org.immutables.value.Value;
 import java.util.List;
 
 @Value.Immutable
-public interface AttributeLoadingPolicy {
+public abstract class AttributeLoadingPolicy {
 
-    AttributeLoadingType getAttributeLoadingType();
+    public abstract AttributeLoadingType getAttributeLoadingType();
 
-    List<String> getAttributeKeys();
+    public abstract List<String> getAttributeKeys();
 
-    AttributeLoadingPolicy LoadAllWithoutLocking = ImmutableAttributeLoadingPolicy.builder().build();
+    public static final AttributeLoadingPolicy LoadAllWithoutLocking = ImmutableAttributeLoadingPolicy.builder().build();
 }
