@@ -48,6 +48,7 @@ dependencies {
     implementation 'io.swagger:swagger-models:1.6.6'
     implementation 'io.swagger:swagger-core:1.6.6'
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.3'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.3'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.3'
