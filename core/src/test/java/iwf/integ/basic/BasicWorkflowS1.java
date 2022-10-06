@@ -2,6 +2,7 @@ package iwf.integ.basic;
 
 import iwf.core.Context;
 import iwf.core.StateDecision;
+import iwf.core.WorkflowStartOptions;
 import iwf.core.WorkflowState;
 import iwf.core.attributes.QueryAttributesRW;
 import iwf.core.attributes.SearchAttributesRW;
@@ -21,7 +22,7 @@ public class BasicWorkflowS1 implements WorkflowState {
 
     @Override
     public Class getInputType() {
-        return null;
+        return WorkflowStartOptions.class;
     }
 
     @Override
@@ -31,6 +32,7 @@ public class BasicWorkflowS1 implements WorkflowState {
 
     @Override
     public StateDecision decide(final Context context, final Object input, final CommandResults commandResults, final StateLocalAttributesR stateLocals, final SearchAttributesRW searchAttributes, final QueryAttributesRW queryAttributes) {
-        return StateDecision.COMPLETING_WORKFLOW;
+        final StateDecision out = StateDecision.completeWorkflow(input);
+        return out;
     }
 }
