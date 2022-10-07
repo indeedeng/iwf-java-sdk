@@ -1,7 +1,12 @@
 package iwf.core;
 
+import com.google.common.base.Preconditions;
 import iwf.gen.api.ApiClient;
 import iwf.gen.api.DefaultApi;
+import iwf.gen.models.EncodedObject;
+import iwf.gen.models.StateCompletionOutput;
+import iwf.gen.models.WorkflowGetRequest;
+import iwf.gen.models.WorkflowGetResponse;
 import iwf.gen.models.WorkflowStartRequest;
 import iwf.gen.models.WorkflowStartResponse;
 
@@ -10,6 +15,8 @@ public class Client {
     private final DefaultApi defaultApi;
 
     private final ClientOptions clientOptions;
+
+    private final ObjectEncoder objectEncoder = new JacksonJsonObjectEncoder();
 
     public Client(final Registry registry, final ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
@@ -38,12 +45,39 @@ public class Client {
         if (stateDef == null || !stateDef.getCanStartWorkflow()) {
             throw new RuntimeException("invalid start stateId " + startStateId);
         }
+
+        final String data = objectEncoder.toData(input);
+
         WorkflowStartResponse workflowStartResponse = defaultApi.apiV1WorkflowStartPost(new WorkflowStartRequest()
                 .workflowId(workflowId)
                 .iwfWorkerUrl(clientOptions.getWorkerUrl())
                 .iwfWorkflowType(wfType)
                 .workflowTimeoutSeconds(options.getWorkflowTimeoutSeconds())
+                .stateInput(new EncodedObject()
+                        .encoding(objectEncoder.getEncodingType())
+                        .data(data)
+                )
                 .startStateId(startStateId));
         return workflowStartResponse.getWorkflowRunId();
+    }
+
+    public <T> T GetSingleWorkflowStateOutputWithLongWait(
+            Class<T> valueClass,
+            final String workflowId) {
+        WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithLongWaitPost(
+                new WorkflowGetRequest()
+                        .needsResults(true)
+                        .workflowId(workflowId)
+        );
+
+        String checkErrorMessage = "this workflow should have exactly one state output";
+        Preconditions.checkNotNull(workflowGetResponse.getResults(), checkErrorMessage);
+        Preconditions.checkArgument(workflowGetResponse.getResults().size() == 1, checkErrorMessage);
+        Preconditions.checkNotNull(workflowGetResponse.getResults().get(0).getCompletedStateOutput(), checkErrorMessage);
+
+        //TODO validate encoding type
+
+        final StateCompletionOutput output = workflowGetResponse.getResults().get(0);
+        return objectEncoder.fromData(output.getCompletedStateOutput().getData(), valueClass);
     }
 }
