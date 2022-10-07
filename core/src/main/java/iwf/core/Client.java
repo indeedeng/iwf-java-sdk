@@ -1,5 +1,6 @@
 package iwf.core;
 
+import com.google.common.base.Preconditions;
 import iwf.gen.api.ApiClient;
 import iwf.gen.api.DefaultApi;
 import iwf.gen.models.EncodedObject;
@@ -45,12 +46,8 @@ public class Client {
             throw new RuntimeException("invalid start stateId " + startStateId);
         }
 
-        final String data;
-        try {
-            data = objectEncoder.toData(input);
-        } catch (ObjectEncoderException e) {
-            throw new RuntimeException(e);
-        }
+        final String data = objectEncoder.toData(input);
+
         WorkflowStartResponse workflowStartResponse = defaultApi.apiV1WorkflowStartPost(new WorkflowStartRequest()
                 .workflowId(workflowId)
                 .iwfWorkerUrl(clientOptions.getWorkerUrl())
@@ -66,17 +63,21 @@ public class Client {
 
     public <T> T GetSingleWorkflowStateOutputWithLongWait(
             Class<T> valueClass,
-            final String workflowId) throws ObjectEncoderException {
+            final String workflowId) {
         WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithLongWaitPost(
                 new WorkflowGetRequest()
                         .needsResults(true)
                         .workflowId(workflowId)
         );
-        if (workflowGetResponse.getResults() == null || workflowGetResponse.getResults().size() != 1) {
-            throw new RuntimeException("this workflow should have exactly one state output");
-        }
+
+        String checkErrorMessage = "this workflow should have exactly one state output";
+        Preconditions.checkNotNull(workflowGetResponse.getResults(), checkErrorMessage);
+        Preconditions.checkArgument(workflowGetResponse.getResults().size() == 1, checkErrorMessage);
+        Preconditions.checkNotNull(workflowGetResponse.getResults().get(0).getCompletedStateOutput(), checkErrorMessage);
+
         //TODO validate encoding type
+
         final StateCompletionOutput output = workflowGetResponse.getResults().get(0);
-        return objectEncoder.fromData(output.getCompletedStateOutput().getData(), valueClass, valueClass);
+        return objectEncoder.fromData(output.getCompletedStateOutput().getData(), valueClass);
     }
 }

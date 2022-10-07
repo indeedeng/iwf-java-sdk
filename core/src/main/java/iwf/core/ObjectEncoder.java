@@ -19,8 +19,6 @@
  */
 package iwf.core;
 
-import java.lang.reflect.Type;
-
 public interface ObjectEncoder {
 
     /**
@@ -35,22 +33,20 @@ public interface ObjectEncoder {
      *
      * @param value Java value to convert.
      * @return converted value
-     * @throws ObjectEncoderException if conversion of the value passed as parameter failed for any
-     *                                reason.
+     * Note that it will ObjectEncoderException if conversion of the value passed as parameter failed for any
+     * reason.
      * @see #getEncodingType() getEncodingType javadoc for an important implementation detail
      */
-    String toData(Object value) throws ObjectEncoderException;
+    String toData(Object value);
 
     /**
      * Implements conversion of a single value.
      *
      * @param content          Serialized value to convert to a Java object.
      * @param valueType        type of the value stored in the {@code content}
-     * @param valueGenericType generic type of the value stored in the {@code content}
      * @return converted Java object
-     * @throws ObjectEncoderException if conversion of the data passed as parameter failed for any
+     * Note that it will ObjectEncoderException if conversion of the data passed as parameter failed for any
      *                                reason.
      */
-    <T> T fromData(String content, Class<T> valueType, Type valueGenericType)
-            throws ObjectEncoderException;
+    <T> T fromData(String content, Class<T> valueType);
 }

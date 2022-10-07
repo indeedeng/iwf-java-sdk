@@ -3,7 +3,6 @@ package iwf.integ.basic;
 import iwf.core.Client;
 import iwf.core.ClientOptions;
 import iwf.core.ImmutableWorkflowStartOptions;
-import iwf.core.ObjectEncoderException;
 import iwf.core.Registry;
 import iwf.core.WorkflowStartOptions;
 import iwf.spring.TestSingletonWorkerService;
@@ -19,7 +18,7 @@ public class BasicTest {
     }
 
     @Test
-    public void testBasicWorkflow() throws InterruptedException, ObjectEncoderException {
+    public void testBasicWorkflow() {
         final Registry registry = new Registry();
         final BasicWorkflow wf = new BasicWorkflow();
         registry.addWorkflow(wf);

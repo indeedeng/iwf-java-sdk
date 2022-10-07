@@ -31,7 +31,6 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 
 public class JacksonJsonObjectEncoder implements ObjectEncoder {
 
@@ -59,7 +58,7 @@ public class JacksonJsonObjectEncoder implements ObjectEncoder {
   }
 
   @Override
-  public String toData(Object value) throws ObjectEncoderException {
+  public String toData(Object value) {
     try {
       return mapper.writeValueAsString(value);
 
@@ -69,14 +68,13 @@ public class JacksonJsonObjectEncoder implements ObjectEncoder {
   }
 
   @Override
-  public <T> T fromData(String content, Class<T> valueClass, Type valueType)
-          throws ObjectEncoderException {
+  public <T> T fromData(String content, Class<T> valueClass) {
     if (content.isEmpty()) {
       return null;
     }
     try {
       @SuppressWarnings("deprecation")
-      JavaType reference = mapper.getTypeFactory().constructType(valueType, valueClass);
+      JavaType reference = mapper.getTypeFactory().constructType(valueClass, valueClass);
       return mapper.readValue(content, reference);
     } catch (IOException e) {
       throw new ObjectEncoderException(e);
