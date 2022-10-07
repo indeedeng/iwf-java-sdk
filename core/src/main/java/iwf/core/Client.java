@@ -3,12 +3,7 @@ package iwf.core;
 import com.google.common.base.Preconditions;
 import iwf.gen.api.ApiClient;
 import iwf.gen.api.DefaultApi;
-import iwf.gen.models.EncodedObject;
-import iwf.gen.models.StateCompletionOutput;
-import iwf.gen.models.WorkflowGetRequest;
-import iwf.gen.models.WorkflowGetResponse;
-import iwf.gen.models.WorkflowStartRequest;
-import iwf.gen.models.WorkflowStartResponse;
+import iwf.gen.models.*;
 
 public class Client {
     private final Registry registry;
@@ -24,6 +19,18 @@ public class Client {
         this.defaultApi = new ApiClient()
                 .setBasePath(clientOptions.getServerUrl())
                 .buildClient(DefaultApi.class);
+    }
+
+    public void SignalWorkflow(
+            final String workflowId,
+            final String workflowRunId,
+            final String signalName,
+            final EncodedObject signalValue) {
+        defaultApi.apiV1WorkflowSignalPost(new WorkflowSignalRequest()
+                .workflowId(workflowId)
+                .workflowRunId(workflowRunId)
+                .signalName(signalName)
+                .signalValue(signalValue));
     }
 
     public String StartWorkflow(
