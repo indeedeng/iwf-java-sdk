@@ -28,6 +28,12 @@ public abstract class StateDecision {
         )).build();
     }
 
+    public static StateDecision forceCompleteWorkflow(final Object output) {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
+                StateMovement.forceCompleteWorkflow(output)
+        )).build();
+    }
+
     public static StateDecision singleNextState(final String stateId, final Object stateInput) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 ImmutableStateMovement.builder().stateId(stateId)
