@@ -32,10 +32,6 @@ public class BasicWorkflowS1 implements WorkflowState<Integer> {
     @Override
     public StateDecision decide(final Context context, final Integer input, final CommandResults commandResults, final StateLocalAttributesR stateLocals, final SearchAttributesRW searchAttributes, final QueryAttributesRW queryAttributes) {
         final int output = input + 1;
-        if (input == 0) {
-            return StateDecision.singleNextState(BasicWorkflowS1.StateId, output);
-        } else {
-            return StateDecision.singleNextState(BasicWorkflowS2.StateId, output);
-        }
+        return StateDecision.singleNextState(BasicWorkflowS2.StateId, output);
     }
 }
