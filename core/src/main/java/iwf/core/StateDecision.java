@@ -35,4 +35,8 @@ public abstract class StateDecision {
                         .build()
         )).build();
     }
+
+    public static StateDecision multiNextStates(final StateMovement... stateMovements) {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(stateMovements)).build();
+    }
 }
