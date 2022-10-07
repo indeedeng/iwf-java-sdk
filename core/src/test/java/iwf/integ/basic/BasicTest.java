@@ -2,7 +2,6 @@ package iwf.integ.basic;
 
 import iwf.core.Client;
 import iwf.core.ClientOptions;
-import iwf.core.ImmutableWorkflowStartOptions;
 import iwf.core.Registry;
 import iwf.core.WorkflowStartOptions;
 import iwf.spring.TestSingletonWorkerService;
@@ -18,7 +17,7 @@ public class BasicTest {
     }
 
     @Test
-    public void testBasicWorkflow() {
+    public void testBasicWorkflow() throws InterruptedException {
         final Registry registry = new Registry();
         final BasicWorkflow wf = new BasicWorkflow();
         registry.addWorkflow(wf);
@@ -26,9 +25,10 @@ public class BasicTest {
         final Client client = new Client(registry, ClientOptions.localDefault);
         final String wfId = "basic-test-id" + System.currentTimeMillis() / 1000;
         final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
-        client.StartWorkflow(BasicWorkflow.class, BasicWorkflowS1.StateId, startOptions, wfId, startOptions);
+        final Integer input = new Integer(0);
+        client.StartWorkflow(BasicWorkflow.class, BasicWorkflowS1.StateId, input, wfId, startOptions);
         // wait for workflow to finish
-        final ImmutableWorkflowStartOptions output = client.GetSingleWorkflowStateOutputWithLongWait(ImmutableWorkflowStartOptions.class, wfId);
-        Assertions.assertEquals(startOptions, output);
+        final Integer output = client.GetSingleWorkflowStateOutputWithLongWait(Integer.class, wfId);
+        Assertions.assertEquals(input + 2, output);
     }
 }

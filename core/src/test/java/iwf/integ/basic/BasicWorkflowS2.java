@@ -10,9 +10,9 @@ import iwf.core.attributes.StateLocalAttributesW;
 import iwf.core.command.CommandRequest;
 import iwf.core.command.CommandResults;
 
-public class BasicWorkflowS1 implements WorkflowState {
+public class BasicWorkflowS2 implements WorkflowState {
 
-    public static final String StateId = "S1";
+    public static final String StateId = "S2";
 
     @Override
     public String getStateId() {
@@ -33,6 +33,7 @@ public class BasicWorkflowS1 implements WorkflowState {
     public StateDecision decide(final Context context, final Object input, final CommandResults commandResults, final StateLocalAttributesR stateLocals, final SearchAttributesRW searchAttributes, final QueryAttributesRW queryAttributes) {
         final Integer in = (Integer) input;
         final int output = in + 1;
-        return StateDecision.singleNextState(BasicWorkflowS2.StateId, output);
+        final StateDecision out = StateDecision.completeWorkflow(output);
+        return out;
     }
 }
