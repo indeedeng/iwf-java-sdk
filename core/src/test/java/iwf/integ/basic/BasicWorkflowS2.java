@@ -32,7 +32,6 @@ public class BasicWorkflowS2 implements WorkflowState<Integer> {
     @Override
     public StateDecision decide(final Context context, final Integer input, final CommandResults commandResults, final StateLocalAttributesR stateLocals, final SearchAttributesRW searchAttributes, final QueryAttributesRW queryAttributes) {
         final int output = input + 1;
-        final StateDecision out = StateDecision.gracefulCompleteWorkflow(output);
-        return out;
+        return StateDecision.gracefulCompleteWorkflow(output);
     }
 }
