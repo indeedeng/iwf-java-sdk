@@ -3,13 +3,13 @@ package iwf.core.attributes;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public abstract class SearchAttributeDef<T> {
+public abstract class SearchAttributeDef {
 
-    public abstract Class<T> getSearchAttributeType();
+    public abstract SearchAttributeType getSearchAttributeType();
 
     public abstract String getSearchAttributeKey();
 
-    public static SearchAttributeDef create(Class attributeType, String attributeKey) {
+    public static SearchAttributeDef create(SearchAttributeType attributeType, String attributeKey) {
         return ImmutableSearchAttributeDef.builder()
                 .searchAttributeKey(attributeKey)
                 .searchAttributeType(attributeType)

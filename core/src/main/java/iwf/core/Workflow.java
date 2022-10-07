@@ -37,7 +37,7 @@ public interface Workflow {
     /**
      * defines all the search attributes supported by this workflow.
      */
-    default List<SearchAttributeDef<?>> getSearchAttributes() {
+    default List<SearchAttributeDef> getSearchAttributes() {
         return Collections.emptyList();
     }
 
