@@ -22,7 +22,7 @@ public abstract class StateDef {
                 .build();
     }
 
-    public static StateDef normalState(WorkflowState state) {
+    public static StateDef nonStartingState(WorkflowState state) {
         return ImmutableStateDef.builder()
                 .canStartWorkflow(false)
                 .workflowState(
