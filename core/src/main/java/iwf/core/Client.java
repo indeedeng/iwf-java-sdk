@@ -25,12 +25,14 @@ public class Client {
             final String workflowId,
             final String workflowRunId,
             final String signalName,
-            final EncodedObject signalValue) {
+            final Object signalValue) {
         defaultApi.apiV1WorkflowSignalPost(new WorkflowSignalRequest()
                 .workflowId(workflowId)
                 .workflowRunId(workflowRunId)
                 .signalName(signalName)
-                .signalValue(signalValue));
+                .signalValue(new EncodedObject()
+                        .encoding(objectEncoder.getEncodingType())
+                        .data(objectEncoder.toData(signalValue))));
     }
 
     public String StartWorkflow(
