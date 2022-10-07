@@ -22,9 +22,21 @@ public abstract class StateDecision {
 
     public static final StateDecision WAIT_FOR_MORE_RESULTS = ImmutableStateDecision.builder().waitForMoreCommandResults(true).build();
 
-    public static StateDecision completeWorkflow(Object output) {
+    public static StateDecision gracefulCompleteWorkflow(final Object output) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
-                StateMovement.completeWorkflow(output)
+                StateMovement.gracefulCompleteWorkflow(output)
         )).build();
+    }
+
+    public static StateDecision singleNextState(final String stateId, final Object stateInput) {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
+                ImmutableStateMovement.builder().stateId(stateId)
+                        .nextStateInput(stateInput)
+                        .build()
+        )).build();
+    }
+
+    public static StateDecision multiNextStates(final StateMovement... stateMovements) {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(stateMovements)).build();
     }
 }
