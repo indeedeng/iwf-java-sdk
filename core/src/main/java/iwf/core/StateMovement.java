@@ -16,7 +16,7 @@ public abstract class StateMovement {
     public static final StateMovement GRACEFUL_COMPLETING_WORKFLOW = ImmutableStateMovement.builder().stateId(GRACEFUL_COMPLETING_WORKFLOW_STATE_ID).build();
     public static final StateMovement FORCE_FAILING_WORKFLOW_MOVEMENT = ImmutableStateMovement.builder().stateId(FORCE_FAILING_WORKFLOW_STATE_ID).build();
 
-    public static StateMovement completeWorkflow(Object output) {
+    public static StateMovement gracefulCompleteWorkflow(Object output) {
         return ImmutableStateMovement.builder().stateId(GRACEFUL_COMPLETING_WORKFLOW_STATE_ID)
                 .nextStateInput(output)
                 .build();
