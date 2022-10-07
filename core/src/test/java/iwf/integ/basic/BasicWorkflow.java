@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class BasicWorkflow implements Workflow {
+    @Override
     public List<StateDef> getStates() {
         return Arrays.asList(
                 StateDef.startingState(new BasicWorkflowS1()),

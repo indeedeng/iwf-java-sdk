@@ -2,11 +2,19 @@ package iwf.core.attributes;
 
 public class SearchAttributesRW {
 
-    public <T> T get(String key) {
+    public Long getLongInteger(String key) {
         return null;
     }
 
-    public void upsert(String key, Object value) {
+    public void upsertLongInteger(String key, Long value) {
+        return;
+    }
+
+    public String getTextOrKeyword(String key) {
+        return null;
+    }
+
+    public void upsertTextOrKeyword(String key, String value) {
         return;
     }
 }
