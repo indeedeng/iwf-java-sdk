@@ -12,6 +12,8 @@ plugins {
     id "org.openapi.generator" version "6.0.1"
     id 'org.springframework.boot' version '2.7.2'
     id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+    id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
+    id "maven-publish"
 }
 
 bootJar {
@@ -95,3 +97,25 @@ openApiGenerate {
 compileJava.dependsOn tasks.openApiGenerate
 
 sourceSets.main.java.srcDirs += "$buildDir/generated/src/main/java"
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+group = "io.github.cadence-oss"
+version = "1.0.0"
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            username = project.property('myNexusUsername')
+            password = project.property('myNexusPassword')
+        }
+    }
+}
