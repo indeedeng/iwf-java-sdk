@@ -80,12 +80,12 @@ openApiGenerate {
     generatorName = "java"
     inputSpec = "$rootDir/iwf-idl/iwf.yaml".toString()
     outputDir = "$buildDir/generated".toString()
-    apiPackage = "iwf.gen.api"
-    modelPackage = "iwf.gen.models"
-    invokerPackage = "iwf.gen.api"
+    apiPackage = "io.github.cadenceoss.iwf.gen.api"
+    modelPackage = "io.github.cadenceoss.iwf.gen.models"
+    invokerPackage = "io.github.cadenceoss.iwf.gen.api"
     configOptions = [
-            configPackage: "iwf.gen.configuration",
-            basePackage  : "iwf.gen",
+            configPackage: "io.github.cadenceoss.iwf.gen.configuration",
+            basePackage  : "io.github.cadenceoss.iwf.gen",
             library      : "feign",
             interfaceOnly: "true"
     ]
