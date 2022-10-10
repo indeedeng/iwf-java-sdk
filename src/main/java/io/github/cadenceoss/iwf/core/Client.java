@@ -1,14 +1,12 @@
 package io.github.cadenceoss.iwf.core;
 
 import com.google.common.base.Preconditions;
-import io.github.cadenceoss.iwf.gen.models.EncodedObject;
-import io.github.cadenceoss.iwf.gen.models.StateCompletionOutput;
-import io.github.cadenceoss.iwf.gen.models.WorkflowGetRequest;
-import io.github.cadenceoss.iwf.gen.models.WorkflowGetResponse;
-import io.github.cadenceoss.iwf.gen.models.WorkflowStartResponse;
+import io.github.cadenceoss.iwf.core.command.SignalMethodDef;
+import io.github.cadenceoss.iwf.gen.models.*;
 import io.github.cadenceoss.iwf.gen.api.ApiClient;
 import io.github.cadenceoss.iwf.gen.api.DefaultApi;
-import io.github.cadenceoss.iwf.gen.models.WorkflowStartRequest;
+
+import java.util.Map;
 
 public class Client {
     private final Registry registry;
@@ -53,10 +51,7 @@ public class Client {
                 .iwfWorkerUrl(clientOptions.getWorkerUrl())
                 .iwfWorkflowType(wfType)
                 .workflowTimeoutSeconds(options.getWorkflowTimeoutSeconds())
-                .stateInput(new EncodedObject()
-                        .encoding(objectEncoder.getEncodingType())
-                        .data(data)
-                )
+                .stateInput(new EncodedObject().encoding(objectEncoder.getEncodingType()).data(data))
                 .startStateId(startStateId));
         return workflowStartResponse.getWorkflowRunId();
     }
@@ -79,5 +74,34 @@ public class Client {
 
         final StateCompletionOutput output = workflowGetResponse.getResults().get(0);
         return objectEncoder.fromData(output.getCompletedStateOutput().getData(), valueClass);
+    }
+
+    public void SignalWorkflow(
+            final Class<? extends Workflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId,
+            final String signalName,
+            final Object signalValue) {
+        final String wfType = workflowClass.getSimpleName();
+        if (registry.getSignalNameToSignalTypeMap(wfType) == null) {
+            throw new RuntimeException(String.format("Workflow %s doesn't have any registered signal", wfType));
+        }
+
+        Map<String, Class<?>> signalNameToTypeMap = registry.getSignalNameToSignalTypeMap(wfType);
+        if (!signalNameToTypeMap.containsKey(signalName)) {
+            throw new RuntimeException(String.format("Workflow %s doesn't have signal %s", wfType, signalName));
+        }
+        Class<?> signalType = signalNameToTypeMap.get(signalName);
+        if (!signalType.isInstance(signalValue)) {
+            throw new RuntimeException(String.format("Signal value is not of type %s", signalType.getName()));
+        }
+
+        defaultApi.apiV1WorkflowSignalPost(new WorkflowSignalRequest()
+                .workflowId(workflowId)
+                .workflowRunId(workflowRunId)
+                .signalName(signalName)
+                .signalValue(new EncodedObject()
+                        .encoding(objectEncoder.getEncodingType())
+                        .data(objectEncoder.toData(signalValue))));
     }
 }
