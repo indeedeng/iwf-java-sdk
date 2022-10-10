@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"io.github.cadenceoss.iwf.gen", "io.github.cadenceoss.iwf.gen.api", "io.github.cadenceoss.iwf.spring.configuration", "io.github.cadenceoss.iwf.spring.controller"})
+@ComponentScan(basePackages = {"io.github.cadenceoss.iwf.gen", "io.github.cadenceoss.iwf.gen.api", "io.github.cadenceoss.iwf.spring.controller"})
 public class SpringMainApplication {
 
     public static void main(String[] args) {
