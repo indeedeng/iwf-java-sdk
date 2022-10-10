@@ -1,6 +1,7 @@
 package io.github.cadenceoss.iwf.core;
 
 import io.github.cadenceoss.iwf.core.mapper.CommandRequestMapper;
+import io.github.cadenceoss.iwf.core.mapper.CommandResultsMapper;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideResponse;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.mapper.StateDecisionMapper;
@@ -29,12 +30,13 @@ public class WorkerService {
     }
 
     public WorkflowStateDecideResponse handleWorkflowStateDecide(final WorkflowStateDecideRequest req) {
+        System.out.println(req.toString());
         StateDef state = registry.getWorkflowState(req.getWorkflowType(), req.getWorkflowStateId());
         final Object input;
         final EncodedObject stateInput = req.getStateInput();
         input = objectEncoder.fromData(stateInput.getData(), state.getWorkflowState().getInputType());
 
-        StateDecision stateDecision = state.getWorkflowState().decide(null, input, null, null, null, null);
+        StateDecision stateDecision = state.getWorkflowState().decide(null, input, CommandResultsMapper.fromGenerated(req.getCommandResults()), null, null, null);
         return new WorkflowStateDecideResponse().stateDecision(StateDecisionMapper.toGenerated(stateDecision));
     }
 }

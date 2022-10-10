@@ -1,14 +1,9 @@
 package io.github.cadenceoss.iwf.core;
 
 import com.google.common.base.Preconditions;
-import io.github.cadenceoss.iwf.gen.models.EncodedObject;
-import io.github.cadenceoss.iwf.gen.models.StateCompletionOutput;
-import io.github.cadenceoss.iwf.gen.models.WorkflowGetRequest;
-import io.github.cadenceoss.iwf.gen.models.WorkflowGetResponse;
-import io.github.cadenceoss.iwf.gen.models.WorkflowStartResponse;
+import io.github.cadenceoss.iwf.gen.models.*;
 import io.github.cadenceoss.iwf.gen.api.ApiClient;
 import io.github.cadenceoss.iwf.gen.api.DefaultApi;
-import io.github.cadenceoss.iwf.gen.models.WorkflowStartRequest;
 
 public class Client {
     private final Registry registry;
@@ -79,5 +74,19 @@ public class Client {
 
         final StateCompletionOutput output = workflowGetResponse.getResults().get(0);
         return objectEncoder.fromData(output.getCompletedStateOutput().getData(), valueClass);
+    }
+
+    public void SignalWorkflow(
+            final String workflowId,
+            final String workflowRunId,
+            final String signalName,
+            final Object signalValue) {
+        defaultApi.apiV1WorkflowSignalPost(new WorkflowSignalRequest()
+                .workflowId(workflowId)
+                .workflowRunId(workflowRunId)
+                .signalName(signalName)
+                .signalValue(new EncodedObject()
+                        .encoding(objectEncoder.getEncodingType())
+                        .data(objectEncoder.toData(signalValue))));
     }
 }
