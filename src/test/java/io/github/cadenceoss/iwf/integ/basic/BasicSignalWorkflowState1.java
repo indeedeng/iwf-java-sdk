@@ -9,8 +9,6 @@ import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesR;
 import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesW;
 import io.github.cadenceoss.iwf.core.command.*;
 
-import java.util.List;
-
 public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
     public static final String STATE_ID = "signal-s1";
     public static final String SIGNAL_NAME = "test-signal";
@@ -33,7 +31,6 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
 
     @Override
     public StateDecision decide(Context context, Integer input, CommandResults commandResults, StateLocalAttributesR stateLocals, SearchAttributesRW searchAttributes, QueryAttributesRW queryAttributes) {
-        System.out.println(commandResults.toString());
         SignalCommandResult signalCommandResult = commandResults.getAllSignalCommandResults().get(0);
         Integer output = input + (Integer) signalCommandResult.getSignalValue();
         return StateDecision.gracefulCompleteWorkflow(output);

@@ -30,13 +30,21 @@ public class WorkerService {
     }
 
     public WorkflowStateDecideResponse handleWorkflowStateDecide(final WorkflowStateDecideRequest req) {
-        System.out.println(req.toString());
         StateDef state = registry.getWorkflowState(req.getWorkflowType(), req.getWorkflowStateId());
         final Object input;
         final EncodedObject stateInput = req.getStateInput();
         input = objectEncoder.fromData(stateInput.getData(), state.getWorkflowState().getInputType());
 
-        StateDecision stateDecision = state.getWorkflowState().decide(null, input, CommandResultsMapper.fromGenerated(req.getCommandResults()), null, null, null);
+        StateDecision stateDecision = state.getWorkflowState().decide(
+                null,
+                input,
+                CommandResultsMapper.fromGenerated(
+                        req.getCommandResults(),
+                        registry.getSignalNameToSignalTypeMap(req.getWorkflowType()),
+                        objectEncoder),
+                null,
+                null,
+                null);
         return new WorkflowStateDecideResponse().stateDecision(StateDecisionMapper.toGenerated(stateDecision));
     }
 }

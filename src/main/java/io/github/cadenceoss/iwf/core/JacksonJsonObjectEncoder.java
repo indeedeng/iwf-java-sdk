@@ -68,14 +68,14 @@ public class JacksonJsonObjectEncoder implements ObjectEncoder {
   }
 
   @Override
-  public <T> T fromData(String content, Class<T> valueClass) {
-    if (content.isEmpty()) {
+  public <T> T fromData(String data, Class<T> valueClass) {
+    if (data.isEmpty()) {
       return null;
     }
     try {
       @SuppressWarnings("deprecation")
       JavaType reference = mapper.getTypeFactory().constructType(valueClass, valueClass);
-      return mapper.readValue(content, reference);
+      return mapper.readValue(data, reference);
     } catch (IOException e) {
       throw new ObjectEncoderException(e);
     }

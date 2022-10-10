@@ -41,21 +41,11 @@ public class BasicTest {
         final Client client = new Client(registry, ClientOptions.localDefault);
         final String wfId = "basic-signal-test-id" + System.currentTimeMillis() / 1000;
         final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
-        final Integer input = Integer.valueOf(0);
+        final Integer input = Integer.valueOf(1);
         final String runId = client.StartWorkflow(
                 BasicSignalWorkflow.class, BasicSignalWorkflowState1.STATE_ID, input, wfId, startOptions);
-        client.SignalWorkflow(wfId, runId, BasicSignalWorkflowState1.COMMAND_ID, Integer.valueOf(1));
+        client.SignalWorkflow(wfId, runId, BasicSignalWorkflowState1.SIGNAL_NAME, Integer.valueOf(2));
         final Integer output = client.GetSingleWorkflowStateOutputWithLongWait(Integer.class, wfId);
-    }
-
-    @Test
-    public void sendSignal() {
-        final Registry registry = new Registry();
-        final BasicSignalWorkflow basicSignalWorkflow = new BasicSignalWorkflow();
-        registry.addWorkflow(basicSignalWorkflow);
-
-        final Client client = new Client(registry, ClientOptions.localDefault);
-        client.SignalWorkflow("basic-signal-test-id1665293895", "fef3048c-464d-4cc1-ab6c-d386d0fc4ab1", BasicSignalWorkflowState1.COMMAND_ID, Integer.valueOf(1));
-
+        Assertions.assertEquals(3, output);
     }
 }
