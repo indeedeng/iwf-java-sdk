@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class Registry {
     private final Map<String,Workflow> workflowStore = new HashMap<>();
+    // (workflow type, stateId)-> StateDef
     private final Map<String, StateDef> workflowStateStore = new HashMap<>();
     private final Map<String, Map<String, Class<?>>> signalTypeStore = new HashMap<>();
 

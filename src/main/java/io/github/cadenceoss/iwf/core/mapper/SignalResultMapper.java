@@ -3,7 +3,6 @@ package io.github.cadenceoss.iwf.core.mapper;
 import io.github.cadenceoss.iwf.core.ObjectEncoder;
 import io.github.cadenceoss.iwf.core.command.ImmutableSignalCommandResult;
 import io.github.cadenceoss.iwf.core.command.SignalCommandResult;
-import io.github.cadenceoss.iwf.gen.models.EncodedObject;
 import io.github.cadenceoss.iwf.gen.models.SignalResult;
 
 public class SignalResultMapper {
@@ -13,7 +12,7 @@ public class SignalResultMapper {
             ObjectEncoder objectEncoder) {
         return ImmutableSignalCommandResult.builder()
                 .commandId(signalResult.getCommandId())
-                .signalStatus(SignalStatusMapper.fromGenerated(signalResult.getSignalStatus()))
+                .signalStatusEnum(signalResult.getSignalStatus())
                 .signalName(signalResult.getSignalName())
                 .signalValue(decode(signalResult, signalType, objectEncoder))
                 .build();
