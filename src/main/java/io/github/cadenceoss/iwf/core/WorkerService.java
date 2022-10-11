@@ -23,7 +23,7 @@ public class WorkerService {
         StateDef state = registry.getWorkflowState(req.getWorkflowType(), req.getWorkflowStateId());
         final EncodedObject stateInput = req.getStateInput();
         final Object input;
-            input = objectEncoder.fromData(stateInput.getData(), state.getWorkflowState().getInputType());
+            input = objectEncoder.decode(stateInput, state.getWorkflowState().getInputType());
         CommandRequest commandRequest = state.getWorkflowState().start(null, input, null, null, null);
         
         return new WorkflowStateStartResponse().commandRequest(CommandRequestMapper.toGenerated(commandRequest));
@@ -33,7 +33,7 @@ public class WorkerService {
         StateDef state = registry.getWorkflowState(req.getWorkflowType(), req.getWorkflowStateId());
         final Object input;
         final EncodedObject stateInput = req.getStateInput();
-        input = objectEncoder.fromData(stateInput.getData(), state.getWorkflowState().getInputType());
+        input = objectEncoder.decode(stateInput, state.getWorkflowState().getInputType());
 
         StateDecision stateDecision = state.getWorkflowState().decide(
                 null,

@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.github.cadenceoss.iwf.gen.models.EncodedObject;
 
 import java.io.IOException;
 
@@ -58,23 +59,31 @@ public class JacksonJsonObjectEncoder implements ObjectEncoder {
   }
 
   @Override
-  public String toData(Object value) {
-    try {
-      return mapper.writeValueAsString(value);
+  public EncodedObject encode(Object object) {
+    if (object == null) {
+      return null;
+    }
 
+    try {
+      String data = mapper.writeValueAsString(object);
+      return new EncodedObject()
+              .encoding(getEncodingType())
+              .data(data);
     } catch (JsonProcessingException e) {
       throw new ObjectEncoderException(e);
     }
   }
 
   @Override
-  public <T> T fromData(String data, Class<T> valueClass) {
-    if (data.isEmpty()) {
+  public <T> T decode(EncodedObject encodedObject, Class<T> type) {
+    String data = encodedObject.getData();
+    if (data == null || data.isEmpty()) {
       return null;
     }
+
     try {
       @SuppressWarnings("deprecation")
-      JavaType reference = mapper.getTypeFactory().constructType(valueClass, valueClass);
+      JavaType reference = mapper.getTypeFactory().constructType(type, type);
       return mapper.readValue(data, reference);
     } catch (IOException e) {
       throw new ObjectEncoderException(e);

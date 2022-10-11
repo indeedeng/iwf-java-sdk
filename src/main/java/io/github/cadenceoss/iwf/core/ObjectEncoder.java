@@ -19,8 +19,9 @@
  */
 package io.github.cadenceoss.iwf.core;
 
-public interface ObjectEncoder {
+import io.github.cadenceoss.iwf.gen.models.EncodedObject;
 
+public interface ObjectEncoder {
     /**
      * Each {@link ObjectEncoder} has an Encoding Type that it handles.
      *
@@ -29,24 +30,19 @@ public interface ObjectEncoder {
     String getEncodingType();
 
     /**
-     * Implements conversion of a list of values.
+     * Encode a Java object to and EncodedObject
      *
-     * @param value Java value to convert.
-     * @return converted value
-     * Note that it will ObjectEncoderException if conversion of the value passed as parameter failed for any
-     * reason.
-     * @see #getEncodingType() getEncodingType javadoc for an important implementation detail
+     * @param object Java object to convert
+     * @return encoded object with the encoding type of the encoder
      */
-    String toData(Object value);
+    EncodedObject encode(Object object);
 
     /**
-     * Implements conversion of a single value.
-     *
-     * @param content          Serialized value to convert to a Java object.
-     * @param valueType        type of the value stored in the {@code content}
-     * @return converted Java object
-     * Note that it will ObjectEncoderException if conversion of the data passed as parameter failed for any
-     *                                reason.
+     * Decode an encoded object into a Java object with input type
+     * @param encodedObject encoded object to decode
+     * @param type Java class to decode into
+     * @param <T> Java class to decode into
+     * @return decoded Java object
      */
-    <T> T fromData(String content, Class<T> valueType);
+    <T> T decode(EncodedObject encodedObject, Class<T> type);
 }
