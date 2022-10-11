@@ -5,6 +5,7 @@ import io.github.cadenceoss.iwf.gen.models.*;
 import io.github.cadenceoss.iwf.gen.api.ApiClient;
 import io.github.cadenceoss.iwf.gen.api.DefaultApi;
 
+import java.util.List;
 import java.util.Map;
 
 public class Client {
@@ -53,13 +54,24 @@ public class Client {
         return workflowStartResponse.getWorkflowRunId();
     }
 
-    public <T> T GetSingleWorkflowStateOutputWithLongWait(
+    /**
+     * For most cases, a workflow only has one result(one completion state)
+     * Use this API to retrieve the output of the state
+     * @param valueClass the type class of the output
+     * @param workflowId the workflowId
+     * @param workflowRunId optional runId
+     * @return
+     * @param <T> type of the output
+     */
+    public <T> T GetSimpleWorkflowResultWithLongWait(
             Class<T> valueClass,
-            final String workflowId) {
+            final String workflowId,
+            final String workflowRunId) {
         WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithLongWaitPost(
                 new WorkflowGetRequest()
                         .needsResults(true)
                         .workflowId(workflowId)
+                        .workflowRunId(workflowRunId)
         );
 
         String checkErrorMessage = "this workflow should have exactly one state output";
@@ -73,6 +85,33 @@ public class Client {
         return objectEncoder.decode(output.getCompletedStateOutput(), valueClass);
     }
 
+    public <T> T GetSimpleWorkflowResultWithLongWait(
+            Class<T> valueClass,
+            final String workflowId) {
+        return GetSimpleWorkflowResultWithLongWait(valueClass, workflowId, "");
+    }
+
+    /**
+     * In some cases, a workflow may have more than one completion states
+     * @param workflowId
+     * @param workflowRunId
+     * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
+     */
+    public List<StateCompletionOutput> GetComplexWorkflowResultWithLongWait(
+            final String workflowId, final String workflowRunId) {
+        WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithLongWaitPost(
+                new WorkflowGetRequest()
+                        .needsResults(true)
+                        .workflowId(workflowId)
+                        .workflowRunId(workflowRunId)
+        );
+
+        return workflowGetResponse.getResults();
+    }
+
+    public List<StateCompletionOutput> GetComplexWorkflowResultWithLongWait(final String workflowId) {
+        return GetComplexWorkflowResultWithLongWait(workflowId, "");
+    }
     public void SignalWorkflow(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,

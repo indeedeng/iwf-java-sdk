@@ -28,7 +28,7 @@ public class BasicTest {
         final Integer input = Integer.valueOf(0);
         client.StartWorkflow(BasicWorkflow.class, BasicWorkflowS1.StateId, input, wfId, startOptions);
         // wait for workflow to finish
-        final Integer output = client.GetSingleWorkflowStateOutputWithLongWait(Integer.class, wfId);
+        final Integer output = client.GetSimpleWorkflowResultWithLongWait(Integer.class, wfId);
         Assertions.assertEquals(input + 2, output);
     }
 
@@ -46,7 +46,7 @@ public class BasicTest {
                 BasicSignalWorkflow.class, BasicSignalWorkflowState1.STATE_ID, input, wfId, startOptions);
         client.SignalWorkflow(
                 BasicSignalWorkflow.class, wfId, runId, BasicSignalWorkflowState1.SIGNAL_NAME, Integer.valueOf(2));
-        final Integer output = client.GetSingleWorkflowStateOutputWithLongWait(Integer.class, wfId);
+        final Integer output = client.GetSimpleWorkflowResultWithLongWait(Integer.class, wfId);
         Assertions.assertEquals(3, output);
     }
 }
