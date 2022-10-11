@@ -14,11 +14,7 @@ public class SignalResultMapper {
                 .commandId(signalResult.getCommandId())
                 .signalStatusEnum(signalResult.getSignalStatus())
                 .signalName(signalResult.getSignalName())
-                .signalValue(decode(signalResult, signalType, objectEncoder))
+                .signalValue(objectEncoder.decode(signalResult.getSignalValue(), signalType))
                 .build();
-    }
-
-    private static <T> T decode(SignalResult signalResult, Class<T> signalType, ObjectEncoder objectEncoder) {
-        return objectEncoder.fromData(signalResult.getSignalValue().getData(), signalType);
     }
 }

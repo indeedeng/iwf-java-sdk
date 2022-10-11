@@ -1,7 +1,6 @@
 package io.github.cadenceoss.iwf.core;
 
 import com.google.common.base.Preconditions;
-import io.github.cadenceoss.iwf.core.command.SignalMethodDef;
 import io.github.cadenceoss.iwf.gen.models.*;
 import io.github.cadenceoss.iwf.gen.api.ApiClient;
 import io.github.cadenceoss.iwf.gen.api.DefaultApi;
@@ -44,14 +43,12 @@ public class Client {
             throw new RuntimeException("invalid start stateId " + startStateId);
         }
 
-        final String data = objectEncoder.toData(input);
-
         WorkflowStartResponse workflowStartResponse = defaultApi.apiV1WorkflowStartPost(new WorkflowStartRequest()
                 .workflowId(workflowId)
                 .iwfWorkerUrl(clientOptions.getWorkerUrl())
                 .iwfWorkflowType(wfType)
                 .workflowTimeoutSeconds(options.getWorkflowTimeoutSeconds())
-                .stateInput(new EncodedObject().encoding(objectEncoder.getEncodingType()).data(data))
+                .stateInput(objectEncoder.encode(input))
                 .startStateId(startStateId));
         return workflowStartResponse.getWorkflowRunId();
     }
@@ -73,7 +70,7 @@ public class Client {
         //TODO validate encoding type
 
         final StateCompletionOutput output = workflowGetResponse.getResults().get(0);
-        return objectEncoder.fromData(output.getCompletedStateOutput().getData(), valueClass);
+        return objectEncoder.decode(output.getCompletedStateOutput(), valueClass);
     }
 
     public void SignalWorkflow(
@@ -100,8 +97,6 @@ public class Client {
                 .workflowId(workflowId)
                 .workflowRunId(workflowRunId)
                 .signalName(signalName)
-                .signalValue(new EncodedObject()
-                        .encoding(objectEncoder.getEncodingType())
-                        .data(objectEncoder.toData(signalValue))));
+                .signalValue(objectEncoder.encode(signalValue)));
     }
 }
