@@ -107,14 +107,14 @@ publishing {
             from(components.java)
 
             pom {
-                name = "iwf-core"
+                name = "iwf-java-sdk"
                 description = "iwf java sdk core"
-                url = 'https://github.com/cadence-oss/iwf-java'
+                url = 'https://github.com/cadence-oss/iwf-java-sdk'
 
                 scm {
-                    connection = 'scm:git@github.com:cadence-oss/iwf-java.git'
-                    developerConnection = 'scm:git@github.com:cadence-oss/iwf-java.git'
-                    url = 'https://github.com/cadence-oss/iwf-java.git'
+                    connection = 'scm:git@github.com:cadence-oss/iwf-java-sdk.git'
+                    developerConnection = 'scm:git@github.com:cadence-oss/iwf-java-sdk.git'
+                    url = 'https://github.com/cadence-oss/iwf-java-sdk.git'
                 }
 
                 licenses {
@@ -141,7 +141,7 @@ signing {
 }
 
 group = "io.github.cadence-oss"
-version = "1.0.1"
+version = "0.1.0"
 
 nexusPublishing {
     repositories {
