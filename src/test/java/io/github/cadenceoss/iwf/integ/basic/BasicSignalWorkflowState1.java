@@ -11,7 +11,7 @@ import io.github.cadenceoss.iwf.core.command.*;
 
 public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
     public static final String STATE_ID = "signal-s1";
-    public static final String SIGNAL_NAME = "test-signal";
+    public static final String SIGNAL_CHANNEL_NAME = "test-signal";
     public static final String COMMAND_ID = "test-signal-id";
 
     @Override
@@ -26,7 +26,7 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
 
     @Override
     public CommandRequest start(Context context, Integer input, StateLocalAttributesW stateLocals, SearchAttributesRW searchAttributes, QueryAttributesRW queryAttributes) {
-        return CommandRequest.forAllCommandCompleted(SignalCommand.create(COMMAND_ID, SIGNAL_NAME));
+        return CommandRequest.forAllCommandCompleted(SignalCommand.create(COMMAND_ID, SIGNAL_CHANNEL_NAME));
     }
 
     @Override

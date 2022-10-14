@@ -8,9 +8,9 @@ public abstract class SignalCommandResult {
 
     public abstract String getCommandId();
 
-    public abstract String getSignalName();
+    public abstract String getSignalChannelName();
 
     public abstract Object getSignalValue();
 
-    public abstract SignalResult.SignalStatusEnum getSignalStatusEnum();
+    public abstract SignalResult.SignalRequestStatusEnum getSignalRequestStatusEnum();
 }

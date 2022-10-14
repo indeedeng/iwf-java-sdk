@@ -6,6 +6,6 @@ public class SignalCommandMapper {
     public static SignalCommand toGenerated(io.github.cadenceoss.iwf.core.command.SignalCommand signalCommand) {
         return new SignalCommand()
                 .commandId(signalCommand.getCommandId())
-                .signalName(signalCommand.getSignalName());
+                .signalChannelName(signalCommand.getSignalChannelName());
     }
 }

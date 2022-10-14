@@ -1,6 +1,6 @@
 package io.github.cadenceoss.iwf.core;
 
-import io.github.cadenceoss.iwf.core.command.SignalMethodDef;
+import io.github.cadenceoss.iwf.core.command.SignalChannelDef;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,14 +42,14 @@ public class Registry {
 
     private void registerWorkflowSignal(final Workflow wf) {
         String workflowType = wf.getClass().getSimpleName();
-        for (SignalMethodDef signalMethodDef: wf.getSignalMethods()) {
+        for (SignalChannelDef signalChannelDef: wf.getSignalChannels()) {
             Map<String, Class<?>> signalNameToTypeMap =
                     signalTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
-            if (signalNameToTypeMap.containsKey(signalMethodDef.getSignalName())) {
+            if (signalNameToTypeMap.containsKey(signalChannelDef.getSignalChannelName())) {
                 throw new RuntimeException(
-                        String.format("Signal name  %s already exists", signalMethodDef.getSignalName()));
+                        String.format("Signal channel name  %s already exists", signalChannelDef.getSignalChannelName()));
             }
-            signalNameToTypeMap.put(signalMethodDef.getSignalName(), signalMethodDef.getSignalType());
+            signalNameToTypeMap.put(signalChannelDef.getSignalChannelName(), signalChannelDef.getSignalValueType());
         }
     }
 
@@ -61,7 +61,7 @@ public class Registry {
         return workflowStateStore.get(getStateDefKey(workflowType, stateId));
     }
 
-    public Map<String, Class<?>> getSignalNameToSignalTypeMap(final String workflowType) {
+    public Map<String, Class<?>> getSignalChannelNameToSignalTypeMap(final String workflowType) {
         return signalTypeStore.get(workflowType);
     }
 

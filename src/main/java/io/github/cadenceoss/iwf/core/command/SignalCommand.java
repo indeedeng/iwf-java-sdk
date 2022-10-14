@@ -5,18 +5,18 @@ import org.immutables.value.Value;
 @Value.Immutable
 public abstract class SignalCommand implements BaseCommand {
 
-    public abstract String getSignalName();
+    public abstract String getSignalChannelName();
 
-    public static SignalCommand create(final String commandId, final String signalName) {
+    public static SignalCommand create(final String commandId, final String channelName) {
         return ImmutableSignalCommand.builder()
-                .signalName(signalName)
+                .signalChannelName(channelName)
                 .commandId(commandId)
                 .build();
     }
 
     public static SignalCommand create(String signalName) {
         return ImmutableSignalCommand.builder()
-                .signalName(signalName)
+                .signalChannelName(signalName)
                 .build();
     }
 }

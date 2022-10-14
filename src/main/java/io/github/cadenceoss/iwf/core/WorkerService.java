@@ -40,7 +40,7 @@ public class WorkerService {
                 input,
                 CommandResultsMapper.fromGenerated(
                         req.getCommandResults(),
-                        registry.getSignalNameToSignalTypeMap(req.getWorkflowType()),
+                        registry.getSignalChannelNameToSignalTypeMap(req.getWorkflowType()),
                         objectEncoder),
                 null,
                 null,
