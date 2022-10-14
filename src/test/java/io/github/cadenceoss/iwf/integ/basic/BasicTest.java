@@ -45,7 +45,7 @@ public class BasicTest {
         final String runId = client.StartWorkflow(
                 BasicSignalWorkflow.class, BasicSignalWorkflowState1.STATE_ID, input, wfId, startOptions);
         client.SignalWorkflow(
-                BasicSignalWorkflow.class, wfId, runId, BasicSignalWorkflowState1.SIGNAL_NAME, Integer.valueOf(2));
+                BasicSignalWorkflow.class, wfId, runId, BasicSignalWorkflowState1.SIGNAL_CHANNEL_NAME, Integer.valueOf(2));
         final Integer output = client.GetSimpleWorkflowResultWithLongWait(Integer.class, wfId);
         Assertions.assertEquals(3, output);
     }

@@ -3,7 +3,7 @@ package io.github.cadenceoss.iwf.core;
 import io.github.cadenceoss.iwf.core.attributes.QueryAttributeDef;
 import io.github.cadenceoss.iwf.core.attributes.SearchAttributeDef;
 import io.github.cadenceoss.iwf.core.command.LongRunningActivityDef;
-import io.github.cadenceoss.iwf.core.command.SignalMethodDef;
+import io.github.cadenceoss.iwf.core.command.SignalChannelDef;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,9 +28,9 @@ public interface Workflow {
     List<StateDef> getStates();
 
     /**
-     * defines all the signal methods supported by this workflow.
+     * defines all the signal channels supported by this workflow.
      */
-    default List<SignalMethodDef<?>> getSignalMethods() {
+    default List<SignalChannelDef> getSignalChannels() {
         return Collections.emptyList();
     }
 

@@ -116,18 +116,18 @@ public class Client {
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
-            final String signalName,
+            final String signalChannelName,
             final Object signalValue) {
         final String wfType = workflowClass.getSimpleName();
-        if (registry.getSignalNameToSignalTypeMap(wfType) == null) {
-            throw new RuntimeException(String.format("Workflow %s doesn't have any registered signal", wfType));
+        if (registry.getSignalChannelNameToSignalTypeMap(wfType) == null) {
+            throw new RuntimeException(String.format("Workflow %s doesn't have any registered signal channels", wfType));
         }
 
-        Map<String, Class<?>> signalNameToTypeMap = registry.getSignalNameToSignalTypeMap(wfType);
-        if (!signalNameToTypeMap.containsKey(signalName)) {
-            throw new RuntimeException(String.format("Workflow %s doesn't have signal %s", wfType, signalName));
+        Map<String, Class<?>> nameToTypeMap = registry.getSignalChannelNameToSignalTypeMap(wfType);
+        if (!nameToTypeMap.containsKey(signalChannelName)) {
+            throw new RuntimeException(String.format("Workflow %s doesn't have signal %s", wfType, signalChannelName));
         }
-        Class<?> signalType = signalNameToTypeMap.get(signalName);
+        Class<?> signalType = nameToTypeMap.get(signalChannelName);
         if (!signalType.isInstance(signalValue)) {
             throw new RuntimeException(String.format("Signal value is not of type %s", signalType.getName()));
         }
@@ -135,7 +135,7 @@ public class Client {
         defaultApi.apiV1WorkflowSignalPost(new WorkflowSignalRequest()
                 .workflowId(workflowId)
                 .workflowRunId(workflowRunId)
-                .signalName(signalName)
+                .signalChannelName(signalChannelName)
                 .signalValue(objectEncoder.encode(signalValue)));
     }
 

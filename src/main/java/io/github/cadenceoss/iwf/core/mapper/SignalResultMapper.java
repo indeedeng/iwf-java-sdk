@@ -12,8 +12,8 @@ public class SignalResultMapper {
             ObjectEncoder objectEncoder) {
         return ImmutableSignalCommandResult.builder()
                 .commandId(signalResult.getCommandId())
-                .signalStatusEnum(signalResult.getSignalStatus())
-                .signalName(signalResult.getSignalName())
+                .signalRequestStatusEnum(signalResult.getSignalRequestStatus())
+                .signalChannelName(signalResult.getSignalChannelName())
                 .signalValue(objectEncoder.decode(signalResult.getSignalValue(), signalType))
                 .build();
     }

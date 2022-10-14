@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class CommandResultsMapper {
     public static CommandResults fromGenerated(
             io.github.cadenceoss.iwf.gen.models.CommandResults commandResults,
-            Map<String, Class<?>> signalNameToTypeMap,
+            Map<String, Class<?>> nameToTypeMap,
             ObjectEncoder objectEncoder) {
 
         ImmutableCommandResults.Builder builder = ImmutableCommandResults.builder();
@@ -21,7 +21,7 @@ public class CommandResultsMapper {
             builder.allSignalCommandResults(commandResults.getSignalResults().stream()
                     .map(signalResult -> SignalResultMapper.fromGenerated(
                             signalResult,
-                            signalNameToTypeMap.get(signalResult.getSignalName()),
+                            nameToTypeMap.get(signalResult.getSignalChannelName()),
                             objectEncoder))
                     .collect(Collectors.toList()));
         }
