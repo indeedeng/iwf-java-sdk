@@ -1,12 +1,11 @@
 package io.github.cadenceoss.iwf.core.attributes;
 
-public class QueryAttributesRW {
+import io.github.cadenceoss.iwf.gen.models.KeyValue;
 
-    public <T> T get(String key) {
-        return null;
-    }
+import java.util.List;
 
-    public void upsert(String key, Object value) {
-        return;
-    }
+public interface QueryAttributesRW {
+    <T> T get(String key, Class<T> type);
+    void set(String key, Object value);
+    List<KeyValue> getUpsertQueryAttributes();
 }

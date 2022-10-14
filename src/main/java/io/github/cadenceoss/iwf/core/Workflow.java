@@ -44,7 +44,7 @@ public interface Workflow {
     /**
      * defines all the query attributes supported by this workflow.
      */
-    default List<QueryAttributeDef<?>> getQueryAttributes() {
+    default List<QueryAttributeDef> getQueryAttributes() {
         return Collections.emptyList();
     }
 

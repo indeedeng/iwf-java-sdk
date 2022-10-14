@@ -6,6 +6,7 @@ import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideResponse;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateStartRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateStartResponse;
+import io.github.cadenceoss.iwf.integ.basic.BasicQueryWorkflow;
 import io.github.cadenceoss.iwf.integ.basic.BasicSignalWorkflow;
 import io.github.cadenceoss.iwf.integ.basic.BasicWorkflow;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class ApiController {
         final Registry registry = new Registry();
         registry.addWorkflow(new BasicWorkflow());
         registry.addWorkflow(new BasicSignalWorkflow());
+        registry.addWorkflow(new BasicQueryWorkflow());
         workerService = new WorkerService(registry);
     }
 

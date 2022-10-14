@@ -5,6 +5,7 @@ import io.github.cadenceoss.iwf.gen.models.*;
 import io.github.cadenceoss.iwf.gen.api.ApiClient;
 import io.github.cadenceoss.iwf.gen.api.DefaultApi;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -177,4 +178,47 @@ public class Client {
         return resp.getWorkflowRunId();
     }
 
+    public Map<String, EncodedObject> queryWorkflow(
+            final Class<? extends Workflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId,
+            List<String> attributeKeys) {
+        final String wfType = workflowClass.getSimpleName();
+        if (registry.getQueryAttributeNameToTypeMap(wfType) == null) {
+            throw new RuntimeException(
+                    String.format("Workflow %s doesn't have any registered query attribute", wfType)
+            );
+        }
+
+        Map<String, Class<?>> queryAttributeNameToTypeMap = registry.getQueryAttributeNameToTypeMap(wfType);
+        List<String> nonExistingQueryAttributeList = attributeKeys.stream()
+                .filter(s -> !queryAttributeNameToTypeMap.containsKey(s))
+                .toList();
+        if (!nonExistingQueryAttributeList.isEmpty()) {
+            throw new RuntimeException(
+                    String.format(
+                            "Query attributes not registered: %s",
+                            String.join(", ", nonExistingQueryAttributeList)
+                    )
+            );
+        }
+
+        WorkflowQueryResponse response = defaultApi.apiV1WorkflowQueryPost(
+                new WorkflowQueryRequest()
+                        .workflowId(workflowId)
+                        .workflowRunId(workflowRunId)
+                        .attributeKeys(attributeKeys)
+        );
+
+        if (response.getQueryAttributes() == null) {
+            throw new RuntimeException("query attributes not returned");
+        }
+        Map<String, EncodedObject> result = new HashMap<>();
+        for (KeyValue keyValue: response.getQueryAttributes()) {
+            if (keyValue.getValue() != null) {
+                result.put(keyValue.getKey(), keyValue.getValue());
+            }
+        }
+        return result;
+    }
 }

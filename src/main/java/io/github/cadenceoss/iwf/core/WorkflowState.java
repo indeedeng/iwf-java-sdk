@@ -1,10 +1,6 @@
 package io.github.cadenceoss.iwf.core;
 
-import io.github.cadenceoss.iwf.core.attributes.AttributeLoadingPolicy;
-import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesR;
-import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesW;
+import io.github.cadenceoss.iwf.core.attributes.*;
 import io.github.cadenceoss.iwf.core.command.CommandCarryOverPolicy;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
@@ -42,7 +38,9 @@ public interface WorkflowState<I> {
      */
     CommandRequest start(
             final Context context, I input,
-            final StateLocalAttributesW stateLocals, final SearchAttributesRW searchAttributes, final QueryAttributesRW queryAttributes);
+            final StateLocalAttributesW stateLocals,
+            final SearchAttributesRW searchAttributes,
+            final QueryAttributesRW queryAttributes);
 
     /**
      * Implement this method to decide what to do next when requested commands are ready
@@ -54,8 +52,12 @@ public interface WorkflowState<I> {
      * @return the decision of what to do next(e.g. transition to next states)
      */
     StateDecision decide(
-            final Context context, final I input, final CommandResults commandResults,
-            final StateLocalAttributesR stateLocals, final SearchAttributesRW searchAttributes, final QueryAttributesRW queryAttributes);
+            final Context context,
+            final I input,
+            final CommandResults commandResults,
+            final StateLocalAttributesR stateLocals,
+            final SearchAttributesRW searchAttributes,
+            final QueryAttributesRW queryAttributes);
 }
 
 
