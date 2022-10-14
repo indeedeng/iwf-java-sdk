@@ -1,8 +1,8 @@
 # iwf-java-sdk 
-Java SDK for iwf workflow engine(interpreter workflow engine for Cadence/Temporal)
+WIP Java SDK for [iwf workflow engine](https://github.com/indeedeng/iwf)
 
 ## API documentation 
-[WIP doc](https://docs.google.com/document/d/15CETNk9ewiP7M_6N9s7jo-Wm57WG977hch9kTVnaExA/edit#)
+[API review doc](https://docs.google.com/document/d/15CETNk9ewiP7M_6N9s7jo-Wm57WG977hch9kTVnaExA/edit#) feel free to leave y our comments
 
 ## How to build & run 
 
