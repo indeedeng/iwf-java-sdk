@@ -8,6 +8,7 @@ import io.github.cadenceoss.iwf.gen.api.DefaultApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Client {
     private final Registry registry;
@@ -68,7 +69,7 @@ public class Client {
             Class<T> valueClass,
             final String workflowId,
             final String workflowRunId) {
-        WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithLongWaitPost(
+        WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithWaitPost(
                 new WorkflowGetRequest()
                         .needsResults(true)
                         .workflowId(workflowId)
@@ -100,7 +101,7 @@ public class Client {
      */
     public List<StateCompletionOutput> GetComplexWorkflowResultWithLongWait(
             final String workflowId, final String workflowRunId) {
-        WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithLongWaitPost(
+        WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithWaitPost(
                 new WorkflowGetRequest()
                         .needsResults(true)
                         .workflowId(workflowId)
@@ -200,7 +201,7 @@ public class Client {
         if (attributeKeys != null && !attributeKeys.isEmpty()) {
             List<String> nonExistingQueryAttributeList = attributeKeys.stream()
                     .filter(s -> !queryAttributeKeyToTypeMap.containsKey(s))
-                    .toList();
+                    .collect(Collectors.toList());
             if (!nonExistingQueryAttributeList.isEmpty()) {
                 throw new RuntimeException(
                         String.format(
@@ -211,8 +212,8 @@ public class Client {
             }
         }
 
-        WorkflowQueryResponse response = defaultApi.apiV1WorkflowQueryPost(
-                new WorkflowQueryRequest()
+        WorkflowGetQueryAttributesResponse response = defaultApi.apiV1WorkflowQueryattributesGetPost(
+                new WorkflowGetQueryAttributesRequest()
                         .workflowId(workflowId)
                         .workflowRunId(workflowRunId)
                         .attributeKeys(attributeKeys)

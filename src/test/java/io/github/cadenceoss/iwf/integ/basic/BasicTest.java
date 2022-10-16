@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +64,7 @@ public class BasicTest {
                 BasicQueryWorkflow.class, BasicQueryWorkflowState1.STATE_ID, "start", wfId, startOptions);
         final String output = client.GetSimpleWorkflowResultWithLongWait(String.class, wfId);
         Map<String, Object> map =
-                client.queryWorkflow(BasicQueryWorkflow.class, wfId, runId, List.of(BasicQueryWorkflow.ATTRIBUTE_KEY));
+                client.queryWorkflow(BasicQueryWorkflow.class, wfId, runId, Arrays.asList(BasicQueryWorkflow.ATTRIBUTE_KEY));
         Assertions.assertEquals(
                 "query-start-query-decide", map.get(BasicQueryWorkflow.ATTRIBUTE_KEY));
         Map<String, Object> allQueryAttributes =
