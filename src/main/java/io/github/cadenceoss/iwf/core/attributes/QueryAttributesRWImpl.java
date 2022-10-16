@@ -28,7 +28,7 @@ public class QueryAttributesRWImpl implements QueryAttributesRW{
     @Override
     public <T> T get(String key, Class<T> type) {
         if (!queryAttributeNameToTypeMap.containsKey(key)) {
-            throw new RuntimeException(String.format("Query attribute %s is not registered", key));
+            throw new IllegalArgumentException(String.format("Query attribute %s is not registered", key));
         }
         if (!queryAttributeNameToEncodedObjectMap.containsKey(key)) {
             return null;
@@ -36,7 +36,7 @@ public class QueryAttributesRWImpl implements QueryAttributesRW{
 
         Class<?> registeredType = queryAttributeNameToTypeMap.get(key);
         if (!type.isAssignableFrom(registeredType)) {
-            throw new RuntimeException(
+            throw new IllegalArgumentException(
                     String.format(
                             "%s is not assignable from registered type %s",
                             type.getName(),
@@ -50,12 +50,12 @@ public class QueryAttributesRWImpl implements QueryAttributesRW{
     @Override
     public void set(String key, Object value) {
         if (!queryAttributeNameToTypeMap.containsKey(key)) {
-            throw new RuntimeException(String.format("Query attribute %s is not registered", key));
+            throw new IllegalArgumentException(String.format("Query attribute %s is not registered", key));
         }
 
         Class<?> registeredType = queryAttributeNameToTypeMap.get(key);
         if (!registeredType.isInstance(value)) {
-            throw new RuntimeException(String.format("Input is not an instance of class %s", registeredType.getName()));
+            throw new IllegalArgumentException(String.format("Input is not an instance of class %s", registeredType.getName()));
         }
 
         this.queryAttributeNameToEncodedObjectMap.put(key, objectEncoder.encode(value));
