@@ -1,12 +1,6 @@
 package io.github.cadenceoss.iwf.core.attributes;
 
-public class QueryAttributesRW {
-
-    public <T> T get(String key) {
-        return null;
-    }
-
-    public void upsert(String key, Object value) {
-        return;
-    }
+public interface QueryAttributesRW {
+    <T> T get(String key, Class<T> type);
+    void set(String key, Object value);
 }

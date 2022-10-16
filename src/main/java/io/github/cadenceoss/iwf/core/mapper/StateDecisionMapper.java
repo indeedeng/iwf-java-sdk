@@ -9,10 +9,11 @@ public class StateDecisionMapper {
         if (!stateDecision.getNextStates().isPresent()) {
             return null;
         }
-        return new StateDecision().nextStates(
-                stateDecision.getNextStates()
-                        .get().stream()
+        return new StateDecision()
+                .nextStates(stateDecision.getNextStates().get()
+                        .stream()
                         .map(StateMovementMapper::toGenerated)
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList()))
+                .upsertQueryAttributes(stateDecision.getUpsertQueryAttributes().get());
     }
 }

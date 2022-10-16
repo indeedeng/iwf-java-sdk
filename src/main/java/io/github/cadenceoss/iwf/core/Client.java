@@ -5,6 +5,7 @@ import io.github.cadenceoss.iwf.gen.models.*;
 import io.github.cadenceoss.iwf.gen.api.ApiClient;
 import io.github.cadenceoss.iwf.gen.api.DefaultApi;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -177,4 +178,65 @@ public class Client {
         return resp.getWorkflowRunId();
     }
 
+    public Map<String, Object> queryWorkflow(
+            final Class<? extends Workflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId,
+            List<String> attributeKeys) {
+        final String wfType = workflowClass.getSimpleName();
+        if (registry.getWorkflow(wfType) == null) {
+            throw new RuntimeException(
+                    String.format("Workflow %s is not registered", wfType)
+            );
+        }
+        if (registry.getQueryAttributeKeyToTypeMap(wfType) == null) {
+            throw new RuntimeException(
+                    String.format("Workflow %s doesn't have any registered query attribute", wfType)
+            );
+        }
+
+        Map<String, Class<?>> queryAttributeKeyToTypeMap = registry.getQueryAttributeKeyToTypeMap(wfType);
+        // if attribute keys is null or empty, iwf server will return all query attributes
+        if (attributeKeys != null && !attributeKeys.isEmpty()) {
+            List<String> nonExistingQueryAttributeList = attributeKeys.stream()
+                    .filter(s -> !queryAttributeKeyToTypeMap.containsKey(s))
+                    .toList();
+            if (!nonExistingQueryAttributeList.isEmpty()) {
+                throw new RuntimeException(
+                        String.format(
+                                "Query attributes not registered: %s",
+                                String.join(", ", nonExistingQueryAttributeList)
+                        )
+                );
+            }
+        }
+
+        WorkflowQueryResponse response = defaultApi.apiV1WorkflowQueryPost(
+                new WorkflowQueryRequest()
+                        .workflowId(workflowId)
+                        .workflowRunId(workflowRunId)
+                        .attributeKeys(attributeKeys)
+        );
+
+        if (response.getQueryAttributes() == null) {
+            throw new RuntimeException("query attributes not returned");
+        }
+        Map<String, Object> result = new HashMap<>();
+        for (KeyValue keyValue: response.getQueryAttributes()) {
+            if (keyValue.getValue() != null) {
+                result.put(
+                        keyValue.getKey(),
+                        objectEncoder.decode(keyValue.getValue(), queryAttributeKeyToTypeMap.get(keyValue.getKey()))
+                );
+            }
+        }
+        return result;
+    }
+
+    public Map<String, Object> queryAllQueryAttributes(
+            final Class<? extends Workflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId) {
+        return queryWorkflow(workflowClass, workflowId, workflowRunId, null);
+    }
 }

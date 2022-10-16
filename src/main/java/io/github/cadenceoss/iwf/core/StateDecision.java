@@ -1,5 +1,6 @@
 package io.github.cadenceoss.iwf.core;
 
+import io.github.cadenceoss.iwf.gen.models.KeyValue;
 import org.immutables.value.Value;
 
 import java.util.Arrays;
@@ -12,6 +13,8 @@ public abstract class StateDecision {
     public abstract Optional<List<StateMovement>> getNextStates();
 
     public abstract Optional<Boolean> getWaitForMoreCommandResults();
+
+    public abstract Optional<List<KeyValue>> getUpsertQueryAttributes();
 
     public static final StateDecision DEAD_END = ImmutableStateDecision.builder().build();
     public static final StateDecision COMPLETING_WORKFLOW = ImmutableStateDecision.builder().nextStates(Arrays.asList(StateMovement.GRACEFUL_COMPLETING_WORKFLOW)).build();
