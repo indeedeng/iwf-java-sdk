@@ -80,9 +80,7 @@ public class Client {
         Preconditions.checkNotNull(workflowGetResponse.getResults(), checkErrorMessage);
         Preconditions.checkArgument(workflowGetResponse.getResults().size() == 1, checkErrorMessage);
         Preconditions.checkNotNull(workflowGetResponse.getResults().get(0).getCompletedStateOutput(), checkErrorMessage);
-
-        //TODO validate encoding type
-
+        
         final StateCompletionOutput output = workflowGetResponse.getResults().get(0);
         return objectEncoder.decode(output.getCompletedStateOutput(), valueClass);
     }
