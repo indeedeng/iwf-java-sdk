@@ -4,6 +4,7 @@ import io.github.cadenceoss.iwf.core.ObjectEncoder;
 import io.github.cadenceoss.iwf.gen.models.EncodedObject;
 import io.github.cadenceoss.iwf.gen.models.KeyValue;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 public class QueryAttributesRWImpl implements QueryAttributesRW{
     private final Map<String, Class<?>> queryAttributeNameToTypeMap;
     private final Map<String, EncodedObject> queryAttributeNameToEncodedObjectMap;
+    private final Map<String, EncodedObject> queryAttributesToUpsert;
     private final ObjectEncoder objectEncoder;
 
     public QueryAttributesRWImpl(
@@ -19,6 +21,7 @@ public class QueryAttributesRWImpl implements QueryAttributesRW{
             final ObjectEncoder objectEncoder) {
         this.queryAttributeNameToTypeMap = queryAttributeNameToTypeMap;
         this.queryAttributeNameToEncodedObjectMap = queryAttributeNameToValueMap;
+        this.queryAttributesToUpsert = new HashMap<>();
         this.objectEncoder = objectEncoder;
     }
 
@@ -56,11 +59,11 @@ public class QueryAttributesRWImpl implements QueryAttributesRW{
         }
 
         this.queryAttributeNameToEncodedObjectMap.put(key, objectEncoder.encode(value));
+        this.queryAttributesToUpsert.put(key, objectEncoder.encode(value));
     }
 
-    @Override
     public List<KeyValue> getUpsertQueryAttributes() {
-        return queryAttributeNameToEncodedObjectMap.entrySet().stream()
+        return queryAttributesToUpsert.entrySet().stream()
                 .map(stringEncodedObjectEntry ->
                         new KeyValue()
                                 .key(stringEncodedObjectEntry.getKey())

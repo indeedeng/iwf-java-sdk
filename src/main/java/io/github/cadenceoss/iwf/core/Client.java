@@ -184,15 +184,20 @@ public class Client {
             final String workflowRunId,
             List<String> attributeKeys) {
         final String wfType = workflowClass.getSimpleName();
-        if (registry.getQueryAttributeNameToTypeMap(wfType) == null) {
+        if (registry.getWorkflow(wfType) == null) {
+            throw new RuntimeException(
+                    String.format("Workflow %s is not registered", wfType)
+            );
+        }
+        if (registry.getQueryAttributeKeyToTypeMap(wfType) == null) {
             throw new RuntimeException(
                     String.format("Workflow %s doesn't have any registered query attribute", wfType)
             );
         }
 
-        Map<String, Class<?>> queryAttributeNameToTypeMap = registry.getQueryAttributeNameToTypeMap(wfType);
+        Map<String, Class<?>> queryAttributeKeyToTypeMap = registry.getQueryAttributeKeyToTypeMap(wfType);
         List<String> nonExistingQueryAttributeList = attributeKeys.stream()
-                .filter(s -> !queryAttributeNameToTypeMap.containsKey(s))
+                .filter(s -> !queryAttributeKeyToTypeMap.containsKey(s))
                 .toList();
         if (!nonExistingQueryAttributeList.isEmpty()) {
             throw new RuntimeException(

@@ -26,7 +26,7 @@ public class WorkerService {
         StateDef state = registry.getWorkflowState(req.getWorkflowType(), req.getWorkflowStateId());
         final EncodedObject stateInput = req.getStateInput();
         final Object input = objectEncoder.decode(stateInput, state.getWorkflowState().getInputType());
-        final QueryAttributesRW queryAttributesRW =
+        final QueryAttributesRWImpl queryAttributesRW =
                 createQueryAttributesRW(req.getWorkflowType(), req.getQueryAttributes());
 
         CommandRequest commandRequest = state.getWorkflowState().start(
@@ -38,7 +38,7 @@ public class WorkerService {
         
         return new WorkflowStateStartResponse()
                 .commandRequest(CommandRequestMapper.toGenerated(commandRequest))
-                .upsertQueryAttributes(queryAttributesRW != null ? queryAttributesRW.getUpsertQueryAttributes() : null);
+                .upsertQueryAttributes(queryAttributesRW.getUpsertQueryAttributes());
     }
 
     public WorkflowStateDecideResponse handleWorkflowStateDecide(final WorkflowStateDecideRequest req) {
@@ -46,7 +46,7 @@ public class WorkerService {
         final Object input;
         final EncodedObject stateInput = req.getStateInput();
         input = objectEncoder.decode(stateInput, state.getWorkflowState().getInputType());
-        final QueryAttributesRW queryAttributesRW =
+        final QueryAttributesRWImpl queryAttributesRW =
                 createQueryAttributesRW(req.getWorkflowType(), req.getQueryAttributes());
 
         StateDecision stateDecision = state.getWorkflowState().decide(
@@ -59,11 +59,13 @@ public class WorkerService {
                 null,
                 null,
                 queryAttributesRW);
+        List<KeyValue> queryAttributesToUpsert = queryAttributesRW.getUpsertQueryAttributes();
+        stateDecision = ImmutableStateDecision.copyOf(stateDecision).withUpsertQueryAttributes(queryAttributesToUpsert);
         return new WorkflowStateDecideResponse()
                 .stateDecision(StateDecisionMapper.toGenerated(stateDecision));
     }
 
-    private QueryAttributesRW createQueryAttributesRW(String workflowType, List<KeyValue> keyValues) {
+    private QueryAttributesRWImpl createQueryAttributesRW(String workflowType, List<KeyValue> keyValues) {
         Map<String, EncodedObject> map;
         if (keyValues == null || keyValues.isEmpty()) {
             map = new HashMap<>();
@@ -73,6 +75,6 @@ public class WorkerService {
                     .collect(Collectors.toMap(KeyValue::getKey, KeyValue::getValue));
         }
 
-        return new QueryAttributesRWImpl(registry.getQueryAttributeNameToTypeMap(workflowType), map, objectEncoder);
+        return new QueryAttributesRWImpl(registry.getQueryAttributeKeyToTypeMap(workflowType), map, objectEncoder);
     }
 }

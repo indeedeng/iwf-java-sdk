@@ -57,22 +57,23 @@ public class Registry {
     }
 
     private void registerWorkflowQueryAttributes(final Workflow wf) {
+        String workflowType = wf.getClass().getSimpleName();
         if (wf.getQueryAttributes() == null || wf.getQueryAttributes().isEmpty()) {
+            queryAttributeTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        String workflowType = wf.getClass().getSimpleName();
         for (QueryAttributeDef queryAttributeDef: wf.getQueryAttributes()) {
-            Map<String, Class<?>> queryAttributeNameToTypeMap =
+            Map<String, Class<?>> queryAttributeKeyToTypeMap =
                     queryAttributeTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
-            if (queryAttributeNameToTypeMap.containsKey(queryAttributeDef.getQueryAttributeKey())) {
+            if (queryAttributeKeyToTypeMap.containsKey(queryAttributeDef.getQueryAttributeKey())) {
                 throw new RuntimeException(
                         String.format(
-                                "Query attribute name %s already exists",
+                                "Query attribute key %s already exists",
                                 queryAttributeDef.getQueryAttributeKey())
                 );
             }
-            queryAttributeNameToTypeMap.put(
+            queryAttributeKeyToTypeMap.put(
                     queryAttributeDef.getQueryAttributeKey(),
                     queryAttributeDef.getQueryAttributeType()
             );
@@ -91,8 +92,8 @@ public class Registry {
         return signalTypeStore.get(workflowType);
     }
 
-    public Map<String, Class<?>> getQueryAttributeNameToTypeMap(final String worflowType) {
-        return queryAttributeTypeStore.get(worflowType);
+    public Map<String, Class<?>> getQueryAttributeKeyToTypeMap(final String workflowType) {
+        return queryAttributeTypeStore.get(workflowType);
     }
 
     private String getStateDefKey(final String workflowType, final String stateId) {

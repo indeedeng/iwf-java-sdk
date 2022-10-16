@@ -61,11 +61,11 @@ public class BasicTest {
         final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
         final String runId = client.StartWorkflow(
                 BasicQueryWorkflow.class, BasicQueryWorkflowState1.STATE_ID, "start", wfId, startOptions);
+        final String output = client.GetSimpleWorkflowResultWithLongWait(String.class, wfId);
         Map<String, EncodedObject> map =
                 client.queryWorkflow(BasicQueryWorkflow.class, wfId, runId, List.of(BasicQueryWorkflow.ATTRIBUTE_KEY));
-        final String output = client.GetSimpleWorkflowResultWithLongWait(String.class, wfId);
         Assertions.assertEquals(
-                "modified",
+                "query-start-query-decide",
                 new JacksonJsonObjectEncoder().decode(map.get(BasicQueryWorkflow.ATTRIBUTE_KEY), String.class));
     }
 }
