@@ -178,7 +178,7 @@ public class Client {
         return resp.getWorkflowRunId();
     }
 
-    public Map<String, EncodedObject> queryWorkflow(
+    public Map<String, Object> queryWorkflow(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
@@ -196,16 +196,19 @@ public class Client {
         }
 
         Map<String, Class<?>> queryAttributeKeyToTypeMap = registry.getQueryAttributeKeyToTypeMap(wfType);
-        List<String> nonExistingQueryAttributeList = attributeKeys.stream()
-                .filter(s -> !queryAttributeKeyToTypeMap.containsKey(s))
-                .toList();
-        if (!nonExistingQueryAttributeList.isEmpty()) {
-            throw new RuntimeException(
-                    String.format(
-                            "Query attributes not registered: %s",
-                            String.join(", ", nonExistingQueryAttributeList)
-                    )
-            );
+        // if attribute keys is null or empty, iwf server will return all query attributes
+        if (attributeKeys != null && !attributeKeys.isEmpty()) {
+            List<String> nonExistingQueryAttributeList = attributeKeys.stream()
+                    .filter(s -> !queryAttributeKeyToTypeMap.containsKey(s))
+                    .toList();
+            if (!nonExistingQueryAttributeList.isEmpty()) {
+                throw new RuntimeException(
+                        String.format(
+                                "Query attributes not registered: %s",
+                                String.join(", ", nonExistingQueryAttributeList)
+                        )
+                );
+            }
         }
 
         WorkflowQueryResponse response = defaultApi.apiV1WorkflowQueryPost(
@@ -218,12 +221,22 @@ public class Client {
         if (response.getQueryAttributes() == null) {
             throw new RuntimeException("query attributes not returned");
         }
-        Map<String, EncodedObject> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         for (KeyValue keyValue: response.getQueryAttributes()) {
             if (keyValue.getValue() != null) {
-                result.put(keyValue.getKey(), keyValue.getValue());
+                result.put(
+                        keyValue.getKey(),
+                        objectEncoder.decode(keyValue.getValue(), queryAttributeKeyToTypeMap.get(keyValue.getKey()))
+                );
             }
         }
         return result;
+    }
+
+    public Map<String, Object> queryAllQueryAttributes(
+            final Class<? extends Workflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId) {
+        return queryWorkflow(workflowClass, workflowId, workflowRunId, null);
     }
 }
