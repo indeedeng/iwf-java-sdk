@@ -1,13 +1,12 @@
 package io.github.cadenceoss.iwf.integ.basic;
 
 import io.github.cadenceoss.iwf.core.*;
-import io.github.cadenceoss.iwf.gen.models.EncodedObject;
 import io.github.cadenceoss.iwf.spring.TestSingletonWorkerService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 
 public class BasicTest {
@@ -29,7 +28,7 @@ public class BasicTest {
         final Integer input = Integer.valueOf(0);
         client.StartWorkflow(BasicWorkflow.class, BasicWorkflowS1.StateId, input, wfId, startOptions);
         // wait for workflow to finish
-        final Integer output = client.GetSimpleWorkflowResultWithLongWait(Integer.class, wfId);
+        final Integer output = client.GetSimpleWorkflowResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(input + 2, output);
     }
 
@@ -47,7 +46,7 @@ public class BasicTest {
                 BasicSignalWorkflow.class, BasicSignalWorkflowState1.STATE_ID, input, wfId, startOptions);
         client.SignalWorkflow(
                 BasicSignalWorkflow.class, wfId, runId, BasicSignalWorkflowState1.SIGNAL_CHANNEL_NAME, Integer.valueOf(2));
-        final Integer output = client.GetSimpleWorkflowResultWithLongWait(Integer.class, wfId);
+        final Integer output = client.GetSimpleWorkflowResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(3, output);
     }
 
@@ -61,13 +60,13 @@ public class BasicTest {
         final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
         final String runId = client.StartWorkflow(
                 BasicQueryWorkflow.class, BasicQueryWorkflowState1.STATE_ID, "start", wfId, startOptions);
-        final String output = client.GetSimpleWorkflowResultWithLongWait(String.class, wfId);
+        final String output = client.GetSimpleWorkflowResultWithWait(String.class, wfId);
         Map<String, Object> map =
-                client.queryWorkflow(BasicQueryWorkflow.class, wfId, runId, List.of(BasicQueryWorkflow.ATTRIBUTE_KEY));
+                client.getWorkflowQueryAttributes(BasicQueryWorkflow.class, wfId, runId, Arrays.asList(BasicQueryWorkflow.ATTRIBUTE_KEY));
         Assertions.assertEquals(
                 "query-start-query-decide", map.get(BasicQueryWorkflow.ATTRIBUTE_KEY));
         Map<String, Object> allQueryAttributes =
-                client.queryAllQueryAttributes(BasicQueryWorkflow.class, wfId, runId);
+                client.getAllQueryAttributes(BasicQueryWorkflow.class, wfId, runId);
         Assertions.assertEquals(
                 "query-start-query-decide", allQueryAttributes.get(BasicQueryWorkflow.ATTRIBUTE_KEY));
         Assertions.assertEquals(

@@ -26,17 +26,20 @@ public class Registry {
         String workflowType = wf.getClass().getSimpleName();
 
         if (workflowStore.containsKey(workflowType)) {
-            throw new RuntimeException(String.format("Workflow type %s already exists", workflowType));
+            throw new WorkflowDefinitionException(String.format("Workflow type %s already exists", workflowType));
         }
         workflowStore.put(workflowType, wf);
     }
 
     private void registerWorkflowState(final Workflow wf) {
         String workflowType = wf.getClass().getSimpleName();
+        if(wf.getStates() == null || wf.getStates().size() == 0){
+            throw new WorkflowDefinitionException(String.format("Workflow type %s must contain at least one state", workflowType));
+        }
         for (StateDef stateDef: wf.getStates()) {
             String key = getStateDefKey(workflowType, stateDef.getWorkflowState().getStateId());
             if (workflowStateStore.containsKey(key)) {
-                throw new RuntimeException(String.format("Workflow state definition %s already exists", key));
+                throw new WorkflowDefinitionException(String.format("Workflow state definition %s already exists", key));
             } else {
                 workflowStateStore.put(key, stateDef);
             }
@@ -45,11 +48,16 @@ public class Registry {
 
     private void registerWorkflowSignal(final Workflow wf) {
         String workflowType = wf.getClass().getSimpleName();
+        if (wf.getSignalChannels() == null || wf.getSignalChannels().isEmpty()) {
+            signalTypeStore.put(workflowType, new HashMap<>());
+            return;
+        }
+
         for (SignalChannelDef signalChannelDef: wf.getSignalChannels()) {
             Map<String, Class<?>> signalNameToTypeMap =
                     signalTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
             if (signalNameToTypeMap.containsKey(signalChannelDef.getSignalChannelName())) {
-                throw new RuntimeException(
+                throw new WorkflowDefinitionException(
                         String.format("Signal channel name  %s already exists", signalChannelDef.getSignalChannelName()));
             }
             signalNameToTypeMap.put(signalChannelDef.getSignalChannelName(), signalChannelDef.getSignalValueType());
@@ -67,7 +75,7 @@ public class Registry {
             Map<String, Class<?>> queryAttributeKeyToTypeMap =
                     queryAttributeTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
             if (queryAttributeKeyToTypeMap.containsKey(queryAttributeDef.getQueryAttributeKey())) {
-                throw new RuntimeException(
+                throw new WorkflowDefinitionException(
                         String.format(
                                 "Query attribute key %s already exists",
                                 queryAttributeDef.getQueryAttributeKey())
