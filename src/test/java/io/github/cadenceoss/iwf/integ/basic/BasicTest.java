@@ -22,7 +22,10 @@ public class BasicTest {
         final BasicWorkflow wf = new BasicWorkflow();
         registry.addWorkflow(wf);
 
-        final Client client = new Client(registry, ClientOptions.localDefault);
+        System.getProperties().put( "server.port", 8181 );  //8181 port is set here
+        final Client client = new Client(registry, ClientOptions.minimum(
+                "http://localhost:8181", "http://localhost:8080/workflow-prototype"
+        ));
         final String wfId = "basic-test-id" + System.currentTimeMillis() / 1000;
         final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
         final Integer input = Integer.valueOf(0);
