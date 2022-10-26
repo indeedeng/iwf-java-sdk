@@ -28,6 +28,16 @@ public abstract class StateMovement {
                 .build();
     }
 
+    public static StateMovement gracefulCompleteWorkflow() {
+        return ImmutableStateMovement.builder().stateId(GRACEFUL_COMPLETING_WORKFLOW_STATE_ID)
+                .build();
+    }
+
+    public static StateMovement forceCompleteWorkflow() {
+        return ImmutableStateMovement.builder().stateId(FORCE_COMPLETING_WORKFLOW_STATE_ID)
+                .build();
+    }
+
     public static StateMovement create(final String stateId, final Object stateInput) {
         return ImmutableStateMovement.builder().stateId(stateId)
                 .nextStateInput(stateInput)

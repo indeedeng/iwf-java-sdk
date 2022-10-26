@@ -18,6 +18,10 @@ public abstract class StateDecision {
 
     public static final StateDecision DEAD_END = ImmutableStateDecision.builder().build();
 
+    public static ImmutableStateDecision.Builder builder() {
+        return ImmutableStateDecision.builder();
+    }
+
     public static StateDecision gracefulCompleteWorkflow(final Object output) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 StateMovement.gracefulCompleteWorkflow(output)
@@ -27,6 +31,16 @@ public abstract class StateDecision {
     public static StateDecision forceCompleteWorkflow(final Object output) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 StateMovement.forceCompleteWorkflow(output)
+        )).build();
+    }
+
+    public static StateDecision gracefulCompleteWorkflow() {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
+        )).build();
+    }
+
+    public static StateDecision forceCompleteWorkflow() {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
         )).build();
     }
 
