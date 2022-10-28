@@ -19,11 +19,7 @@ public abstract class CommandRequest {
         return ImmutableCommandRequest.builder().addAllCommands(Arrays.asList(commands)).deciderTriggerType(io.github.cadenceoss.iwf.gen.models.CommandRequest.DeciderTriggerTypeEnum.ALL_COMMAND_COMPLETED).build();
     }
 
-    public static CommandRequest forAnyCommandsCompleted(final BaseCommand... commands) {
+    public static CommandRequest forAnyCommandCompleted(final BaseCommand... commands) {
         return ImmutableCommandRequest.builder().addAllCommands(Arrays.asList(commands)).deciderTriggerType(io.github.cadenceoss.iwf.gen.models.CommandRequest.DeciderTriggerTypeEnum.ANY_COMMAND_COMPLETED).build();
-    }
-
-    public static CommandRequest forAnyCommandClosed(final BaseCommand... commands) {
-        return ImmutableCommandRequest.builder().addAllCommands(Arrays.asList(commands)).deciderTriggerType(io.github.cadenceoss.iwf.gen.models.CommandRequest.DeciderTriggerTypeEnum.ANY_COMMAND_CLOSED).build();
     }
 }

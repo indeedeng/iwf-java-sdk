@@ -1,13 +1,20 @@
-package io.github.cadenceoss.iwf.integ.basic;
+package io.github.cadenceoss.iwf.integ.query;
 
-import io.github.cadenceoss.iwf.core.*;
-import io.github.cadenceoss.iwf.core.attributes.*;
+import io.github.cadenceoss.iwf.core.Context;
+import io.github.cadenceoss.iwf.core.ImmutableStateDecision;
+import io.github.cadenceoss.iwf.core.StateDecision;
+import io.github.cadenceoss.iwf.core.StateMovement;
+import io.github.cadenceoss.iwf.core.WorkflowState;
+import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
+import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
+import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesR;
+import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesW;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
 
 import java.util.Arrays;
 
-import static io.github.cadenceoss.iwf.integ.basic.BasicQueryWorkflow.ATTRIBUTE_KEY;
+import static io.github.cadenceoss.iwf.integ.query.BasicQueryWorkflow.ATTRIBUTE_KEY;
 
 public class BasicQueryWorkflowState1 implements WorkflowState<String> {
     public static final String STATE_ID = "query-s1";

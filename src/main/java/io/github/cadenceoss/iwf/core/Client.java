@@ -1,9 +1,19 @@
 package io.github.cadenceoss.iwf.core;
 
 import com.google.common.base.Preconditions;
-import io.github.cadenceoss.iwf.gen.models.*;
 import io.github.cadenceoss.iwf.gen.api.ApiClient;
 import io.github.cadenceoss.iwf.gen.api.DefaultApi;
+import io.github.cadenceoss.iwf.gen.models.KeyValue;
+import io.github.cadenceoss.iwf.gen.models.StateCompletionOutput;
+import io.github.cadenceoss.iwf.gen.models.WorkflowGetQueryAttributesRequest;
+import io.github.cadenceoss.iwf.gen.models.WorkflowGetQueryAttributesResponse;
+import io.github.cadenceoss.iwf.gen.models.WorkflowGetRequest;
+import io.github.cadenceoss.iwf.gen.models.WorkflowGetResponse;
+import io.github.cadenceoss.iwf.gen.models.WorkflowResetRequest;
+import io.github.cadenceoss.iwf.gen.models.WorkflowResetResponse;
+import io.github.cadenceoss.iwf.gen.models.WorkflowSignalRequest;
+import io.github.cadenceoss.iwf.gen.models.WorkflowStartRequest;
+import io.github.cadenceoss.iwf.gen.models.WorkflowStartResponse;
 
 import java.util.HashMap;
 import java.util.List;
@@ -76,11 +86,15 @@ public class Client {
                         .workflowRunId(workflowRunId)
         );
 
-        String checkErrorMessage = "this workflow should have exactly one state output";
+        if (workflowGetResponse.getResults() == null || workflowGetResponse.getResults().size() == 0) {
+            return null;
+        }
+
+        String checkErrorMessage = "this workflow should have one or zero state output for using this API";
         Preconditions.checkNotNull(workflowGetResponse.getResults(), checkErrorMessage);
         Preconditions.checkArgument(workflowGetResponse.getResults().size() == 1, checkErrorMessage);
         Preconditions.checkNotNull(workflowGetResponse.getResults().get(0).getCompletedStateOutput(), checkErrorMessage);
-        
+
         final StateCompletionOutput output = workflowGetResponse.getResults().get(0);
         return objectEncoder.decode(output.getCompletedStateOutput(), valueClass);
     }

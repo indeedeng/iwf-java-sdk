@@ -1,4 +1,4 @@
-package io.github.cadenceoss.iwf.integ.basic;
+package io.github.cadenceoss.iwf.integ.signal;
 
 import io.github.cadenceoss.iwf.core.StateDef;
 import io.github.cadenceoss.iwf.core.Workflow;

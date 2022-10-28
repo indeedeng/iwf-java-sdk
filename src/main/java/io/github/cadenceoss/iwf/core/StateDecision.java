@@ -17,10 +17,10 @@ public abstract class StateDecision {
     public abstract Optional<List<KeyValue>> getUpsertQueryAttributes();
 
     public static final StateDecision DEAD_END = ImmutableStateDecision.builder().build();
-    public static final StateDecision COMPLETING_WORKFLOW = ImmutableStateDecision.builder().nextStates(Arrays.asList(StateMovement.GRACEFUL_COMPLETING_WORKFLOW)).build();
-    public static final StateDecision FAILING_WORKFLOW = ImmutableStateDecision.builder().nextStates(Arrays.asList(StateMovement.FORCE_FAILING_WORKFLOW_MOVEMENT)).build();
 
-    public static final StateDecision WAIT_FOR_MORE_RESULTS = ImmutableStateDecision.builder().waitForMoreCommandResults(true).build();
+    public static ImmutableStateDecision.Builder builder() {
+        return ImmutableStateDecision.builder();
+    }
 
     public static StateDecision gracefulCompleteWorkflow(final Object output) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
@@ -31,6 +31,16 @@ public abstract class StateDecision {
     public static StateDecision forceCompleteWorkflow(final Object output) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 StateMovement.forceCompleteWorkflow(output)
+        )).build();
+    }
+
+    public static StateDecision gracefulCompleteWorkflow() {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
+        )).build();
+    }
+
+    public static StateDecision forceCompleteWorkflow() {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
         )).build();
     }
 

@@ -1,4 +1,4 @@
-package io.github.cadenceoss.iwf.integ.basic;
+package io.github.cadenceoss.iwf.integ.timer;
 
 import io.github.cadenceoss.iwf.core.Context;
 import io.github.cadenceoss.iwf.core.StateDecision;
@@ -7,12 +7,15 @@ import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
 import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
 import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesR;
 import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesW;
-import io.github.cadenceoss.iwf.core.command.*;
+import io.github.cadenceoss.iwf.core.command.CommandRequest;
+import io.github.cadenceoss.iwf.core.command.CommandResults;
+import io.github.cadenceoss.iwf.core.command.TimerCommand;
 
-public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
-    public static final String STATE_ID = "signal-s1";
-    public static final String SIGNAL_CHANNEL_NAME = "test-signal";
-    public static final String COMMAND_ID = "test-signal-id";
+import java.time.Duration;
+
+public class BasicTimerWorkflowState1 implements WorkflowState<Integer> {
+    public static final String STATE_ID = "timer-s1";
+    public static final String COMMAND_ID = "test-timer-id";
 
     @Override
     public String getStateId() {
@@ -31,7 +34,7 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
             StateLocalAttributesW stateLocals,
             SearchAttributesRW searchAttributes,
             QueryAttributesRW queryAttributes) {
-        return CommandRequest.forAllCommandCompleted(SignalCommand.create(COMMAND_ID, SIGNAL_CHANNEL_NAME));
+        return CommandRequest.forAllCommandCompleted(TimerCommand.createByDuration(COMMAND_ID, Duration.ofSeconds(input)));
     }
 
     @Override
@@ -42,8 +45,6 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
             StateLocalAttributesR stateLocals,
             SearchAttributesRW searchAttributes,
             QueryAttributesRW queryAttributes) {
-        SignalCommandResult signalCommandResult = commandResults.getAllSignalCommandResults().get(0);
-        Integer output = input + (Integer) signalCommandResult.getSignalValue();
-        return StateDecision.gracefulCompleteWorkflow(output);
+        return StateDecision.gracefulCompleteWorkflow();
     }
 }

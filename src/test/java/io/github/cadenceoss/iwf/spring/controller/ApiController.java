@@ -1,14 +1,11 @@
 package io.github.cadenceoss.iwf.spring.controller;
 
-import io.github.cadenceoss.iwf.core.Registry;
 import io.github.cadenceoss.iwf.core.WorkerService;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideResponse;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateStartRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateStartResponse;
-import io.github.cadenceoss.iwf.integ.basic.BasicQueryWorkflow;
-import io.github.cadenceoss.iwf.integ.basic.BasicSignalWorkflow;
-import io.github.cadenceoss.iwf.integ.basic.BasicWorkflow;
+import io.github.cadenceoss.iwf.integ.WorkflowRegistry;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,11 +18,7 @@ public class ApiController {
     private WorkerService workerService;
 
     public ApiController() {
-        final Registry registry = new Registry();
-        registry.addWorkflow(new BasicWorkflow());
-        registry.addWorkflow(new BasicSignalWorkflow());
-        registry.addWorkflow(new BasicQueryWorkflow());
-        workerService = new WorkerService(registry);
+        workerService = new WorkerService(WorkflowRegistry.registry);
     }
 
     @RequestMapping("/")
