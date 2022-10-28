@@ -141,7 +141,7 @@ signing {
 }
 
 group = "io.github.cadence-oss"
-version = "0.1.0"
+version = "0.2.0"
 
 nexusPublishing {
     repositories {
