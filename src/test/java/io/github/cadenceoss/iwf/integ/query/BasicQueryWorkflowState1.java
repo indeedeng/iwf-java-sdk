@@ -7,10 +7,10 @@ import io.github.cadenceoss.iwf.core.StateMovement;
 import io.github.cadenceoss.iwf.core.WorkflowState;
 import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
 import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesR;
-import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesW;
+import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesRW;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
+import io.github.cadenceoss.iwf.core.command.InterStateChannel;
 
 import java.util.Arrays;
 
@@ -29,13 +29,13 @@ public class BasicQueryWorkflowState1 implements WorkflowState<String> {
     }
 
     @Override
-    public CommandRequest start(Context context, String input, StateLocalAttributesW stateLocals, SearchAttributesRW searchAttributes, QueryAttributesRW queryAttributes) {
+    public CommandRequest start(Context context, String input, StateLocalAttributesRW stateLocals, SearchAttributesRW searchAttributes, QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
         queryAttributes.set(ATTRIBUTE_KEY, "query-start");
         return CommandRequest.empty;
     }
 
     @Override
-    public StateDecision decide(Context context, String input, CommandResults commandResults, StateLocalAttributesR stateLocals, SearchAttributesRW searchAttributes, QueryAttributesRW queryAttributes) {
+    public StateDecision decide(Context context, String input, CommandResults commandResults, StateLocalAttributesRW stateLocals, SearchAttributesRW searchAttributes, QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
         String str = queryAttributes.get(ATTRIBUTE_KEY, String.class);
         queryAttributes.set(ATTRIBUTE_KEY, str + "-query-decide");
         return ImmutableStateDecision.builder()

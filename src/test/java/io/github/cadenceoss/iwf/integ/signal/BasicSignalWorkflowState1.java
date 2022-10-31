@@ -5,10 +5,10 @@ import io.github.cadenceoss.iwf.core.StateDecision;
 import io.github.cadenceoss.iwf.core.WorkflowState;
 import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
 import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesR;
-import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesW;
+import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesRW;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
+import io.github.cadenceoss.iwf.core.command.InterStateChannel;
 import io.github.cadenceoss.iwf.core.command.SignalCommand;
 import io.github.cadenceoss.iwf.core.command.SignalCommandResult;
 
@@ -31,9 +31,9 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
     public CommandRequest start(
             Context context,
             Integer input,
-            StateLocalAttributesW stateLocals,
+            StateLocalAttributesRW stateLocals,
             SearchAttributesRW searchAttributes,
-            QueryAttributesRW queryAttributes) {
+            QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
         return CommandRequest.forAllCommandCompleted(SignalCommand.create(COMMAND_ID, SIGNAL_CHANNEL_NAME));
     }
 
@@ -42,9 +42,9 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
             Context context,
             Integer input,
             CommandResults commandResults,
-            StateLocalAttributesR stateLocals,
+            StateLocalAttributesRW stateLocals,
             SearchAttributesRW searchAttributes,
-            QueryAttributesRW queryAttributes) {
+            QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
         SignalCommandResult signalCommandResult = commandResults.getAllSignalCommandResults().get(0);
         Integer output = input + (Integer) signalCommandResult.getSignalValue();
         return StateDecision.gracefulCompleteWorkflow(output);
