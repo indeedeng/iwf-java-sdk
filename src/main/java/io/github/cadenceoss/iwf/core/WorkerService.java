@@ -1,12 +1,16 @@
 package io.github.cadenceoss.iwf.core;
 
-import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
 import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRWImpl;
+import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.mapper.CommandRequestMapper;
 import io.github.cadenceoss.iwf.core.mapper.CommandResultsMapper;
-import io.github.cadenceoss.iwf.gen.models.*;
-import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.mapper.StateDecisionMapper;
+import io.github.cadenceoss.iwf.gen.models.EncodedObject;
+import io.github.cadenceoss.iwf.gen.models.KeyValue;
+import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideRequest;
+import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideResponse;
+import io.github.cadenceoss.iwf.gen.models.WorkflowStateStartRequest;
+import io.github.cadenceoss.iwf.gen.models.WorkflowStateStartResponse;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +38,8 @@ public class WorkerService {
                 input,
                 null,
                 null,
-                queryAttributesRW);
+                queryAttributesRW,
+                null);
         
         return new WorkflowStateStartResponse()
                 .commandRequest(CommandRequestMapper.toGenerated(commandRequest))
@@ -58,7 +63,8 @@ public class WorkerService {
                         objectEncoder),
                 null,
                 null,
-                queryAttributesRW);
+                queryAttributesRW,
+                null);
         List<KeyValue> queryAttributesToUpsert = queryAttributesRW.getUpsertQueryAttributes();
         stateDecision = ImmutableStateDecision.copyOf(stateDecision).withUpsertQueryAttributes(queryAttributesToUpsert);
         return new WorkflowStateDecideResponse()

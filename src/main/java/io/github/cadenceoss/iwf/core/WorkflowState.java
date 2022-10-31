@@ -7,6 +7,7 @@ import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesRW;
 import io.github.cadenceoss.iwf.core.command.CommandCarryOverPolicy;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
+import io.github.cadenceoss.iwf.core.command.InterStateChannel;
 
 public interface WorkflowState<I> {
     /**
@@ -44,7 +45,8 @@ public interface WorkflowState<I> {
             final Context context, I input,
             final StateLocalAttributesRW stateLocals,
             final SearchAttributesRW searchAttributes,
-            final QueryAttributesRW queryAttributes);
+            final QueryAttributesRW queryAttributes,
+            final InterStateChannel interStateChannel);
 
     /**
      * Implement this method to decide what to do next when requested commands are ready
@@ -62,7 +64,8 @@ public interface WorkflowState<I> {
             final CommandResults commandResults,
             final StateLocalAttributesRW stateLocals,
             final SearchAttributesRW searchAttributes,
-            final QueryAttributesRW queryAttributes);
+            final QueryAttributesRW queryAttributes,
+            final InterStateChannel interStateChannel);
 }
 
 
