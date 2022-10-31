@@ -71,6 +71,7 @@ public interface Workflow {
     default String getWorkflowType() {
         return "";
     }
+    
     /**
      * defines all the long running activity types supported by this workflow.
      * NOTE that there is NO regular activities in iwf. For non-long-running activities, you just implement them
