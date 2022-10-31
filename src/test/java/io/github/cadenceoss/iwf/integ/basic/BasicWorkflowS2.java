@@ -6,7 +6,7 @@ import io.github.cadenceoss.iwf.core.WorkflowState;
 import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
 import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
 import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesR;
-import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesW;
+import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesRW;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
 
@@ -25,7 +25,7 @@ public class BasicWorkflowS2 implements WorkflowState<Integer> {
     }
 
     @Override
-    public CommandRequest start(final Context context, final Integer input, final StateLocalAttributesW stateLocals, final SearchAttributesRW searchAttributes, final QueryAttributesRW queryAttributes) {
+    public CommandRequest start(final Context context, final Integer input, final StateLocalAttributesRW stateLocals, final SearchAttributesRW searchAttributes, final QueryAttributesRW queryAttributes) {
         return CommandRequest.empty;
     }
 

@@ -61,11 +61,11 @@ public class IntegrationTest {
                 BasicQueryWorkflow.class, BasicQueryWorkflowState1.STATE_ID, "start", wfId, startOptions);
         final String output = client.GetSimpleWorkflowResultWithWait(String.class, wfId);
         Map<String, Object> map =
-                client.getWorkflowQueryAttributes(BasicQueryWorkflow.class, wfId, runId, Arrays.asList(BasicQueryWorkflow.ATTRIBUTE_KEY));
+                client.GetWorkflowQueryAttributes(BasicQueryWorkflow.class, wfId, runId, Arrays.asList(BasicQueryWorkflow.ATTRIBUTE_KEY));
         Assertions.assertEquals(
                 "query-start-query-decide", map.get(BasicQueryWorkflow.ATTRIBUTE_KEY));
         Map<String, Object> allQueryAttributes =
-                client.getAllQueryAttributes(BasicQueryWorkflow.class, wfId, runId);
+                client.GetAllQueryAttributes(BasicQueryWorkflow.class, wfId, runId);
         Assertions.assertEquals(
                 "query-start-query-decide", allQueryAttributes.get(BasicQueryWorkflow.ATTRIBUTE_KEY));
         Assertions.assertEquals(

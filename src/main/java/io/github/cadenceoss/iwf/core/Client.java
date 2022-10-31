@@ -194,7 +194,7 @@ public class Client {
         return resp.getWorkflowRunId();
     }
 
-    public Map<String, Object> getWorkflowQueryAttributes(
+    public Map<String, Object> GetWorkflowQueryAttributes(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
@@ -256,7 +256,7 @@ public class Client {
         return result;
     }
 
-    public Map<String, Object> getAllQueryAttributes(
+    public Map<String, Object> GetAllQueryAttributes(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId) {

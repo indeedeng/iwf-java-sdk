@@ -1,6 +1,9 @@
 package io.github.cadenceoss.iwf.core;
 
-import io.github.cadenceoss.iwf.core.attributes.*;
+import io.github.cadenceoss.iwf.core.attributes.AttributeLoadingPolicy;
+import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
+import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
+import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesRW;
 import io.github.cadenceoss.iwf.core.command.CommandCarryOverPolicy;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
@@ -32,13 +35,14 @@ public interface WorkflowState<I> {
      * Implement this method to execute the commands set up for this state.
      *
      * @param input            the state input which is deserialized by dataConverter with {@link #getInputType}
-     * @param queryAttributes  the query attributes that can be used as readOnly
-     * @param searchAttributes the search attributes that can be used as readOnly
+     * @param stateLocals      read/write the local attributes in the state. Mostly for recording an action into this history for tracking, or passing a value from Start API to Decide API.
+     * @param queryAttributes  read or write to the query attributes as the API response
+     * @param searchAttributes read or write to the search attributes as the API response
      * @return the requested commands for this step
      */
     CommandRequest start(
             final Context context, I input,
-            final StateLocalAttributesW stateLocals,
+            final StateLocalAttributesRW stateLocals,
             final SearchAttributesRW searchAttributes,
             final QueryAttributesRW queryAttributes);
 
@@ -47,6 +51,7 @@ public interface WorkflowState<I> {
      *
      * @param input            the state input which is deserialized by dataConverter with {@link #getInputType}
      * @param commandResults   the results of the command that executed by {@link #start}
+     * @param stateLocals      read/write the local attributes in the state. Mostly for recording an action into this history for tracking, or passing a value from Start API to Decide API.
      * @param queryAttributes  the query attributes that can be used as Read+Write
      * @param searchAttributes the search attributes that can be used as Read+Write
      * @return the decision of what to do next(e.g. transition to next states)
@@ -55,7 +60,7 @@ public interface WorkflowState<I> {
             final Context context,
             final I input,
             final CommandResults commandResults,
-            final StateLocalAttributesR stateLocals,
+            final StateLocalAttributesRW stateLocals,
             final SearchAttributesRW searchAttributes,
             final QueryAttributesRW queryAttributes);
 }
