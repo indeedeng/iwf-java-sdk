@@ -66,6 +66,13 @@ public interface Workflow {
     }
 
     /**
+     * The workflowType that will be used to registered a workflow. By default is the simpleName of the class(when providing empty string).
+     */
+    default String getWorkflowType() {
+        return "";
+    }
+    
+    /**
      * defines all the long running activity types supported by this workflow.
      * NOTE that there is NO regular activities in iwf. For non-long-running activities, you just implement them
      * in the workflow state APIs(start/decide).

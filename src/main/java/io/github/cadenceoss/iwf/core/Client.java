@@ -194,6 +194,21 @@ public class Client {
         return resp.getWorkflowRunId();
     }
 
+    /**
+     * Cancel a workflow, this is essentially terminate the workflow gracefully
+     *
+     * @param workflowId    required
+     * @param workflowRunId optional
+     * @param reason        optional
+     * @return
+     */
+    public String CancelWorkflow(
+            final String workflowId,
+            final String workflowRunId,
+            final String reason) {
+        throw new RuntimeException("TODO");
+    }
+
     public Map<String, Object> GetWorkflowQueryAttributes(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
