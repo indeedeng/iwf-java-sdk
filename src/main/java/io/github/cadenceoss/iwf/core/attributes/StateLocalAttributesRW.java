@@ -1,13 +1,12 @@
 package io.github.cadenceoss.iwf.core.attributes;
 
-public class StateLocalAttributesRW {
-    // user code must make sure using the same type for both get & set
-    public void set(String key, Object value) {
-        return;
-    }
+import io.github.cadenceoss.iwf.core.ObjectEncoder;
+import io.github.cadenceoss.iwf.gen.models.EncodedObject;
 
-    // user code must make sure using the same type for both get & set
-    public <T> T get(String key, Class<T> type) {
-        return null;
+import java.util.Map;
+
+public class StateLocalAttributesRW extends AbstractAttributeStoreRW {
+    public StateLocalAttributesRW(final Map<String, Class<?>> queryAttributeNameToTypeMap, final Map<String, EncodedObject> queryAttributeNameToValueMap, final ObjectEncoder objectEncoder) {
+        super(queryAttributeNameToTypeMap, queryAttributeNameToValueMap, objectEncoder);
     }
 }
