@@ -1,17 +1,21 @@
 package io.github.cadenceoss.iwf.core;
 
 import io.github.cadenceoss.iwf.core.attributes.QueryAttributeDef;
+import io.github.cadenceoss.iwf.core.attributes.SearchAttributeDef;
+import io.github.cadenceoss.iwf.core.attributes.SearchAttributeType;
 import io.github.cadenceoss.iwf.core.command.SignalChannelDef;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Registry {
-    private final Map<String,Workflow> workflowStore = new HashMap<>();
+    private final Map<String, Workflow> workflowStore = new HashMap<>();
     // (workflow type, stateId)-> StateDef
     private final Map<String, StateDef> workflowStateStore = new HashMap<>();
     private final Map<String, Map<String, Class<?>>> signalTypeStore = new HashMap<>();
     private final Map<String, Map<String, Class<?>>> queryAttributeTypeStore = new HashMap<>();
+
+    private final Map<String, Map<String, SearchAttributeType>> searchAttributeTypeStore = new HashMap<>();
 
     private static final String DELIMITER = "_";
 
@@ -20,6 +24,7 @@ public class Registry {
         registerWorkflowState(wf);
         registerWorkflowSignal(wf);
         registerWorkflowQueryAttributes(wf);
+        registerWorkflowSearchAttributes(wf);
     }
 
     public static String getWorkflowType(final Workflow wf) {
@@ -95,11 +100,36 @@ public class Registry {
         }
     }
 
-    public Workflow getWorkflow(final String workflowType){
+    private void registerWorkflowSearchAttributes(final Workflow wf) {
+        String workflowType = getWorkflowType(wf);
+        if (wf.getSearchAttributes() == null || wf.getSearchAttributes().isEmpty()) {
+            searchAttributeTypeStore.put(workflowType, new HashMap<>());
+            return;
+        }
+
+        for (SearchAttributeDef searchAttributeDef : wf.getSearchAttributes()) {
+            Map<String, SearchAttributeType> searchAttributeKeyToTypeMap =
+                    searchAttributeTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
+
+            if (searchAttributeKeyToTypeMap.containsKey(searchAttributeDef.getSearchAttributeKey())) {
+                throw new WorkflowDefinitionException(
+                        String.format(
+                                "Search attribute key %s already exists",
+                                searchAttributeDef.getSearchAttributeKey())
+                );
+            }
+            searchAttributeKeyToTypeMap.put(
+                    searchAttributeDef.getSearchAttributeKey(),
+                    searchAttributeDef.getSearchAttributeType()
+            );
+        }
+    }
+
+    public Workflow getWorkflow(final String workflowType) {
         return workflowStore.get(workflowType);
     }
 
-    public StateDef getWorkflowState(final String workflowType, final String stateId){
+    public StateDef getWorkflowState(final String workflowType, final String stateId) {
         return workflowStateStore.get(getStateDefKey(workflowType, stateId));
     }
 
@@ -109,6 +139,10 @@ public class Registry {
 
     public Map<String, Class<?>> getQueryAttributeKeyToTypeMap(final String workflowType) {
         return queryAttributeTypeStore.get(workflowType);
+    }
+
+    public Map<String, SearchAttributeType> getSearchAttributeKeyToTypeMap(final String workflowType) {
+        return searchAttributeTypeStore.get(workflowType);
     }
 
     private String getStateDefKey(final String workflowType, final String stateId) {

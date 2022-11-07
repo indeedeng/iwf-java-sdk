@@ -1,10 +1,16 @@
 package io.github.cadenceoss.iwf.core;
 
+import io.github.cadenceoss.iwf.core.attributes.SearchAttributeType;
 import io.github.cadenceoss.iwf.gen.models.KeyValue;
+import io.github.cadenceoss.iwf.gen.models.SearchAttribute;
+import io.github.cadenceoss.iwf.gen.models.SearchAttributeKeyAndType;
 import io.github.cadenceoss.iwf.gen.models.StateCompletionOutput;
 import io.github.cadenceoss.iwf.gen.models.WorkflowGetQueryAttributesResponse;
+import io.github.cadenceoss.iwf.gen.models.WorkflowGetSearchAttributesResponse;
 import io.github.cadenceoss.iwf.gen.models.WorkflowResetRequest;
+import io.github.cadenceoss.iwf.gen.models.WorkflowSearchResponse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -201,7 +207,7 @@ public class Client {
             throw new InternalServiceException("query attributes not returned");
         }
         Map<String, Object> result = new HashMap<>();
-        for (KeyValue keyValue: response.getQueryAttributes()) {
+        for (KeyValue keyValue : response.getQueryAttributes()) {
             if (keyValue.getValue() != null) {
                 result.put(
                         keyValue.getKey(),
@@ -210,5 +216,111 @@ public class Client {
             }
         }
         return result;
+    }
+
+    public WorkflowSearchResponse SearchWorkflow(final String query, final int pageSize) {
+        return untypedClient.SearchWorkflow(query, pageSize);
+    }
+
+    public Map<String, Object> GetWorkflowSearchAttributes(
+            final Class<? extends Workflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId,
+            List<String> attributeKeys) {
+        if (attributeKeys == null || attributeKeys.isEmpty()) {
+            throw new IllegalArgumentException("attributeKeys must contain at least one entry, or use GetAllSearchAttributes API to get all");
+        }
+        return doGetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, attributeKeys);
+    }
+
+    public Map<String, Object> GetAllSearchAttributes(
+            final Class<? extends Workflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId) {
+        return doGetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, null);
+    }
+
+    private Map<String, Object> doGetWorkflowSearchAttributes(
+            final Class<? extends Workflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId,
+            final List<String> attributeKeys) {
+        final String wfType = workflowClass.getSimpleName();
+
+        final Map<String, SearchAttributeType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
+        if (searchAttributeKeyToTypeMap == null) {
+            throw new IllegalArgumentException(
+                    String.format("Workflow %s is not registered", wfType)
+            );
+        }
+
+        // if attribute keys is null or empty, iwf server will return all query attributes
+        if (attributeKeys != null && !attributeKeys.isEmpty()) {
+            List<String> nonExistingSearchAttributeList = attributeKeys.stream()
+                    .filter(s -> !searchAttributeKeyToTypeMap.containsKey(s))
+                    .collect(Collectors.toList());
+
+            if (!nonExistingSearchAttributeList.isEmpty()) {
+                throw new IllegalArgumentException(
+                        String.format(
+                                "Search attributes not registered: %s",
+                                String.join(", ", nonExistingSearchAttributeList)
+                        )
+                );
+            }
+        }
+
+        List<SearchAttributeKeyAndType> keyAndTypes = new ArrayList<>();
+        if (attributeKeys == null) {
+            searchAttributeKeyToTypeMap.forEach((key, type) -> {
+                final SearchAttributeKeyAndType keyAndType = new SearchAttributeKeyAndType()
+                        .key(key)
+                        .valueType(toGeneratedSearchAttributeType(type));
+                keyAndTypes.add(keyAndType);
+            });
+        } else {
+            attributeKeys.forEach((key) -> {
+                final SearchAttributeType saType = searchAttributeKeyToTypeMap.get(key);
+                final SearchAttributeKeyAndType keyAndType = new SearchAttributeKeyAndType()
+                        .key(key)
+                        .valueType(toGeneratedSearchAttributeType(saType));
+                keyAndTypes.add(keyAndType);
+            });
+        }
+
+        WorkflowGetSearchAttributesResponse response = untypedClient.GetAnyWorkflowSearchAttributes(workflowId, workflowRunId, keyAndTypes);
+
+        if (response.getSearchAttributes() == null) {
+            throw new InternalServiceException("query attributes not returned");
+        }
+        Map<String, Object> result = new HashMap<>();
+        for (SearchAttribute searchAttribute : response.getSearchAttributes()) {
+            final SearchAttributeType saType = searchAttributeKeyToTypeMap.get(searchAttribute.getKey());
+            Object value = getSearchAttributeValue(saType, searchAttribute);
+            result.put(searchAttribute.getKey(), value);
+        }
+        return result;
+    }
+
+    private Object getSearchAttributeValue(final SearchAttributeType saType, final SearchAttribute searchAttribute) {
+        switch (saType) {
+            case INT_64:
+                return searchAttribute.getIntegerValue();
+            case KEYWORD:
+                return searchAttribute.getStringValue();
+            default:
+                throw new InternalServiceException("unsupported type");
+        }
+    }
+
+    private SearchAttributeKeyAndType.ValueTypeEnum toGeneratedSearchAttributeType(final SearchAttributeType saType) {
+        switch (saType) {
+            case INT_64:
+                return SearchAttributeKeyAndType.ValueTypeEnum.INT;
+            case KEYWORD:
+                return SearchAttributeKeyAndType.ValueTypeEnum.KEYWORD;
+            default:
+                throw new InternalServiceException("unsupported type");
+        }
     }
 }

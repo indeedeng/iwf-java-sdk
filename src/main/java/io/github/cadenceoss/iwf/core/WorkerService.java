@@ -1,6 +1,7 @@
 package io.github.cadenceoss.iwf.core;
 
 import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRWImpl;
+import io.github.cadenceoss.iwf.core.attributes.SearchAttributeRWImpl;
 import io.github.cadenceoss.iwf.core.attributes.StateLocalImpl;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.mapper.CommandRequestMapper;
@@ -8,11 +9,13 @@ import io.github.cadenceoss.iwf.core.mapper.CommandResultsMapper;
 import io.github.cadenceoss.iwf.core.mapper.StateDecisionMapper;
 import io.github.cadenceoss.iwf.gen.models.EncodedObject;
 import io.github.cadenceoss.iwf.gen.models.KeyValue;
+import io.github.cadenceoss.iwf.gen.models.SearchAttribute;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideResponse;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateStartRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateStartResponse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,12 +43,14 @@ public class WorkerService {
                 .stateExecutionId(req.getContext().getStateExecutionId())
                 .build();
         final StateLocalImpl stateLocals = new StateLocalImpl(toMap(null), objectEncoder);
+        final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(
+                registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType()), req.getSearchAttributes());
 
         CommandRequest commandRequest = state.getWorkflowState().start(
                 context,
                 input,
                 stateLocals,
-                null,
+                searchAttributeRW,
                 queryAttributesRW,
                 null);
 
@@ -53,7 +58,10 @@ public class WorkerService {
                 .commandRequest(CommandRequestMapper.toGenerated(commandRequest))
                 .upsertQueryAttributes(queryAttributesRW.getUpsertQueryAttributes())
                 .upsertStateLocalAttributes(stateLocals.getUpsertStateLocalAttributes())
-                .recordEvents(stateLocals.getRecordEvents());
+                .recordEvents(stateLocals.getRecordEvents())
+                .upsertSearchAttributes(createUpsertSearchAttributes(
+                        searchAttributeRW.getUpsertToServerInt64AttributeMap(),
+                        searchAttributeRW.getUpsertToServerKeywordAttributeMap()));
     }
 
     public WorkflowStateDecideResponse handleWorkflowStateDecide(final WorkflowStateDecideRequest req) {
@@ -71,6 +79,8 @@ public class WorkerService {
                 .stateExecutionId(req.getContext().getStateExecutionId())
                 .build();
         final StateLocalImpl stateLocals = new StateLocalImpl(toMap(req.getStateLocalAttributes()), objectEncoder);
+        final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(
+                registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType()), req.getSearchAttributes());
 
         StateDecision stateDecision = state.getWorkflowState().decide(
                 context,
@@ -80,14 +90,17 @@ public class WorkerService {
                         registry.getSignalChannelNameToSignalTypeMap(req.getWorkflowType()),
                         objectEncoder),
                 stateLocals,
-                null,
+                searchAttributeRW,
                 queryAttributesRW,
                 null);
         return new WorkflowStateDecideResponse()
                 .stateDecision(StateDecisionMapper.toGenerated(stateDecision))
                 .upsertQueryAttributes(queryAttributesRW.getUpsertQueryAttributes())
                 .upsertStateLocalAttributes(stateLocals.getUpsertStateLocalAttributes())
-                .recordEvents(stateLocals.getRecordEvents());
+                .recordEvents(stateLocals.getRecordEvents())
+                .upsertSearchAttributes(createUpsertSearchAttributes(
+                        searchAttributeRW.getUpsertToServerInt64AttributeMap(),
+                        searchAttributeRW.getUpsertToServerKeywordAttributeMap()));
     }
 
     private QueryAttributesRWImpl createQueryAttributesRW(String workflowType, List<KeyValue> keyValues) {
@@ -105,5 +118,26 @@ public class WorkerService {
                     .collect(Collectors.toMap(KeyValue::getKey, KeyValue::getValue));
         }
         return map;
+    }
+
+    private List<SearchAttribute> createUpsertSearchAttributes(
+            final Map<String, Long> upsertToServerInt64AttributeMap,
+            final Map<String, String> upsertToServerKeywordAttributeMap) {
+        List<SearchAttribute> sas = new ArrayList<>();
+        upsertToServerKeywordAttributeMap.forEach((key, sa) -> {
+            final SearchAttribute attr = new SearchAttribute()
+                    .key(key)
+                    .stringValue(sa)
+                    .valueType(SearchAttribute.ValueTypeEnum.KEYWORD);
+            sas.add(attr);
+        });
+        upsertToServerInt64AttributeMap.forEach((key, sa) -> {
+            final SearchAttribute attr = new SearchAttribute()
+                    .key(key)
+                    .integerValue(sa)
+                    .valueType(SearchAttribute.ValueTypeEnum.INT);
+            sas.add(attr);
+        });
+        return sas;
     }
 }
