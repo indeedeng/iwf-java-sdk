@@ -16,6 +16,8 @@ public abstract class CommandResults {
 
     public abstract List<TimerCommandResult> getAllTimerCommandResults();
 
+    public abstract List<InterStateChannelCommandResult> getAllInterStateChannelCommandResult();
+
     // below are helpers
     public <T> T getActivityOutputByIndex(int idx) {
         throw new RuntimeException("TODO");
