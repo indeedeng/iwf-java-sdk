@@ -11,6 +11,7 @@ import io.github.cadenceoss.iwf.core.command.CommandResults;
 import io.github.cadenceoss.iwf.core.command.InterStateChannel;
 import io.github.cadenceoss.iwf.core.command.SignalCommand;
 import io.github.cadenceoss.iwf.core.command.SignalCommandResult;
+import io.github.cadenceoss.iwf.gen.models.SignalResult;
 
 public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
     public static final String STATE_ID = "signal-s1";
@@ -52,6 +53,11 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
             QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
         SignalCommandResult signalCommandResult = commandResults.getAllSignalCommandResults().get(0);
         Integer output = input + (Integer) signalCommandResult.getSignalValue().get();
+
+        SignalCommandResult signalCommandResult2 = commandResults.getAllSignalCommandResults().get(1);
+        if (signalCommandResult2.getSignalRequestStatusEnum() != SignalResult.SignalRequestStatusEnum.WAITING) {
+            throw new RuntimeException("the second signal should be waiting");
+        }
         return StateDecision.gracefulCompleteWorkflow(output);
     }
 }
