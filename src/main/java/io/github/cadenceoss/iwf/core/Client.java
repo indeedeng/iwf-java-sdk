@@ -140,14 +140,12 @@ public class Client {
      *
      * @param workflowId    required
      * @param workflowRunId optional, can be empty
-     * @param reason        optional, can be empty
      * @return
      */
     public void CancelWorkflow(
             final String workflowId,
-            final String workflowRunId,
-            final String reason) {
-        untypedClient.CancelWorkflow(workflowId, workflowRunId, reason);
+            final String workflowRunId) {
+        untypedClient.CancelWorkflow(workflowId, workflowRunId);
     }
 
     public Map<String, Object> GetWorkflowQueryAttributes(
@@ -167,7 +165,7 @@ public class Client {
             final String workflowRunId) {
         return doGetWorkflowQueryAttributes(workflowClass, workflowId, workflowRunId, null);
     }
-    
+
     private Map<String, Object> doGetWorkflowQueryAttributes(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,

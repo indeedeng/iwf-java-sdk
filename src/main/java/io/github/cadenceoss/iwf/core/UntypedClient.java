@@ -165,13 +165,11 @@ public class UntypedClient {
      *
      * @param workflowId    required
      * @param workflowRunId optional
-     * @param reason        optional
      * @return
      */
     public void CancelWorkflow(
             final String workflowId,
-            final String workflowRunId,
-            final String reason) {
+            final String workflowRunId) {
         defaultApi.apiV1WorkflowCancelPost(new WorkflowCancelRequest()
                 .workflowId(workflowId)
                 .workflowRunId(workflowRunId));
