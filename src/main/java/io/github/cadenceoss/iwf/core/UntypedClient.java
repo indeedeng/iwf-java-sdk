@@ -3,14 +3,19 @@ package io.github.cadenceoss.iwf.core;
 import com.google.common.base.Preconditions;
 import io.github.cadenceoss.iwf.gen.api.ApiClient;
 import io.github.cadenceoss.iwf.gen.api.DefaultApi;
+import io.github.cadenceoss.iwf.gen.models.SearchAttributeKeyAndType;
 import io.github.cadenceoss.iwf.gen.models.StateCompletionOutput;
 import io.github.cadenceoss.iwf.gen.models.WorkflowCancelRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowGetQueryAttributesRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowGetQueryAttributesResponse;
 import io.github.cadenceoss.iwf.gen.models.WorkflowGetRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowGetResponse;
+import io.github.cadenceoss.iwf.gen.models.WorkflowGetSearchAttributesRequest;
+import io.github.cadenceoss.iwf.gen.models.WorkflowGetSearchAttributesResponse;
 import io.github.cadenceoss.iwf.gen.models.WorkflowResetRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowResetResponse;
+import io.github.cadenceoss.iwf.gen.models.WorkflowSearchRequest;
+import io.github.cadenceoss.iwf.gen.models.WorkflowSearchResponse;
 import io.github.cadenceoss.iwf.gen.models.WorkflowSignalRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStartRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStartResponse;
@@ -188,6 +193,26 @@ public class UntypedClient {
 
         return defaultApi.apiV1WorkflowQueryattributesGetPost(
                 new WorkflowGetQueryAttributesRequest()
+                        .workflowId(workflowId)
+                        .workflowRunId(workflowRunId)
+                        .attributeKeys(attributeKeys)
+        );
+    }
+
+    public WorkflowSearchResponse SearchWorkflow(final String query, final int pageSize) {
+        return defaultApi.apiV1WorkflowSearchPost(
+                new WorkflowSearchRequest()
+                        .query(query)
+                        .pageSize(pageSize)
+        );
+    }
+
+    public WorkflowGetSearchAttributesResponse GetAnyWorkflowSearchAttributes(
+            final String workflowId,
+            final String workflowRunId,
+            List<SearchAttributeKeyAndType> attributeKeys) {
+        return defaultApi.apiV1WorkflowSearchattributesGetPost(
+                new WorkflowGetSearchAttributesRequest()
                         .workflowId(workflowId)
                         .workflowRunId(workflowRunId)
                         .attributeKeys(attributeKeys)
