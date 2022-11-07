@@ -76,6 +76,10 @@ public class JacksonJsonObjectEncoder implements ObjectEncoder {
 
   @Override
   public <T> T decode(EncodedObject encodedObject, Class<T> type) {
+    if (encodedObject == null) {
+      return null;
+    }
+    
     String data = encodedObject.getData();
     if (data == null || data.isEmpty()) {
       return null;

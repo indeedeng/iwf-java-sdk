@@ -14,7 +14,9 @@ import io.github.cadenceoss.iwf.core.command.SignalCommandResult;
 
 public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
     public static final String STATE_ID = "signal-s1";
-    public static final String SIGNAL_CHANNEL_NAME = "test-signal";
+    public static final String SIGNAL_CHANNEL_NAME_1 = "test-signal-1";
+
+    public static final String SIGNAL_CHANNEL_NAME_2 = "test-signal-2";
     public static final String COMMAND_ID = "test-signal-id";
 
     @Override
@@ -34,7 +36,10 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
             StateLocal stateLocals,
             SearchAttributesRW searchAttributes,
             QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
-        return CommandRequest.forAllCommandCompleted(SignalCommand.create(COMMAND_ID, SIGNAL_CHANNEL_NAME));
+        return CommandRequest.forAnyCommandCompleted(
+                SignalCommand.create(COMMAND_ID, SIGNAL_CHANNEL_NAME_1),
+                SignalCommand.create(COMMAND_ID, SIGNAL_CHANNEL_NAME_2)
+        );
     }
 
     @Override
@@ -46,7 +51,7 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
             SearchAttributesRW searchAttributes,
             QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
         SignalCommandResult signalCommandResult = commandResults.getAllSignalCommandResults().get(0);
-        Integer output = input + (Integer) signalCommandResult.getSignalValue();
+        Integer output = input + (Integer) signalCommandResult.getSignalValue().get();
         return StateDecision.gracefulCompleteWorkflow(output);
     }
 }
