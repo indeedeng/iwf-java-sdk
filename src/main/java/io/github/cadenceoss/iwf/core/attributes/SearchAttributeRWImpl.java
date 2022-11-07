@@ -24,15 +24,17 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
         keywordAttributeMap = new HashMap<>();
         upsertToServerKeywordAttributeMap = new HashMap<>();
 
-        searchAttributeMap.forEach((sa) -> {
-            final SearchAttributeType type = keyToTypeMap.get(sa.getKey());
-            if (type == SearchAttributeType.KEYWORD) {
-                keywordAttributeMap.put(sa.getKey(), sa.getStringValue());
-            }
-            if (type == SearchAttributeType.INT_64) {
-                int64AttributeMap.put(sa.getKey(), sa.getIntegerValue());
-            }
-        });
+        if (searchAttributeMap != null) {
+            searchAttributeMap.forEach((sa) -> {
+                final SearchAttributeType type = keyToTypeMap.get(sa.getKey());
+                if (type == SearchAttributeType.KEYWORD) {
+                    keywordAttributeMap.put(sa.getKey(), sa.getStringValue());
+                }
+                if (type == SearchAttributeType.INT_64) {
+                    int64AttributeMap.put(sa.getKey(), sa.getIntegerValue());
+                }
+            });
+        }
     }
 
     @Override
@@ -41,7 +43,7 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
     }
 
     @Override
-    public void upsertInt64(final String key, final Long value) {
+    public void setInt64(final String key, final Long value) {
         if (!keyToTypeMap.containsKey(key) || keyToTypeMap.get(key) != SearchAttributeType.INT_64) {
             throw new WorkflowDefinitionException(String.format(
                     "key %s is not defined as int64", key));
@@ -56,7 +58,7 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
     }
 
     @Override
-    public void upsertKeyword(final String key, final String value) {
+    public void setKeyword(final String key, final String value) {
         if (!keyToTypeMap.containsKey(key) || keyToTypeMap.get(key) != SearchAttributeType.KEYWORD) {
             throw new WorkflowDefinitionException(String.format(
                     "key %s is not defined as keyword", key));

@@ -222,11 +222,29 @@ public class Client {
         return untypedClient.SearchWorkflow(query, pageSize);
     }
 
-    private Map<String, Object> doGetWorkflowSearchAttributes(
+    public Map<String, Object> GetWorkflowSearchAttributes(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
             List<String> attributeKeys) {
+        if (attributeKeys == null || attributeKeys.isEmpty()) {
+            throw new IllegalArgumentException("attributeKeys must contain at least one entry, or use GetAllSearchAttributes API to get all");
+        }
+        return doGetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, attributeKeys);
+    }
+
+    public Map<String, Object> GetAllSearchAttributes(
+            final Class<? extends Workflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId) {
+        return doGetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, null);
+    }
+
+    private Map<String, Object> doGetWorkflowSearchAttributes(
+            final Class<? extends Workflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId,
+            final List<String> attributeKeys) {
         final String wfType = workflowClass.getSimpleName();
 
         final Map<String, SearchAttributeType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
@@ -253,13 +271,23 @@ public class Client {
         }
 
         List<SearchAttributeKeyAndType> keyAndTypes = new ArrayList<>();
-        attributeKeys.forEach((key) -> {
-            final SearchAttributeType saType = searchAttributeKeyToTypeMap.get(key);
-            final SearchAttributeKeyAndType keyAndType = new SearchAttributeKeyAndType()
-                    .key(key)
-                    .valueType(toGeneratedSearchAttributeType(saType));
-            keyAndTypes.add(keyAndType);
-        });
+        if (attributeKeys == null) {
+            searchAttributeKeyToTypeMap.forEach((key, type) -> {
+                final SearchAttributeKeyAndType keyAndType = new SearchAttributeKeyAndType()
+                        .key(key)
+                        .valueType(toGeneratedSearchAttributeType(type));
+                keyAndTypes.add(keyAndType);
+            });
+        } else {
+            attributeKeys.forEach((key) -> {
+                final SearchAttributeType saType = searchAttributeKeyToTypeMap.get(key);
+                final SearchAttributeKeyAndType keyAndType = new SearchAttributeKeyAndType()
+                        .key(key)
+                        .valueType(toGeneratedSearchAttributeType(saType));
+                keyAndTypes.add(keyAndType);
+            });
+        }
+
         WorkflowGetSearchAttributesResponse response = untypedClient.GetAnyWorkflowSearchAttributes(workflowId, workflowRunId, keyAndTypes);
 
         if (response.getSearchAttributes() == null) {

@@ -97,7 +97,10 @@ public class WorkerService {
                 .stateDecision(StateDecisionMapper.toGenerated(stateDecision))
                 .upsertQueryAttributes(queryAttributesRW.getUpsertQueryAttributes())
                 .upsertStateLocalAttributes(stateLocals.getUpsertStateLocalAttributes())
-                .recordEvents(stateLocals.getRecordEvents());
+                .recordEvents(stateLocals.getRecordEvents())
+                .upsertSearchAttributes(createUpsertSearchAttributes(
+                        searchAttributeRW.getUpsertToServerInt64AttributeMap(),
+                        searchAttributeRW.getUpsertToServerKeywordAttributeMap()));
     }
 
     private QueryAttributesRWImpl createQueryAttributesRW(String workflowType, List<KeyValue> keyValues) {
