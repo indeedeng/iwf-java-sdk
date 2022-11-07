@@ -6,14 +6,13 @@ import java.util.stream.Collectors;
 
 public class StateDecisionMapper {
     public static StateDecision toGenerated(io.github.cadenceoss.iwf.core.StateDecision stateDecision) {
-        if (!stateDecision.getNextStates().isPresent()) {
+        if (stateDecision.getNextStates() == null) {
             return null;
         }
         return new StateDecision()
-                .nextStates(stateDecision.getNextStates().get()
+                .nextStates(stateDecision.getNextStates()
                         .stream()
                         .map(StateMovementMapper::toGenerated)
-                        .collect(Collectors.toList()))
-                .upsertQueryAttributes(stateDecision.getUpsertQueryAttributes().get());
+                        .collect(Collectors.toList()));
     }
 }

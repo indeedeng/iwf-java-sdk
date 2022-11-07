@@ -3,7 +3,7 @@ package io.github.cadenceoss.iwf.core;
 import io.github.cadenceoss.iwf.core.attributes.AttributeLoadingPolicy;
 import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
 import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesRW;
+import io.github.cadenceoss.iwf.core.attributes.StateLocal;
 import io.github.cadenceoss.iwf.core.command.CommandCarryOverPolicy;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
@@ -43,7 +43,7 @@ public interface WorkflowState<I> {
      */
     CommandRequest start(
             final Context context, I input,
-            final StateLocalAttributesRW stateLocals,
+            final StateLocal stateLocals,
             final SearchAttributesRW searchAttributes,
             final QueryAttributesRW queryAttributes,
             final InterStateChannel interStateChannel);
@@ -62,7 +62,7 @@ public interface WorkflowState<I> {
             final Context context,
             final I input,
             final CommandResults commandResults,
-            final StateLocalAttributesRW stateLocals,
+            final StateLocal stateLocals,
             final SearchAttributesRW searchAttributes,
             final QueryAttributesRW queryAttributes,
             final InterStateChannel interStateChannel);

@@ -70,6 +70,7 @@ public class IntegrationTest {
                 "query-start-query-decide", allQueryAttributes.get(BasicQueryWorkflow.ATTRIBUTE_KEY));
         Assertions.assertEquals(
                 1, allQueryAttributes.size());
+        Assertions.assertEquals("test-value-2", output);
 
     }
 
