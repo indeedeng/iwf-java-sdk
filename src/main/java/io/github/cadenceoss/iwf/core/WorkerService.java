@@ -32,15 +32,21 @@ public class WorkerService {
         final Object input = objectEncoder.decode(stateInput, state.getWorkflowState().getInputType());
         final QueryAttributesRWImpl queryAttributesRW =
                 createQueryAttributesRW(req.getWorkflowType(), req.getQueryAttributes());
+        final Context context = ImmutableContext.builder()
+                .workflowId(req.getContext().getWorkflowId())
+                .workflowRunId(req.getContext().getWorkflowRunId())
+                .workflowStartTimestampSeconds(req.getContext().getWorkflowStartedTimestamp())
+                .stateExecutionId(req.getContext().getStateExecutionId())
+                .build();
 
         CommandRequest commandRequest = state.getWorkflowState().start(
-                null,
+                context,
                 input,
                 null,
                 null,
                 queryAttributesRW,
                 null);
-        
+
         return new WorkflowStateStartResponse()
                 .commandRequest(CommandRequestMapper.toGenerated(commandRequest))
                 .upsertQueryAttributes(queryAttributesRW.getUpsertQueryAttributes());
@@ -54,8 +60,15 @@ public class WorkerService {
         final QueryAttributesRWImpl queryAttributesRW =
                 createQueryAttributesRW(req.getWorkflowType(), req.getQueryAttributes());
 
+        final Context context = ImmutableContext.builder()
+                .workflowId(req.getContext().getWorkflowId())
+                .workflowRunId(req.getContext().getWorkflowRunId())
+                .workflowStartTimestampSeconds(req.getContext().getWorkflowStartedTimestamp())
+                .stateExecutionId(req.getContext().getStateExecutionId())
+                .build();
+
         StateDecision stateDecision = state.getWorkflowState().decide(
-                null,
+                context,
                 input,
                 CommandResultsMapper.fromGenerated(
                         req.getCommandResults(),
