@@ -4,7 +4,7 @@ import org.immutables.value.Value;
 
 @Value.Immutable
 public abstract class Context {
-    public abstract Integer getWorkflowStartTimestampSeconds();
+    public abstract Long getWorkflowStartTimestampSeconds();
 
     public abstract String getStateExecutionId();
 

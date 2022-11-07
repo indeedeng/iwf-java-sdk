@@ -1,6 +1,7 @@
 package io.github.cadenceoss.iwf.core;
 
 import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRWImpl;
+import io.github.cadenceoss.iwf.core.attributes.StateLocalImpl;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.mapper.CommandRequestMapper;
 import io.github.cadenceoss.iwf.core.mapper.CommandResultsMapper;
@@ -32,18 +33,27 @@ public class WorkerService {
         final Object input = objectEncoder.decode(stateInput, state.getWorkflowState().getInputType());
         final QueryAttributesRWImpl queryAttributesRW =
                 createQueryAttributesRW(req.getWorkflowType(), req.getQueryAttributes());
+        final Context context = ImmutableContext.builder()
+                .workflowId(req.getContext().getWorkflowId())
+                .workflowRunId(req.getContext().getWorkflowRunId())
+                .workflowStartTimestampSeconds(req.getContext().getWorkflowStartedTimestamp())
+                .stateExecutionId(req.getContext().getStateExecutionId())
+                .build();
+        final StateLocalImpl stateLocals = new StateLocalImpl(toMap(null), objectEncoder);
 
         CommandRequest commandRequest = state.getWorkflowState().start(
-                null,
+                context,
                 input,
-                null,
+                stateLocals,
                 null,
                 queryAttributesRW,
                 null);
-        
+
         return new WorkflowStateStartResponse()
                 .commandRequest(CommandRequestMapper.toGenerated(commandRequest))
-                .upsertQueryAttributes(queryAttributesRW.getUpsertQueryAttributes());
+                .upsertQueryAttributes(queryAttributesRW.getUpsertQueryAttributes())
+                .upsertStateLocalAttributes(stateLocals.getUpsertStateLocalAttributes())
+                .recordEvents(stateLocals.getRecordEvents());
     }
 
     public WorkflowStateDecideResponse handleWorkflowStateDecide(final WorkflowStateDecideRequest req) {
@@ -54,25 +64,39 @@ public class WorkerService {
         final QueryAttributesRWImpl queryAttributesRW =
                 createQueryAttributesRW(req.getWorkflowType(), req.getQueryAttributes());
 
+        final Context context = ImmutableContext.builder()
+                .workflowId(req.getContext().getWorkflowId())
+                .workflowRunId(req.getContext().getWorkflowRunId())
+                .workflowStartTimestampSeconds(req.getContext().getWorkflowStartedTimestamp())
+                .stateExecutionId(req.getContext().getStateExecutionId())
+                .build();
+        final StateLocalImpl stateLocals = new StateLocalImpl(toMap(req.getStateLocalAttributes()), objectEncoder);
+
         StateDecision stateDecision = state.getWorkflowState().decide(
-                null,
+                context,
                 input,
                 CommandResultsMapper.fromGenerated(
                         req.getCommandResults(),
                         registry.getSignalChannelNameToSignalTypeMap(req.getWorkflowType()),
                         objectEncoder),
-                null,
+                stateLocals,
                 null,
                 queryAttributesRW,
                 null);
-        List<KeyValue> queryAttributesToUpsert = queryAttributesRW.getUpsertQueryAttributes();
-        stateDecision = ImmutableStateDecision.copyOf(stateDecision).withUpsertQueryAttributes(queryAttributesToUpsert);
         return new WorkflowStateDecideResponse()
-                .stateDecision(StateDecisionMapper.toGenerated(stateDecision));
+                .stateDecision(StateDecisionMapper.toGenerated(stateDecision))
+                .upsertQueryAttributes(queryAttributesRW.getUpsertQueryAttributes())
+                .upsertStateLocalAttributes(stateLocals.getUpsertStateLocalAttributes())
+                .recordEvents(stateLocals.getRecordEvents());
     }
 
     private QueryAttributesRWImpl createQueryAttributesRW(String workflowType, List<KeyValue> keyValues) {
-        Map<String, EncodedObject> map;
+        final Map<String, EncodedObject> map = toMap(keyValues);
+        return new QueryAttributesRWImpl(registry.getQueryAttributeKeyToTypeMap(workflowType), map, objectEncoder);
+    }
+
+    private Map<String, EncodedObject> toMap(final List<KeyValue> keyValues) {
+        final Map<String, EncodedObject> map;
         if (keyValues == null || keyValues.isEmpty()) {
             map = new HashMap<>();
         } else {
@@ -80,7 +104,6 @@ public class WorkerService {
                     .filter(keyValue -> keyValue.getValue() != null)
                     .collect(Collectors.toMap(KeyValue::getKey, KeyValue::getValue));
         }
-
-        return new QueryAttributesRWImpl(registry.getQueryAttributeKeyToTypeMap(workflowType), map, objectEncoder);
+        return map;
     }
 }

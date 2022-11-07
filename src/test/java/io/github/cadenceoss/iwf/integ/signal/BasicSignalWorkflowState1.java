@@ -5,7 +5,7 @@ import io.github.cadenceoss.iwf.core.StateDecision;
 import io.github.cadenceoss.iwf.core.WorkflowState;
 import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
 import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.StateLocalAttributesRW;
+import io.github.cadenceoss.iwf.core.attributes.StateLocal;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
 import io.github.cadenceoss.iwf.core.command.InterStateChannel;
@@ -31,7 +31,7 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
     public CommandRequest start(
             Context context,
             Integer input,
-            StateLocalAttributesRW stateLocals,
+            StateLocal stateLocals,
             SearchAttributesRW searchAttributes,
             QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
         return CommandRequest.forAllCommandCompleted(SignalCommand.create(COMMAND_ID, SIGNAL_CHANNEL_NAME));
@@ -42,7 +42,7 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
             Context context,
             Integer input,
             CommandResults commandResults,
-            StateLocalAttributesRW stateLocals,
+            StateLocal stateLocals,
             SearchAttributesRW searchAttributes,
             QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
         SignalCommandResult signalCommandResult = commandResults.getAllSignalCommandResults().get(0);
