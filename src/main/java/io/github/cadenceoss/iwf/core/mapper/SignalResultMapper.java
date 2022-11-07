@@ -5,6 +5,8 @@ import io.github.cadenceoss.iwf.core.command.ImmutableSignalCommandResult;
 import io.github.cadenceoss.iwf.core.command.SignalCommandResult;
 import io.github.cadenceoss.iwf.gen.models.SignalResult;
 
+import java.util.Optional;
+
 public class SignalResultMapper {
     public static SignalCommandResult fromGenerated(
             SignalResult signalResult,
@@ -14,7 +16,7 @@ public class SignalResultMapper {
                 .commandId(signalResult.getCommandId())
                 .signalRequestStatusEnum(signalResult.getSignalRequestStatus())
                 .signalChannelName(signalResult.getSignalChannelName())
-                .signalValue(objectEncoder.decode(signalResult.getSignalValue(), signalType))
+                .signalValue(Optional.ofNullable(objectEncoder.decode(signalResult.getSignalValue(), signalType)))
                 .build();
     }
 }

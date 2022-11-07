@@ -10,7 +10,10 @@ import java.util.List;
 public class BasicSignalWorkflow implements Workflow {
     @Override
     public List<SignalChannelDef> getSignalChannels() {
-        return Arrays.asList(SignalChannelDef.create(Integer.class, BasicSignalWorkflowState1.SIGNAL_CHANNEL_NAME));
+        return Arrays.asList(
+                SignalChannelDef.create(Integer.class, BasicSignalWorkflowState1.SIGNAL_CHANNEL_NAME_1),
+                SignalChannelDef.create(Integer.class, BasicSignalWorkflowState1.SIGNAL_CHANNEL_NAME_2)
+        );
     }
 
     @Override
