@@ -6,7 +6,7 @@ public interface SearchAttributesRW {
 
     void upsertInt64(String key, Long value);
 
-    String getTextOrKeyword(String key);
+    String getKeyword(String key);
 
-    void upsertTextOrKeyword(String key, String value);
+    void upsertKeyword(String key, String value);
 }
