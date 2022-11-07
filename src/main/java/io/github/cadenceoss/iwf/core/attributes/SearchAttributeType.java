@@ -5,5 +5,5 @@ package io.github.cadenceoss.iwf.core.attributes;
 public enum SearchAttributeType {
     TEXT,
     KEYWORD,
-    LONG_INTEGER
+    INT_64
 }
