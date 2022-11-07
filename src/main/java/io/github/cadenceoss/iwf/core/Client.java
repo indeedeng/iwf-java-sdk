@@ -1,19 +1,9 @@
 package io.github.cadenceoss.iwf.core;
 
-import com.google.common.base.Preconditions;
-import io.github.cadenceoss.iwf.gen.api.ApiClient;
-import io.github.cadenceoss.iwf.gen.api.DefaultApi;
 import io.github.cadenceoss.iwf.gen.models.KeyValue;
 import io.github.cadenceoss.iwf.gen.models.StateCompletionOutput;
-import io.github.cadenceoss.iwf.gen.models.WorkflowGetQueryAttributesRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowGetQueryAttributesResponse;
-import io.github.cadenceoss.iwf.gen.models.WorkflowGetRequest;
-import io.github.cadenceoss.iwf.gen.models.WorkflowGetResponse;
 import io.github.cadenceoss.iwf.gen.models.WorkflowResetRequest;
-import io.github.cadenceoss.iwf.gen.models.WorkflowResetResponse;
-import io.github.cadenceoss.iwf.gen.models.WorkflowSignalRequest;
-import io.github.cadenceoss.iwf.gen.models.WorkflowStartRequest;
-import io.github.cadenceoss.iwf.gen.models.WorkflowStartResponse;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,18 +12,14 @@ import java.util.stream.Collectors;
 
 public class Client {
     private final Registry registry;
-    private final DefaultApi defaultApi;
 
-    private final ClientOptions clientOptions;
+    private final UntypedClient untypedClient;
 
     private final ObjectEncoder objectEncoder = new JacksonJsonObjectEncoder();
 
     public Client(final Registry registry, final ClientOptions clientOptions) {
-        this.clientOptions = clientOptions;
         this.registry = registry;
-        this.defaultApi = new ApiClient()
-                .setBasePath(clientOptions.getServerUrl())
-                .buildClient(DefaultApi.class);
+        this.untypedClient = new UntypedClient(clientOptions);
     }
 
     public String StartWorkflow(
@@ -56,47 +42,24 @@ public class Client {
             throw new IllegalArgumentException("invalid start stateId " + startStateId);
         }
 
-        WorkflowStartResponse workflowStartResponse = defaultApi.apiV1WorkflowStartPost(new WorkflowStartRequest()
-                .workflowId(workflowId)
-                .iwfWorkerUrl(clientOptions.getWorkerUrl())
-                .iwfWorkflowType(wfType)
-                .workflowTimeoutSeconds(options.getWorkflowTimeoutSeconds())
-                .stateInput(objectEncoder.encode(input))
-                .startStateId(startStateId));
-        return workflowStartResponse.getWorkflowRunId();
+        return untypedClient.StartWorkflow(wfType, startStateId, input, workflowId, options);
     }
 
     /**
      * For most cases, a workflow only has one result(one completion state)
      * Use this API to retrieve the output of the state
-     * @param valueClass the type class of the output
-     * @param workflowId the workflowId
-     * @param workflowRunId optional runId
+     *
+     * @param valueClass    the type class of the output
+     * @param workflowId    the workflowId
+     * @param workflowRunId optional runId, can be empty
+     * @param <T>           type of the output
      * @return
-     * @param <T> type of the output
      */
     public <T> T GetSimpleWorkflowResultWithWait(
             Class<T> valueClass,
             final String workflowId,
             final String workflowRunId) {
-        WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithWaitPost(
-                new WorkflowGetRequest()
-                        .needsResults(true)
-                        .workflowId(workflowId)
-                        .workflowRunId(workflowRunId)
-        );
-
-        if (workflowGetResponse.getResults() == null || workflowGetResponse.getResults().size() == 0) {
-            return null;
-        }
-
-        String checkErrorMessage = "this workflow should have one or zero state output for using this API";
-        Preconditions.checkNotNull(workflowGetResponse.getResults(), checkErrorMessage);
-        Preconditions.checkArgument(workflowGetResponse.getResults().size() == 1, checkErrorMessage);
-        Preconditions.checkNotNull(workflowGetResponse.getResults().get(0).getCompletedStateOutput(), checkErrorMessage);
-
-        final StateCompletionOutput output = workflowGetResponse.getResults().get(0);
-        return objectEncoder.decode(output.getCompletedStateOutput(), valueClass);
+        return untypedClient.GetSimpleWorkflowResultWithWait(valueClass, workflowId, workflowRunId);
     }
 
     public <T> T GetSimpleWorkflowResultWithWait(
@@ -113,14 +76,7 @@ public class Client {
      */
     public List<StateCompletionOutput> GetComplexWorkflowResultWithWait(
             final String workflowId, final String workflowRunId) {
-        WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithWaitPost(
-                new WorkflowGetRequest()
-                        .needsResults(true)
-                        .workflowId(workflowId)
-                        .workflowRunId(workflowRunId)
-        );
-
-        return workflowGetResponse.getResults();
+        return untypedClient.GetComplexWorkflowResultWithWait(workflowId, workflowRunId);
     }
 
     public List<StateCompletionOutput> GetComplexWorkflowResultWithWait(final String workflowId) {
@@ -149,11 +105,7 @@ public class Client {
             throw new IllegalArgumentException(String.format("Signal value is not of type %s", signalType.getName()));
         }
 
-        defaultApi.apiV1WorkflowSignalPost(new WorkflowSignalRequest()
-                .workflowId(workflowId)
-                .workflowRunId(workflowRunId)
-                .signalChannelName(signalChannelName)
-                .signalValue(objectEncoder.encode(signalValue)));
+        untypedClient.SignalWorkflow(workflowId, workflowRunId, signalChannelName, signalValue);
     }
 
     /**
@@ -180,33 +132,22 @@ public class Client {
             final boolean skipSignalReapply
             ){
 
-        final WorkflowResetResponse resp = defaultApi.apiV1WorkflowResetPost(new WorkflowResetRequest()
-                .workflowId(workflowId)
-                .workflowRunId(workflowRunId)
-                .resetType(resetType)
-                .historyEventId(historyEventId)
-                .reason(reason)
-                .decisionOffset(decisionOffset)
-                .resetBadBinaryChecksum(resetBadBinaryChecksum)
-                .earliestTime(earliestTime)
-                .skipSignalReapply(skipSignalReapply)
-        );
-        return resp.getWorkflowRunId();
+        return untypedClient.ResetWorkflow(workflowId, workflowRunId, resetType, historyEventId, reason, resetBadBinaryChecksum, decisionOffset, earliestTime, skipSignalReapply);
     }
 
     /**
      * Cancel a workflow, this is essentially terminate the workflow gracefully
      *
      * @param workflowId    required
-     * @param workflowRunId optional
-     * @param reason        optional
+     * @param workflowRunId optional, can be empty
+     * @param reason        optional, can be empty
      * @return
      */
-    public String CancelWorkflow(
+    public void CancelWorkflow(
             final String workflowId,
             final String workflowRunId,
             final String reason) {
-        throw new RuntimeException("TODO");
+        untypedClient.CancelWorkflow(workflowId, workflowRunId, reason);
     }
 
     public Map<String, Object> GetWorkflowQueryAttributes(
@@ -220,6 +161,13 @@ public class Client {
         return doGetWorkflowQueryAttributes(workflowClass, workflowId, workflowRunId, attributeKeys);
     }
 
+    public Map<String, Object> GetAllQueryAttributes(
+            final Class<? extends Workflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId) {
+        return doGetWorkflowQueryAttributes(workflowClass, workflowId, workflowRunId, null);
+    }
+    
     private Map<String, Object> doGetWorkflowQueryAttributes(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
@@ -249,12 +197,7 @@ public class Client {
             }
         }
 
-        WorkflowGetQueryAttributesResponse response = defaultApi.apiV1WorkflowQueryattributesGetPost(
-                new WorkflowGetQueryAttributesRequest()
-                        .workflowId(workflowId)
-                        .workflowRunId(workflowRunId)
-                        .attributeKeys(attributeKeys)
-        );
+        WorkflowGetQueryAttributesResponse response = untypedClient.GetAnyWorkflowQueryAttributes(workflowId, workflowRunId, attributeKeys);
 
         if (response.getQueryAttributes() == null) {
             throw new InternalServiceException("query attributes not returned");
@@ -269,12 +212,5 @@ public class Client {
             }
         }
         return result;
-    }
-
-    public Map<String, Object> GetAllQueryAttributes(
-            final Class<? extends Workflow> workflowClass,
-            final String workflowId,
-            final String workflowRunId) {
-        return doGetWorkflowQueryAttributes(workflowClass, workflowId, workflowRunId, null);
     }
 }
