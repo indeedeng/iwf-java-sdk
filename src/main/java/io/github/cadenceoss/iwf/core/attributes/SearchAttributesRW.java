@@ -1,20 +1,12 @@
 package io.github.cadenceoss.iwf.core.attributes;
 
-public class SearchAttributesRW {
+public interface SearchAttributesRW {
 
-    public Long getLongInteger(String key) {
-        return null;
-    }
+    Long getInt64(String key);
 
-    public void upsertLongInteger(String key, Long value) {
-        return;
-    }
+    void upsertInt64(String key, Long value);
 
-    public String getTextOrKeyword(String key) {
-        return null;
-    }
+    String getTextOrKeyword(String key);
 
-    public void upsertTextOrKeyword(String key, String value) {
-        return;
-    }
+    void upsertTextOrKeyword(String key, String value);
 }
