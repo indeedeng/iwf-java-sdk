@@ -16,7 +16,7 @@ public abstract class ClientOptions {
     public static final ClientOptions localDefault = minimum(defaultWorkerUrl, defaultServerUrl);
 
     // use this when running with docker-compose of iWF server
-    public static final ClientOptions dockerDefault = minimum(defaultWorkerUrl, defaultServerUrl);
+    public static final ClientOptions dockerDefault = minimum(workerUrlFromDocker, defaultServerUrl);
 
     public static ClientOptions minimum(final String workerUrl, final String serverUrl) {
         return ImmutableClientOptions.builder().workerUrl(workerUrl).serverUrl(serverUrl).build();
