@@ -61,7 +61,7 @@ public interface Workflow {
      * InterStateChannel are for synchronization communications between WorkflowStates.
      * E.g. WorkflowStateA will continue after receiving a value from WorkflowStateB
      */
-    default List<InterStateChannelDef> getInterStateChannelChannels() {
+    default List<InterStateChannelDef> getInterStateChannels() {
         return Collections.emptyList();
     }
 

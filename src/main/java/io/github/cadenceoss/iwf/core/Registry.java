@@ -26,6 +26,7 @@ public class Registry {
         registerWorkflow(wf);
         registerWorkflowState(wf);
         registerWorkflowSignal(wf);
+        registerWorkflowInterstateChannel(wf);
         registerWorkflowQueryAttributes(wf);
         registerWorkflowSearchAttributes(wf);
     }
@@ -81,12 +82,12 @@ public class Registry {
 
     private void registerWorkflowInterstateChannel(final Workflow wf) {
         String workflowType = getWorkflowType(wf);
-        if (wf.getInterStateChannelChannels() == null || wf.getInterStateChannelChannels().isEmpty()) {
+        if (wf.getInterStateChannels() == null || wf.getInterStateChannels().isEmpty()) {
             interstateChannelTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        for (InterStateChannelDef interstateChannelDef : wf.getInterStateChannelChannels()) {
+        for (InterStateChannelDef interstateChannelDef : wf.getInterStateChannels()) {
             Map<String, Class<?>> nameToTypeMap =
                     interstateChannelTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
             if (nameToTypeMap.containsKey(interstateChannelDef.getChannelName())) {

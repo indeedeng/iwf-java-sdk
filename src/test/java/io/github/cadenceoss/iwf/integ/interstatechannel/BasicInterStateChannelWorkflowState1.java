@@ -9,8 +9,8 @@ import io.github.cadenceoss.iwf.core.attributes.StateLocal;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
 import io.github.cadenceoss.iwf.core.command.InterStateChannel;
+import io.github.cadenceoss.iwf.core.command.InterStateChannelCommand;
 import io.github.cadenceoss.iwf.core.command.InterStateChannelCommandResult;
-import io.github.cadenceoss.iwf.core.command.SignalCommand;
 import io.github.cadenceoss.iwf.gen.models.InterStateChannelResult;
 
 import static io.github.cadenceoss.iwf.integ.interstatechannel.BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_NAME_1;
@@ -38,8 +38,8 @@ public class BasicInterStateChannelWorkflowState1 implements WorkflowState<Integ
             SearchAttributesRW searchAttributes,
             QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
         return CommandRequest.forAnyCommandCompleted(
-                SignalCommand.create(COMMAND_ID, INTER_STATE_CHANNEL_NAME_1),
-                SignalCommand.create(COMMAND_ID, INTER_STATE_CHANNEL_NAME_2)
+                InterStateChannelCommand.create(COMMAND_ID, INTER_STATE_CHANNEL_NAME_1),
+                InterStateChannelCommand.create(COMMAND_ID, INTER_STATE_CHANNEL_NAME_2)
         );
     }
 

@@ -4,12 +4,12 @@ import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRWImpl;
 import io.github.cadenceoss.iwf.core.attributes.SearchAttributeRWImpl;
 import io.github.cadenceoss.iwf.core.attributes.StateLocalImpl;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
+import io.github.cadenceoss.iwf.core.command.InterStateChannelCommand;
 import io.github.cadenceoss.iwf.core.command.InterStateChannelImpl;
 import io.github.cadenceoss.iwf.core.mapper.CommandRequestMapper;
 import io.github.cadenceoss.iwf.core.mapper.CommandResultsMapper;
 import io.github.cadenceoss.iwf.core.mapper.StateDecisionMapper;
 import io.github.cadenceoss.iwf.gen.models.EncodedObject;
-import io.github.cadenceoss.iwf.gen.models.InterStateChannelCommand;
 import io.github.cadenceoss.iwf.gen.models.InterStateChannelPublishing;
 import io.github.cadenceoss.iwf.gen.models.KeyValue;
 import io.github.cadenceoss.iwf.gen.models.SearchAttribute;
@@ -75,7 +75,8 @@ public class WorkerService {
                 .recordEvents(stateLocals.getRecordEvents())
                 .upsertSearchAttributes(createUpsertSearchAttributes(
                         searchAttributeRW.getUpsertToServerInt64AttributeMap(),
-                        searchAttributeRW.getUpsertToServerKeywordAttributeMap()));
+                        searchAttributeRW.getUpsertToServerKeywordAttributeMap()))
+                .publishToInterStateChannel(toInterStateChannelPublishing(interStateChannel.getToPublish()));
     }
 
     public WorkflowStateDecideResponse handleWorkflowStateDecide(final WorkflowStateDecideRequest req) {
