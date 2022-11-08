@@ -105,6 +105,7 @@ public class WorkerService {
                 CommandResultsMapper.fromGenerated(
                         req.getCommandResults(),
                         registry.getSignalChannelNameToSignalTypeMap(req.getWorkflowType()),
+                        registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()),
                         objectEncoder),
                 stateLocals,
                 searchAttributeRW,

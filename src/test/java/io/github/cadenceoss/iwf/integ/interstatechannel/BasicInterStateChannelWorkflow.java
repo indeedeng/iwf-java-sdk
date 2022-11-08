@@ -9,9 +9,9 @@ import java.util.List;
 
 public class BasicInterStateChannelWorkflow implements Workflow {
 
-    public static final String INTER_STATE_CHANNEL_NAME_1 = "test-signal-1";
+    public static final String INTER_STATE_CHANNEL_NAME_1 = "test-inter-state-channel-1";
 
-    public static final String INTER_STATE_CHANNEL_NAME_2 = "test-signal-2";
+    public static final String INTER_STATE_CHANNEL_NAME_2 = "test-inter-state-channel-2";
 
     @Override
     public List<InterStateChannelDef> getInterStateChannels() {
