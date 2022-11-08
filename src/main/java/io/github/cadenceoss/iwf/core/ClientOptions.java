@@ -8,7 +8,7 @@ public abstract class ClientOptions {
 
     public abstract String getWorkerUrl();
 
-    public static final String defaultWorkerUrl = "http://localhost:8080";
+    public static final String defaultWorkerUrl = "http://localhost:8802";
     public static final String defaultServerUrl = "http://localhost:8801";
 
     public static final ClientOptions localDefault = minimum(defaultWorkerUrl, defaultServerUrl);

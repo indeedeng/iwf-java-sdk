@@ -11,6 +11,8 @@ public class TestWorker {
     ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public void start() throws ExecutionException, InterruptedException {
+        System.getProperties().put("server.port", 8802);
+        
         executor.submit(() -> {
             SpringApplication.run(SpringMainApplication.class);
         }).get();
