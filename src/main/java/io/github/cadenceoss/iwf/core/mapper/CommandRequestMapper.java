@@ -1,6 +1,7 @@
 package io.github.cadenceoss.iwf.core.mapper;
 
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
+import io.github.cadenceoss.iwf.core.command.InterStateChannelCommand;
 import io.github.cadenceoss.iwf.core.command.SignalCommand;
 import io.github.cadenceoss.iwf.core.command.TimerCommand;
 
@@ -20,6 +21,13 @@ public class CommandRequestMapper {
                                 .filter(baseCommand -> baseCommand instanceof TimerCommand)
                                 .map(baseCommand -> (TimerCommand) baseCommand)
                                 .map(TimerCommandMapper::toGenerated)
+                                .collect(Collectors.toList())
+                )
+                .interStateChannelCommands(
+                        commandRequest.getCommands().stream()
+                                .filter(baseCommand -> baseCommand instanceof InterStateChannelCommand)
+                                .map(baseCommand -> (InterStateChannelCommand) baseCommand)
+                                .map(InterStateChannelCommandMapper::toGenerated)
                                 .collect(Collectors.toList())
                 )
                 .deciderTriggerType(commandRequest.getDeciderTriggerType());

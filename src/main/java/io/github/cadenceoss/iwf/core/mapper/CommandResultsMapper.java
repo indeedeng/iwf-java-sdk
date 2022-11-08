@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 public class CommandResultsMapper {
     public static CommandResults fromGenerated(
             io.github.cadenceoss.iwf.gen.models.CommandResults commandResults,
-            Map<String, Class<?>> nameToTypeMap,
+            Map<String, Class<?>> signalNameToTypeMap,
+            Map<String, Class<?>> interstateChannelNameToTypeMap,
             ObjectEncoder objectEncoder) {
 
         ImmutableCommandResults.Builder builder = ImmutableCommandResults.builder();
@@ -21,11 +22,23 @@ public class CommandResultsMapper {
             builder.allSignalCommandResults(commandResults.getSignalResults().stream()
                     .map(signalResult -> SignalResultMapper.fromGenerated(
                             signalResult,
-                            nameToTypeMap.get(signalResult.getSignalChannelName()),
+                            signalNameToTypeMap.get(signalResult.getSignalChannelName()),
                             objectEncoder))
                     .collect(Collectors.toList()));
         }
-        // TODO: add mapping for activity results and timer results
+        if (commandResults.getTimerResults() != null) {
+            builder.allTimerCommandResults(commandResults.getTimerResults().stream()
+                    .map(TimerResultMapper::fromGenerated)
+                    .collect(Collectors.toList()));
+        }
+        if (commandResults.getInterStateChannelResults() != null) {
+            builder.allInterStateChannelCommandResult(commandResults.getInterStateChannelResults().stream()
+                    .map(result -> InterStateChannelResultMapper.fromGenerated(
+                            result,
+                            interstateChannelNameToTypeMap.get(result.getChannelName()),
+                            objectEncoder))
+                    .collect(Collectors.toList()));
+        }
         return builder.build();
     }
 }

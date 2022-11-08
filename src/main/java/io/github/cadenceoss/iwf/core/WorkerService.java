@@ -4,10 +4,13 @@ import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRWImpl;
 import io.github.cadenceoss.iwf.core.attributes.SearchAttributeRWImpl;
 import io.github.cadenceoss.iwf.core.attributes.StateLocalImpl;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
+import io.github.cadenceoss.iwf.core.command.InterStateChannelCommand;
+import io.github.cadenceoss.iwf.core.command.InterStateChannelImpl;
 import io.github.cadenceoss.iwf.core.mapper.CommandRequestMapper;
 import io.github.cadenceoss.iwf.core.mapper.CommandResultsMapper;
 import io.github.cadenceoss.iwf.core.mapper.StateDecisionMapper;
 import io.github.cadenceoss.iwf.gen.models.EncodedObject;
+import io.github.cadenceoss.iwf.gen.models.InterStateChannelPublishing;
 import io.github.cadenceoss.iwf.gen.models.KeyValue;
 import io.github.cadenceoss.iwf.gen.models.SearchAttribute;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideRequest;
@@ -45,6 +48,8 @@ public class WorkerService {
         final StateLocalImpl stateLocals = new StateLocalImpl(toMap(null), objectEncoder);
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(
                 registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType()), req.getSearchAttributes());
+        final InterStateChannelImpl interStateChannel = new InterStateChannelImpl(
+                registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()), objectEncoder);
 
         CommandRequest commandRequest = state.getWorkflowState().start(
                 context,
@@ -52,7 +57,16 @@ public class WorkerService {
                 stateLocals,
                 searchAttributeRW,
                 queryAttributesRW,
-                null);
+                interStateChannel);
+
+        commandRequest.getCommands().forEach(cmd -> {
+            if (cmd instanceof InterStateChannelCommand) {
+                final String name = ((InterStateChannelCommand) cmd).getChannelName();
+                if (interStateChannel.getToPublish().containsKey(name)) {
+                    throw new WorkflowDefinitionException("it's not allowed to publish and wait for the same interstate channel - " + name);
+                }
+            }
+        });
 
         return new WorkflowStateStartResponse()
                 .commandRequest(CommandRequestMapper.toGenerated(commandRequest))
@@ -61,7 +75,8 @@ public class WorkerService {
                 .recordEvents(stateLocals.getRecordEvents())
                 .upsertSearchAttributes(createUpsertSearchAttributes(
                         searchAttributeRW.getUpsertToServerInt64AttributeMap(),
-                        searchAttributeRW.getUpsertToServerKeywordAttributeMap()));
+                        searchAttributeRW.getUpsertToServerKeywordAttributeMap()))
+                .publishToInterStateChannel(toInterStateChannelPublishing(interStateChannel.getToPublish()));
     }
 
     public WorkflowStateDecideResponse handleWorkflowStateDecide(final WorkflowStateDecideRequest req) {
@@ -81,6 +96,8 @@ public class WorkerService {
         final StateLocalImpl stateLocals = new StateLocalImpl(toMap(req.getStateLocalAttributes()), objectEncoder);
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(
                 registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType()), req.getSearchAttributes());
+        final InterStateChannelImpl interStateChannel = new InterStateChannelImpl(
+                registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()), objectEncoder);
 
         StateDecision stateDecision = state.getWorkflowState().decide(
                 context,
@@ -88,11 +105,13 @@ public class WorkerService {
                 CommandResultsMapper.fromGenerated(
                         req.getCommandResults(),
                         registry.getSignalChannelNameToSignalTypeMap(req.getWorkflowType()),
+                        registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()),
                         objectEncoder),
                 stateLocals,
                 searchAttributeRW,
                 queryAttributesRW,
-                null);
+                interStateChannel);
+
         return new WorkflowStateDecideResponse()
                 .stateDecision(StateDecisionMapper.toGenerated(stateDecision))
                 .upsertQueryAttributes(queryAttributesRW.getUpsertQueryAttributes())
@@ -100,7 +119,22 @@ public class WorkerService {
                 .recordEvents(stateLocals.getRecordEvents())
                 .upsertSearchAttributes(createUpsertSearchAttributes(
                         searchAttributeRW.getUpsertToServerInt64AttributeMap(),
-                        searchAttributeRW.getUpsertToServerKeywordAttributeMap()));
+                        searchAttributeRW.getUpsertToServerKeywordAttributeMap()))
+                .publishToInterStateChannel(toInterStateChannelPublishing(interStateChannel.getToPublish()));
+    }
+
+    private List<InterStateChannelPublishing> toInterStateChannelPublishing(final Map<String, List<EncodedObject>> toPublish) {
+        List<InterStateChannelPublishing> results = new ArrayList<>();
+        toPublish.forEach((cname, list) -> {
+            list.forEach(val -> {
+                final InterStateChannelPublishing pub = new InterStateChannelPublishing()
+                        .channelName(cname)
+                        .value(val);
+                results.add(pub);
+
+            });
+        });
+        return results;
     }
 
     private QueryAttributesRWImpl createQueryAttributesRW(String workflowType, List<KeyValue> keyValues) {
