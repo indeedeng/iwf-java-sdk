@@ -4,7 +4,7 @@ public interface StateLocal {
     /**
      * set a local attribute. The scope of the attribute is only within the execution of this state.
      * Usually it's for passing from State Start API to State Decide API
-     * User code must make sure using the same type for both get & set
+     * User code must make sure using the same type for both get and set
      *
      * @param key
      * @param value
@@ -13,7 +13,7 @@ public interface StateLocal {
 
     /**
      * Retrieve a local state attribute
-     * User code must make sure using the same type for both get & set
+     * User code must make sure using the same type for both get and set
      *
      * @param key
      * @param type
