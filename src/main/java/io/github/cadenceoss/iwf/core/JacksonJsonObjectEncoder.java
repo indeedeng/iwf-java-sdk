@@ -36,6 +36,7 @@ import java.io.IOException;
 public class JacksonJsonObjectEncoder implements ObjectEncoder {
 
   private final ObjectMapper mapper;
+  private final String encodingType;
 
   public JacksonJsonObjectEncoder() {
     mapper = new ObjectMapper();
@@ -47,15 +48,17 @@ public class JacksonJsonObjectEncoder implements ObjectEncoder {
     mapper.registerModule(new JavaTimeModule());
     mapper.registerModule(new Jdk8Module());
     mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+    encodingType = "BuiltinJacksonJson";
   }
 
-  public JacksonJsonObjectEncoder(ObjectMapper mapper) {
+  public JacksonJsonObjectEncoder(ObjectMapper mapper, String encodingType) {
     this.mapper = mapper;
+    this.encodingType = encodingType;
   }
 
   @Override
   public String getEncodingType() {
-    return "BuiltinJacksonJson";
+    return encodingType;
   }
 
   @Override
@@ -79,7 +82,11 @@ public class JacksonJsonObjectEncoder implements ObjectEncoder {
     if (encodedObject == null) {
       return null;
     }
-    
+
+    if (!encodedObject.getEncoding().equals(this.encodingType)) {
+      throw new ObjectEncoderException("not supported encoding type for this encoder " + encodedObject.getEncoding());
+    }
+
     String data = encodedObject.getData();
     if (data == null || data.isEmpty()) {
       return null;

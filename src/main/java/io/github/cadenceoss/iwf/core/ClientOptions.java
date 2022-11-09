@@ -8,6 +8,8 @@ public abstract class ClientOptions {
 
     public abstract String getWorkerUrl();
 
+    public abstract ObjectEncoder getObjectEncoder();
+
     public static final String defaultWorkerUrl = "http://localhost:8802";
 
     public static final String workerUrlFromDocker = "http://host.docker.internal:8802";
@@ -19,6 +21,14 @@ public abstract class ClientOptions {
     public static final ClientOptions dockerDefault = minimum(workerUrlFromDocker, defaultServerUrl);
 
     public static ClientOptions minimum(final String workerUrl, final String serverUrl) {
-        return ImmutableClientOptions.builder().workerUrl(workerUrl).serverUrl(serverUrl).build();
+        return ImmutableClientOptions.builder()
+                .workerUrl(workerUrl)
+                .serverUrl(serverUrl)
+                .objectEncoder(new JacksonJsonObjectEncoder())
+                .build();
+    }
+
+    public static ImmutableClientOptions.Builder builder() {
+        return ImmutableClientOptions.builder();
     }
 }
