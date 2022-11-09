@@ -1,5 +1,6 @@
 package io.github.cadenceoss.iwf.spring.controller;
 
+import io.github.cadenceoss.iwf.core.WorkerOptions;
 import io.github.cadenceoss.iwf.core.WorkerService;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideResponse;
@@ -18,7 +19,7 @@ public class ApiController {
     private WorkerService workerService;
 
     public ApiController() {
-        workerService = new WorkerService(WorkflowRegistry.registry);
+        workerService = new WorkerService(WorkflowRegistry.registry, WorkerOptions.defaultOptions);
     }
 
     @RequestMapping("/")

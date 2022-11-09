@@ -31,8 +31,6 @@ public class UntypedClient {
 
     private final ClientOptions clientOptions;
 
-    private final ObjectEncoder objectEncoder = new JacksonJsonObjectEncoder();
-
     public UntypedClient(final ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.defaultApi = new ApiClient()
@@ -51,7 +49,7 @@ public class UntypedClient {
                 .iwfWorkerUrl(clientOptions.getWorkerUrl())
                 .iwfWorkflowType(workflowType)
                 .workflowTimeoutSeconds(options.getWorkflowTimeoutSeconds())
-                .stateInput(objectEncoder.encode(input))
+                .stateInput(clientOptions.getObjectEncoder().encode(input))
                 .startStateId(startStateId));
         return workflowStartResponse.getWorkflowRunId();
     }
@@ -87,7 +85,7 @@ public class UntypedClient {
         Preconditions.checkNotNull(workflowGetResponse.getResults().get(0).getCompletedStateOutput(), checkErrorMessage);
 
         final StateCompletionOutput output = workflowGetResponse.getResults().get(0);
-        return objectEncoder.decode(output.getCompletedStateOutput(), valueClass);
+        return clientOptions.getObjectEncoder().decode(output.getCompletedStateOutput(), valueClass);
     }
 
     public <T> T GetSimpleWorkflowResultWithWait(
@@ -124,7 +122,7 @@ public class UntypedClient {
                 .workflowId(workflowId)
                 .workflowRunId(workflowRunId)
                 .signalChannelName(signalChannelName)
-                .signalValue(objectEncoder.encode(signalValue)));
+                .signalValue(clientOptions.getObjectEncoder().encode(signalValue)));
     }
 
     /**

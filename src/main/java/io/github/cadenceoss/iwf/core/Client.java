@@ -21,10 +21,11 @@ public class Client {
 
     private final UntypedClient untypedClient;
 
-    private final ObjectEncoder objectEncoder = new JacksonJsonObjectEncoder();
+    final ClientOptions clientOptions;
 
     public Client(final Registry registry, final ClientOptions clientOptions) {
         this.registry = registry;
+        this.clientOptions = clientOptions;
         this.untypedClient = new UntypedClient(clientOptions);
     }
 
@@ -211,7 +212,7 @@ public class Client {
             if (keyValue.getValue() != null) {
                 result.put(
                         keyValue.getKey(),
-                        objectEncoder.decode(keyValue.getValue(), queryAttributeKeyToTypeMap.get(keyValue.getKey()))
+                        clientOptions.getObjectEncoder().decode(keyValue.getValue(), queryAttributeKeyToTypeMap.get(keyValue.getKey()))
                 );
             }
         }
