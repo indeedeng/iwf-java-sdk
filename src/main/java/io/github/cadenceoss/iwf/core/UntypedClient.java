@@ -133,7 +133,7 @@ public class UntypedClient {
      * @param reason                 reason to do the reset for tracking purpose
      * @param resetBadBinaryChecksum required for resetType of BAD_BINARY. Binary checksum for resetType of BadBinary
      * @param decisionOffset         based on the reset point calculated by resetType, this offset will move/offset the point by decision. Currently only negative number is supported, and only works with LastDecisionCompleted
-     * @param earliestTime           required for resetType of DECISION_COMPLETED_TIME. EarliestTime of decision start time, required for resetType of DecisionCompletedTime.Supported formats are '2006-01-02T15:04:05+07:00', raw UnixNano and time range (N<duration>), where 0 < N < 1000000 and duration (full-notation/short-notation) can be second/s, minute/m, hour/h, day/d, week/w, month/M or year/y. For example, '15minute' or '15m' implies last 15 minutes, meaning that workflow will be reset to the first decision that completed in last 15 minutes
+     * @param earliestTime           required for resetType of DECISION_COMPLETED_TIME. EarliestTime of decision start time, required for resetType of DecisionCompletedTime
      * @param skipSignalReapply
      * @return
      */
@@ -168,7 +168,6 @@ public class UntypedClient {
      *
      * @param workflowId    required
      * @param workflowRunId optional
-     * @return
      */
     public void CancelWorkflow(
             final String workflowId,

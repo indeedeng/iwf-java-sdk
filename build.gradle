@@ -25,6 +25,13 @@ jar {
     enabled = true
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withJavadocJar()
+    withSourcesJar()
+}
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
@@ -141,7 +148,7 @@ signing {
 }
 
 group = "io.github.cadence-oss"
-version = "1.0.1-rc1"
+version = "1.0.0-rc3"
 
 nexusPublishing {
     repositories {
