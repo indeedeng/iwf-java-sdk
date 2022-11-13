@@ -15,7 +15,7 @@ public abstract class WorkflowStartOptions {
 
     public static WorkflowStartOptions getDefault() {
         return ImmutableWorkflowStartOptions.builder()
-                .workflowIdReusePolicy(WorkflowIdReusePolicy.ALLOW_DUPLICATE_FAILED_ONLY)
+                .workflowIdReusePolicy(WorkflowIdReusePolicy.ALLOW_DUPLICATE)
                 .build();
     }
 }
