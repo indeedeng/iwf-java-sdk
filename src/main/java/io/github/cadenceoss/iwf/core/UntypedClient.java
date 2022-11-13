@@ -58,9 +58,7 @@ public class UntypedClient {
                         new io.github.cadenceoss.iwf.gen.models.WorkflowStartOptions()
                                 .workflowIDReusePolicy(WorkflowIdReusePolicyMapper.toGenerated(
                                         options.getWorkflowIdReusePolicy()))
-                                .cronSchedule(
-                                        CronScheduleValidator.isValidCronSchedule(options.getCronSchedule())
-                                                ? options.getCronSchedule() : null)
+                                .cronSchedule(CronScheduleValidator.validate(options.getCronSchedule()))
                 )
         );
         return workflowStartResponse.getWorkflowRunId();

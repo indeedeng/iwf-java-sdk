@@ -8,20 +8,11 @@ import com.cronutils.parser.CronParser;
 import static com.cronutils.model.CronType.UNIX;
 
 public class CronScheduleValidator {
-    public static boolean isValidCronSchedule(String cronTab) {
+    public static String validate(String cronTab) {
         CronDefinition cronDefinition =
                 CronDefinitionBuilder.instanceDefinitionFor(UNIX);
         CronParser parser = new CronParser(cronDefinition);
-        boolean result = true;
-        try {
-            parser.parse(cronTab);
-        } catch (IllegalArgumentException ex) {
-            result = false;
-        }
-        return result;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(CronScheduleValidator.isValidCronSchedule("5 0 * 8 *"));
+        parser.parse(cronTab);
+        return cronTab;
     }
 }
