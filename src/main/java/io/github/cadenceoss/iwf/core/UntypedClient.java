@@ -1,6 +1,9 @@
 package io.github.cadenceoss.iwf.core;
 
 import com.google.common.base.Preconditions;
+import io.github.cadenceoss.iwf.core.mapper.WorkflowIdReusePolicyMapper;
+import io.github.cadenceoss.iwf.core.options.WorkflowIdReusePolicy;
+import io.github.cadenceoss.iwf.core.validator.CronScheduleValidator;
 import io.github.cadenceoss.iwf.gen.api.ApiClient;
 import io.github.cadenceoss.iwf.gen.api.DefaultApi;
 import io.github.cadenceoss.iwf.gen.models.SearchAttributeKeyAndType;
@@ -50,7 +53,14 @@ public class UntypedClient {
                 .iwfWorkflowType(workflowType)
                 .workflowTimeoutSeconds(options.getWorkflowTimeoutSeconds())
                 .stateInput(clientOptions.getObjectEncoder().encode(input))
-                .startStateId(startStateId));
+                .startStateId(startStateId)
+                .workflowStartOptions(
+                        new io.github.cadenceoss.iwf.gen.models.WorkflowStartOptions()
+                                .workflowIDReusePolicy(WorkflowIdReusePolicyMapper.toGenerated(
+                                        options.getWorkflowIdReusePolicy()))
+                                .cronSchedule(CronScheduleValidator.validate(options.getCronSchedule()))
+                )
+        );
         return workflowStartResponse.getWorkflowRunId();
     }
 
