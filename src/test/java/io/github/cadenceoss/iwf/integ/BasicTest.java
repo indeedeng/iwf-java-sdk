@@ -2,7 +2,9 @@ package io.github.cadenceoss.iwf.integ;
 
 import io.github.cadenceoss.iwf.core.Client;
 import io.github.cadenceoss.iwf.core.ClientOptions;
+import io.github.cadenceoss.iwf.core.ImmutableWorkflowStartOptions;
 import io.github.cadenceoss.iwf.core.WorkflowStartOptions;
+import io.github.cadenceoss.iwf.core.options.WorkflowIdReusePolicy;
 import io.github.cadenceoss.iwf.integ.basic.BasicWorkflow;
 import io.github.cadenceoss.iwf.integ.basic.BasicWorkflowS1;
 import io.github.cadenceoss.iwf.spring.TestSingletonWorkerService;
