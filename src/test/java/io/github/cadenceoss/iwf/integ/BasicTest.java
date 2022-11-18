@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class BasicTest {
@@ -25,11 +26,15 @@ public class BasicTest {
     public void testBasicWorkflow() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-test-id" + System.currentTimeMillis() / 1000;
-        final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
+        final WorkflowStartOptions startOptions = ImmutableWorkflowStartOptions.builder()
+                .workflowTimeoutSeconds(10)
+                .workflowIdReusePolicy(Optional.of(WorkflowIdReusePolicy.ALLOW_DUPLICATE))
+                .build();
         final Integer input = 0;
-        client.StartWorkflow(BasicWorkflow.class, BasicWorkflowS1.StateId, input, wfId, startOptions);
+        client.StartWorkflow(BasicWorkflow.class, BasicWorkflowS1.StateId, input, "test", startOptions);
         // wait for workflow to finish
-        final Integer output = client.GetSimpleWorkflowResultWithWait(Integer.class, wfId);
+        final Integer output = client.GetSimpleWorkflowResultWithWait(Integer.class, "test");
+        client.StartWorkflow(BasicWorkflow.class, BasicWorkflowS1.StateId, input, "test", startOptions);
         Assertions.assertEquals(input + 2, output);
     }
 }

@@ -3,14 +3,16 @@ package io.github.cadenceoss.iwf.core.mapper;
 import io.github.cadenceoss.iwf.core.options.WorkflowIdReusePolicy;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStartOptions;
 
+import java.util.Optional;
+
 public class WorkflowIdReusePolicyMapper {
     public static WorkflowStartOptions.WorkflowIDReusePolicyEnum toGenerated(
-            WorkflowIdReusePolicy workflowIdReusePolicy
+            Optional<WorkflowIdReusePolicy> workflowIdReusePolicy
     ) {
-        if (workflowIdReusePolicy == null) {
+        if (workflowIdReusePolicy.isEmpty()) {
             return WorkflowStartOptions.WorkflowIDReusePolicyEnum.ALLOW_DUPLICATE_FAILED_ONLY;
         }
-        switch (workflowIdReusePolicy) {
+        switch (workflowIdReusePolicy.get()) {
             case ALLOW_DUPLICATE_FAILED_ONLY:
                 return WorkflowStartOptions.WorkflowIDReusePolicyEnum.ALLOW_DUPLICATE_FAILED_ONLY;
             case ALLOW_DUPLICATE:
