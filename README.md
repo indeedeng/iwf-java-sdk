@@ -1,9 +1,23 @@
 # iwf-java-sdk 
-WIP Java SDK for [iwf workflow engine](https://github.com/indeedeng/iwf)
+Java SDK for [iwf workflow engine](https://github.com/indeedeng/iwf)
 
-## API documentation 
-[API review doc](https://docs.google.com/document/d/15CETNk9ewiP7M_6N9s7jo-Wm57WG977hch9kTVnaExA/edit#) feel free to leave y our comments
+### Gradle
+```gradle
+// https://mvnrepository.com/artifact/io.github.cadence-oss/iwf-java-sdk
+implementation 'io.github.cadence-oss:iwf-java-sdk:1.0.0-rc3'
 
+```
+### Maven
+```
+<!-- https://mvnrepository.com/artifact/io.github.cadence-oss/iwf-java-sdk -->
+<dependency>
+    <groupId>io.github.cadence-oss</groupId>
+    <artifactId>iwf-java-sdk</artifactId>
+    <version>1.0.0-rc3</version>
+    <type>pom</type>
+</dependency>
+
+```
 ## How to build & run 
 
 ### IntelliJ
