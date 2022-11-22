@@ -6,6 +6,7 @@ import io.github.cadenceoss.iwf.core.WorkflowStartOptions;
 import io.github.cadenceoss.iwf.integ.timer.BasicTimerWorkflow;
 import io.github.cadenceoss.iwf.integ.timer.BasicTimerWorkflowState1;
 import io.github.cadenceoss.iwf.spring.TestSingletonWorkerService;
+import io.github.cadenceoss.iwf.spring.controller.WorkflowRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

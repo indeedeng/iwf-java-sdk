@@ -1,8 +1,10 @@
 package io.github.cadenceoss.iwf.core.command;
 
+import java.util.Optional;
+
 public interface BaseCommand {
 
-    String getCommandId();
+    Optional<String> getCommandId();
 }
 
 

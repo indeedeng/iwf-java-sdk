@@ -10,7 +10,7 @@ import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
 import io.github.cadenceoss.iwf.core.command.InterStateChannel;
 
-public class BasicWorkflowS2 implements WorkflowState<Integer> {
+public class BasicWorkflowState2 implements WorkflowState<Integer> {
 
     public static final String StateId = "S2";
 
