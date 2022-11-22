@@ -10,8 +10,9 @@ import static com.cronutils.model.CronType.UNIX;
 
 public class CronScheduleValidator {
     public static String validate(Optional<String> cronTab) {
-        if (cronTab.isEmpty())
+        if (!cronTab.isPresent()) {
             return null;
+        }
         CronDefinition cronDefinition =
                 CronDefinitionBuilder.instanceDefinitionFor(UNIX);
         CronParser parser = new CronParser(cronDefinition);

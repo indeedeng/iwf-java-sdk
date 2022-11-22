@@ -9,7 +9,7 @@ public class WorkflowIdReusePolicyMapper {
     public static WorkflowStartOptions.WorkflowIDReusePolicyEnum toGenerated(
             Optional<WorkflowIdReusePolicy> workflowIdReusePolicy
     ) {
-        if (workflowIdReusePolicy.isEmpty()) {
+        if (!workflowIdReusePolicy.isPresent()) {
             return WorkflowStartOptions.WorkflowIDReusePolicyEnum.ALLOW_DUPLICATE_FAILED_ONLY;
         }
         switch (workflowIdReusePolicy.get()) {
