@@ -5,10 +5,12 @@ import io.github.cadenceoss.iwf.core.Workflow;
 import io.github.cadenceoss.iwf.core.attributes.QueryAttributeDef;
 import io.github.cadenceoss.iwf.core.attributes.SearchAttributeDef;
 import io.github.cadenceoss.iwf.core.attributes.SearchAttributeType;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
+@Component
 public class BasicAttributeWorkflow implements Workflow {
     public static final String TEST_QUERY_ATTRIBUTE_KEY = "query-attr-1";
 

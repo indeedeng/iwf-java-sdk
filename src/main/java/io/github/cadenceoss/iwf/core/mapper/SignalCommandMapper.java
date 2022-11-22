@@ -4,8 +4,11 @@ import io.github.cadenceoss.iwf.gen.models.SignalCommand;
 
 public class SignalCommandMapper {
     public static SignalCommand toGenerated(io.github.cadenceoss.iwf.core.command.SignalCommand signalCommand) {
-        return new SignalCommand()
-                .commandId(signalCommand.getCommandId())
+        final SignalCommand command = new SignalCommand()
                 .signalChannelName(signalCommand.getSignalChannelName());
+        if (signalCommand.getCommandId().isPresent()) {
+            command.commandId(signalCommand.getCommandId().get());
+        }
+        return command;
     }
 }

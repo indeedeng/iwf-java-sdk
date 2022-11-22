@@ -38,6 +38,12 @@ public abstract class StateDecision {
         )).build();
     }
 
+    public static StateDecision singleNextState(final String stateId) {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
+                ImmutableStateMovement.builder().stateId(stateId).build()
+        )).build();
+    }
+
     public static StateDecision singleNextState(final String stateId, final Object stateInput) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 ImmutableStateMovement.builder().stateId(stateId)

@@ -34,7 +34,7 @@ public class BasicTimerWorkflowState1 implements WorkflowState<Integer> {
             StateLocal stateLocals,
             SearchAttributesRW searchAttributes,
             QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
-        return CommandRequest.forAllCommandCompleted(TimerCommand.createByDuration(COMMAND_ID, Duration.ofSeconds(input)));
+        return CommandRequest.forAllCommandCompleted(TimerCommand.createByDuration(Duration.ofSeconds(input)));
     }
 
     @Override

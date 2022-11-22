@@ -6,3 +6,4 @@ build
 
 # Ignore intellij files
 .idea
+.run

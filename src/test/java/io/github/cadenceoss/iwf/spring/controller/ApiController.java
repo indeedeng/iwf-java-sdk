@@ -6,7 +6,6 @@ import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateDecideResponse;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateStartRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStateStartResponse;
-import io.github.cadenceoss.iwf.integ.WorkflowRegistry;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,8 +17,8 @@ public class ApiController {
 
     private WorkerService workerService;
 
-    public ApiController() {
-        workerService = new WorkerService(WorkflowRegistry.registry, WorkerOptions.defaultOptions);
+    public ApiController(WorkflowRegistry registry) {
+        workerService = new WorkerService(registry.getRegistry(), WorkerOptions.defaultOptions);
     }
 
     @RequestMapping("/")

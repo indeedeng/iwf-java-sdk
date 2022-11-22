@@ -10,8 +10,7 @@ import java.util.List;
 @Value.Immutable
 public abstract class CommandResults {
 
-    public abstract List<LongRunningActivityCommandResult> getAllLongRunningActivityCommandResults();
-
+    //public abstract List<LongRunningActivityCommandResult> getAllLongRunningActivityCommandResults();
     public abstract List<SignalCommandResult> getAllSignalCommandResults();
 
     public abstract List<TimerCommandResult> getAllTimerCommandResults();
@@ -19,27 +18,19 @@ public abstract class CommandResults {
     public abstract List<InterStateChannelCommandResult> getAllInterStateChannelCommandResult();
 
     // below are helpers
-    public <T> T getActivityOutputByIndex(int idx) {
-        throw new RuntimeException("TODO");
-    }
-
-    public <T> T getActivityOutputById(String commandId) {
-        throw new RuntimeException("TODO");
-    }
-
-    public LongRunningActivityCommandResult getActivityCommandResultByIndex(int idx) {
-        throw new RuntimeException("TODO");
-    }
-
-    public LongRunningActivityCommandResult getActivityCommandResultById(String commandId) {
-        throw new RuntimeException("TODO");
-    }
-
     public <T> T getSignalValueByIndex(int idx) {
-        throw new RuntimeException("TODO");
+        final List<SignalCommandResult> results = getAllSignalCommandResults();
+        final SignalCommandResult value = results.get(idx);
+        return (T) value.getSignalValue().get();
     }
 
     public <T> T getSignalValueById(String commandId) {
-        throw new RuntimeException("TODO");
+        final List<SignalCommandResult> results = getAllSignalCommandResults();
+        for (SignalCommandResult result : results) {
+            if (result.getCommandId().equals(commandId)) {
+                return (T) result.getSignalValue().get();
+            }
+        }
+        throw new IllegalArgumentException("commandId not found");
     }
 }

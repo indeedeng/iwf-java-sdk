@@ -83,10 +83,6 @@ public class JacksonJsonObjectEncoder implements ObjectEncoder {
       return null;
     }
 
-    if (!encodedObject.getEncoding().equals(this.encodingType)) {
-      throw new ObjectEncoderException("not supported encoding type for this encoder " + encodedObject.getEncoding());
-    }
-
     String data = encodedObject.getData();
     if (data == null || data.isEmpty()) {
       return null;

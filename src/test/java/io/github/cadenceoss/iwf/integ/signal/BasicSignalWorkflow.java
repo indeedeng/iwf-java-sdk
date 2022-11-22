@@ -3,11 +3,14 @@ package io.github.cadenceoss.iwf.integ.signal;
 import io.github.cadenceoss.iwf.core.StateDef;
 import io.github.cadenceoss.iwf.core.Workflow;
 import io.github.cadenceoss.iwf.core.command.SignalChannelDef;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
+@Component
 public class BasicSignalWorkflow implements Workflow {
+
     @Override
     public List<SignalChannelDef> getSignalChannels() {
         return Arrays.asList(

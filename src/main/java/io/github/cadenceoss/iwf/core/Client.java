@@ -29,6 +29,10 @@ public class Client {
         this.untypedClient = new UntypedClient(clientOptions);
     }
 
+    public UntypedClient getUntypedClient() {
+        return untypedClient;
+    }
+
     public String StartWorkflow(
             final Class<? extends Workflow> workflowClass,
             final String startStateId,
@@ -36,7 +40,7 @@ public class Client {
             final WorkflowStartOptions options) {
         return StartWorkflow(workflowClass, startStateId, null, workflowId, options);
     }
-    
+
     public String StartWorkflow(
             final Class<? extends Workflow> workflowClass,
             final String startStateId,
