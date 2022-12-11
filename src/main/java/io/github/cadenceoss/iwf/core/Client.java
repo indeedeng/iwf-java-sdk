@@ -32,15 +32,15 @@ public class Client {
         return untypedClient;
     }
 
-    public String StartWorkflow(
+    public String startWorkflow(
             final Class<? extends Workflow> workflowClass,
             final String startStateId,
             final String workflowId,
             final WorkflowStartOptions options) {
-        return StartWorkflow(workflowClass, startStateId, null, workflowId, options);
+        return startWorkflow(workflowClass, startStateId, null, workflowId, options);
     }
 
-    public String StartWorkflow(
+    public String startWorkflow(
             final Class<? extends Workflow> workflowClass,
             final String startStateId,
             final Object input,
@@ -52,7 +52,7 @@ public class Client {
             throw new IllegalArgumentException("invalid start stateId " + startStateId);
         }
 
-        return untypedClient.StartWorkflow(wfType, startStateId, input, workflowId, options);
+        return untypedClient.startWorkflow(wfType, startStateId, input, workflowId, options);
     }
 
     /**
@@ -65,34 +65,36 @@ public class Client {
      * @param <T>           type of the output
      * @return
      */
-    public <T> T GetSimpleWorkflowResultWithWait(
+    public <T> T getSimpleWorkflowResultWithWait(
             Class<T> valueClass,
             final String workflowId,
             final String workflowRunId) {
-        return untypedClient.GetSimpleWorkflowResultWithWait(valueClass, workflowId, workflowRunId);
+        return untypedClient.getSimpleWorkflowResultWithWait(valueClass, workflowId, workflowRunId);
     }
 
-    public <T> T GetSimpleWorkflowResultWithWait(
+    public <T> T getSimpleWorkflowResultWithWait(
             Class<T> valueClass,
             final String workflowId) {
-        return GetSimpleWorkflowResultWithWait(valueClass, workflowId, "");
+        return getSimpleWorkflowResultWithWait(valueClass, workflowId, "");
     }
 
     /**
      * In some cases, a workflow may have more than one completion states
+     *
      * @param workflowId
      * @param workflowRunId
      * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
      */
-    public List<StateCompletionOutput> GetComplexWorkflowResultWithWait(
+    public List<StateCompletionOutput> getComplexWorkflowResultWithWait(
             final String workflowId, final String workflowRunId) {
-        return untypedClient.GetComplexWorkflowResultWithWait(workflowId, workflowRunId);
+        return untypedClient.getComplexWorkflowResultWithWait(workflowId, workflowRunId);
     }
 
-    public List<StateCompletionOutput> GetComplexWorkflowResultWithWait(final String workflowId) {
-        return GetComplexWorkflowResultWithWait(workflowId, "");
+    public List<StateCompletionOutput> getComplexWorkflowResultWithWait(final String workflowId) {
+        return getComplexWorkflowResultWithWait(workflowId, "");
     }
-    public void SignalWorkflow(
+
+    public void signalWorkflow(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
@@ -115,7 +117,7 @@ public class Client {
             throw new IllegalArgumentException(String.format("Signal value is not of type %s", signalType.getName()));
         }
 
-        untypedClient.SignalWorkflow(workflowId, workflowRunId, signalChannelName, signalValue);
+        untypedClient.signalWorkflow(workflowId, workflowRunId, signalChannelName, signalValue);
     }
 
     /**
@@ -124,46 +126,46 @@ public class Client {
      * @param resetWorkflowTypeAndOptions
      * @return
      */
-    public String ResetWorkflow(
+    public String resetWorkflow(
             final String workflowId,
             final String workflowRunId,
             final ResetWorkflowTypeAndOptions resetWorkflowTypeAndOptions
-            ){
+    ) {
 
-        return untypedClient.ResetWorkflow(workflowId, workflowRunId, resetWorkflowTypeAndOptions);
+        return untypedClient.resetWorkflow(workflowId, workflowRunId, resetWorkflowTypeAndOptions);
     }
 
     /**
-     * Cancel a workflow, this is essentially terminate the workflow gracefully
+     * Stop a workflow, this is essentially terminate the workflow gracefully
      *
      * @param workflowId    required
      * @param workflowRunId optional, can be empty
      */
-    public void CancelWorkflow(
+    public void stopWorkflow(
             final String workflowId,
             final String workflowRunId) {
-        untypedClient.CancelWorkflow(workflowId, workflowRunId);
+        untypedClient.StopWorkflow(workflowId, workflowRunId);
     }
 
-    public Map<String, Object> GetWorkflowQueryAttributes(
+    public Map<String, Object> getWorkflowDataObjects(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
             List<String> attributeKeys) {
         if (attributeKeys == null || attributeKeys.isEmpty()) {
-            throw new IllegalArgumentException("attributeKeys must contain at least one entry, or use getAllQueryAttributes API to get all");
+            throw new IllegalArgumentException("attributeKeys must contain at least one entry, or use getAllDataObjects API to get all");
         }
-        return doGetWorkflowQueryAttributes(workflowClass, workflowId, workflowRunId, attributeKeys);
+        return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, attributeKeys);
     }
 
-    public Map<String, Object> GetAllQueryAttributes(
+    public Map<String, Object> getAllDataObjects(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId) {
-        return doGetWorkflowQueryAttributes(workflowClass, workflowId, workflowRunId, null);
+        return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, null);
     }
 
-    private Map<String, Object> doGetWorkflowQueryAttributes(
+    private Map<String, Object> doGetWorkflowDataObjects(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
@@ -192,7 +194,7 @@ public class Client {
             }
         }
 
-        final WorkflowGetDataObjectsResponse response = untypedClient.GetAnyWorkflowDataObjects(workflowId, workflowRunId, attributeKeys);
+        final WorkflowGetDataObjectsResponse response = untypedClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, attributeKeys);
 
         if (response.getObjects() == null) {
             throw new InternalServiceException("query attributes not returned");
@@ -209,11 +211,11 @@ public class Client {
         return result;
     }
 
-    public WorkflowSearchResponse SearchWorkflow(final String query, final int pageSize) {
-        return untypedClient.SearchWorkflow(query, pageSize);
+    public WorkflowSearchResponse searchWorkflow(final String query, final int pageSize) {
+        return untypedClient.searchWorkflow(query, pageSize);
     }
 
-    public Map<String, Object> GetWorkflowSearchAttributes(
+    public Map<String, Object> getWorkflowSearchAttributes(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
@@ -224,7 +226,7 @@ public class Client {
         return doGetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, attributeKeys);
     }
 
-    public Map<String, Object> GetAllSearchAttributes(
+    public Map<String, Object> getAllSearchAttributes(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId) {
@@ -279,7 +281,7 @@ public class Client {
             });
         }
 
-        WorkflowGetSearchAttributesResponse response = untypedClient.GetAnyWorkflowSearchAttributes(workflowId, workflowRunId, keyAndTypes);
+        WorkflowGetSearchAttributesResponse response = untypedClient.getAnyWorkflowSearchAttributes(workflowId, workflowRunId, keyAndTypes);
 
         if (response.getSearchAttributes() == null) {
             throw new InternalServiceException("query attributes not returned");

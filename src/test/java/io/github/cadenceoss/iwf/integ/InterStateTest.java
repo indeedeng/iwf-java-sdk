@@ -26,9 +26,9 @@ public class InterStateTest {
         final String wfId = "basic-inter-state-test-id" + System.currentTimeMillis() / 1000;
         final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
         final Integer input = 1;
-        final String runId = client.StartWorkflow(
+        final String runId = client.startWorkflow(
                 BasicInterStateChannelWorkflow.class, BasicInterStateChannelWorkflowState0.STATE_ID, input, wfId, startOptions);
-        final Integer output = client.GetSimpleWorkflowResultWithWait(Integer.class, wfId);
+        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(3, output);
     }
 }

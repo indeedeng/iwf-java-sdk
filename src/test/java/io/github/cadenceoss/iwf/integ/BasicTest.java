@@ -34,9 +34,9 @@ public class BasicTest {
                 .workflowIdReusePolicy(Optional.of(WorkflowIdReusePolicy.ALLOW_DUPLICATE))
                 .build();
         final Integer input = 0;
-        client.StartWorkflow(BasicWorkflow.class, BasicWorkflowState1.StateId, input, wfId, startOptions);
+        client.startWorkflow(BasicWorkflow.class, BasicWorkflowState1.StateId, input, wfId, startOptions);
         // wait for workflow to finish
-        final Integer output = client.GetSimpleWorkflowResultWithWait(Integer.class, wfId);
+        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(input + 2, output);
     }
 
@@ -50,8 +50,8 @@ public class BasicTest {
                 .build();
         
         //client.StartWorkflow(EmptyInputWorkflow.class, EmptyInputWorkflowState1.StateId, null, wfId, startOptions);
-        client.getUntypedClient().StartWorkflow(EmptyInputWorkflow.CUSTOM_WF_TYPE, EmptyInputWorkflowState1.StateId, null, wfId, startOptions);
+        client.getUntypedClient().startWorkflow(EmptyInputWorkflow.CUSTOM_WF_TYPE, EmptyInputWorkflowState1.StateId, null, wfId, startOptions);
         // wait for workflow to finish
-        client.GetSimpleWorkflowResultWithWait(Integer.class, wfId);
+        client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
     }
 }
