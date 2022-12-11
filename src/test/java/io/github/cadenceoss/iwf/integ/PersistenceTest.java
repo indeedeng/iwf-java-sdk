@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 import static io.github.cadenceoss.iwf.integ.attribute.BasicAttributeWorkflow.TEST_SEARCH_ATTRIBUTE_INT;
 import static io.github.cadenceoss.iwf.integ.attribute.BasicAttributeWorkflow.TEST_SEARCH_ATTRIBUTE_KEYWORD;
 
-public class AttributeTest {
+public class PersistenceTest {
 
     @BeforeEach
     public void setup() throws ExecutionException, InterruptedException {
@@ -27,7 +27,7 @@ public class AttributeTest {
     }
 
     @Test
-    public void testBasicAttributeWorkflow() throws InterruptedException {
+    public void testPersistenceWorkflow() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-query-test-id" + System.currentTimeMillis() / 1000;
         final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
