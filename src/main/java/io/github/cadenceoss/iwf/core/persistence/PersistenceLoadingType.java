@@ -1,6 +1,6 @@
-package io.github.cadenceoss.iwf.core.attributes;
+package io.github.cadenceoss.iwf.core.persistence;
 
-public enum AttributeLoadingType {
+public enum PersistenceLoadingType {
     // this will load all attributes without locking
     LOAD_ALL_WITHOUT_LOCKING,
     // this will load all attributes but lock them exclusively for one request(execute/decide) at a time

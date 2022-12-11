@@ -1,4 +1,4 @@
-package io.github.cadenceoss.iwf.core.command;
+package io.github.cadenceoss.iwf.core.communication;
 
 import io.github.cadenceoss.iwf.gen.models.SignalResult;
 import org.immutables.value.Value;

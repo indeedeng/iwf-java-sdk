@@ -2,15 +2,13 @@ package io.github.cadenceoss.iwf.core;
 
 import com.google.common.base.Preconditions;
 import io.github.cadenceoss.iwf.core.mapper.WorkflowIdReusePolicyMapper;
-import io.github.cadenceoss.iwf.core.options.WorkflowIdReusePolicy;
 import io.github.cadenceoss.iwf.core.validator.CronScheduleValidator;
 import io.github.cadenceoss.iwf.gen.api.ApiClient;
 import io.github.cadenceoss.iwf.gen.api.DefaultApi;
 import io.github.cadenceoss.iwf.gen.models.SearchAttributeKeyAndType;
 import io.github.cadenceoss.iwf.gen.models.StateCompletionOutput;
-import io.github.cadenceoss.iwf.gen.models.WorkflowCancelRequest;
-import io.github.cadenceoss.iwf.gen.models.WorkflowGetQueryAttributesRequest;
-import io.github.cadenceoss.iwf.gen.models.WorkflowGetQueryAttributesResponse;
+import io.github.cadenceoss.iwf.gen.models.WorkflowGetDataObjectsRequest;
+import io.github.cadenceoss.iwf.gen.models.WorkflowGetDataObjectsResponse;
 import io.github.cadenceoss.iwf.gen.models.WorkflowGetRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowGetResponse;
 import io.github.cadenceoss.iwf.gen.models.WorkflowGetSearchAttributesRequest;
@@ -22,6 +20,7 @@ import io.github.cadenceoss.iwf.gen.models.WorkflowSearchResponse;
 import io.github.cadenceoss.iwf.gen.models.WorkflowSignalRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStartRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowStartResponse;
+import io.github.cadenceoss.iwf.gen.models.WorkflowStopRequest;
 
 import java.util.List;
 
@@ -136,40 +135,33 @@ public class UntypedClient {
     }
 
     /**
-     * @param workflowId             required
-     * @param workflowRunId          optional, default to current runId
-     * @param resetType              rquired
-     * @param historyEventId         required for resetType of HISTORY_EVENT_ID. The eventID of any event after DecisionTaskStarted you want to reset to (this event is exclusive in a new run. The new run history will fork and continue from the previous eventID of this). It can be DecisionTaskCompleted, DecisionTaskFailed or others
-     * @param reason                 reason to do the reset for tracking purpose
-     * @param resetBadBinaryChecksum required for resetType of BAD_BINARY. Binary checksum for resetType of BadBinary
-     * @param decisionOffset         based on the reset point calculated by resetType, this offset will move/offset the point by decision. Currently only negative number is supported, and only works with LastDecisionCompleted
-     * @param earliestTime           required for resetType of DECISION_COMPLETED_TIME. EarliestTime of decision start time, required for resetType of DecisionCompletedTime
-     * @param skipSignalReapply
+     * @param workflowId
+     * @param workflowRunId
+     * @param resetWorkflowTypeAndOptions
      * @return
      */
     public String ResetWorkflow(
             final String workflowId,
             final String workflowRunId,
-            final WorkflowResetRequest.ResetTypeEnum resetType,
-            final int historyEventId,
-            final String reason,
-            final String resetBadBinaryChecksum,
-            final int decisionOffset,
-            final String earliestTime,
-            final boolean skipSignalReapply
+            final ResetWorkflowTypeAndOptions resetWorkflowTypeAndOptions
     ) {
 
-        final WorkflowResetResponse resp = defaultApi.apiV1WorkflowResetPost(new WorkflowResetRequest()
+        final WorkflowResetRequest request = new WorkflowResetRequest()
                 .workflowId(workflowId)
                 .workflowRunId(workflowRunId)
-                .resetType(resetType)
-                .historyEventId(historyEventId)
-                .reason(reason)
-                .decisionOffset(decisionOffset)
-                .resetBadBinaryChecksum(resetBadBinaryChecksum)
-                .earliestTime(earliestTime)
-                .skipSignalReapply(skipSignalReapply)
-        );
+                .resetType(resetWorkflowTypeAndOptions.getResetType())
+                .reason(resetWorkflowTypeAndOptions.getReason());
+        if (resetWorkflowTypeAndOptions.getHistoryEventId().isPresent()) {
+            request.historyEventId(resetWorkflowTypeAndOptions.getHistoryEventId().get());
+        }
+        if (resetWorkflowTypeAndOptions.getHistoryEventTime().isPresent()) {
+            request.historyEventTime(resetWorkflowTypeAndOptions.getHistoryEventTime().get());
+        }
+        if (resetWorkflowTypeAndOptions.getSkipSignalReapply().isPresent()) {
+            request.skipSignalReapply(resetWorkflowTypeAndOptions.getSkipSignalReapply().get());
+        }
+
+        final WorkflowResetResponse resp = defaultApi.apiV1WorkflowResetPost(request);
         return resp.getWorkflowRunId();
     }
 
@@ -182,7 +174,7 @@ public class UntypedClient {
     public void CancelWorkflow(
             final String workflowId,
             final String workflowRunId) {
-        defaultApi.apiV1WorkflowCancelPost(new WorkflowCancelRequest()
+        defaultApi.apiV1WorkflowStopPost(new WorkflowStopRequest()
                 .workflowId(workflowId)
                 .workflowRunId(workflowRunId));
     }
@@ -193,16 +185,16 @@ public class UntypedClient {
      * @param attributeKeys, return all attributes if this is empty or null
      * @return
      */
-    public WorkflowGetQueryAttributesResponse GetAnyWorkflowQueryAttributes(
+    public WorkflowGetDataObjectsResponse GetAnyWorkflowDataObjects(
             final String workflowId,
             final String workflowRunId,
             List<String> attributeKeys) {
 
-        return defaultApi.apiV1WorkflowQueryattributesGetPost(
-                new WorkflowGetQueryAttributesRequest()
+        return defaultApi.apiV1WorkflowDataobjectsGetPost(
+                new WorkflowGetDataObjectsRequest()
                         .workflowId(workflowId)
                         .workflowRunId(workflowRunId)
-                        .attributeKeys(attributeKeys)
+                        .keys(attributeKeys)
         );
     }
 
@@ -222,7 +214,7 @@ public class UntypedClient {
                 new WorkflowGetSearchAttributesRequest()
                         .workflowId(workflowId)
                         .workflowRunId(workflowRunId)
-                        .attributeKeys(attributeKeys)
+                        .keys(attributeKeys)
         );
     }
 }

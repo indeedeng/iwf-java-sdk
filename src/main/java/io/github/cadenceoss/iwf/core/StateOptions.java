@@ -1,8 +1,8 @@
 package io.github.cadenceoss.iwf.core;
 
-import io.github.cadenceoss.iwf.core.attributes.AttributeLoadingPolicy;
 import io.github.cadenceoss.iwf.core.command.CommandCarryOverPolicy;
 import io.github.cadenceoss.iwf.core.command.CommandCarryOverType;
+import io.github.cadenceoss.iwf.core.persistence.PersistenceLoadingPolicy;
 import org.immutables.value.Value;
 
 @Value.Immutable
@@ -19,11 +19,11 @@ public abstract class StateOptions {
      * this decides whether to load all the query attributes into {@link WorkflowState#decide} and {@link WorkflowState#start} method
      * default to true
      */
-    public abstract AttributeLoadingPolicy getQueryAttributesLoadingPolicy();
+    public abstract PersistenceLoadingPolicy getQueryAttributesLoadingPolicy();
 
     /**
      * this decides whether to load all the search attributes into {@link WorkflowState#decide} and {@link WorkflowState#start} method
      * default to true
      */
-    public abstract AttributeLoadingPolicy getSearchAttributesLoadingPolicy();
+    public abstract PersistenceLoadingPolicy getSearchAttributesLoadingPolicy();
 }

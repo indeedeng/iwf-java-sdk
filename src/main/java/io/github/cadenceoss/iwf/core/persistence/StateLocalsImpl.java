@@ -1,4 +1,4 @@
-package io.github.cadenceoss.iwf.core.attributes;
+package io.github.cadenceoss.iwf.core.persistence;
 
 import io.github.cadenceoss.iwf.core.ObjectEncoder;
 import io.github.cadenceoss.iwf.core.WorkflowDefinitionException;
@@ -10,15 +10,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class StateLocalImpl implements StateLocal {
+public class StateLocalsImpl implements StateLocals {
 
     private final Map<String, EncodedObject> recordEvents;
     private final Map<String, EncodedObject> attributeNameToEncodedObjectMap;
     private final Map<String, EncodedObject> upsertAttributesToReturnToServer;
     private final ObjectEncoder objectEncoder;
 
-    public StateLocalImpl(final Map<String, EncodedObject> attributeNameToEncodedObjectMap,
-                          final ObjectEncoder objectEncoder) {
+    public StateLocalsImpl(final Map<String, EncodedObject> attributeNameToEncodedObjectMap,
+                           final ObjectEncoder objectEncoder) {
         this.objectEncoder = objectEncoder;
         this.attributeNameToEncodedObjectMap = attributeNameToEncodedObjectMap;
         upsertAttributesToReturnToServer = new HashMap<>();
@@ -26,14 +26,14 @@ public class StateLocalImpl implements StateLocal {
     }
 
     @Override
-    public void setLocalAttribute(final String key, final Object value) {
+    public void setStateLocal(final String key, final Object value) {
         final EncodedObject encodedData = objectEncoder.encode(value);
         attributeNameToEncodedObjectMap.put(key, encodedData);
         upsertAttributesToReturnToServer.put(key, encodedData);
     }
 
     @Override
-    public <T> T getLocalAttribute(final String key, final Class<T> type) {
+    public <T> T getStateLocal(final String key, final Class<T> type) {
         final EncodedObject encodedData = this.attributeNameToEncodedObjectMap.get(key);
         if (encodedData == null) {
             return null;
@@ -42,7 +42,7 @@ public class StateLocalImpl implements StateLocal {
     }
 
     @Override
-    public void recordEvent(final String key, final Object eventData) {
+    public void recordStateEvent(final String key, final Object eventData) {
         if (recordEvents.containsKey(key)) {
             throw new WorkflowDefinitionException("cannot record the same event for more than once");
         }

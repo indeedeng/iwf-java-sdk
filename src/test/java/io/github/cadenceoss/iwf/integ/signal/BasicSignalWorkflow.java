@@ -2,7 +2,7 @@ package io.github.cadenceoss.iwf.integ.signal;
 
 import io.github.cadenceoss.iwf.core.StateDef;
 import io.github.cadenceoss.iwf.core.Workflow;
-import io.github.cadenceoss.iwf.core.command.SignalChannelDef;
+import io.github.cadenceoss.iwf.core.communication.SignalChannel;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -12,10 +12,10 @@ import java.util.List;
 public class BasicSignalWorkflow implements Workflow {
 
     @Override
-    public List<SignalChannelDef> getSignalChannels() {
+    public List<SignalChannel> getSignalChannels() {
         return Arrays.asList(
-                SignalChannelDef.create(Integer.class, BasicSignalWorkflowState1.SIGNAL_CHANNEL_NAME_1),
-                SignalChannelDef.create(Integer.class, BasicSignalWorkflowState1.SIGNAL_CHANNEL_NAME_2)
+                SignalChannel.create(Integer.class, BasicSignalWorkflowState1.SIGNAL_CHANNEL_NAME_1),
+                SignalChannel.create(Integer.class, BasicSignalWorkflowState1.SIGNAL_CHANNEL_NAME_2)
         );
     }
 

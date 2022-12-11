@@ -1,14 +1,14 @@
 package io.github.cadenceoss.iwf.core;
 
-import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRWImpl;
-import io.github.cadenceoss.iwf.core.attributes.SearchAttributeRWImpl;
-import io.github.cadenceoss.iwf.core.attributes.StateLocalImpl;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
-import io.github.cadenceoss.iwf.core.command.InterStateChannelCommand;
-import io.github.cadenceoss.iwf.core.command.InterStateChannelImpl;
+import io.github.cadenceoss.iwf.core.communication.CommunicationImpl;
+import io.github.cadenceoss.iwf.core.communication.InterStateChannelCommand;
 import io.github.cadenceoss.iwf.core.mapper.CommandRequestMapper;
 import io.github.cadenceoss.iwf.core.mapper.CommandResultsMapper;
 import io.github.cadenceoss.iwf.core.mapper.StateDecisionMapper;
+import io.github.cadenceoss.iwf.core.persistence.DataObjectsRWImpl;
+import io.github.cadenceoss.iwf.core.persistence.SearchAttributeRWImpl;
+import io.github.cadenceoss.iwf.core.persistence.StateLocalsImpl;
 import io.github.cadenceoss.iwf.gen.models.EncodedObject;
 import io.github.cadenceoss.iwf.gen.models.InterStateChannelPublishing;
 import io.github.cadenceoss.iwf.gen.models.KeyValue;
@@ -38,18 +38,18 @@ public class WorkerService {
         StateDef state = registry.getWorkflowState(req.getWorkflowType(), req.getWorkflowStateId());
         final EncodedObject stateInput = req.getStateInput();
         final Object input = workerOptions.getObjectEncoder().decode(stateInput, state.getWorkflowState().getInputType());
-        final QueryAttributesRWImpl queryAttributesRW =
-                createQueryAttributesRW(req.getWorkflowType(), req.getQueryAttributes());
+        final DataObjectsRWImpl dataObjectsRW =
+                createQueryAttributesRW(req.getWorkflowType(), req.getDataObjects());
         final Context context = ImmutableContext.builder()
                 .workflowId(req.getContext().getWorkflowId())
                 .workflowRunId(req.getContext().getWorkflowRunId())
                 .workflowStartTimestampSeconds(req.getContext().getWorkflowStartedTimestamp())
                 .stateExecutionId(req.getContext().getStateExecutionId())
                 .build();
-        final StateLocalImpl stateLocals = new StateLocalImpl(toMap(null), workerOptions.getObjectEncoder());
+        final StateLocalsImpl stateLocals = new StateLocalsImpl(toMap(null), workerOptions.getObjectEncoder());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(
                 registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType()), req.getSearchAttributes());
-        final InterStateChannelImpl interStateChannel = new InterStateChannelImpl(
+        final CommunicationImpl interStateChannel = new CommunicationImpl(
                 registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder());
 
         CommandRequest commandRequest = state.getWorkflowState().start(
@@ -57,7 +57,7 @@ public class WorkerService {
                 input,
                 stateLocals,
                 searchAttributeRW,
-                queryAttributesRW,
+                dataObjectsRW,
                 interStateChannel);
 
         commandRequest.getCommands().forEach(cmd -> {
@@ -71,8 +71,8 @@ public class WorkerService {
 
         return new WorkflowStateStartResponse()
                 .commandRequest(CommandRequestMapper.toGenerated(commandRequest))
-                .upsertQueryAttributes(queryAttributesRW.getUpsertQueryAttributes())
-                .upsertStateLocalAttributes(stateLocals.getUpsertStateLocalAttributes())
+                .upsertDataObjects(dataObjectsRW.getToReturnToServer())
+                .upsertStateLocals(stateLocals.getUpsertStateLocalAttributes())
                 .recordEvents(stateLocals.getRecordEvents())
                 .upsertSearchAttributes(createUpsertSearchAttributes(
                         searchAttributeRW.getUpsertToServerInt64AttributeMap(),
@@ -85,8 +85,8 @@ public class WorkerService {
         final Object input;
         final EncodedObject stateInput = req.getStateInput();
         input = workerOptions.getObjectEncoder().decode(stateInput, state.getWorkflowState().getInputType());
-        final QueryAttributesRWImpl queryAttributesRW =
-                createQueryAttributesRW(req.getWorkflowType(), req.getQueryAttributes());
+        final DataObjectsRWImpl queryAttributesRW =
+                createQueryAttributesRW(req.getWorkflowType(), req.getDataObjects());
 
         final Context context = ImmutableContext.builder()
                 .workflowId(req.getContext().getWorkflowId())
@@ -94,10 +94,10 @@ public class WorkerService {
                 .workflowStartTimestampSeconds(req.getContext().getWorkflowStartedTimestamp())
                 .stateExecutionId(req.getContext().getStateExecutionId())
                 .build();
-        final StateLocalImpl stateLocals = new StateLocalImpl(toMap(req.getStateLocalAttributes()), workerOptions.getObjectEncoder());
+        final StateLocalsImpl stateLocals = new StateLocalsImpl(toMap(req.getStateLocals()), workerOptions.getObjectEncoder());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(
                 registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType()), req.getSearchAttributes());
-        final InterStateChannelImpl interStateChannel = new InterStateChannelImpl(
+        final CommunicationImpl interStateChannel = new CommunicationImpl(
                 registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder());
 
         StateDecision stateDecision = state.getWorkflowState().decide(
@@ -115,8 +115,8 @@ public class WorkerService {
 
         return new WorkflowStateDecideResponse()
                 .stateDecision(StateDecisionMapper.toGenerated(stateDecision, workerOptions.getObjectEncoder()))
-                .upsertQueryAttributes(queryAttributesRW.getUpsertQueryAttributes())
-                .upsertStateLocalAttributes(stateLocals.getUpsertStateLocalAttributes())
+                .upsertDataObjects(queryAttributesRW.getToReturnToServer())
+                .upsertStateLocals(stateLocals.getUpsertStateLocalAttributes())
                 .recordEvents(stateLocals.getRecordEvents())
                 .upsertSearchAttributes(createUpsertSearchAttributes(
                         searchAttributeRW.getUpsertToServerInt64AttributeMap(),
@@ -138,9 +138,9 @@ public class WorkerService {
         return results;
     }
 
-    private QueryAttributesRWImpl createQueryAttributesRW(String workflowType, List<KeyValue> keyValues) {
+    private DataObjectsRWImpl createQueryAttributesRW(String workflowType, List<KeyValue> keyValues) {
         final Map<String, EncodedObject> map = toMap(keyValues);
-        return new QueryAttributesRWImpl(registry.getQueryAttributeKeyToTypeMap(workflowType), map, workerOptions.getObjectEncoder());
+        return new DataObjectsRWImpl(registry.getQueryAttributeKeyToTypeMap(workflowType), map, workerOptions.getObjectEncoder());
     }
 
     private Map<String, EncodedObject> toMap(final List<KeyValue> keyValues) {

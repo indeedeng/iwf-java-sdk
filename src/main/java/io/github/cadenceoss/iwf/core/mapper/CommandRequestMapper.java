@@ -1,8 +1,8 @@
 package io.github.cadenceoss.iwf.core.mapper;
 
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
-import io.github.cadenceoss.iwf.core.command.InterStateChannelCommand;
-import io.github.cadenceoss.iwf.core.command.SignalCommand;
+import io.github.cadenceoss.iwf.core.communication.InterStateChannelCommand;
+import io.github.cadenceoss.iwf.core.communication.SignalCommand;
 import io.github.cadenceoss.iwf.core.command.TimerCommand;
 
 import java.util.stream.Collectors;

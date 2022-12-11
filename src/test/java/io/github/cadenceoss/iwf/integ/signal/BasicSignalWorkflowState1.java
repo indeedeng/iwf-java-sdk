@@ -3,14 +3,14 @@ package io.github.cadenceoss.iwf.integ.signal;
 import io.github.cadenceoss.iwf.core.Context;
 import io.github.cadenceoss.iwf.core.StateDecision;
 import io.github.cadenceoss.iwf.core.WorkflowState;
-import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.StateLocal;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
-import io.github.cadenceoss.iwf.core.command.InterStateChannel;
-import io.github.cadenceoss.iwf.core.command.SignalCommand;
-import io.github.cadenceoss.iwf.core.command.SignalCommandResult;
+import io.github.cadenceoss.iwf.core.communication.SignalCommand;
+import io.github.cadenceoss.iwf.core.communication.SignalCommandResult;
+import io.github.cadenceoss.iwf.core.communication.Communication;
+import io.github.cadenceoss.iwf.core.persistence.DataObjectsRW;
+import io.github.cadenceoss.iwf.core.persistence.SearchAttributesRW;
+import io.github.cadenceoss.iwf.core.persistence.StateLocals;
 import io.github.cadenceoss.iwf.gen.models.SignalResult;
 
 public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
@@ -34,9 +34,9 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
     public CommandRequest start(
             Context context,
             Integer input,
-            StateLocal stateLocals,
+            StateLocals stateLocals,
             SearchAttributesRW searchAttributes,
-            QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
+            DataObjectsRW queryAttributes, final Communication communication) {
         return CommandRequest.forAnyCommandCompleted(
                 SignalCommand.create(COMMAND_ID, SIGNAL_CHANNEL_NAME_1),
                 SignalCommand.create(COMMAND_ID, SIGNAL_CHANNEL_NAME_2)
@@ -48,9 +48,9 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
             Context context,
             Integer input,
             CommandResults commandResults,
-            StateLocal stateLocals,
+            StateLocals stateLocals,
             SearchAttributesRW searchAttributes,
-            QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
+            DataObjectsRW queryAttributes, final Communication communication) {
         SignalCommandResult signalCommandResult = commandResults.getAllSignalCommandResults().get(0);
         Integer output = input + (Integer) signalCommandResult.getSignalValue().get();
 

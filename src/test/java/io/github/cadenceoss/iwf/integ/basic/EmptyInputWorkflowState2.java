@@ -3,12 +3,12 @@ package io.github.cadenceoss.iwf.integ.basic;
 import io.github.cadenceoss.iwf.core.Context;
 import io.github.cadenceoss.iwf.core.StateDecision;
 import io.github.cadenceoss.iwf.core.WorkflowState;
-import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.StateLocal;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
-import io.github.cadenceoss.iwf.core.command.InterStateChannel;
+import io.github.cadenceoss.iwf.core.communication.Communication;
+import io.github.cadenceoss.iwf.core.persistence.DataObjectsRW;
+import io.github.cadenceoss.iwf.core.persistence.SearchAttributesRW;
+import io.github.cadenceoss.iwf.core.persistence.StateLocals;
 
 public class EmptyInputWorkflowState2 implements WorkflowState<Void> {
 
@@ -25,12 +25,12 @@ public class EmptyInputWorkflowState2 implements WorkflowState<Void> {
     }
 
     @Override
-    public CommandRequest start(final Context context, final Void input, final StateLocal stateLocals, final SearchAttributesRW searchAttributes, final QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
+    public CommandRequest start(final Context context, final Void input, final StateLocals stateLocals, final SearchAttributesRW searchAttributes, final DataObjectsRW queryAttributes, final Communication communication) {
         return CommandRequest.empty;
     }
 
     @Override
-    public StateDecision decide(final Context context, final Void input, final CommandResults commandResults, final StateLocal stateLocals, final SearchAttributesRW searchAttributes, final QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
+    public StateDecision decide(final Context context, final Void input, final CommandResults commandResults, final StateLocals stateLocals, final SearchAttributesRW searchAttributes, final DataObjectsRW queryAttributes, final Communication communication) {
         return StateDecision.gracefulCompleteWorkflow();
     }
 }

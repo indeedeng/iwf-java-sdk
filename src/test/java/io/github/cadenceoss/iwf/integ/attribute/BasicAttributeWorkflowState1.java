@@ -5,12 +5,12 @@ import io.github.cadenceoss.iwf.core.ImmutableStateDecision;
 import io.github.cadenceoss.iwf.core.StateDecision;
 import io.github.cadenceoss.iwf.core.StateMovement;
 import io.github.cadenceoss.iwf.core.WorkflowState;
-import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.StateLocal;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
-import io.github.cadenceoss.iwf.core.command.InterStateChannel;
+import io.github.cadenceoss.iwf.core.communication.Communication;
+import io.github.cadenceoss.iwf.core.persistence.DataObjectsRW;
+import io.github.cadenceoss.iwf.core.persistence.SearchAttributesRW;
+import io.github.cadenceoss.iwf.core.persistence.StateLocals;
 
 import java.util.Arrays;
 
@@ -32,30 +32,30 @@ public class BasicAttributeWorkflowState1 implements WorkflowState<String> {
     }
 
     @Override
-    public CommandRequest start(Context context, String input, StateLocal stateLocals, SearchAttributesRW searchAttributes, QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
-        queryAttributes.set(TEST_QUERY_ATTRIBUTE_KEY, "query-start");
-        stateLocals.setLocalAttribute("test-key", "test-value-1");
-        stateLocals.recordEvent("event-1", "event-1");
-        searchAttributes.setInt64(TEST_SEARCH_ATTRIBUTE_INT, 1L);
-        searchAttributes.setKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-1");
+    public CommandRequest start(Context context, String input, StateLocals stateLocals, SearchAttributesRW searchAttributes, DataObjectsRW queryAttributes, final Communication communication) {
+        queryAttributes.setDataObject(TEST_QUERY_ATTRIBUTE_KEY, "query-start");
+        stateLocals.setStateLocal("test-key", "test-value-1");
+        stateLocals.recordStateEvent("event-1", "event-1");
+        searchAttributes.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, 1L);
+        searchAttributes.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-1");
         return CommandRequest.empty;
     }
 
     @Override
-    public StateDecision decide(Context context, String input, CommandResults commandResults, StateLocal stateLocals, SearchAttributesRW searchAttributes, QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
-        String str = queryAttributes.get(TEST_QUERY_ATTRIBUTE_KEY, String.class);
-        queryAttributes.set(TEST_QUERY_ATTRIBUTE_KEY, str + "-query-decide");
-        String testVal2 = stateLocals.getLocalAttribute("test-key", String.class);
+    public StateDecision decide(Context context, String input, CommandResults commandResults, StateLocals stateLocals, SearchAttributesRW searchAttributes, DataObjectsRW queryAttributes, final Communication communication) {
+        String str = queryAttributes.getDataObject(TEST_QUERY_ATTRIBUTE_KEY, String.class);
+        queryAttributes.setDataObject(TEST_QUERY_ATTRIBUTE_KEY, str + "-query-decide");
+        String testVal2 = stateLocals.getStateLocal("test-key", String.class);
         if (testVal2.equals("test-value-1")) {
-            stateLocals.setLocalAttribute("test-key", "test-value-2");
+            stateLocals.setStateLocal("test-key", "test-value-2");
         }
-        stateLocals.recordEvent("event-1", "event-1");
-        stateLocals.recordEvent("event-2", "event-2");
+        stateLocals.recordStateEvent("event-1", "event-1");
+        stateLocals.recordStateEvent("event-2", "event-2");
 
-        if (searchAttributes.getInt64(TEST_SEARCH_ATTRIBUTE_INT) == 1L
-                && searchAttributes.getKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD).equals("keyword-1")) {
-            searchAttributes.setInt64(TEST_SEARCH_ATTRIBUTE_INT, 2L);
-            searchAttributes.setKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-2");
+        if (searchAttributes.getSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT) == 1L
+                && searchAttributes.getSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD).equals("keyword-1")) {
+            searchAttributes.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, 2L);
+            searchAttributes.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-2");
         }
         return ImmutableStateDecision.builder()
                 .nextStates(Arrays.asList(StateMovement.gracefulCompleteWorkflow("test-value-2")))

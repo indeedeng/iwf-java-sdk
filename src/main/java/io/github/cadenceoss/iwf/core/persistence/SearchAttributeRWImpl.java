@@ -1,4 +1,4 @@
-package io.github.cadenceoss.iwf.core.attributes;
+package io.github.cadenceoss.iwf.core.persistence;
 
 import io.github.cadenceoss.iwf.core.WorkflowDefinitionException;
 import io.github.cadenceoss.iwf.gen.models.SearchAttribute;
@@ -38,12 +38,12 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
     }
 
     @Override
-    public Long getInt64(final String key) {
+    public Long getSearchAttributeInt64(final String key) {
         return int64AttributeMap.get(key);
     }
 
     @Override
-    public void setInt64(final String key, final Long value) {
+    public void setSearchAttributeInt64(final String key, final Long value) {
         if (!keyToTypeMap.containsKey(key) || keyToTypeMap.get(key) != SearchAttributeType.INT_64) {
             throw new WorkflowDefinitionException(String.format(
                     "key %s is not defined as int64", key));
@@ -53,12 +53,12 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
     }
 
     @Override
-    public String getKeyword(final String key) {
+    public String getSearchAttributeKeyword(final String key) {
         return keywordAttributeMap.get(key);
     }
 
     @Override
-    public void setKeyword(final String key, final String value) {
+    public void setSearchAttributeKeyword(final String key, final String value) {
         if (!keyToTypeMap.containsKey(key) || keyToTypeMap.get(key) != SearchAttributeType.KEYWORD) {
             throw new WorkflowDefinitionException(String.format(
                     "key %s is not defined as keyword", key));

@@ -2,7 +2,7 @@ package io.github.cadenceoss.iwf.integ.interstatechannel;
 
 import io.github.cadenceoss.iwf.core.StateDef;
 import io.github.cadenceoss.iwf.core.Workflow;
-import io.github.cadenceoss.iwf.core.command.InterStateChannelDef;
+import io.github.cadenceoss.iwf.core.communication.InterStateChannel;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -15,10 +15,10 @@ public class BasicInterStateChannelWorkflow implements Workflow {
     public static final String INTER_STATE_CHANNEL_NAME_2 = "test-inter-state-channel-2";
 
     @Override
-    public List<InterStateChannelDef> getInterStateChannels() {
+    public List<InterStateChannel> getInterStateChannels() {
         return Arrays.asList(
-                InterStateChannelDef.create(Integer.class, INTER_STATE_CHANNEL_NAME_1),
-                InterStateChannelDef.create(Integer.class, INTER_STATE_CHANNEL_NAME_2)
+                InterStateChannel.create(Integer.class, INTER_STATE_CHANNEL_NAME_1),
+                InterStateChannel.create(Integer.class, INTER_STATE_CHANNEL_NAME_2)
         );
     }
 

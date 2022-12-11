@@ -1,13 +1,13 @@
 package io.github.cadenceoss.iwf.core;
 
-import io.github.cadenceoss.iwf.core.attributes.AttributeLoadingPolicy;
-import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.StateLocal;
 import io.github.cadenceoss.iwf.core.command.CommandCarryOverPolicy;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
-import io.github.cadenceoss.iwf.core.command.InterStateChannel;
+import io.github.cadenceoss.iwf.core.communication.Communication;
+import io.github.cadenceoss.iwf.core.persistence.DataObjectsRW;
+import io.github.cadenceoss.iwf.core.persistence.PersistenceLoadingPolicy;
+import io.github.cadenceoss.iwf.core.persistence.SearchAttributesRW;
+import io.github.cadenceoss.iwf.core.persistence.StateLocals;
 
 public interface WorkflowState<I> {
     /**
@@ -21,8 +21,8 @@ public interface WorkflowState<I> {
      */
     default StateOptions getStateOptions() {
         return ImmutableStateOptions.builder()
-                .queryAttributesLoadingPolicy(AttributeLoadingPolicy.LoadAllWithoutLocking)
-                .searchAttributesLoadingPolicy(AttributeLoadingPolicy.LoadAllWithoutLocking)
+                .queryAttributesLoadingPolicy(PersistenceLoadingPolicy.LoadAllWithoutLocking)
+                .searchAttributesLoadingPolicy(PersistenceLoadingPolicy.LoadAllWithoutLocking)
                 .commandCarryOverPolicy(CommandCarryOverPolicy.none)
                 .build();
     }
@@ -43,10 +43,10 @@ public interface WorkflowState<I> {
      */
     CommandRequest start(
             final Context context, I input,
-            final StateLocal stateLocals,
+            final StateLocals stateLocals,
             final SearchAttributesRW searchAttributes,
-            final QueryAttributesRW queryAttributes,
-            final InterStateChannel interStateChannel);
+            final DataObjectsRW queryAttributes,
+            final Communication communication);
 
     /**
      * Implement this method to decide what to do next when requested commands are ready
@@ -62,10 +62,10 @@ public interface WorkflowState<I> {
             final Context context,
             final I input,
             final CommandResults commandResults,
-            final StateLocal stateLocals,
+            final StateLocals stateLocals,
             final SearchAttributesRW searchAttributes,
-            final QueryAttributesRW queryAttributes,
-            final InterStateChannel interStateChannel);
+            final DataObjectsRW queryAttributes,
+            final Communication communication);
 }
 
 

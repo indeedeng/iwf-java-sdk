@@ -1,9 +1,9 @@
 package io.github.cadenceoss.iwf.core;
 
-import io.github.cadenceoss.iwf.core.attributes.QueryAttributeDef;
-import io.github.cadenceoss.iwf.core.attributes.SearchAttributeDef;
-import io.github.cadenceoss.iwf.core.command.InterStateChannelDef;
-import io.github.cadenceoss.iwf.core.command.SignalChannelDef;
+import io.github.cadenceoss.iwf.core.communication.InterStateChannel;
+import io.github.cadenceoss.iwf.core.communication.SignalChannel;
+import io.github.cadenceoss.iwf.core.persistence.DataObjectField;
+import io.github.cadenceoss.iwf.core.persistence.SearchAttributeField;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +33,7 @@ public interface Workflow {
      * Workflow execution can listen on the signal in the WorkflowState start API and receive in
      * the WorkflowState decide API
      */
-    default List<SignalChannelDef> getSignalChannels() {
+    default List<SignalChannel> getSignalChannels() {
         return Collections.emptyList();
     }
 
@@ -43,7 +43,7 @@ public interface Workflow {
      * Search attributes can also be read by GetSearchAttributes Client API by external applications
      * External applications can also use "SearchWorkflow" API to find workflows by SQL-like query
      */
-    default List<SearchAttributeDef> getSearchAttributes() {
+    default List<SearchAttributeField> getSearchAttributes() {
         return Collections.emptyList();
     }
 
@@ -52,7 +52,7 @@ public interface Workflow {
      * Query attributes can be read/upsert in WorkflowState start/decide API
      * Query attributes can also be read by GetQueryAttributes Client API by external applications
      */
-    default List<QueryAttributeDef> getQueryAttributes() {
+    default List<DataObjectField> getQueryAttributes() {
         return Collections.emptyList();
     }
 
@@ -61,7 +61,7 @@ public interface Workflow {
      * InterStateChannel are for synchronization communications between WorkflowStates.
      * E.g. WorkflowStateA will continue after receiving a value from WorkflowStateB
      */
-    default List<InterStateChannelDef> getInterStateChannels() {
+    default List<InterStateChannel> getInterStateChannels() {
         return Collections.emptyList();
     }
 
