@@ -33,7 +33,7 @@ public class CommunicationImpl implements Communication {
         publish.add(objectEncoder.encode(value));
     }
 
-    public Map<String, List<EncodedObject>> getToPublish() {
+    public Map<String, List<EncodedObject>> getToPublishInterStateChannels() {
         return toPublish;
     }
 }

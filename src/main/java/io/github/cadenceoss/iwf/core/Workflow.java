@@ -1,9 +1,7 @@
 package io.github.cadenceoss.iwf.core;
 
-import io.github.cadenceoss.iwf.core.communication.InterStateChannelDef;
-import io.github.cadenceoss.iwf.core.communication.SignalChannel;
-import io.github.cadenceoss.iwf.core.persistence.DataObjectFieldDef;
-import io.github.cadenceoss.iwf.core.persistence.SearchAttributeFieldDef;
+import io.github.cadenceoss.iwf.core.communication.CommunicationMethodDef;
+import io.github.cadenceoss.iwf.core.persistence.PersistenceFieldDef;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,46 +26,37 @@ public interface Workflow {
     List<StateDef> getStates();
 
     /**
-     * defines all the signal channels supported by this workflow.
+     * defines all the communication methods for this workflow, this includes
+     * 1. Signal channel
+     * 2. Interstate channel
+     * <p>
      * Signal channel is for external applications to send signal to workflow execution.
      * Workflow execution can listen on the signal in the WorkflowState start API and receive in
      * the WorkflowState decide API
+     * <p>
+     * InterStateChannel is for synchronization communications between WorkflowStates.
+     * E.g. WorkflowStateA will continue after receiving a value from WorkflowStateB
      */
-    default List<SignalChannel> getSignalChannels() {
+    default List<CommunicationMethodDef> getCommunicationSchema() {
         return Collections.emptyList();
     }
 
     /**
-     * defines all the search attributes supported by this workflow.
+     * defines all the persistence fields for this workflow, this includes:
+     * 1. Data objects
+     * 2. Search attributes
+     * <p>
+     * Data objects can be read/upsert in WorkflowState start/decide API
+     * Data objects  can also be read by GetQueryAttributes Client API by external applications
+     * <p>
      * Search attributes can be read/upsert in WorkflowState start/decide API
      * Search attributes can also be read by GetSearchAttributes Client API by external applications
      * External applications can also use "SearchWorkflow" API to find workflows by SQL-like query
      */
-    default List<SearchAttributeFieldDef> getSearchAttributes() {
+    default List<PersistenceFieldDef> getPersistenceSchema() {
         return Collections.emptyList();
     }
 
-    /**
-     * defines all the query attributes supported by this workflow.
-     * Query attributes can be read/upsert in WorkflowState start/decide API
-     * Query attributes can also be read by GetQueryAttributes Client API by external applications
-     */
-    default List<DataObjectFieldDef> getQueryAttributes() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * defines all the interStateChannels supported by this workflow
-     * InterStateChannel are for synchronization communications between WorkflowStates.
-     * E.g. WorkflowStateA will continue after receiving a value from WorkflowStateB
-     */
-    default List<InterStateChannelDef> getInterStateChannels() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * The workflowType that will be used to registered a workflow. By default is the simpleName of the class(when providing empty string).
-     */
     default String getWorkflowType() {
         return "";
     }
