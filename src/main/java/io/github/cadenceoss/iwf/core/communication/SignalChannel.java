@@ -3,7 +3,7 @@ package io.github.cadenceoss.iwf.core.communication;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public abstract class SignalChannel implements CommunicationMethod {
+public abstract class SignalChannel implements CommunicationMethodDef {
 
     public abstract Class getSignalValueType();
 

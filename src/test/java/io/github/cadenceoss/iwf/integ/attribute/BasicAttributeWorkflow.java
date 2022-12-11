@@ -2,8 +2,8 @@ package io.github.cadenceoss.iwf.integ.attribute;
 
 import io.github.cadenceoss.iwf.core.StateDef;
 import io.github.cadenceoss.iwf.core.Workflow;
-import io.github.cadenceoss.iwf.core.persistence.DataObjectField;
-import io.github.cadenceoss.iwf.core.persistence.SearchAttributeField;
+import io.github.cadenceoss.iwf.core.persistence.DataObjectFieldDef;
+import io.github.cadenceoss.iwf.core.persistence.SearchAttributeFieldDef;
 import io.github.cadenceoss.iwf.core.persistence.SearchAttributeType;
 import org.springframework.stereotype.Component;
 
@@ -23,15 +23,15 @@ public class BasicAttributeWorkflow implements Workflow {
     }
 
     @Override
-    public List<DataObjectField> getQueryAttributes() {
-        return Arrays.asList(DataObjectField.create(String.class, TEST_QUERY_ATTRIBUTE_KEY));
+    public List<DataObjectFieldDef> getQueryAttributes() {
+        return Arrays.asList(DataObjectFieldDef.create(String.class, TEST_QUERY_ATTRIBUTE_KEY));
     }
 
     @Override
-    public List<SearchAttributeField> getSearchAttributes() {
+    public List<SearchAttributeFieldDef> getSearchAttributes() {
         return Arrays.asList(
-                SearchAttributeField.create(SearchAttributeType.INT_64, TEST_SEARCH_ATTRIBUTE_INT),
-                SearchAttributeField.create(SearchAttributeType.KEYWORD, TEST_SEARCH_ATTRIBUTE_KEYWORD)
+                SearchAttributeFieldDef.create(SearchAttributeType.INT_64, TEST_SEARCH_ATTRIBUTE_INT),
+                SearchAttributeFieldDef.create(SearchAttributeType.KEYWORD, TEST_SEARCH_ATTRIBUTE_KEYWORD)
         );
     }
 }

@@ -1,9 +1,9 @@
 package io.github.cadenceoss.iwf.core;
 
-import io.github.cadenceoss.iwf.core.communication.InterStateChannel;
+import io.github.cadenceoss.iwf.core.communication.InterStateChannelDef;
 import io.github.cadenceoss.iwf.core.communication.SignalChannel;
-import io.github.cadenceoss.iwf.core.persistence.DataObjectField;
-import io.github.cadenceoss.iwf.core.persistence.SearchAttributeField;
+import io.github.cadenceoss.iwf.core.persistence.DataObjectFieldDef;
+import io.github.cadenceoss.iwf.core.persistence.SearchAttributeFieldDef;
 
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +43,7 @@ public interface Workflow {
      * Search attributes can also be read by GetSearchAttributes Client API by external applications
      * External applications can also use "SearchWorkflow" API to find workflows by SQL-like query
      */
-    default List<SearchAttributeField> getSearchAttributes() {
+    default List<SearchAttributeFieldDef> getSearchAttributes() {
         return Collections.emptyList();
     }
 
@@ -52,7 +52,7 @@ public interface Workflow {
      * Query attributes can be read/upsert in WorkflowState start/decide API
      * Query attributes can also be read by GetQueryAttributes Client API by external applications
      */
-    default List<DataObjectField> getQueryAttributes() {
+    default List<DataObjectFieldDef> getQueryAttributes() {
         return Collections.emptyList();
     }
 
@@ -61,7 +61,7 @@ public interface Workflow {
      * InterStateChannel are for synchronization communications between WorkflowStates.
      * E.g. WorkflowStateA will continue after receiving a value from WorkflowStateB
      */
-    default List<InterStateChannel> getInterStateChannels() {
+    default List<InterStateChannelDef> getInterStateChannels() {
         return Collections.emptyList();
     }
 
@@ -71,15 +71,5 @@ public interface Workflow {
     default String getWorkflowType() {
         return "";
     }
-    
-    /**
-     * defines all the long running activity types supported by this workflow.
-     * NOTE that there is NO regular activities in iwf. For non-long-running activities, you just implement them
-     * in the workflow state APIs(start/decide).
-     */
-    // TODO: need server to support this feature
-//    default List<LongRunningActivityDef<?>> getLongRunningActivityTypes(){
-//        return Collections.emptyList();
-//    }
 }
 

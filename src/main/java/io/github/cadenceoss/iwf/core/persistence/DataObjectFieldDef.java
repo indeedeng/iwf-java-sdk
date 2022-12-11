@@ -3,11 +3,11 @@ package io.github.cadenceoss.iwf.core.persistence;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public abstract class DataObjectField implements PersistenceField {
+public abstract class DataObjectFieldDef implements PersistenceFieldDef {
     public abstract Class getDataObjectType();
 
-    public static DataObjectField create(Class dataType, String key) {
-        return ImmutableDataObjectField.builder()
+    public static DataObjectFieldDef create(Class dataType, String key) {
+        return ImmutableDataObjectFieldDef.builder()
                 .key(key)
                 .dataObjectType(dataType)
                 .build();

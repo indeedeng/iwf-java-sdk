@@ -1,5 +1,5 @@
 package io.github.cadenceoss.iwf.core.persistence;
 
-public interface PersistenceField {
+public interface PersistenceFieldDef {
     public abstract String getKey();
 }

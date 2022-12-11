@@ -1,9 +1,9 @@
 package io.github.cadenceoss.iwf.core;
 
-import io.github.cadenceoss.iwf.core.communication.InterStateChannel;
+import io.github.cadenceoss.iwf.core.communication.InterStateChannelDef;
 import io.github.cadenceoss.iwf.core.communication.SignalChannel;
-import io.github.cadenceoss.iwf.core.persistence.DataObjectField;
-import io.github.cadenceoss.iwf.core.persistence.SearchAttributeField;
+import io.github.cadenceoss.iwf.core.persistence.DataObjectFieldDef;
+import io.github.cadenceoss.iwf.core.persistence.SearchAttributeFieldDef;
 import io.github.cadenceoss.iwf.core.persistence.SearchAttributeType;
 
 import java.util.HashMap;
@@ -87,14 +87,14 @@ public class Registry {
             return;
         }
 
-        for (InterStateChannel interstateChannel : wf.getInterStateChannels()) {
+        for (InterStateChannelDef interstateChannelDef : wf.getInterStateChannels()) {
             Map<String, Class<?>> nameToTypeMap =
                     interstateChannelTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
-            if (nameToTypeMap.containsKey(interstateChannel.getChannelName())) {
+            if (nameToTypeMap.containsKey(interstateChannelDef.getChannelName())) {
                 throw new WorkflowDefinitionException(
-                        String.format("InterStateChannel name  %s already exists", interstateChannel.getChannelName()));
+                        String.format("InterStateChannel name  %s already exists", interstateChannelDef.getChannelName()));
             }
-            nameToTypeMap.put(interstateChannel.getChannelName(), interstateChannel.getValueType());
+            nameToTypeMap.put(interstateChannelDef.getChannelName(), interstateChannelDef.getValueType());
         }
     }
 
@@ -105,7 +105,7 @@ public class Registry {
             return;
         }
 
-        for (DataObjectField dataObjectField : wf.getQueryAttributes()) {
+        for (DataObjectFieldDef dataObjectField : wf.getQueryAttributes()) {
             Map<String, Class<?>> queryAttributeKeyToTypeMap =
                     dataObjectTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
             if (queryAttributeKeyToTypeMap.containsKey(dataObjectField.getKey())) {
@@ -129,7 +129,7 @@ public class Registry {
             return;
         }
 
-        for (SearchAttributeField searchAttributeField : wf.getSearchAttributes()) {
+        for (SearchAttributeFieldDef searchAttributeField : wf.getSearchAttributes()) {
             Map<String, SearchAttributeType> searchAttributeKeyToTypeMap =
                     searchAttributeTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
 
