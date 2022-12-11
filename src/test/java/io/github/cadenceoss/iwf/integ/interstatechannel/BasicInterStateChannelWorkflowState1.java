@@ -3,14 +3,12 @@ package io.github.cadenceoss.iwf.integ.interstatechannel;
 import io.github.cadenceoss.iwf.core.Context;
 import io.github.cadenceoss.iwf.core.StateDecision;
 import io.github.cadenceoss.iwf.core.WorkflowState;
-import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.StateLocal;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
-import io.github.cadenceoss.iwf.core.command.InterStateChannel;
-import io.github.cadenceoss.iwf.core.command.InterStateChannelCommand;
-import io.github.cadenceoss.iwf.core.command.InterStateChannelCommandResult;
+import io.github.cadenceoss.iwf.core.communication.Communication;
+import io.github.cadenceoss.iwf.core.communication.InterStateChannelCommand;
+import io.github.cadenceoss.iwf.core.communication.InterStateChannelCommandResult;
+import io.github.cadenceoss.iwf.core.persistence.Persistence;
 import io.github.cadenceoss.iwf.gen.models.InterStateChannelResult;
 
 import static io.github.cadenceoss.iwf.integ.interstatechannel.BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_NAME_1;
@@ -34,9 +32,8 @@ public class BasicInterStateChannelWorkflowState1 implements WorkflowState<Integ
     public CommandRequest start(
             Context context,
             Integer input,
-            StateLocal stateLocals,
-            SearchAttributesRW searchAttributes,
-            QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
+            Persistence persistence,
+            final Communication communication) {
         return CommandRequest.forAnyCommandCompleted(
                 InterStateChannelCommand.create(COMMAND_ID, INTER_STATE_CHANNEL_NAME_1),
                 InterStateChannelCommand.create(COMMAND_ID, INTER_STATE_CHANNEL_NAME_2)
@@ -48,9 +45,8 @@ public class BasicInterStateChannelWorkflowState1 implements WorkflowState<Integ
             Context context,
             Integer input,
             CommandResults commandResults,
-            StateLocal stateLocals,
-            SearchAttributesRW searchAttributes,
-            QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
+            Persistence persistence,
+            final Communication communication) {
         final InterStateChannelCommandResult result1 = commandResults.getAllInterStateChannelCommandResult().get(0);
         Integer output = input + (Integer) result1.getValue().get();
 

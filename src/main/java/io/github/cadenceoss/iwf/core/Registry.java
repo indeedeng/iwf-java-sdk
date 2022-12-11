@@ -1,13 +1,15 @@
 package io.github.cadenceoss.iwf.core;
 
-import io.github.cadenceoss.iwf.core.attributes.QueryAttributeDef;
-import io.github.cadenceoss.iwf.core.attributes.SearchAttributeDef;
-import io.github.cadenceoss.iwf.core.attributes.SearchAttributeType;
-import io.github.cadenceoss.iwf.core.command.InterStateChannelDef;
-import io.github.cadenceoss.iwf.core.command.SignalChannelDef;
+import io.github.cadenceoss.iwf.core.communication.InterStateChannelDef;
+import io.github.cadenceoss.iwf.core.communication.SignalChannelDef;
+import io.github.cadenceoss.iwf.core.persistence.DataObjectFieldDef;
+import io.github.cadenceoss.iwf.core.persistence.SearchAttributeFieldDef;
+import io.github.cadenceoss.iwf.core.persistence.SearchAttributeType;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Registry {
     private final Map<String, Workflow> workflowStore = new HashMap<>();
@@ -16,7 +18,7 @@ public class Registry {
     private final Map<String, Map<String, Class<?>>> signalTypeStore = new HashMap<>();
 
     private final Map<String, Map<String, Class<?>>> interstateChannelTypeStore = new HashMap<>();
-    private final Map<String, Map<String, Class<?>>> queryAttributeTypeStore = new HashMap<>();
+    private final Map<String, Map<String, Class<?>>> dataObjectTypeStore = new HashMap<>();
 
     private final Map<String, Map<String, SearchAttributeType>> searchAttributeTypeStore = new HashMap<>();
 
@@ -27,7 +29,7 @@ public class Registry {
         registerWorkflowState(wf);
         registerWorkflowSignal(wf);
         registerWorkflowInterstateChannel(wf);
-        registerWorkflowQueryAttributes(wf);
+        registerWorkflowDataObjects(wf);
         registerWorkflowSearchAttributes(wf);
     }
 
@@ -64,12 +66,13 @@ public class Registry {
 
     private void registerWorkflowSignal(final Workflow wf) {
         String workflowType = getWorkflowType(wf);
-        if (wf.getSignalChannels() == null || wf.getSignalChannels().isEmpty()) {
+        final List<SignalChannelDef> channels = getSignalChannels(wf);
+        if (channels == null || channels.isEmpty()) {
             signalTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        for (SignalChannelDef signalChannelDef : wf.getSignalChannels()) {
+        for (SignalChannelDef signalChannelDef : channels) {
             Map<String, Class<?>> signalNameToTypeMap =
                     signalTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
             if (signalNameToTypeMap.containsKey(signalChannelDef.getSignalChannelName())) {
@@ -82,12 +85,13 @@ public class Registry {
 
     private void registerWorkflowInterstateChannel(final Workflow wf) {
         String workflowType = getWorkflowType(wf);
-        if (wf.getInterStateChannels() == null || wf.getInterStateChannels().isEmpty()) {
+        final List<InterStateChannelDef> channels = getInterStateChannels(wf);
+        if (channels == null || channels.isEmpty()) {
             interstateChannelTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        for (InterStateChannelDef interstateChannelDef : wf.getInterStateChannels()) {
+        for (InterStateChannelDef interstateChannelDef : channels) {
             Map<String, Class<?>> nameToTypeMap =
                     interstateChannelTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
             if (nameToTypeMap.containsKey(interstateChannelDef.getChannelName())) {
@@ -98,51 +102,69 @@ public class Registry {
         }
     }
 
-    private void registerWorkflowQueryAttributes(final Workflow wf) {
+    private void registerWorkflowDataObjects(final Workflow wf) {
         String workflowType = getWorkflowType(wf);
-        if (wf.getQueryAttributes() == null || wf.getQueryAttributes().isEmpty()) {
-            queryAttributeTypeStore.put(workflowType, new HashMap<>());
+        final List<DataObjectFieldDef> fields = getDataObjectFields(wf);
+        if (fields == null || fields.isEmpty()) {
+            dataObjectTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        for (QueryAttributeDef queryAttributeDef : wf.getQueryAttributes()) {
+        for (DataObjectFieldDef dataObjectField : fields) {
             Map<String, Class<?>> queryAttributeKeyToTypeMap =
-                    queryAttributeTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
-            if (queryAttributeKeyToTypeMap.containsKey(queryAttributeDef.getQueryAttributeKey())) {
+                    dataObjectTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
+            if (queryAttributeKeyToTypeMap.containsKey(dataObjectField.getKey())) {
                 throw new WorkflowDefinitionException(
                         String.format(
                                 "Query attribute key %s already exists",
-                                queryAttributeDef.getQueryAttributeKey())
+                                dataObjectField.getDataObjectType())
                 );
             }
             queryAttributeKeyToTypeMap.put(
-                    queryAttributeDef.getQueryAttributeKey(),
-                    queryAttributeDef.getQueryAttributeType()
+                    dataObjectField.getKey(),
+                    dataObjectField.getDataObjectType()
             );
         }
     }
 
+    private List<DataObjectFieldDef> getDataObjectFields(final Workflow wf) {
+        return wf.getPersistenceSchema().stream().filter((f) -> f instanceof DataObjectFieldDef).map(f -> (DataObjectFieldDef) f).collect(Collectors.toList());
+    }
+
+    private List<SearchAttributeFieldDef> getSearchAttributeFields(final Workflow wf) {
+        return wf.getPersistenceSchema().stream().filter((f) -> f instanceof SearchAttributeFieldDef).map(f -> (SearchAttributeFieldDef) f).collect(Collectors.toList());
+    }
+
+    private List<InterStateChannelDef> getInterStateChannels(final Workflow wf) {
+        return wf.getCommunicationSchema().stream().filter((f) -> f instanceof InterStateChannelDef).map(f -> (InterStateChannelDef) f).collect(Collectors.toList());
+    }
+
+    private List<SignalChannelDef> getSignalChannels(final Workflow wf) {
+        return wf.getCommunicationSchema().stream().filter((f) -> f instanceof SignalChannelDef).map(f -> (SignalChannelDef) f).collect(Collectors.toList());
+    }
+
     private void registerWorkflowSearchAttributes(final Workflow wf) {
         String workflowType = getWorkflowType(wf);
-        if (wf.getSearchAttributes() == null || wf.getSearchAttributes().isEmpty()) {
+        final List<SearchAttributeFieldDef> fields = getSearchAttributeFields(wf);
+        if (fields == null || fields.isEmpty()) {
             searchAttributeTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        for (SearchAttributeDef searchAttributeDef : wf.getSearchAttributes()) {
+        for (SearchAttributeFieldDef searchAttributeField : fields) {
             Map<String, SearchAttributeType> searchAttributeKeyToTypeMap =
                     searchAttributeTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
 
-            if (searchAttributeKeyToTypeMap.containsKey(searchAttributeDef.getSearchAttributeKey())) {
+            if (searchAttributeKeyToTypeMap.containsKey(searchAttributeField.getKey())) {
                 throw new WorkflowDefinitionException(
                         String.format(
                                 "Search attribute key %s already exists",
-                                searchAttributeDef.getSearchAttributeKey())
+                                searchAttributeField.getKey())
                 );
             }
             searchAttributeKeyToTypeMap.put(
-                    searchAttributeDef.getSearchAttributeKey(),
-                    searchAttributeDef.getSearchAttributeType()
+                    searchAttributeField.getKey(),
+                    searchAttributeField.getSearchAttributeType()
             );
         }
     }
@@ -164,7 +186,7 @@ public class Registry {
     }
 
     public Map<String, Class<?>> getQueryAttributeKeyToTypeMap(final String workflowType) {
-        return queryAttributeTypeStore.get(workflowType);
+        return dataObjectTypeStore.get(workflowType);
     }
 
     public Map<String, SearchAttributeType> getSearchAttributeKeyToTypeMap(final String workflowType) {

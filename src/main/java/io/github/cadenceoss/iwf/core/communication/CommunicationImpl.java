@@ -1,4 +1,4 @@
-package io.github.cadenceoss.iwf.core.command;
+package io.github.cadenceoss.iwf.core.communication;
 
 import io.github.cadenceoss.iwf.core.ObjectEncoder;
 import io.github.cadenceoss.iwf.core.WorkflowDefinitionException;
@@ -9,14 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InterStateChannelImpl implements InterStateChannel {
+public class CommunicationImpl implements Communication {
 
     final Map<String, Class<?>> nameToTypeMap;
     final Map<String, List<EncodedObject>> toPublish = new HashMap<>();
 
     final ObjectEncoder objectEncoder;
 
-    public InterStateChannelImpl(
+    public CommunicationImpl(
             final Map<String, Class<?>> nameToTypeMap,
             final ObjectEncoder objectEncoder) {
         this.nameToTypeMap = nameToTypeMap;
@@ -24,7 +24,7 @@ public class InterStateChannelImpl implements InterStateChannel {
     }
 
     @Override
-    public void publish(final String channelName, final Object value) {
+    public void publishInterstateChannel(final String channelName, final Object value) {
         final Class<?> type = nameToTypeMap.get(channelName);
         if (!type.isInstance(value)) {
             throw new WorkflowDefinitionException(String.format("InterStateChannel value is not of type %s", type.getName()));
@@ -33,7 +33,7 @@ public class InterStateChannelImpl implements InterStateChannel {
         publish.add(objectEncoder.encode(value));
     }
 
-    public Map<String, List<EncodedObject>> getToPublish() {
+    public Map<String, List<EncodedObject>> getToPublishInterStateChannels() {
         return toPublish;
     }
 }

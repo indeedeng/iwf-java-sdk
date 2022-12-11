@@ -1,5 +1,7 @@
 package io.github.cadenceoss.iwf.core.command;
 
+import io.github.cadenceoss.iwf.core.communication.InterStateChannelCommandResult;
+import io.github.cadenceoss.iwf.core.communication.SignalCommandResult;
 import org.immutables.value.Value;
 
 import java.util.List;

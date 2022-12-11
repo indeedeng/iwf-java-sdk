@@ -1,5 +1,6 @@
-package io.github.cadenceoss.iwf.core.command;
+package io.github.cadenceoss.iwf.core.communication;
 
+import io.github.cadenceoss.iwf.core.command.BaseCommand;
 import org.immutables.value.Value;
 
 @Value.Immutable

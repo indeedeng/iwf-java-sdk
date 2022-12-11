@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 import static io.github.cadenceoss.iwf.integ.attribute.BasicAttributeWorkflow.TEST_SEARCH_ATTRIBUTE_INT;
 import static io.github.cadenceoss.iwf.integ.attribute.BasicAttributeWorkflow.TEST_SEARCH_ATTRIBUTE_KEYWORD;
 
-public class AttributeTest {
+public class PersistenceTest {
 
     @BeforeEach
     public void setup() throws ExecutionException, InterruptedException {
@@ -27,7 +27,7 @@ public class AttributeTest {
     }
 
     @Test
-    public void testBasicAttributeWorkflow() throws InterruptedException {
+    public void testPersistenceWorkflow() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-query-test-id" + System.currentTimeMillis() / 1000;
         final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
@@ -35,13 +35,13 @@ public class AttributeTest {
                 BasicAttributeWorkflow.class, BasicAttributeWorkflowState1.STATE_ID, "start", wfId, startOptions);
         final String output = client.GetSimpleWorkflowResultWithWait(String.class, wfId);
         Map<String, Object> map =
-                client.GetWorkflowQueryAttributes(BasicAttributeWorkflow.class, wfId, runId, Arrays.asList(BasicAttributeWorkflow.TEST_QUERY_ATTRIBUTE_KEY));
+                client.GetWorkflowQueryAttributes(BasicAttributeWorkflow.class, wfId, runId, Arrays.asList(BasicAttributeWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
-                "query-start-query-decide", map.get(BasicAttributeWorkflow.TEST_QUERY_ATTRIBUTE_KEY));
+                "query-start-query-decide", map.get(BasicAttributeWorkflow.TEST_DATA_OBJECT_KEY));
         Map<String, Object> allQueryAttributes =
                 client.GetAllQueryAttributes(BasicAttributeWorkflow.class, wfId, runId);
         Assertions.assertEquals(
-                "query-start-query-decide", allQueryAttributes.get(BasicAttributeWorkflow.TEST_QUERY_ATTRIBUTE_KEY));
+                "query-start-query-decide", allQueryAttributes.get(BasicAttributeWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 1, allQueryAttributes.size());
         Assertions.assertEquals("test-value-2", output);

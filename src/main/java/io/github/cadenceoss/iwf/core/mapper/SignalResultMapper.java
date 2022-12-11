@@ -1,8 +1,8 @@
 package io.github.cadenceoss.iwf.core.mapper;
 
 import io.github.cadenceoss.iwf.core.ObjectEncoder;
-import io.github.cadenceoss.iwf.core.command.ImmutableSignalCommandResult;
-import io.github.cadenceoss.iwf.core.command.SignalCommandResult;
+import io.github.cadenceoss.iwf.core.communication.ImmutableSignalCommandResult;
+import io.github.cadenceoss.iwf.core.communication.SignalCommandResult;
 import io.github.cadenceoss.iwf.gen.models.SignalResult;
 
 import java.util.Optional;

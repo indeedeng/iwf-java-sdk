@@ -3,13 +3,11 @@ package io.github.cadenceoss.iwf.integ.timer;
 import io.github.cadenceoss.iwf.core.Context;
 import io.github.cadenceoss.iwf.core.StateDecision;
 import io.github.cadenceoss.iwf.core.WorkflowState;
-import io.github.cadenceoss.iwf.core.attributes.QueryAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.attributes.StateLocal;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
-import io.github.cadenceoss.iwf.core.command.InterStateChannel;
 import io.github.cadenceoss.iwf.core.command.TimerCommand;
+import io.github.cadenceoss.iwf.core.communication.Communication;
+import io.github.cadenceoss.iwf.core.persistence.Persistence;
 
 import java.time.Duration;
 
@@ -31,9 +29,8 @@ public class BasicTimerWorkflowState1 implements WorkflowState<Integer> {
     public CommandRequest start(
             Context context,
             Integer input,
-            StateLocal stateLocals,
-            SearchAttributesRW searchAttributes,
-            QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
+            Persistence persistence,
+            final Communication communication) {
         return CommandRequest.forAllCommandCompleted(TimerCommand.createByDuration(Duration.ofSeconds(input)));
     }
 
@@ -42,9 +39,8 @@ public class BasicTimerWorkflowState1 implements WorkflowState<Integer> {
             Context context,
             Integer input,
             CommandResults commandResults,
-            StateLocal stateLocals,
-            SearchAttributesRW searchAttributes,
-            QueryAttributesRW queryAttributes, final InterStateChannel interStateChannel) {
+            Persistence persistence,
+            final Communication communication) {
         return StateDecision.gracefulCompleteWorkflow();
     }
 }

@@ -1,9 +1,9 @@
-package io.github.cadenceoss.iwf.core.command;
+package io.github.cadenceoss.iwf.core.communication;
 
 import org.immutables.value.Value;
 
 @Value.Immutable
-public abstract class SignalChannelDef {
+public abstract class SignalChannelDef implements CommunicationMethodDef {
 
     public abstract Class getSignalValueType();
 

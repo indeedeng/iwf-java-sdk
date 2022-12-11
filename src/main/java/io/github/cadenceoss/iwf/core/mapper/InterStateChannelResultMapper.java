@@ -1,8 +1,8 @@
 package io.github.cadenceoss.iwf.core.mapper;
 
 import io.github.cadenceoss.iwf.core.ObjectEncoder;
-import io.github.cadenceoss.iwf.core.command.ImmutableInterStateChannelCommandResult;
-import io.github.cadenceoss.iwf.core.command.InterStateChannelCommandResult;
+import io.github.cadenceoss.iwf.core.communication.ImmutableInterStateChannelCommandResult;
+import io.github.cadenceoss.iwf.core.communication.InterStateChannelCommandResult;
 import io.github.cadenceoss.iwf.gen.models.InterStateChannelResult;
 
 import java.util.Optional;

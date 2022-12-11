@@ -1,13 +1,12 @@
 package io.github.cadenceoss.iwf.core;
 
-import io.github.cadenceoss.iwf.core.attributes.SearchAttributeType;
+import io.github.cadenceoss.iwf.core.persistence.SearchAttributeType;
 import io.github.cadenceoss.iwf.gen.models.KeyValue;
 import io.github.cadenceoss.iwf.gen.models.SearchAttribute;
 import io.github.cadenceoss.iwf.gen.models.SearchAttributeKeyAndType;
 import io.github.cadenceoss.iwf.gen.models.StateCompletionOutput;
-import io.github.cadenceoss.iwf.gen.models.WorkflowGetQueryAttributesResponse;
+import io.github.cadenceoss.iwf.gen.models.WorkflowGetDataObjectsResponse;
 import io.github.cadenceoss.iwf.gen.models.WorkflowGetSearchAttributesResponse;
-import io.github.cadenceoss.iwf.gen.models.WorkflowResetRequest;
 import io.github.cadenceoss.iwf.gen.models.WorkflowSearchResponse;
 
 import java.util.ArrayList;
@@ -120,30 +119,18 @@ public class Client {
     }
 
     /**
-     * @param workflowId             required
-     * @param workflowRunId          optional, default to current runId
-     * @param resetType              required
-     * @param historyEventId         required for resetType of HISTORY_EVENT_ID. The eventID of any event after DecisionTaskStarted you want to reset to (this event is exclusive in a new run. The new run history will fork and continue from the previous eventID of this). It can be DecisionTaskCompleted, DecisionTaskFailed or others
-     * @param reason                 reason to do the reset for tracking purpose
-     * @param resetBadBinaryChecksum required for resetType of BAD_BINARY. Binary checksum for resetType of BadBinary
-     * @param decisionOffset         based on the reset point calculated by resetType, this offset will move/offset the point by decision. Currently only negative number is supported, and only works with LastDecisionCompleted
-     * @param earliestTime           required for resetType of DECISION_COMPLETED_TIME. EarliestTime of decision start time, required for resetType of DecisionCompletedTime.Supported formats are '2006-01-02T15:04:05+07:00', raw UnixNano and time range
-     * @param skipSignalReapply
+     * @param workflowId
+     * @param workflowRunId
+     * @param resetWorkflowTypeAndOptions
      * @return
      */
     public String ResetWorkflow(
             final String workflowId,
             final String workflowRunId,
-            final WorkflowResetRequest.ResetTypeEnum resetType,
-            final int historyEventId,
-            final String reason,
-            final String resetBadBinaryChecksum,
-            final int decisionOffset,
-            final String earliestTime,
-            final boolean skipSignalReapply
+            final ResetWorkflowTypeAndOptions resetWorkflowTypeAndOptions
             ){
 
-        return untypedClient.ResetWorkflow(workflowId, workflowRunId, resetType, historyEventId, reason, resetBadBinaryChecksum, decisionOffset, earliestTime, skipSignalReapply);
+        return untypedClient.ResetWorkflow(workflowId, workflowRunId, resetWorkflowTypeAndOptions);
     }
 
     /**
@@ -205,13 +192,13 @@ public class Client {
             }
         }
 
-        WorkflowGetQueryAttributesResponse response = untypedClient.GetAnyWorkflowQueryAttributes(workflowId, workflowRunId, attributeKeys);
+        final WorkflowGetDataObjectsResponse response = untypedClient.GetAnyWorkflowDataObjects(workflowId, workflowRunId, attributeKeys);
 
-        if (response.getQueryAttributes() == null) {
+        if (response.getObjects() == null) {
             throw new InternalServiceException("query attributes not returned");
         }
         Map<String, Object> result = new HashMap<>();
-        for (KeyValue keyValue : response.getQueryAttributes()) {
+        for (KeyValue keyValue : response.getObjects()) {
             if (keyValue.getValue() != null) {
                 result.put(
                         keyValue.getKey(),
