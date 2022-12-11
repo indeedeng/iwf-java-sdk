@@ -26,11 +26,11 @@ public class SignalTest {
         final String wfId = "basic-signal-test-id" + System.currentTimeMillis() / 1000;
         final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
         final Integer input = 1;
-        final String runId = client.StartWorkflow(
+        final String runId = client.startWorkflow(
                 BasicSignalWorkflow.class, BasicSignalWorkflowState1.STATE_ID, input, wfId, startOptions);
-        client.SignalWorkflow(
+        client.signalWorkflow(
                 BasicSignalWorkflow.class, wfId, runId, BasicSignalWorkflowState1.SIGNAL_CHANNEL_NAME_1, Integer.valueOf(2));
-        final Integer output = client.GetSimpleWorkflowResultWithWait(Integer.class, wfId);
+        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(3, output);
     }
 }

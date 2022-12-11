@@ -31,25 +31,25 @@ public class PersistenceTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-query-test-id" + System.currentTimeMillis() / 1000;
         final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
-        final String runId = client.StartWorkflow(
+        final String runId = client.startWorkflow(
                 BasicAttributeWorkflow.class, BasicAttributeWorkflowState1.STATE_ID, "start", wfId, startOptions);
-        final String output = client.GetSimpleWorkflowResultWithWait(String.class, wfId);
+        final String output = client.getSimpleWorkflowResultWithWait(String.class, wfId);
         Map<String, Object> map =
-                client.GetWorkflowQueryAttributes(BasicAttributeWorkflow.class, wfId, runId, Arrays.asList(BasicAttributeWorkflow.TEST_DATA_OBJECT_KEY));
+                client.getWorkflowDataObjects(BasicAttributeWorkflow.class, wfId, runId, Arrays.asList(BasicAttributeWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 "query-start-query-decide", map.get(BasicAttributeWorkflow.TEST_DATA_OBJECT_KEY));
         Map<String, Object> allQueryAttributes =
-                client.GetAllQueryAttributes(BasicAttributeWorkflow.class, wfId, runId);
+                client.getAllDataObjects(BasicAttributeWorkflow.class, wfId, runId);
         Assertions.assertEquals(
                 "query-start-query-decide", allQueryAttributes.get(BasicAttributeWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 1, allQueryAttributes.size());
         Assertions.assertEquals("test-value-2", output);
 
-        final Map<String, Object> searchAttributes1 = client.GetWorkflowSearchAttributes(BasicAttributeWorkflow.class,
+        final Map<String, Object> searchAttributes1 = client.getWorkflowSearchAttributes(BasicAttributeWorkflow.class,
                 wfId, "", Arrays.asList(TEST_SEARCH_ATTRIBUTE_KEYWORD, TEST_SEARCH_ATTRIBUTE_INT));
 
-        final Map<String, Object> searchAttributes2 = client.GetAllSearchAttributes(BasicAttributeWorkflow.class,
+        final Map<String, Object> searchAttributes2 = client.getAllSearchAttributes(BasicAttributeWorkflow.class,
                 wfId, "");
 
         Assertions.assertEquals(searchAttributes1, searchAttributes2);

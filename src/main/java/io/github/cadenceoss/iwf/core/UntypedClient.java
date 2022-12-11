@@ -40,7 +40,7 @@ public class UntypedClient {
                 .buildClient(DefaultApi.class);
     }
 
-    public String StartWorkflow(
+    public String startWorkflow(
             final String workflowType,
             final String startStateId,
             final Object input,
@@ -73,7 +73,7 @@ public class UntypedClient {
      * @param <T>           type of the output
      * @return
      */
-    public <T> T GetSimpleWorkflowResultWithWait(
+    public <T> T getSimpleWorkflowResultWithWait(
             Class<T> valueClass,
             final String workflowId,
             final String workflowRunId) {
@@ -97,10 +97,10 @@ public class UntypedClient {
         return clientOptions.getObjectEncoder().decode(output.getCompletedStateOutput(), valueClass);
     }
 
-    public <T> T GetSimpleWorkflowResultWithWait(
+    public <T> T getSimpleWorkflowResultWithWait(
             Class<T> valueClass,
             final String workflowId) {
-        return GetSimpleWorkflowResultWithWait(valueClass, workflowId, "");
+        return getSimpleWorkflowResultWithWait(valueClass, workflowId, "");
     }
 
     /**
@@ -110,7 +110,7 @@ public class UntypedClient {
      * @param workflowRunId optional runId, can be empty string
      * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
      */
-    public List<StateCompletionOutput> GetComplexWorkflowResultWithWait(
+    public List<StateCompletionOutput> getComplexWorkflowResultWithWait(
             final String workflowId, final String workflowRunId) {
         WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithWaitPost(
                 new WorkflowGetRequest()
@@ -122,7 +122,7 @@ public class UntypedClient {
         return workflowGetResponse.getResults();
     }
 
-    public void SignalWorkflow(
+    public void signalWorkflow(
             final String workflowId,
             final String workflowRunId,
             final String signalChannelName,
@@ -140,7 +140,7 @@ public class UntypedClient {
      * @param resetWorkflowTypeAndOptions
      * @return
      */
-    public String ResetWorkflow(
+    public String resetWorkflow(
             final String workflowId,
             final String workflowRunId,
             final ResetWorkflowTypeAndOptions resetWorkflowTypeAndOptions
@@ -166,12 +166,12 @@ public class UntypedClient {
     }
 
     /**
-     * Cancel a workflow, this is essentially terminate the workflow gracefully
+     * Stop a workflow, this is essentially terminate the workflow gracefully
      *
      * @param workflowId    required
      * @param workflowRunId optional
      */
-    public void CancelWorkflow(
+    public void StopWorkflow(
             final String workflowId,
             final String workflowRunId) {
         defaultApi.apiV1WorkflowStopPost(new WorkflowStopRequest()
@@ -185,7 +185,7 @@ public class UntypedClient {
      * @param attributeKeys, return all attributes if this is empty or null
      * @return
      */
-    public WorkflowGetDataObjectsResponse GetAnyWorkflowDataObjects(
+    public WorkflowGetDataObjectsResponse getAnyWorkflowDataObjects(
             final String workflowId,
             final String workflowRunId,
             List<String> attributeKeys) {
@@ -198,7 +198,7 @@ public class UntypedClient {
         );
     }
 
-    public WorkflowSearchResponse SearchWorkflow(final String query, final int pageSize) {
+    public WorkflowSearchResponse searchWorkflow(final String query, final int pageSize) {
         return defaultApi.apiV1WorkflowSearchPost(
                 new WorkflowSearchRequest()
                         .query(query)
@@ -206,7 +206,7 @@ public class UntypedClient {
         );
     }
 
-    public WorkflowGetSearchAttributesResponse GetAnyWorkflowSearchAttributes(
+    public WorkflowGetSearchAttributesResponse getAnyWorkflowSearchAttributes(
             final String workflowId,
             final String workflowRunId,
             List<SearchAttributeKeyAndType> attributeKeys) {
