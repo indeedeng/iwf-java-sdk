@@ -6,9 +6,7 @@ import io.github.cadenceoss.iwf.core.WorkflowState;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
 import io.github.cadenceoss.iwf.core.communication.Communication;
-import io.github.cadenceoss.iwf.core.persistence.DataObjectsRW;
-import io.github.cadenceoss.iwf.core.persistence.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.persistence.StateLocals;
+import io.github.cadenceoss.iwf.core.persistence.Persistence;
 
 public class BasicInterStateChannelWorkflowState2 implements WorkflowState<Integer> {
     public static final String STATE_ID = "inter-state-s2";
@@ -27,9 +25,7 @@ public class BasicInterStateChannelWorkflowState2 implements WorkflowState<Integ
     public CommandRequest start(
             Context context,
             Integer input,
-            StateLocals stateLocals,
-            SearchAttributesRW searchAttributes,
-            DataObjectsRW queryAttributes, final Communication communication) {
+            Persistence persistence, final Communication communication) {
         communication.publishInterstateChannel(BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_NAME_1, 2);
         return CommandRequest.empty;
     }
@@ -39,9 +35,7 @@ public class BasicInterStateChannelWorkflowState2 implements WorkflowState<Integ
             Context context,
             Integer input,
             CommandResults commandResults,
-            StateLocals stateLocals,
-            SearchAttributesRW searchAttributes,
-            DataObjectsRW queryAttributes, final Communication communication) {
+            Persistence persistence, final Communication communication) {
         return StateDecision.DEAD_END;
     }
 }

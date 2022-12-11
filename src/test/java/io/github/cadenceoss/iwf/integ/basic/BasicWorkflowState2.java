@@ -6,9 +6,7 @@ import io.github.cadenceoss.iwf.core.WorkflowState;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
 import io.github.cadenceoss.iwf.core.communication.Communication;
-import io.github.cadenceoss.iwf.core.persistence.DataObjectsRW;
-import io.github.cadenceoss.iwf.core.persistence.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.persistence.StateLocals;
+import io.github.cadenceoss.iwf.core.persistence.Persistence;
 
 public class BasicWorkflowState2 implements WorkflowState<Integer> {
 
@@ -25,12 +23,12 @@ public class BasicWorkflowState2 implements WorkflowState<Integer> {
     }
 
     @Override
-    public CommandRequest start(final Context context, final Integer input, final StateLocals stateLocals, final SearchAttributesRW searchAttributes, final DataObjectsRW queryAttributes, final Communication communication) {
+    public CommandRequest start(final Context context, final Integer input, Persistence persistence, final Communication communication) {
         return CommandRequest.empty;
     }
 
     @Override
-    public StateDecision decide(final Context context, final Integer input, final CommandResults commandResults, final StateLocals stateLocals, final SearchAttributesRW searchAttributes, final DataObjectsRW queryAttributes, final Communication communication) {
+    public StateDecision decide(final Context context, final Integer input, final CommandResults commandResults, Persistence persistence, final Communication communication) {
         final int output = input + 1;
         return StateDecision.gracefulCompleteWorkflow(output);
     }

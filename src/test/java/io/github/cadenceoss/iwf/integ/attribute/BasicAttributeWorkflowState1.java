@@ -8,13 +8,11 @@ import io.github.cadenceoss.iwf.core.WorkflowState;
 import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
 import io.github.cadenceoss.iwf.core.communication.Communication;
-import io.github.cadenceoss.iwf.core.persistence.DataObjectsRW;
-import io.github.cadenceoss.iwf.core.persistence.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.persistence.StateLocals;
+import io.github.cadenceoss.iwf.core.persistence.Persistence;
 
 import java.util.Arrays;
 
-import static io.github.cadenceoss.iwf.integ.attribute.BasicAttributeWorkflow.TEST_QUERY_ATTRIBUTE_KEY;
+import static io.github.cadenceoss.iwf.integ.attribute.BasicAttributeWorkflow.TEST_DATA_OBJECT_KEY;
 import static io.github.cadenceoss.iwf.integ.attribute.BasicAttributeWorkflow.TEST_SEARCH_ATTRIBUTE_INT;
 import static io.github.cadenceoss.iwf.integ.attribute.BasicAttributeWorkflow.TEST_SEARCH_ATTRIBUTE_KEYWORD;
 
@@ -32,30 +30,30 @@ public class BasicAttributeWorkflowState1 implements WorkflowState<String> {
     }
 
     @Override
-    public CommandRequest start(Context context, String input, StateLocals stateLocals, SearchAttributesRW searchAttributes, DataObjectsRW queryAttributes, final Communication communication) {
-        queryAttributes.setDataObject(TEST_QUERY_ATTRIBUTE_KEY, "query-start");
-        stateLocals.setStateLocal("test-key", "test-value-1");
-        stateLocals.recordStateEvent("event-1", "event-1");
-        searchAttributes.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, 1L);
-        searchAttributes.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-1");
+    public CommandRequest start(Context context, String input, Persistence persistence, final Communication communication) {
+        persistence.setDataObject(TEST_DATA_OBJECT_KEY, "query-start");
+        persistence.setStateLocal("test-key", "test-value-1");
+        persistence.recordStateEvent("event-1", "event-1");
+        persistence.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, 1L);
+        persistence.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-1");
         return CommandRequest.empty;
     }
 
     @Override
-    public StateDecision decide(Context context, String input, CommandResults commandResults, StateLocals stateLocals, SearchAttributesRW searchAttributes, DataObjectsRW queryAttributes, final Communication communication) {
-        String str = queryAttributes.getDataObject(TEST_QUERY_ATTRIBUTE_KEY, String.class);
-        queryAttributes.setDataObject(TEST_QUERY_ATTRIBUTE_KEY, str + "-query-decide");
-        String testVal2 = stateLocals.getStateLocal("test-key", String.class);
+    public StateDecision decide(Context context, String input, CommandResults commandResults, Persistence persistence, final Communication communication) {
+        String str = persistence.getDataObject(TEST_DATA_OBJECT_KEY, String.class);
+        persistence.setDataObject(TEST_DATA_OBJECT_KEY, str + "-query-decide");
+        String testVal2 = persistence.getStateLocal("test-key", String.class);
         if (testVal2.equals("test-value-1")) {
-            stateLocals.setStateLocal("test-key", "test-value-2");
+            persistence.setStateLocal("test-key", "test-value-2");
         }
-        stateLocals.recordStateEvent("event-1", "event-1");
-        stateLocals.recordStateEvent("event-2", "event-2");
+        persistence.recordStateEvent("event-1", "event-1");
+        persistence.recordStateEvent("event-2", "event-2");
 
-        if (searchAttributes.getSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT) == 1L
-                && searchAttributes.getSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD).equals("keyword-1")) {
-            searchAttributes.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, 2L);
-            searchAttributes.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-2");
+        if (persistence.getSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT) == 1L
+                && persistence.getSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD).equals("keyword-1")) {
+            persistence.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, 2L);
+            persistence.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-2");
         }
         return ImmutableStateDecision.builder()
                 .nextStates(Arrays.asList(StateMovement.gracefulCompleteWorkflow("test-value-2")))

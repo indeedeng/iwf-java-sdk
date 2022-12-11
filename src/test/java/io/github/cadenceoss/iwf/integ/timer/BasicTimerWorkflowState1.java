@@ -7,9 +7,7 @@ import io.github.cadenceoss.iwf.core.command.CommandRequest;
 import io.github.cadenceoss.iwf.core.command.CommandResults;
 import io.github.cadenceoss.iwf.core.command.TimerCommand;
 import io.github.cadenceoss.iwf.core.communication.Communication;
-import io.github.cadenceoss.iwf.core.persistence.DataObjectsRW;
-import io.github.cadenceoss.iwf.core.persistence.SearchAttributesRW;
-import io.github.cadenceoss.iwf.core.persistence.StateLocals;
+import io.github.cadenceoss.iwf.core.persistence.Persistence;
 
 import java.time.Duration;
 
@@ -31,9 +29,8 @@ public class BasicTimerWorkflowState1 implements WorkflowState<Integer> {
     public CommandRequest start(
             Context context,
             Integer input,
-            StateLocals stateLocals,
-            SearchAttributesRW searchAttributes,
-            DataObjectsRW queryAttributes, final Communication communication) {
+            Persistence persistence,
+            final Communication communication) {
         return CommandRequest.forAllCommandCompleted(TimerCommand.createByDuration(Duration.ofSeconds(input)));
     }
 
@@ -42,9 +39,8 @@ public class BasicTimerWorkflowState1 implements WorkflowState<Integer> {
             Context context,
             Integer input,
             CommandResults commandResults,
-            StateLocals stateLocals,
-            SearchAttributesRW searchAttributes,
-            DataObjectsRW queryAttributes, final Communication communication) {
+            Persistence persistence,
+            final Communication communication) {
         return StateDecision.gracefulCompleteWorkflow();
     }
 }

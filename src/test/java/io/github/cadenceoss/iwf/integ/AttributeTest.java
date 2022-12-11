@@ -35,13 +35,13 @@ public class AttributeTest {
                 BasicAttributeWorkflow.class, BasicAttributeWorkflowState1.STATE_ID, "start", wfId, startOptions);
         final String output = client.GetSimpleWorkflowResultWithWait(String.class, wfId);
         Map<String, Object> map =
-                client.GetWorkflowQueryAttributes(BasicAttributeWorkflow.class, wfId, runId, Arrays.asList(BasicAttributeWorkflow.TEST_QUERY_ATTRIBUTE_KEY));
+                client.GetWorkflowQueryAttributes(BasicAttributeWorkflow.class, wfId, runId, Arrays.asList(BasicAttributeWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
-                "query-start-query-decide", map.get(BasicAttributeWorkflow.TEST_QUERY_ATTRIBUTE_KEY));
+                "query-start-query-decide", map.get(BasicAttributeWorkflow.TEST_DATA_OBJECT_KEY));
         Map<String, Object> allQueryAttributes =
                 client.GetAllQueryAttributes(BasicAttributeWorkflow.class, wfId, runId);
         Assertions.assertEquals(
-                "query-start-query-decide", allQueryAttributes.get(BasicAttributeWorkflow.TEST_QUERY_ATTRIBUTE_KEY));
+                "query-start-query-decide", allQueryAttributes.get(BasicAttributeWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 1, allQueryAttributes.size());
         Assertions.assertEquals("test-value-2", output);
