@@ -4,7 +4,7 @@ Java SDK for [iwf workflow engine](https://github.com/indeedeng/iwf)
 ### Gradle
 ```gradle
 // https://mvnrepository.com/artifact/io.github.cadence-oss/iwf-java-sdk
-implementation 'io.github.cadence-oss:iwf-java-sdk:1.0.0-rc4'
+implementation 'io.github.cadence-oss:iwf-java-sdk:1.0.0-rc6'
 
 ```
 ### Maven
@@ -13,7 +13,7 @@ implementation 'io.github.cadence-oss:iwf-java-sdk:1.0.0-rc4'
 <dependency>
     <groupId>io.github.cadence-oss</groupId>
     <artifactId>iwf-java-sdk</artifactId>
-    <version>1.0.0-rc4</version>
+    <version>1.0.0-rc6</version>
     <type>pom</type>
 </dependency>
 
