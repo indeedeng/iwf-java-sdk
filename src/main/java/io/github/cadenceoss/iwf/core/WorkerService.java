@@ -114,15 +114,30 @@ public class WorkerService {
                 persistence,
                 communication);
 
-        return new WorkflowStateDecideResponse()
-                .stateDecision(StateDecisionMapper.toGenerated(stateDecision, workerOptions.getObjectEncoder()))
-                .upsertDataObjects(dataObjectsRW.getToReturnToServer())
-                .upsertStateLocals(stateLocals.getUpsertStateLocalAttributes())
-                .recordEvents(stateLocals.getRecordEvents())
-                .upsertSearchAttributes(createUpsertSearchAttributes(
-                        searchAttributeRW.getUpsertToServerInt64AttributeMap(),
-                        searchAttributeRW.getUpsertToServerKeywordAttributeMap()))
-                .publishToInterStateChannel(toInterStateChannelPublishing(communication.getToPublishInterStateChannels()));
+        final WorkflowStateDecideResponse response = new WorkflowStateDecideResponse()
+                .stateDecision(StateDecisionMapper.toGenerated(stateDecision, workerOptions.getObjectEncoder()));
+
+        if (dataObjectsRW.getToReturnToServer().size() > 0) {
+            response.upsertDataObjects(dataObjectsRW.getToReturnToServer());
+        }
+        if (stateLocals.getUpsertStateLocalAttributes().size() > 0) {
+            response.upsertStateLocals(stateLocals.getUpsertStateLocalAttributes());
+        }
+        if (stateLocals.getRecordEvents().size() > 0) {
+            response.recordEvents(stateLocals.getRecordEvents());
+        }
+        final List<SearchAttribute> upsertSAs = createUpsertSearchAttributes(
+                searchAttributeRW.getUpsertToServerInt64AttributeMap(),
+                searchAttributeRW.getUpsertToServerKeywordAttributeMap());
+        if (upsertSAs.size() > 0) {
+            response.upsertSearchAttributes(upsertSAs);
+        }
+        final List<InterStateChannelPublishing> interStateChannelPublishing = toInterStateChannelPublishing(communication.getToPublishInterStateChannels());
+        if (interStateChannelPublishing.size() > 0) {
+            response.publishToInterStateChannel(interStateChannelPublishing);
+        }
+
+        return response;
     }
 
     private List<InterStateChannelPublishing> toInterStateChannelPublishing(final Map<String, List<EncodedObject>> toPublish) {
