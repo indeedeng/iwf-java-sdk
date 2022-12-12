@@ -94,12 +94,12 @@ openApiGenerate {
     generatorName = "java"
     inputSpec = "$rootDir/iwf-idl/iwf.yaml".toString()
     outputDir = "$buildDir/generated".toString()
-    apiPackage = "io.github.cadenceoss.iwf.gen.api"
-    modelPackage = "io.github.cadenceoss.iwf.gen.models"
-    invokerPackage = "io.github.cadenceoss.iwf.gen.api"
+    apiPackage = "io.iworkflow.gen.api"
+    modelPackage = "io.iworkflow.gen.models"
+    invokerPackage = "io.iworkflow.gen.api"
     configOptions = [
-            configPackage: "io.github.cadenceoss.iwf.gen.configuration",
-            basePackage  : "io.github.cadenceoss.iwf.gen",
+            configPackage: "io.iworkflow.gen.configuration",
+            basePackage  : "io.iworkflow.gen",
             library      : "feign",
             interfaceOnly: "true"
     ]
@@ -149,8 +149,8 @@ signing {
     sign publishing.publications.mavenJava
 }
 
-group = "io.github.cadence-oss"
-version = "1.0.0-rc8"
+group = "io.iworkflow"
+version = "1.0.0-rc1"
 
 nexusPublishing {
     repositories {
