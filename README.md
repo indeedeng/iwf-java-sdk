@@ -17,18 +17,25 @@ implementation 'io.iworkflow:iwf-java-sdk:1.0.0-rc1'
 </dependency>
 
 ```
-## Concepts 
-To implement a workflow, the two most core intefaces are
+
+## Concepts
+
+To implement a workflow, the two most core interfaces are
+
 * [Workflow interface](https://github.com/indeedeng/iwf-java-sdk/blob/main/src/main/java/io/iworkflow/core/Workflow.java)
-  .
+  defines the workflow definition
+
 * [WorkflowState interface](https://github.com/indeedeng/iwf-java-sdk/blob/main/src/main/java/io/iworkflow/core/WorkflowState.java)
-  . A workflow can contain any number of WorkflowStates.
+  defines the workflow states for workflow definitions
+
+A workflow can contain any number of WorkflowStates.
 
 See more in https://github.com/indeedeng/iwf#what-is-iwf
 
-## How to build & run 
+## How to build & run
 
-### IntelliJ
+### Using IntelliJ
+
 1. Check out the idl submodule by running the command: `git submodule update --init --recursive`
 2. In "Build, Execution, Deployment" -> "Gradle", choose "wrapper task in Gradle build script" for "Use gradle from".
 3. Open Gradle tab, click "build" under "build" to build the project
@@ -36,11 +43,7 @@ See more in https://github.com/indeedeng/iwf#what-is-iwf
 5. Go to "script/http/local" folder, use the http script to invoke a REST API (you may need to install the HttpClient
    plugin for IntelliJ)
 
-### Command lines
-
-TODO
-
-## Development
+## Development Guide
 
 ### Update IDL
 
@@ -59,7 +62,7 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 - [x] DataObjectRW
 - [x] StateLocalAttribute
 - [x] Signal workflow API
-- [x] Query workflow API
+- [x] Get workflow DataObjects/SearchAttributes API
 - [x] Get workflow API
 - [x] Search workflow API
 - [x] Cancel workflow API
