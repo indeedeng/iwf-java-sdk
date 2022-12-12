@@ -23,7 +23,10 @@ public interface WorkflowState<I> {
      *
      * @param context       the context info of this API invocation, like workflow start time, workflowId, etc
      * @param input         the state input which is deserialized by dataConverter with {@link #getInputType}
-     * @param persistence   persistence API for 1) data objects, 2) search attributes and 3) stateLocals.
+     * @param persistence   persistence API for 1) data objects, 2) search attributes and 3) stateLocals 4) recordEvent
+     *                      DataObjects and SearchAttributes are defined by {@link Workflow} interface.    
+     *                      StateLocals are for passing data within the state execution from this start API to {@link #decide} API
+     *                      RecordEvent is for storing some tracking info(e.g. RPC call input/output) when executing the API.     
      *                      Note that the write API will be recorded to server after the whole start API response is accepted.
      * @param communication communication API, right now only for publishing value to interstate channel
      *                      Note that the write API will be recorded to server after the whole start API response is accepted.
@@ -40,8 +43,11 @@ public interface WorkflowState<I> {
      * @param context          the context info of this API invocation, like workflow start time, workflowId, etc
      * @param input            the state input which is deserialized by dataConverter with {@link #getInputType}
      * @param commandResults   the results of the command that executed by {@link #start}
-     * @param persistence      persistence API for 1) data objects, 2) search attributes and 3) stateLocals.
-     *                         Note that the write API will be recorded to server after the whole decide API response is accepted.
+     * @param persistence   persistence API for 1) data objects, 2) search attributes and 3) stateLocals 4) recordEvent
+     *                      DataObjects and SearchAttributes are defined by {@link Workflow} interface.    
+     *                      StateLocals are for passing data within the state execution from this start API to {@link #decide} API
+     *                      RecordEvent is for storing some tracking info(e.g. RPC call input/output) when executing the API.     
+     *                      Note that the write API will be recorded to server after the whole start API response is accepted.     
      * @param communication    communication API, right now only for publishing value to interstate channel
      *                         Note that the write API will be recorded to server after the whole decide API response is accepted.
      * @return the decision of what to do next(e.g. transition to next states)
