@@ -3,12 +3,14 @@ package io.github.cadenceoss.iwf.core;
 import io.github.cadenceoss.iwf.core.communication.InterStateChannelDef;
 import io.github.cadenceoss.iwf.core.communication.SignalChannelDef;
 import io.github.cadenceoss.iwf.core.persistence.DataObjectFieldDef;
+import io.github.cadenceoss.iwf.core.persistence.PersistenceFieldDef;
 import io.github.cadenceoss.iwf.core.persistence.SearchAttributeFieldDef;
 import io.github.cadenceoss.iwf.core.persistence.SearchAttributeType;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Registry {
@@ -128,10 +130,18 @@ public class Registry {
     }
 
     private List<DataObjectFieldDef> getDataObjectFields(final Workflow wf) {
+        final Set<String> keySet = wf.getPersistenceSchema().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
+        if (keySet.size() != wf.getPersistenceSchema().size()) {
+            throw new WorkflowDefinitionException("cannot have conflict key definition in persistence schema");
+        }
         return wf.getPersistenceSchema().stream().filter((f) -> f instanceof DataObjectFieldDef).map(f -> (DataObjectFieldDef) f).collect(Collectors.toList());
     }
 
     private List<SearchAttributeFieldDef> getSearchAttributeFields(final Workflow wf) {
+        final Set<String> keySet = wf.getPersistenceSchema().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
+        if (keySet.size() != wf.getPersistenceSchema().size()) {
+            throw new WorkflowDefinitionException("cannot have conflict key definition in persistence schema");
+        }
         return wf.getPersistenceSchema().stream().filter((f) -> f instanceof SearchAttributeFieldDef).map(f -> (SearchAttributeFieldDef) f).collect(Collectors.toList());
     }
 
