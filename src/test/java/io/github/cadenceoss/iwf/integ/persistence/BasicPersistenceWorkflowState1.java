@@ -1,4 +1,4 @@
-package io.github.cadenceoss.iwf.integ.attribute;
+package io.github.cadenceoss.iwf.integ.persistence;
 
 import io.github.cadenceoss.iwf.core.Context;
 import io.github.cadenceoss.iwf.core.ImmutableStateDecision;
@@ -12,11 +12,11 @@ import io.github.cadenceoss.iwf.core.persistence.Persistence;
 
 import java.util.Arrays;
 
-import static io.github.cadenceoss.iwf.integ.attribute.BasicAttributeWorkflow.TEST_DATA_OBJECT_KEY;
-import static io.github.cadenceoss.iwf.integ.attribute.BasicAttributeWorkflow.TEST_SEARCH_ATTRIBUTE_INT;
-import static io.github.cadenceoss.iwf.integ.attribute.BasicAttributeWorkflow.TEST_SEARCH_ATTRIBUTE_KEYWORD;
+import static io.github.cadenceoss.iwf.integ.persistence.BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY;
+import static io.github.cadenceoss.iwf.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_INT;
+import static io.github.cadenceoss.iwf.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_KEYWORD;
 
-public class BasicAttributeWorkflowState1 implements WorkflowState<String> {
+public class BasicPersistenceWorkflowState1 implements WorkflowState<String> {
     public static final String STATE_ID = "query-s1";
 
     @Override

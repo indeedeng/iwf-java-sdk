@@ -2,9 +2,9 @@ package io.github.cadenceoss.iwf.core;
 
 import io.github.cadenceoss.iwf.core.communication.InterStateChannelDef;
 import io.github.cadenceoss.iwf.core.communication.SignalChannelDef;
-import io.github.cadenceoss.iwf.core.persistence.DataObjectFieldDef;
+import io.github.cadenceoss.iwf.core.persistence.DataObjectDef;
 import io.github.cadenceoss.iwf.core.persistence.PersistenceFieldDef;
-import io.github.cadenceoss.iwf.core.persistence.SearchAttributeFieldDef;
+import io.github.cadenceoss.iwf.core.persistence.SearchAttributeDef;
 import io.github.cadenceoss.iwf.core.persistence.SearchAttributeType;
 
 import java.util.HashMap;
@@ -106,13 +106,13 @@ public class Registry {
 
     private void registerWorkflowDataObjects(final Workflow wf) {
         String workflowType = getWorkflowType(wf);
-        final List<DataObjectFieldDef> fields = getDataObjectFields(wf);
+        final List<DataObjectDef> fields = getDataObjectFields(wf);
         if (fields == null || fields.isEmpty()) {
             dataObjectTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        for (DataObjectFieldDef dataObjectField : fields) {
+        for (DataObjectDef dataObjectField : fields) {
             Map<String, Class<?>> queryAttributeKeyToTypeMap =
                     dataObjectTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
             if (queryAttributeKeyToTypeMap.containsKey(dataObjectField.getKey())) {
@@ -129,20 +129,20 @@ public class Registry {
         }
     }
 
-    private List<DataObjectFieldDef> getDataObjectFields(final Workflow wf) {
+    private List<DataObjectDef> getDataObjectFields(final Workflow wf) {
         final Set<String> keySet = wf.getPersistenceSchema().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
         if (keySet.size() != wf.getPersistenceSchema().size()) {
             throw new WorkflowDefinitionException("cannot have conflict key definition in persistence schema");
         }
-        return wf.getPersistenceSchema().stream().filter((f) -> f instanceof DataObjectFieldDef).map(f -> (DataObjectFieldDef) f).collect(Collectors.toList());
+        return wf.getPersistenceSchema().stream().filter((f) -> f instanceof DataObjectDef).map(f -> (DataObjectDef) f).collect(Collectors.toList());
     }
 
-    private List<SearchAttributeFieldDef> getSearchAttributeFields(final Workflow wf) {
+    private List<SearchAttributeDef> getSearchAttributeFields(final Workflow wf) {
         final Set<String> keySet = wf.getPersistenceSchema().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
         if (keySet.size() != wf.getPersistenceSchema().size()) {
             throw new WorkflowDefinitionException("cannot have conflict key definition in persistence schema");
         }
-        return wf.getPersistenceSchema().stream().filter((f) -> f instanceof SearchAttributeFieldDef).map(f -> (SearchAttributeFieldDef) f).collect(Collectors.toList());
+        return wf.getPersistenceSchema().stream().filter((f) -> f instanceof SearchAttributeDef).map(f -> (SearchAttributeDef) f).collect(Collectors.toList());
     }
 
     private List<InterStateChannelDef> getInterStateChannels(final Workflow wf) {
@@ -155,13 +155,13 @@ public class Registry {
 
     private void registerWorkflowSearchAttributes(final Workflow wf) {
         String workflowType = getWorkflowType(wf);
-        final List<SearchAttributeFieldDef> fields = getSearchAttributeFields(wf);
+        final List<SearchAttributeDef> fields = getSearchAttributeFields(wf);
         if (fields == null || fields.isEmpty()) {
             searchAttributeTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        for (SearchAttributeFieldDef searchAttributeField : fields) {
+        for (SearchAttributeDef searchAttributeField : fields) {
             Map<String, SearchAttributeType> searchAttributeKeyToTypeMap =
                     searchAttributeTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
 
