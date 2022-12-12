@@ -19,8 +19,10 @@ implementation 'io.iworkflow:iwf-java-sdk:1.0.0-rc1'
 ```
 ## Concepts 
 To implement a workflow, the two most core intefaces are
-* [Workflow interface](https://github.com/indeedeng/iwf-java-sdk/blob/main/src/main/java/io/github/cadenceoss/iwf/core/Workflow.java).
-* [WorkflowState interface](https://github.com/indeedeng/iwf-java-sdk/blob/main/src/main/java/io/github/cadenceoss/iwf/core/WorkflowState.java). A workflow can contain any number of WorkflowStates.
+* [Workflow interface](https://github.com/indeedeng/iwf-java-sdk/blob/main/src/main/java/io/iworkflow/core/Workflow.java)
+  .
+* [WorkflowState interface](https://github.com/indeedeng/iwf-java-sdk/blob/main/src/main/java/io/iworkflow/core/WorkflowState.java)
+  . A workflow can contain any number of WorkflowStates.
 
 See more in https://github.com/indeedeng/iwf#what-is-iwf
 
