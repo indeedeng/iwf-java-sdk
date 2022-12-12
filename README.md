@@ -1,10 +1,10 @@
 # iwf-java-sdk 
-Java SDK for [iwf workflow engine](https://github.com/indeedeng/iwf)
+Java SDK for [iWF workflow engine](https://github.com/indeedeng/iwf)
 
 ### Gradle
 ```gradle
 // https://mvnrepository.com/artifact/io.github.cadence-oss/iwf-java-sdk
-implementation 'io.github.cadence-oss:iwf-java-sdk:1.0.0-rc6'
+implementation 'io.github.cadence-oss:iwf-java-sdk:1.0.0-rc8'
 
 ```
 ### Maven
@@ -13,11 +13,18 @@ implementation 'io.github.cadence-oss:iwf-java-sdk:1.0.0-rc6'
 <dependency>
     <groupId>io.github.cadence-oss</groupId>
     <artifactId>iwf-java-sdk</artifactId>
-    <version>1.0.0-rc6</version>
+    <version>1.0.0-rc8</version>
     <type>pom</type>
 </dependency>
 
 ```
+## Concepts 
+To implement a workflow, the two most core intefaces are
+* [Workflow interface](https://github.com/indeedeng/iwf-java-sdk/blob/main/src/main/java/io/github/cadenceoss/iwf/core/Workflow.java).
+* [WorkflowState interface](https://github.com/indeedeng/iwf-java-sdk/blob/main/src/main/java/io/github/cadenceoss/iwf/core/WorkflowState.java). A workflow can contain any number of WorkflowStates.
+
+See more in https://github.com/indeedeng/iwf#what-is-iwf
+
 ## How to build & run 
 
 ### IntelliJ
