@@ -29,7 +29,7 @@ public class PersistenceTest {
     @Test
     public void testPersistenceWorkflow() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
-        final String wfId = "basic-query-test-id" + System.currentTimeMillis() / 1000;
+        final String wfId = "basic-persistence-test-id" + System.currentTimeMillis() / 1000;
         final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
         final String runId = client.startWorkflow(
                 BasicPersistenceWorkflow.class, BasicPersistenceWorkflowState1.STATE_ID, "start", wfId, startOptions);
