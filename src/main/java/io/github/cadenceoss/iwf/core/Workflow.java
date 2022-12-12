@@ -7,15 +7,11 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This is a simplified Cadence/Temporal workflow. All the complexity of
- * history replay and decision task processing are hidden. No matter how you modify the workflow code, it will never run
- * into non-deterministic errors. The signal/timer/activities will be defined into a way that you don't need to understand
- * what is a workflow decision task and how it's executed.
- * It preserves the capabilities of executed activities, setting timers, processing signals, upsert search attributes, and
- * setting query methods. So basically, you still have the full power of using Cadence/Temporal, without needing to understand
- * the complex technology.
- * The workflow is still defined as code but in a different way. Instead of having a whole piece of workflow method to define the
- * workflow code, you will have to split the logic and place into different states.
+ * This is the interface to define a workflow definition.
+ * Most of the time, the implementation only needs to return static value for each method.
+ * <p>
+ * For a dynamic workflow definition, the implementation can return different values based on different constructor inputs.
+ * To invokes/interact with a dynamic workflows, applications may need to use {@link UntypedClient} instead of {@link Client}
  */
 public interface Workflow {
     /**
@@ -24,22 +20,6 @@ public interface Workflow {
      * See more details in the state definition.
      */
     List<StateDef> getStates();
-
-    /**
-     * defines all the communication methods for this workflow, this includes
-     * 1. Signal channel
-     * 2. Interstate channel
-     * <p>
-     * Signal channel is for external applications to send signal to workflow execution.
-     * Workflow execution can listen on the signal in the WorkflowState start API and receive in
-     * the WorkflowState decide API
-     * <p>
-     * InterStateChannel is for synchronization communications between WorkflowStates.
-     * E.g. WorkflowStateA will continue after receiving a value from WorkflowStateB
-     */
-    default List<CommunicationMethodDef> getCommunicationSchema() {
-        return Collections.emptyList();
-    }
 
     /**
      * defines all the persistence fields for this workflow, this includes:
@@ -54,6 +34,22 @@ public interface Workflow {
      * External applications can also use "SearchWorkflow" API to find workflows by SQL-like query
      */
     default List<PersistenceFieldDef> getPersistenceSchema() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * defines all the communication methods for this workflow, this includes
+     * 1. Signal channel
+     * 2. Interstate channel
+     * <p>
+     * Signal channel is for external applications to send signal to workflow execution.
+     * Workflow execution can listen on the signal in the WorkflowState start API and receive in
+     * the WorkflowState decide API
+     * <p>
+     * InterStateChannel is for synchronization communications between WorkflowStates.
+     * E.g. WorkflowStateA will continue after receiving a value from WorkflowStateB
+     */
+    default List<CommunicationMethodDef> getCommunicationSchema() {
         return Collections.emptyList();
     }
 

@@ -12,6 +12,10 @@ public abstract class StateDecision {
 
     public static final StateDecision DEAD_END = ImmutableStateDecision.builder().build();
 
+    public static final StateDecision FORCE_FAILING_WORKFLOW = ImmutableStateDecision.builder()
+            .nextStates(Arrays.asList(StateMovement.FORCE_FAILING_WORKFLOW_MOVEMENT))
+            .build();
+
     public static ImmutableStateDecision.Builder builder() {
         return ImmutableStateDecision.builder();
     }
