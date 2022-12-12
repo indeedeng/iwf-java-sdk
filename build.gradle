@@ -118,12 +118,12 @@ publishing {
             pom {
                 name = "iwf-java-sdk"
                 description = "iwf java sdk core"
-                url = 'https://github.com/cadence-oss/iwf-java-sdk'
+                url = 'https://github.com/indeedeng/iwf-java-sdk'
 
                 scm {
-                    connection = 'scm:git@github.com:cadence-oss/iwf-java-sdk.git'
-                    developerConnection = 'scm:git@github.com:cadence-oss/iwf-java-sdk.git'
-                    url = 'https://github.com/cadence-oss/iwf-java-sdk.git'
+                    connection = 'scm:git@github.com:indeedeng/iwf-java-sdk.git'
+                    developerConnection = 'scm:git@github.com:indeedeng/iwf-java-sdk.git'
+                    url = 'https://github.com/indeedeng/iwf-java-sdk.git'
                 }
 
                 licenses {
