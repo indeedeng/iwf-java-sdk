@@ -16,8 +16,8 @@ import java.util.List;
 public interface Workflow {
     /**
      * defines the states of the workflow. A state represents a step of the workflow state machine.
-     * A state can execute some commands (activities/signal/timer) and wait for result
-     * See more details in the state definition.
+     * A state can execute some commands (signal/timer) and wait for result
+     * See more details in the {@link WorkflowState} definition.
      */
     List<StateDef> getStates();
 
@@ -27,7 +27,7 @@ public interface Workflow {
      * 2. Search attributes
      * <p>
      * Data objects can be read/upsert in WorkflowState start/decide API
-     * Data objects  can also be read by GetQueryAttributes Client API by external applications
+     * Data objects  can also be read by getDataObjects API by external applications using {@link Client}
      * <p>
      * Search attributes can be read/upsert in WorkflowState start/decide API
      * Search attributes can also be read by GetSearchAttributes Client API by external applications
