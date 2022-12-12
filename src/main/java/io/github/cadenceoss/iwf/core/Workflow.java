@@ -53,6 +53,12 @@ public interface Workflow {
         return Collections.emptyList();
     }
 
+    /**
+     * Define the workflowType of this workflow definition. By default(when return empty string), it's the simple name of the workflow instance,
+     * which should be the case for most scenarios.
+     * <p>
+     * In case of dynamic workflow implementation, return customized values based on constructor input.
+     */
     default String getWorkflowType() {
         return "";
     }
