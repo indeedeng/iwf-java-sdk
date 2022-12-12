@@ -12,7 +12,7 @@ implementation 'io.iworkflow:iwf-java-sdk:1.0.0-rc1'
 <dependency>
     <groupId>io.iworkflow</groupId>
     <artifactId>iwf-java-sdk</artifactId>
-    <version>1.0.0-rc8</version>
+    <version>1.0.0-rc1</version>
     <type>pom</type>
 </dependency>
 
