@@ -65,7 +65,7 @@ public interface WorkflowState<I> {
      */
     default StateOptions getStateOptions() {
         return ImmutableStateOptions.builder()
-                .queryAttributesLoadingPolicy(PersistenceLoadingPolicy.LoadAllWithoutLocking)
+                .dataObjectsLoadingPolicy(PersistenceLoadingPolicy.LoadAllWithoutLocking)
                 .searchAttributesLoadingPolicy(PersistenceLoadingPolicy.LoadAllWithoutLocking)
                 .commandCarryOverPolicy(CommandCarryOverPolicy.none)
                 .build();

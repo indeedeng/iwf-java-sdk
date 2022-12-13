@@ -19,7 +19,7 @@ public abstract class StateOptions {
      * this decides whether to load all the query attributes into {@link WorkflowState#decide} and {@link WorkflowState#start} method
      * default to true
      */
-    public abstract PersistenceLoadingPolicy getQueryAttributesLoadingPolicy();
+    public abstract PersistenceLoadingPolicy getDataObjectsLoadingPolicy();
 
     /**
      * this decides whether to load all the search attributes into {@link WorkflowState#decide} and {@link WorkflowState#start} method
