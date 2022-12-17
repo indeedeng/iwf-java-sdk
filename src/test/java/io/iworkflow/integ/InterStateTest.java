@@ -2,7 +2,7 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
-import io.iworkflow.core.WorkflowStartOptions;
+import io.iworkflow.core.WorkflowOptions;
 import io.iworkflow.integ.interstatechannel.BasicInterStateChannelWorkflow;
 import io.iworkflow.integ.interstatechannel.BasicInterStateChannelWorkflowState0;
 import io.iworkflow.spring.TestSingletonWorkerService;
@@ -24,7 +24,7 @@ public class InterStateTest {
     public void testBasicInterStateWorkflow() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-inter-state-test-id" + System.currentTimeMillis() / 1000;
-        final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
+        final WorkflowOptions startOptions = WorkflowOptions.minimum(10);
         final Integer input = 1;
         final String runId = client.startWorkflow(
                 BasicInterStateChannelWorkflow.class, BasicInterStateChannelWorkflowState0.STATE_ID, input, wfId, startOptions);

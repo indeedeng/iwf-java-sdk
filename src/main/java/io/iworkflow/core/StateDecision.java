@@ -1,5 +1,6 @@
 package io.iworkflow.core;
 
+import io.iworkflow.gen.models.WorkflowStateOptions;
 import org.immutables.value.Value;
 
 import java.util.Arrays;
@@ -44,15 +45,19 @@ public abstract class StateDecision {
 
     public static StateDecision singleNextState(final String stateId) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
-                ImmutableStateMovement.builder().stateId(stateId).build()
+                StateMovement.create(stateId)
         )).build();
     }
 
     public static StateDecision singleNextState(final String stateId, final Object stateInput) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
-                ImmutableStateMovement.builder().stateId(stateId)
-                        .nextStateInput(stateInput)
-                        .build()
+                StateMovement.create(stateId, stateInput)
+        )).build();
+    }
+
+    public static StateDecision singleNextState(final String stateId, final Object stateInput, final WorkflowStateOptions options) {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
+                StateMovement.create(stateId, stateInput, options)
         )).build();
     }
 

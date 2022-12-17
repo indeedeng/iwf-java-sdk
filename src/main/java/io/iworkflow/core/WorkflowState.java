@@ -1,11 +1,10 @@
 package io.iworkflow.core;
 
-import io.iworkflow.core.command.CommandCarryOverPolicy;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
-import io.iworkflow.core.persistence.PersistenceLoadingPolicy;
+import io.iworkflow.gen.models.WorkflowStateOptions;
 
 public interface WorkflowState<I> {
     /**
@@ -61,14 +60,18 @@ public interface WorkflowState<I> {
 
     /**
      * Optional configuration to adjust the state behaviors
-     * Default options should work well for most cases
+     * Default:
+     * LOAD_ALL_WITHOUT_LOCKING for dataObjects/searchAttributes,
+     * start/decide API:
+     * timeout:10s
+     * retryPolicy:
+     * InitialIntervalSeconds: 1
+     * MaxInternalSeconds:100
+     * MaximumAttempts: 0
+     * BackoffCoefficient: 2
      */
-    default StateOptions getStateOptions() {
-        return ImmutableStateOptions.builder()
-                .dataObjectsLoadingPolicy(PersistenceLoadingPolicy.LoadAllWithoutLocking)
-                .searchAttributesLoadingPolicy(PersistenceLoadingPolicy.LoadAllWithoutLocking)
-                .commandCarryOverPolicy(CommandCarryOverPolicy.none)
-                .build();
+    default WorkflowStateOptions getStateOptions() {
+        return null;
     }
 }
 

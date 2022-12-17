@@ -129,7 +129,7 @@ public class WorkerService {
                 communication);
 
         final WorkflowStateDecideResponse response = new WorkflowStateDecideResponse()
-                .stateDecision(StateDecisionMapper.toGenerated(stateDecision, workerOptions.getObjectEncoder()));
+                .stateDecision(StateDecisionMapper.toGenerated(stateDecision, req.getWorkflowType(), registry, workerOptions.getObjectEncoder()));
 
         if (dataObjectsRW.getToReturnToServer().size() > 0) {
             response.upsertDataObjects(dataObjectsRW.getToReturnToServer());

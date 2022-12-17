@@ -1,5 +1,6 @@
 package io.iworkflow.core;
 
+import io.iworkflow.gen.models.WorkflowStateOptions;
 import org.immutables.value.Value;
 
 import java.util.Optional;
@@ -11,6 +12,9 @@ public abstract class StateMovement {
 
     public abstract Optional<Object> getNextStateInput();
 
+    public abstract Optional<WorkflowStateOptions> getNextStateOptions();
+
+    private final static String RESERVED_STATE_ID_PREFIX = "_SYS_";
     private final static String GRACEFUL_COMPLETING_WORKFLOW_STATE_ID = "_SYS_GRACEFUL_COMPLETING_WORKFLOW";
     private final static String FORCE_COMPLETING_WORKFLOW_STATE_ID = "_SYS_FORCE_COMPLETING_WORKFLOW";
     private final static String FORCE_FAILING_WORKFLOW_STATE_ID = "_SYS_FORCE_FAILING_WORKFLOW";
@@ -38,13 +42,29 @@ public abstract class StateMovement {
                 .build();
     }
 
+    public static StateMovement create(final String stateId, final Object stateInput, final WorkflowStateOptions options) {
+        if (stateId.startsWith(RESERVED_STATE_ID_PREFIX)) {
+            throw new WorkflowDefinitionException("Cannot use reserved stateId prefix for your stateId");
+        }
+        return ImmutableStateMovement.builder().stateId(stateId)
+                .nextStateInput(stateInput)
+                .nextStateOptions(options)
+                .build();
+    }
+
     public static StateMovement create(final String stateId, final Object stateInput) {
+        if (stateId.startsWith(RESERVED_STATE_ID_PREFIX)) {
+            throw new WorkflowDefinitionException("Cannot use reserved stateId prefix for your stateId");
+        }
         return ImmutableStateMovement.builder().stateId(stateId)
                 .nextStateInput(stateInput)
                 .build();
     }
 
     public static StateMovement create(final String stateId) {
+        if (stateId.startsWith(RESERVED_STATE_ID_PREFIX)) {
+            throw new WorkflowDefinitionException("Cannot use reserved stateId prefix for your stateId");
+        }
         return ImmutableStateMovement.builder().stateId(stateId)
                 .build();
     }

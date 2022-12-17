@@ -2,7 +2,7 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
-import io.iworkflow.core.WorkflowStartOptions;
+import io.iworkflow.core.WorkflowOptions;
 import io.iworkflow.integ.timer.BasicTimerWorkflow;
 import io.iworkflow.integ.timer.BasicTimerWorkflowState1;
 import io.iworkflow.spring.TestSingletonWorkerService;
@@ -25,7 +25,7 @@ public class TimerTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final long startTs = System.currentTimeMillis();
         final String wfId = "basic-timer-test-id" + startTs / 1000;
-        final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
+        final WorkflowOptions startOptions = WorkflowOptions.minimum(10);
         final Integer input = 5;
 
         client.startWorkflow(
