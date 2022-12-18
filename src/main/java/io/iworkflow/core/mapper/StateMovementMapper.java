@@ -9,15 +9,15 @@ import io.iworkflow.gen.models.WorkflowStateOptions;
 public class StateMovementMapper {
 
     public static StateMovement toGenerated(io.iworkflow.core.StateMovement stateMovement, final String workflowType, final Registry registry, final ObjectEncoder objectEncoder) {
-        final Object input = stateMovement.getNextStateInput().orElse(null);
+        final Object input = stateMovement.getStateInput().orElse(null);
         final StateMovement movement = new StateMovement()
                 .stateId(stateMovement.getStateId())
-                .nextStateInput(objectEncoder.encode(input));
+                .stateInput(objectEncoder.encode(input));
         if (!stateMovement.getStateId().startsWith("_SYS_")) {
             final StateDef stateDef = registry.getWorkflowState(workflowType, stateMovement.getStateId());
             final WorkflowStateOptions options = stateDef.getWorkflowState().getStateOptions();
             if (options != null) {
-                movement.nextStateOptions(options);
+                movement.stateOptions(options);
             }
         }
         return movement;

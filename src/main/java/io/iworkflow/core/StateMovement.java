@@ -10,9 +10,9 @@ public abstract class StateMovement {
 
     public abstract String getStateId();
 
-    public abstract Optional<Object> getNextStateInput();
+    public abstract Optional<Object> getStateInput();
 
-    public abstract Optional<WorkflowStateOptions> getNextStateOptions();
+    public abstract Optional<WorkflowStateOptions> getStateOptions();
 
     private final static String RESERVED_STATE_ID_PREFIX = "_SYS_";
     private final static String GRACEFUL_COMPLETING_WORKFLOW_STATE_ID = "_SYS_GRACEFUL_COMPLETING_WORKFLOW";
@@ -22,13 +22,13 @@ public abstract class StateMovement {
 
     public static StateMovement gracefulCompleteWorkflow(final Object output) {
         return ImmutableStateMovement.builder().stateId(GRACEFUL_COMPLETING_WORKFLOW_STATE_ID)
-                .nextStateInput(output)
+                .stateInput(output)
                 .build();
     }
 
     public static StateMovement forceCompleteWorkflow(final Object output) {
         return ImmutableStateMovement.builder().stateId(FORCE_COMPLETING_WORKFLOW_STATE_ID)
-                .nextStateInput(output)
+                .stateInput(output)
                 .build();
     }
 
@@ -47,8 +47,8 @@ public abstract class StateMovement {
             throw new WorkflowDefinitionException("Cannot use reserved stateId prefix for your stateId");
         }
         return ImmutableStateMovement.builder().stateId(stateId)
-                .nextStateInput(stateInput)
-                .nextStateOptions(options)
+                .stateInput(stateInput)
+                .stateOptions(options)
                 .build();
     }
 
@@ -57,7 +57,7 @@ public abstract class StateMovement {
             throw new WorkflowDefinitionException("Cannot use reserved stateId prefix for your stateId");
         }
         return ImmutableStateMovement.builder().stateId(stateId)
-                .nextStateInput(stateInput)
+                .stateInput(stateInput)
                 .build();
     }
 
