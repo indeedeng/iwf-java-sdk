@@ -1,7 +1,6 @@
 package io.iworkflow.core;
 
 import com.google.common.base.Preconditions;
-import io.iworkflow.core.mapper.WorkflowIdReusePolicyMapper;
 import io.iworkflow.core.validator.CronScheduleValidator;
 import io.iworkflow.gen.api.ApiClient;
 import io.iworkflow.gen.api.DefaultApi;
@@ -45,21 +44,34 @@ public class UntypedClient {
             final String startStateId,
             final Object input,
             final String workflowId,
-            final WorkflowStartOptions options) {
-        WorkflowStartResponse workflowStartResponse = defaultApi.apiV1WorkflowStartPost(new WorkflowStartRequest()
+            final WorkflowOptions options) {
+
+        final io.iworkflow.gen.models.WorkflowStartOptions startOptions = new io.iworkflow.gen.models.WorkflowStartOptions();
+        if (options.getCronSchedule().isPresent()) {
+            startOptions.cronSchedule(CronScheduleValidator.validate(options.getCronSchedule()));
+        }
+        if (options.getWorkflowIdReusePolicy().isPresent()) {
+            startOptions.workflowIDReusePolicy(options.getWorkflowIdReusePolicy().get());
+        }
+        if (options.getWorkflowRetryPolicy().isPresent()) {
+            startOptions.retryPolicy(options.getWorkflowRetryPolicy().get());
+        }
+
+        final WorkflowStartRequest request = new WorkflowStartRequest()
                 .workflowId(workflowId)
                 .iwfWorkerUrl(clientOptions.getWorkerUrl())
                 .iwfWorkflowType(workflowType)
                 .workflowTimeoutSeconds(options.getWorkflowTimeoutSeconds())
                 .stateInput(clientOptions.getObjectEncoder().encode(input))
                 .startStateId(startStateId)
-                .workflowStartOptions(
-                        new io.iworkflow.gen.models.WorkflowStartOptions()
-                                .workflowIDReusePolicy(WorkflowIdReusePolicyMapper.toGenerated(
-                                        options.getWorkflowIdReusePolicy()))
-                                .cronSchedule(CronScheduleValidator.validate(options.getCronSchedule()))
-                )
-        );
+                .workflowStartOptions(startOptions);
+
+        if (options.getStartStateOptions().isPresent()) {
+            request.stateOptions(options.getStartStateOptions().get());
+        }
+
+        WorkflowStartResponse workflowStartResponse = defaultApi.apiV1WorkflowStartPost(request);
+
         return workflowStartResponse.getWorkflowRunId();
     }
 
@@ -159,6 +171,12 @@ public class UntypedClient {
         }
         if (resetWorkflowTypeAndOptions.getSkipSignalReapply().isPresent()) {
             request.skipSignalReapply(resetWorkflowTypeAndOptions.getSkipSignalReapply().get());
+        }
+        if (resetWorkflowTypeAndOptions.getStateId().isPresent()) {
+            request.stateId(resetWorkflowTypeAndOptions.getStateId().get());
+        }
+        if (resetWorkflowTypeAndOptions.getStateExecutionId().isPresent()) {
+            request.stateExecutionId(resetWorkflowTypeAndOptions.getStateExecutionId().get());
         }
 
         final WorkflowResetResponse resp = defaultApi.apiV1WorkflowResetPost(request);

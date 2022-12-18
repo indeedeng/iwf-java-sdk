@@ -2,7 +2,7 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
-import io.iworkflow.core.WorkflowStartOptions;
+import io.iworkflow.core.WorkflowOptions;
 import io.iworkflow.integ.signal.BasicSignalWorkflow;
 import io.iworkflow.integ.signal.BasicSignalWorkflowState1;
 import io.iworkflow.spring.TestSingletonWorkerService;
@@ -24,7 +24,7 @@ public class SignalTest {
     public void testBasicSignalWorkflow() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-signal-test-id" + System.currentTimeMillis() / 1000;
-        final WorkflowStartOptions startOptions = WorkflowStartOptions.minimum(10);
+        final WorkflowOptions startOptions = WorkflowOptions.minimum(10);
         final Integer input = 1;
         final String runId = client.startWorkflow(
                 BasicSignalWorkflow.class, BasicSignalWorkflowState1.STATE_ID, input, wfId, startOptions);

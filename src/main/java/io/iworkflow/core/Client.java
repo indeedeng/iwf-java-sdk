@@ -36,7 +36,7 @@ public class Client {
             final Class<? extends Workflow> workflowClass,
             final String startStateId,
             final String workflowId,
-            final WorkflowStartOptions options) {
+            final WorkflowOptions options) {
         return startWorkflow(workflowClass, startStateId, null, workflowId, options);
     }
 
@@ -45,7 +45,7 @@ public class Client {
             final String startStateId,
             final Object input,
             final String workflowId,
-            final WorkflowStartOptions options) {
+            final WorkflowOptions options) {
         final String wfType = workflowClass.getSimpleName();
         final StateDef stateDef = registry.getWorkflowState(wfType, startStateId);
         if (stateDef == null || !stateDef.getCanStartWorkflow()) {

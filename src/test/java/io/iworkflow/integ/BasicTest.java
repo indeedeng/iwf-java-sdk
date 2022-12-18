@@ -2,9 +2,9 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
-import io.iworkflow.core.ImmutableWorkflowStartOptions;
-import io.iworkflow.core.WorkflowStartOptions;
-import io.iworkflow.core.options.WorkflowIdReusePolicy;
+import io.iworkflow.core.ImmutableWorkflowOptions;
+import io.iworkflow.core.WorkflowOptions;
+import io.iworkflow.gen.models.WorkflowStartOptions;
 import io.iworkflow.integ.basic.BasicWorkflow;
 import io.iworkflow.integ.basic.BasicWorkflowState1;
 import io.iworkflow.integ.basic.EmptyInputWorkflow;
@@ -29,9 +29,9 @@ public class BasicTest {
     public void testBasicWorkflow() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-test-id" + System.currentTimeMillis() / 1000;
-        final WorkflowStartOptions startOptions = ImmutableWorkflowStartOptions.builder()
+        final WorkflowOptions startOptions = ImmutableWorkflowOptions.builder()
                 .workflowTimeoutSeconds(10)
-                .workflowIdReusePolicy(Optional.of(WorkflowIdReusePolicy.ALLOW_DUPLICATE))
+                .workflowIdReusePolicy(Optional.of(WorkflowStartOptions.WorkflowIDReusePolicyEnum.ALLOW_DUPLICATE))
                 .build();
         final Integer input = 0;
         client.startWorkflow(BasicWorkflow.class, BasicWorkflowState1.StateId, input, wfId, startOptions);
@@ -44,9 +44,9 @@ public class BasicTest {
     public void testEmptyInputWorkflow() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "empty-input-test-id" + System.currentTimeMillis() / 1000;
-        final WorkflowStartOptions startOptions = ImmutableWorkflowStartOptions.builder()
+        final WorkflowOptions startOptions = ImmutableWorkflowOptions.builder()
                 .workflowTimeoutSeconds(10)
-                .workflowIdReusePolicy(Optional.of(WorkflowIdReusePolicy.ALLOW_DUPLICATE))
+                .workflowIdReusePolicy(Optional.of(io.iworkflow.gen.models.WorkflowStartOptions.WorkflowIDReusePolicyEnum.ALLOW_DUPLICATE))
                 .build();
         
         //client.StartWorkflow(EmptyInputWorkflow.class, EmptyInputWorkflowState1.StateId, null, wfId, startOptions);
