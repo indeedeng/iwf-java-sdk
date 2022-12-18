@@ -172,6 +172,12 @@ public class UntypedClient {
         if (resetWorkflowTypeAndOptions.getSkipSignalReapply().isPresent()) {
             request.skipSignalReapply(resetWorkflowTypeAndOptions.getSkipSignalReapply().get());
         }
+        if (resetWorkflowTypeAndOptions.getStateId().isPresent()) {
+            request.stateId(resetWorkflowTypeAndOptions.getStateId().get());
+        }
+        if (resetWorkflowTypeAndOptions.getStateExecutionId().isPresent()) {
+            request.stateExecutionId(resetWorkflowTypeAndOptions.getStateExecutionId().get());
+        }
 
         final WorkflowResetResponse resp = defaultApi.apiV1WorkflowResetPost(request);
         return resp.getWorkflowRunId();

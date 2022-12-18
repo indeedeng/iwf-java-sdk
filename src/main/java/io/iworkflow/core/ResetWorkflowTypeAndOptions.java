@@ -16,6 +16,10 @@ public abstract class ResetWorkflowTypeAndOptions {
 
     public abstract Optional<String> getHistoryEventTime();
 
+    public abstract Optional<String> getStateId();
+
+    public abstract Optional<String> getStateExecutionId();
+
     public abstract Optional<Boolean> getSkipSignalReapply();
 
     public static ResetWorkflowTypeAndOptions resetToBeginning(final String reason) {
@@ -37,6 +41,22 @@ public abstract class ResetWorkflowTypeAndOptions {
         return builder()
                 .resetType(WorkflowResetRequest.ResetTypeEnum.HISTORY_EVENT_ID)
                 .historyEventTime(historyEventTime)
+                .reason(reason)
+                .build();
+    }
+
+    public static ResetWorkflowTypeAndOptions resetToStateId(final String stateId, final String reason) {
+        return builder()
+                .resetType(WorkflowResetRequest.ResetTypeEnum.STATE_ID)
+                .stateId(stateId)
+                .reason(reason)
+                .build();
+    }
+
+    public static ResetWorkflowTypeAndOptions resetToStateExecutionId(final String stateExecution, final String reason) {
+        return builder()
+                .resetType(WorkflowResetRequest.ResetTypeEnum.STATE_EXECUTION_ID)
+                .stateExecutionId(stateExecution)
                 .reason(reason)
                 .build();
     }

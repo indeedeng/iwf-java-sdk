@@ -14,7 +14,7 @@ public abstract class StateMovement {
 
     public abstract Optional<WorkflowStateOptions> getStateOptions();
 
-    private final static String RESERVED_STATE_ID_PREFIX = "_SYS_";
+    public final static String RESERVED_STATE_ID_PREFIX = "_SYS_";
     private final static String GRACEFUL_COMPLETING_WORKFLOW_STATE_ID = "_SYS_GRACEFUL_COMPLETING_WORKFLOW";
     private final static String FORCE_COMPLETING_WORKFLOW_STATE_ID = "_SYS_FORCE_COMPLETING_WORKFLOW";
     private final static String FORCE_FAILING_WORKFLOW_STATE_ID = "_SYS_FORCE_FAILING_WORKFLOW";
