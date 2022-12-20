@@ -1,6 +1,6 @@
 package io.iworkflow.core;
 
-import io.iworkflow.gen.models.WorkflowResetRequest;
+import io.iworkflow.gen.models.WorkflowResetType;
 import org.immutables.value.Value;
 
 import java.util.Optional;
@@ -8,7 +8,7 @@ import java.util.Optional;
 @Value.Immutable
 public abstract class ResetWorkflowTypeAndOptions {
 
-    public abstract WorkflowResetRequest.ResetTypeEnum getResetType();
+    public abstract WorkflowResetType getResetType();
 
     public abstract Optional<Integer> getHistoryEventId();
 
@@ -24,14 +24,14 @@ public abstract class ResetWorkflowTypeAndOptions {
 
     public static ResetWorkflowTypeAndOptions resetToBeginning(final String reason) {
         return builder()
-                .resetType(WorkflowResetRequest.ResetTypeEnum.BEGINNING)
+                .resetType(WorkflowResetType.BEGINNING)
                 .reason(reason)
                 .build();
     }
 
     public static ResetWorkflowTypeAndOptions resetToHistoryEventId(final int historyEventId, final String reason) {
         return builder()
-                .resetType(WorkflowResetRequest.ResetTypeEnum.HISTORY_EVENT_ID)
+                .resetType(WorkflowResetType.HISTORY_EVENT_ID)
                 .historyEventId(historyEventId)
                 .reason(reason)
                 .build();
@@ -39,7 +39,7 @@ public abstract class ResetWorkflowTypeAndOptions {
 
     public static ResetWorkflowTypeAndOptions resetToHistoryEventId(final String historyEventTime, final String reason) {
         return builder()
-                .resetType(WorkflowResetRequest.ResetTypeEnum.HISTORY_EVENT_ID)
+                .resetType(WorkflowResetType.HISTORY_EVENT_ID)
                 .historyEventTime(historyEventTime)
                 .reason(reason)
                 .build();
@@ -47,7 +47,7 @@ public abstract class ResetWorkflowTypeAndOptions {
 
     public static ResetWorkflowTypeAndOptions resetToStateId(final String stateId, final String reason) {
         return builder()
-                .resetType(WorkflowResetRequest.ResetTypeEnum.STATE_ID)
+                .resetType(WorkflowResetType.STATE_ID)
                 .stateId(stateId)
                 .reason(reason)
                 .build();
@@ -55,7 +55,7 @@ public abstract class ResetWorkflowTypeAndOptions {
 
     public static ResetWorkflowTypeAndOptions resetToStateExecutionId(final String stateExecution, final String reason) {
         return builder()
-                .resetType(WorkflowResetRequest.ResetTypeEnum.STATE_EXECUTION_ID)
+                .resetType(WorkflowResetType.STATE_EXECUTION_ID)
                 .stateExecutionId(stateExecution)
                 .reason(reason)
                 .build();

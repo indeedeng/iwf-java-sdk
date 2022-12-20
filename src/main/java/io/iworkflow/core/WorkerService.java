@@ -15,6 +15,7 @@ import io.iworkflow.gen.models.EncodedObject;
 import io.iworkflow.gen.models.InterStateChannelPublishing;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
+import io.iworkflow.gen.models.SearchAttributeValueType;
 import io.iworkflow.gen.models.WorkflowStateDecideRequest;
 import io.iworkflow.gen.models.WorkflowStateDecideResponse;
 import io.iworkflow.gen.models.WorkflowStateStartRequest;
@@ -193,14 +194,14 @@ public class WorkerService {
             final SearchAttribute attr = new SearchAttribute()
                     .key(key)
                     .stringValue(sa)
-                    .valueType(SearchAttribute.ValueTypeEnum.KEYWORD);
+                    .valueType(SearchAttributeValueType.KEYWORD);
             sas.add(attr);
         });
         upsertToServerInt64AttributeMap.forEach((key, sa) -> {
             final SearchAttribute attr = new SearchAttribute()
                     .key(key)
                     .integerValue(sa)
-                    .valueType(SearchAttribute.ValueTypeEnum.INT);
+                    .valueType(SearchAttributeValueType.INT);
             sas.add(attr);
         });
         return sas;

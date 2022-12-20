@@ -10,7 +10,7 @@ import java.util.Optional;
 public abstract class WorkflowOptions {
     public abstract Integer getWorkflowTimeoutSeconds();
 
-    public abstract Optional<io.iworkflow.gen.models.WorkflowStartOptions.WorkflowIDReusePolicyEnum> getWorkflowIdReusePolicy();
+    public abstract Optional<io.iworkflow.gen.models.WorkflowIDReusePolicy> getWorkflowIdReusePolicy();
 
     public abstract Optional<String> getCronSchedule();
 

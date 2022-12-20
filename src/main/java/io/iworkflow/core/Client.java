@@ -4,6 +4,7 @@ import io.iworkflow.core.persistence.SearchAttributeType;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
+import io.iworkflow.gen.models.SearchAttributeValueType;
 import io.iworkflow.gen.models.StateCompletionOutput;
 import io.iworkflow.gen.models.WorkflowGetDataObjectsResponse;
 import io.iworkflow.gen.models.WorkflowGetSearchAttributesResponse;
@@ -63,7 +64,7 @@ public class Client {
      * @param workflowId    the workflowId
      * @param workflowRunId optional runId, can be empty
      * @param <T>           type of the output
-     * @return
+     * @return the output result
      */
     public <T> T getSimpleWorkflowResultWithWait(
             Class<T> valueClass,
@@ -81,8 +82,8 @@ public class Client {
     /**
      * In some cases, a workflow may have more than one completion states
      *
-     * @param workflowId
-     * @param workflowRunId
+     * @param workflowId    workflowId
+     * @param workflowRunId workflowRunId
      * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
      */
     public List<StateCompletionOutput> getComplexWorkflowResultWithWait(
@@ -121,10 +122,10 @@ public class Client {
     }
 
     /**
-     * @param workflowId
-     * @param workflowRunId
-     * @param resetWorkflowTypeAndOptions
-     * @return
+     * @param workflowId workflowId
+     * @param workflowRunId workflowRunId
+     * @param resetWorkflowTypeAndOptions the combination parameter for reset
+     * @return the new runId after reset
      */
     public String resetWorkflow(
             final String workflowId,
@@ -306,12 +307,12 @@ public class Client {
         }
     }
 
-    private SearchAttributeKeyAndType.ValueTypeEnum toGeneratedSearchAttributeType(final SearchAttributeType saType) {
+    private SearchAttributeValueType toGeneratedSearchAttributeType(final SearchAttributeType saType) {
         switch (saType) {
             case INT_64:
-                return SearchAttributeKeyAndType.ValueTypeEnum.INT;
+                return SearchAttributeValueType.INT;
             case KEYWORD:
-                return SearchAttributeKeyAndType.ValueTypeEnum.KEYWORD;
+                return SearchAttributeValueType.KEYWORD;
             default:
                 throw new InternalServiceException("unsupported type");
         }

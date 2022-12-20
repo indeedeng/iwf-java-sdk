@@ -9,11 +9,14 @@ import io.iworkflow.gen.models.WorkflowStateOptions;
 public interface WorkflowState<I> {
     /**
      * a unique identifier of the state
+     *
+     * @return the Id of the state(must be unique in any workflow definition)
      */
     String getStateId();
 
     /**
      * This input type is needed for deserializing data back into Java object
+     * @return the type of the state input
      */
     Class<I> getInputType();
 
@@ -69,6 +72,7 @@ public interface WorkflowState<I> {
      * MaxInternalSeconds:100
      * MaximumAttempts: 0
      * BackoffCoefficient: 2
+     * @return the optional options
      */
     default WorkflowStateOptions getStateOptions() {
         return null;

@@ -83,7 +83,7 @@ public class UntypedClient {
      * @param workflowId    the workflowId
      * @param workflowRunId optional runId, can be empty string
      * @param <T>           type of the output
-     * @return
+     * @return the result
      */
     public <T> T getSimpleWorkflowResultWithWait(
             Class<T> valueClass,
@@ -118,7 +118,7 @@ public class UntypedClient {
     /**
      * In some cases, a workflow may have more than one completion states
      *
-     * @param workflowId
+     * @param workflowId    workflowId
      * @param workflowRunId optional runId, can be empty string
      * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
      */
@@ -147,10 +147,10 @@ public class UntypedClient {
     }
 
     /**
-     * @param workflowId
-     * @param workflowRunId
-     * @param resetWorkflowTypeAndOptions
-     * @return
+     * @param workflowId                  workflowId
+     * @param workflowRunId               workflowRunId
+     * @param resetWorkflowTypeAndOptions the combination parameter for reset
+     * @return the new runId after reset
      */
     public String resetWorkflow(
             final String workflowId,
@@ -198,10 +198,10 @@ public class UntypedClient {
     }
 
     /**
-     * @param workflowId
-     * @param workflowRunId
+     * @param workflowId workflowId
+     * @param workflowRunId workflowRunId
      * @param attributeKeys, return all attributes if this is empty or null
-     * @return
+     * @return the response
      */
     public WorkflowGetDataObjectsResponse getAnyWorkflowDataObjects(
             final String workflowId,
