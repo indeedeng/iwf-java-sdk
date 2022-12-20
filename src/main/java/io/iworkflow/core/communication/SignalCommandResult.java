@@ -1,6 +1,6 @@
 package io.iworkflow.core.communication;
 
-import io.iworkflow.gen.models.SignalResult;
+import io.iworkflow.gen.models.SignalRequestStatus;
 import org.immutables.value.Value;
 
 import java.util.Optional;
@@ -14,5 +14,5 @@ public abstract class SignalCommandResult {
 
     public abstract Optional<Object> getSignalValue();
 
-    public abstract SignalResult.SignalRequestStatusEnum getSignalRequestStatusEnum();
+    public abstract SignalRequestStatus getSignalRequestStatusEnum();
 }

@@ -6,8 +6,8 @@ public interface StateLocals {
      * Usually it's for passing from State Start API to State Decide API
      * User code must make sure using the same type for both get and set
      *
-     * @param key
-     * @param value
+     * @param key   the key of the stateLocal(scope of the state execution)
+     * @param value the value
      */
     void setStateLocal(String key, Object value);
 
@@ -15,10 +15,10 @@ public interface StateLocals {
      * Retrieve a local state attribute
      * User code must make sure using the same type for both get and set
      *
-     * @param key
-     * @param type
-     * @param <T>
-     * @return
+     * @param key the key of the stateLocal(scope of the state execution)
+     * @param type the value type
+     * @param <T> the value type
+     * @return the value
      */
     <T> T getStateLocal(String key, Class<T> type);
 

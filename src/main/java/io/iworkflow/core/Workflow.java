@@ -18,6 +18,8 @@ public interface Workflow {
      * defines the states of the workflow. A state represents a step of the workflow state machine.
      * A state can execute some commands (signal/timer) and wait for result
      * See more details in the {@link WorkflowState} definition.
+     *
+     * @return all the state definitions
      */
     List<StateDef> getStates();
 
@@ -32,6 +34,7 @@ public interface Workflow {
      * Search attributes can be read/upsert in WorkflowState start/decide API
      * Search attributes can also be read by GetSearchAttributes Client API by external applications
      * External applications can also use "SearchWorkflow" API to find workflows by SQL-like query
+     * @return the persistence schema
      */
     default List<PersistenceFieldDef> getPersistenceSchema() {
         return Collections.emptyList();
@@ -48,6 +51,7 @@ public interface Workflow {
      * <p>
      * InterStateChannel is for synchronization communications between WorkflowStates.
      * E.g. WorkflowStateA will continue after receiving a value from WorkflowStateB
+     * @return the communication schema
      */
     default List<CommunicationMethodDef> getCommunicationSchema() {
         return Collections.emptyList();
@@ -58,6 +62,7 @@ public interface Workflow {
      * which should be the case for most scenarios.
      * <p>
      * In case of dynamic workflow implementation, return customized values based on constructor input.
+     * @return the workflow type
      */
     default String getWorkflowType() {
         return "";
