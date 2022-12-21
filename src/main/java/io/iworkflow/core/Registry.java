@@ -113,16 +113,16 @@ public class Registry {
         }
 
         for (DataObjectDef dataObjectField : fields) {
-            Map<String, Class<?>> queryAttributeKeyToTypeMap =
+            Map<String, Class<?>> dataObjectKeyToTypeMap =
                     dataObjectTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
-            if (queryAttributeKeyToTypeMap.containsKey(dataObjectField.getKey())) {
+            if (dataObjectKeyToTypeMap.containsKey(dataObjectField.getKey())) {
                 throw new WorkflowDefinitionException(
                         String.format(
                                 "Query attribute key %s already exists",
                                 dataObjectField.getDataObjectType())
                 );
             }
-            queryAttributeKeyToTypeMap.put(
+            dataObjectKeyToTypeMap.put(
                     dataObjectField.getKey(),
                     dataObjectField.getDataObjectType()
             );
@@ -195,7 +195,7 @@ public class Registry {
         return interstateChannelTypeStore.get(workflowType);
     }
 
-    public Map<String, Class<?>> getQueryAttributeKeyToTypeMap(final String workflowType) {
+    public Map<String, Class<?>> getDataObjectKeyToTypeMap(final String workflowType) {
         return dataObjectTypeStore.get(workflowType);
     }
 

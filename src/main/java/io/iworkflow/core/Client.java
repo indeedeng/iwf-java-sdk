@@ -152,11 +152,11 @@ public class Client {
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
-            List<String> attributeKeys) {
-        if (attributeKeys == null || attributeKeys.isEmpty()) {
-            throw new IllegalArgumentException("attributeKeys must contain at least one entry, or use getAllDataObjects API to get all");
+            List<String> keys) {
+        if (keys == null || keys.isEmpty()) {
+            throw new IllegalArgumentException("keys must contain at least one entry, or use getAllDataObjects API to get all");
         }
-        return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, attributeKeys);
+        return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, keys);
     }
 
     public Map<String, Object> getAllDataObjects(
@@ -170,32 +170,32 @@ public class Client {
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
-            List<String> attributeKeys) {
+            List<String> keys) {
         final String wfType = workflowClass.getSimpleName();
 
-        Map<String, Class<?>> queryAttributeKeyToTypeMap = registry.getQueryAttributeKeyToTypeMap(wfType);
-        if (queryAttributeKeyToTypeMap == null) {
+        Map<String, Class<?>> queryDataObjectKeyToTypeMap = registry.getDataObjectKeyToTypeMap(wfType);
+        if (queryDataObjectKeyToTypeMap == null) {
             throw new IllegalArgumentException(
                     String.format("Workflow %s is not registered", wfType)
             );
         }
 
         // if attribute keys is null or empty, iwf server will return all query attributes
-        if (attributeKeys != null && !attributeKeys.isEmpty()) {
-            List<String> nonExistingQueryAttributeList = attributeKeys.stream()
-                    .filter(s -> !queryAttributeKeyToTypeMap.containsKey(s))
+        if (keys != null && !keys.isEmpty()) {
+            List<String> nonExistingDataObjectKeyList = keys.stream()
+                    .filter(s -> !queryDataObjectKeyToTypeMap.containsKey(s))
                     .collect(Collectors.toList());
-            if (!nonExistingQueryAttributeList.isEmpty()) {
+            if (!nonExistingDataObjectKeyList.isEmpty()) {
                 throw new IllegalArgumentException(
                         String.format(
                                 "Query attributes not registered: %s",
-                                String.join(", ", nonExistingQueryAttributeList)
+                                String.join(", ", nonExistingDataObjectKeyList)
                         )
                 );
             }
         }
 
-        final WorkflowGetDataObjectsResponse response = untypedClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, attributeKeys);
+        final WorkflowGetDataObjectsResponse response = untypedClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys);
 
         if (response.getObjects() == null) {
             throw new InternalServiceException("query attributes not returned");
@@ -205,7 +205,7 @@ public class Client {
             if (keyValue.getValue() != null) {
                 result.put(
                         keyValue.getKey(),
-                        clientOptions.getObjectEncoder().decode(keyValue.getValue(), queryAttributeKeyToTypeMap.get(keyValue.getKey()))
+                        clientOptions.getObjectEncoder().decode(keyValue.getValue(), queryDataObjectKeyToTypeMap.get(keyValue.getKey()))
                 );
             }
         }

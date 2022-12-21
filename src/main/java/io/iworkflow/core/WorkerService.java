@@ -42,7 +42,7 @@ public class WorkerService {
         final EncodedObject stateInput = req.getStateInput();
         final Object input = workerOptions.getObjectEncoder().decode(stateInput, state.getWorkflowState().getInputType());
         final DataObjectsRWImpl dataObjectsRW =
-                createQueryAttributesRW(req.getWorkflowType(), req.getDataObjects());
+                createDataObjectsRW(req.getWorkflowType(), req.getDataObjects());
         final Context context = ImmutableContext.builder()
                 .workflowId(req.getContext().getWorkflowId())
                 .workflowRunId(req.getContext().getWorkflowRunId())
@@ -102,7 +102,7 @@ public class WorkerService {
         final EncodedObject stateInput = req.getStateInput();
         input = workerOptions.getObjectEncoder().decode(stateInput, state.getWorkflowState().getInputType());
         final DataObjectsRWImpl dataObjectsRW =
-                createQueryAttributesRW(req.getWorkflowType(), req.getDataObjects());
+                createDataObjectsRW(req.getWorkflowType(), req.getDataObjects());
 
         final Context context = ImmutableContext.builder()
                 .workflowId(req.getContext().getWorkflowId())
@@ -169,9 +169,9 @@ public class WorkerService {
         return results;
     }
 
-    private DataObjectsRWImpl createQueryAttributesRW(String workflowType, List<KeyValue> keyValues) {
+    private DataObjectsRWImpl createDataObjectsRW(String workflowType, List<KeyValue> keyValues) {
         final Map<String, EncodedObject> map = toMap(keyValues);
-        return new DataObjectsRWImpl(registry.getQueryAttributeKeyToTypeMap(workflowType), map, workerOptions.getObjectEncoder());
+        return new DataObjectsRWImpl(registry.getDataObjectKeyToTypeMap(workflowType), map, workerOptions.getObjectEncoder());
     }
 
     private Map<String, EncodedObject> toMap(final List<KeyValue> keyValues) {
