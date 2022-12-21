@@ -28,6 +28,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class WorkerService {
+
+    public static final String WORKFLOW_STATE_START_API_PATH = "/api/v1/workflowState/start";
+    public static final String WORKFLOW_STATE_DECIDE_API_PATH = "/api/v1/workflowState/decide";
+
     private final Registry registry;
 
     private final WorkerOptions workerOptions;
