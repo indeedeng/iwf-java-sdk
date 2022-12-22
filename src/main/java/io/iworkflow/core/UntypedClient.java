@@ -24,8 +24,10 @@ import io.iworkflow.gen.models.WorkflowStopRequest;
 import java.util.List;
 
 /**
- * UntypedClient will let you invoke the APIs to iWF server without much type checks.
- * It's useful for some use cases like dynamic workflow instance that workflowType is not from class simple name.
+ * UntypedClient will let you invoke the APIs to iWF server without much type validation checks(workflow type, signalChannelName, etc).
+ * It's useful for :
+ * 1) calling Client APIs without workflow registry(which may require to have all the workflow dependencies)
+ * 2) some use cases like dynamic workflow instance that workflowType is not from class simple name.
  */
 public class UntypedClient {
     private final DefaultApi defaultApi;
