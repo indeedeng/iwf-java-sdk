@@ -26,14 +26,14 @@ public class ApiController {
         return ResponseEntity.ok("Hello, world!");
     }
 
-    @PostMapping("/api/v1/workflowState/start")
+    @PostMapping(WorkerService.WORKFLOW_STATE_START_API_PATH)
     public ResponseEntity<WorkflowStateStartResponse> apiV1WorkflowStateStartPost(
             final @RequestBody WorkflowStateStartRequest request
     ) {
         return ResponseEntity.ok(workerService.handleWorkflowStateStart(request));
     }
 
-    @PostMapping("/api/v1/workflowState/decide")
+    @PostMapping(WorkerService.WORKFLOW_STATE_DECIDE_API_PATH)
     public ResponseEntity<WorkflowStateDecideResponse> apiV1WorkflowStateDecidePost(
             final @RequestBody WorkflowStateDecideRequest request
     ) {
