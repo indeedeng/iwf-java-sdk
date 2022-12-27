@@ -5,7 +5,7 @@ import io.iworkflow.core.communication.SignalChannelDef;
 import io.iworkflow.core.persistence.DataObjectDef;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
 import io.iworkflow.core.persistence.SearchAttributeDef;
-import io.iworkflow.core.persistence.SearchAttributeType;
+import io.iworkflow.gen.models.SearchAttributeValueType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +22,7 @@ public class Registry {
     private final Map<String, Map<String, Class<?>>> interstateChannelTypeStore = new HashMap<>();
     private final Map<String, Map<String, Class<?>>> dataObjectTypeStore = new HashMap<>();
 
-    private final Map<String, Map<String, SearchAttributeType>> searchAttributeTypeStore = new HashMap<>();
+    private final Map<String, Map<String, SearchAttributeValueType>> searchAttributeTypeStore = new HashMap<>();
 
     private static final String DELIMITER = "_";
 
@@ -162,7 +162,7 @@ public class Registry {
         }
 
         for (SearchAttributeDef searchAttributeField : fields) {
-            Map<String, SearchAttributeType> searchAttributeKeyToTypeMap =
+            Map<String, SearchAttributeValueType> searchAttributeKeyToTypeMap =
                     searchAttributeTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
 
             if (searchAttributeKeyToTypeMap.containsKey(searchAttributeField.getKey())) {
@@ -199,7 +199,7 @@ public class Registry {
         return dataObjectTypeStore.get(workflowType);
     }
 
-    public Map<String, SearchAttributeType> getSearchAttributeKeyToTypeMap(final String workflowType) {
+    public Map<String, SearchAttributeValueType> getSearchAttributeKeyToTypeMap(final String workflowType) {
         return searchAttributeTypeStore.get(workflowType);
     }
 

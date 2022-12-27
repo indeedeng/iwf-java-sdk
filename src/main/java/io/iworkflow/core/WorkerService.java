@@ -89,7 +89,7 @@ public class WorkerService {
         }
         final List<SearchAttribute> upsertSAs = createUpsertSearchAttributes(
                 searchAttributeRW.getUpsertToServerInt64AttributeMap(),
-                searchAttributeRW.getUpsertToServerKeywordAttributeMap());
+                searchAttributeRW.getUpsertToServerStringAttributeMap());
         if (upsertSAs.size() > 0) {
             response.upsertSearchAttributes(upsertSAs);
         }
@@ -147,7 +147,7 @@ public class WorkerService {
         }
         final List<SearchAttribute> upsertSAs = createUpsertSearchAttributes(
                 searchAttributeRW.getUpsertToServerInt64AttributeMap(),
-                searchAttributeRW.getUpsertToServerKeywordAttributeMap());
+                searchAttributeRW.getUpsertToServerStringAttributeMap());
         if (upsertSAs.size() > 0) {
             response.upsertSearchAttributes(upsertSAs);
         }
