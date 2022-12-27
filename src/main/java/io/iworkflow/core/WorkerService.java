@@ -28,6 +28,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class WorkerService {
+
+    public static final String WORKFLOW_STATE_START_API_PATH = "/api/v1/workflowState/start";
+    public static final String WORKFLOW_STATE_DECIDE_API_PATH = "/api/v1/workflowState/decide";
+
     private final Registry registry;
 
     private final WorkerOptions workerOptions;
@@ -42,7 +46,7 @@ public class WorkerService {
         final EncodedObject stateInput = req.getStateInput();
         final Object input = workerOptions.getObjectEncoder().decode(stateInput, state.getWorkflowState().getInputType());
         final DataObjectsRWImpl dataObjectsRW =
-                createQueryAttributesRW(req.getWorkflowType(), req.getDataObjects());
+                createDataObjectsRW(req.getWorkflowType(), req.getDataObjects());
         final Context context = ImmutableContext.builder()
                 .workflowId(req.getContext().getWorkflowId())
                 .workflowRunId(req.getContext().getWorkflowRunId())
@@ -50,8 +54,8 @@ public class WorkerService {
                 .stateExecutionId(req.getContext().getStateExecutionId())
                 .build();
         final StateLocalsImpl stateLocals = new StateLocalsImpl(toMap(null), workerOptions.getObjectEncoder());
-        final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(
-                registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType()), req.getSearchAttributes());
+        final Map<String, SearchAttributeValueType> saTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
+        final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(saTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
                 registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder());
 
@@ -84,8 +88,13 @@ public class WorkerService {
             response.recordEvents(stateLocals.getRecordEvents());
         }
         final List<SearchAttribute> upsertSAs = createUpsertSearchAttributes(
+                saTypeMap,
                 searchAttributeRW.getUpsertToServerInt64AttributeMap(),
-                searchAttributeRW.getUpsertToServerKeywordAttributeMap());
+                searchAttributeRW.getUpsertToServerStringAttributeMap(),
+                searchAttributeRW.getUpsertToServerBooleanAttributeMap(),
+                searchAttributeRW.getUpsertToServerDoubleAttributeMap(),
+                searchAttributeRW.getUpsertToServerStringArrayAttributeMap()
+        );
         if (upsertSAs.size() > 0) {
             response.upsertSearchAttributes(upsertSAs);
         }
@@ -102,7 +111,7 @@ public class WorkerService {
         final EncodedObject stateInput = req.getStateInput();
         input = workerOptions.getObjectEncoder().decode(stateInput, state.getWorkflowState().getInputType());
         final DataObjectsRWImpl dataObjectsRW =
-                createQueryAttributesRW(req.getWorkflowType(), req.getDataObjects());
+                createDataObjectsRW(req.getWorkflowType(), req.getDataObjects());
 
         final Context context = ImmutableContext.builder()
                 .workflowId(req.getContext().getWorkflowId())
@@ -111,8 +120,8 @@ public class WorkerService {
                 .stateExecutionId(req.getContext().getStateExecutionId())
                 .build();
         final StateLocalsImpl stateLocals = new StateLocalsImpl(toMap(req.getStateLocals()), workerOptions.getObjectEncoder());
-        final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(
-                registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType()), req.getSearchAttributes());
+        final Map<String, SearchAttributeValueType> saTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
+        final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(saTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
                 registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder());
 
@@ -142,8 +151,13 @@ public class WorkerService {
             response.recordEvents(stateLocals.getRecordEvents());
         }
         final List<SearchAttribute> upsertSAs = createUpsertSearchAttributes(
+                saTypeMap,
                 searchAttributeRW.getUpsertToServerInt64AttributeMap(),
-                searchAttributeRW.getUpsertToServerKeywordAttributeMap());
+                searchAttributeRW.getUpsertToServerStringAttributeMap(),
+                searchAttributeRW.getUpsertToServerBooleanAttributeMap(),
+                searchAttributeRW.getUpsertToServerDoubleAttributeMap(),
+                searchAttributeRW.getUpsertToServerStringArrayAttributeMap()
+        );
         if (upsertSAs.size() > 0) {
             response.upsertSearchAttributes(upsertSAs);
         }
@@ -169,9 +183,9 @@ public class WorkerService {
         return results;
     }
 
-    private DataObjectsRWImpl createQueryAttributesRW(String workflowType, List<KeyValue> keyValues) {
+    private DataObjectsRWImpl createDataObjectsRW(String workflowType, List<KeyValue> keyValues) {
         final Map<String, EncodedObject> map = toMap(keyValues);
-        return new DataObjectsRWImpl(registry.getQueryAttributeKeyToTypeMap(workflowType), map, workerOptions.getObjectEncoder());
+        return new DataObjectsRWImpl(registry.getDataObjectKeyToTypeMap(workflowType), map, workerOptions.getObjectEncoder());
     }
 
     private Map<String, EncodedObject> toMap(final List<KeyValue> keyValues) {
@@ -187,21 +201,51 @@ public class WorkerService {
     }
 
     private List<SearchAttribute> createUpsertSearchAttributes(
+            final Map<String, SearchAttributeValueType> typeMap,
             final Map<String, Long> upsertToServerInt64AttributeMap,
-            final Map<String, String> upsertToServerKeywordAttributeMap) {
+            final Map<String, String> upsertToServerKeywordAttributeMap,
+            final Map<String, Boolean> upsertToServerBoolAttributeMap,
+            final Map<String, Double> upsertToServerDoubleAttributeMap,
+            final Map<String, List<String>> upsertToServerStringArrayAttributeMap
+    ) {
         List<SearchAttribute> sas = new ArrayList<>();
         upsertToServerKeywordAttributeMap.forEach((key, sa) -> {
             final SearchAttribute attr = new SearchAttribute()
                     .key(key)
                     .stringValue(sa)
-                    .valueType(SearchAttributeValueType.KEYWORD);
+                    .valueType(typeMap.get(key));
             sas.add(attr);
         });
+
+        upsertToServerStringArrayAttributeMap.forEach((key, sa) -> {
+            final SearchAttribute attr = new SearchAttribute()
+                    .key(key)
+                    .stringArrayValue(sa)
+                    .valueType(typeMap.get(key));
+            sas.add(attr);
+        });
+
         upsertToServerInt64AttributeMap.forEach((key, sa) -> {
             final SearchAttribute attr = new SearchAttribute()
                     .key(key)
                     .integerValue(sa)
-                    .valueType(SearchAttributeValueType.INT);
+                    .valueType(typeMap.get(key));
+            sas.add(attr);
+        });
+
+        upsertToServerDoubleAttributeMap.forEach((key, sa) -> {
+            final SearchAttribute attr = new SearchAttribute()
+                    .key(key)
+                    .doubleValue(sa)
+                    .valueType(typeMap.get(key));
+            sas.add(attr);
+        });
+
+        upsertToServerBoolAttributeMap.forEach((key, sa) -> {
+            final SearchAttribute attr = new SearchAttribute()
+                    .key(key)
+                    .boolValue(sa)
+                    .valueType(typeMap.get(key));
             sas.add(attr);
         });
         return sas;

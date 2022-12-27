@@ -5,7 +5,7 @@ import io.iworkflow.core.communication.SignalChannelDef;
 import io.iworkflow.core.persistence.DataObjectDef;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
 import io.iworkflow.core.persistence.SearchAttributeDef;
-import io.iworkflow.core.persistence.SearchAttributeType;
+import io.iworkflow.gen.models.SearchAttributeValueType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +22,7 @@ public class Registry {
     private final Map<String, Map<String, Class<?>>> interstateChannelTypeStore = new HashMap<>();
     private final Map<String, Map<String, Class<?>>> dataObjectTypeStore = new HashMap<>();
 
-    private final Map<String, Map<String, SearchAttributeType>> searchAttributeTypeStore = new HashMap<>();
+    private final Map<String, Map<String, SearchAttributeValueType>> searchAttributeTypeStore = new HashMap<>();
 
     private static final String DELIMITER = "_";
 
@@ -113,16 +113,16 @@ public class Registry {
         }
 
         for (DataObjectDef dataObjectField : fields) {
-            Map<String, Class<?>> queryAttributeKeyToTypeMap =
+            Map<String, Class<?>> dataObjectKeyToTypeMap =
                     dataObjectTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
-            if (queryAttributeKeyToTypeMap.containsKey(dataObjectField.getKey())) {
+            if (dataObjectKeyToTypeMap.containsKey(dataObjectField.getKey())) {
                 throw new WorkflowDefinitionException(
                         String.format(
                                 "Query attribute key %s already exists",
                                 dataObjectField.getDataObjectType())
                 );
             }
-            queryAttributeKeyToTypeMap.put(
+            dataObjectKeyToTypeMap.put(
                     dataObjectField.getKey(),
                     dataObjectField.getDataObjectType()
             );
@@ -162,7 +162,7 @@ public class Registry {
         }
 
         for (SearchAttributeDef searchAttributeField : fields) {
-            Map<String, SearchAttributeType> searchAttributeKeyToTypeMap =
+            Map<String, SearchAttributeValueType> searchAttributeKeyToTypeMap =
                     searchAttributeTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
 
             if (searchAttributeKeyToTypeMap.containsKey(searchAttributeField.getKey())) {
@@ -195,11 +195,11 @@ public class Registry {
         return interstateChannelTypeStore.get(workflowType);
     }
 
-    public Map<String, Class<?>> getQueryAttributeKeyToTypeMap(final String workflowType) {
+    public Map<String, Class<?>> getDataObjectKeyToTypeMap(final String workflowType) {
         return dataObjectTypeStore.get(workflowType);
     }
 
-    public Map<String, SearchAttributeType> getSearchAttributeKeyToTypeMap(final String workflowType) {
+    public Map<String, SearchAttributeValueType> getSearchAttributeKeyToTypeMap(final String workflowType) {
         return searchAttributeTypeStore.get(workflowType);
     }
 

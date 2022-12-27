@@ -62,7 +62,7 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 - [x] Signal command
 - [x] SearchAttributeRW
 - [x] DataObjectRW
-- [x] StateLocalAttribute
+- [x] StateLocal
 - [x] Signal workflow API
 - [x] Get workflow DataObjects/SearchAttributes API
 - [x] Get workflow API

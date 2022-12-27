@@ -1,6 +1,5 @@
 package io.iworkflow.core;
 
-import io.iworkflow.core.persistence.SearchAttributeType;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
@@ -152,11 +151,11 @@ public class Client {
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
-            List<String> attributeKeys) {
-        if (attributeKeys == null || attributeKeys.isEmpty()) {
-            throw new IllegalArgumentException("attributeKeys must contain at least one entry, or use getAllDataObjects API to get all");
+            List<String> keys) {
+        if (keys == null || keys.isEmpty()) {
+            throw new IllegalArgumentException("keys must contain at least one entry, or use getAllDataObjects API to get all");
         }
-        return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, attributeKeys);
+        return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, keys);
     }
 
     public Map<String, Object> getAllDataObjects(
@@ -170,32 +169,32 @@ public class Client {
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
-            List<String> attributeKeys) {
+            List<String> keys) {
         final String wfType = workflowClass.getSimpleName();
 
-        Map<String, Class<?>> queryAttributeKeyToTypeMap = registry.getQueryAttributeKeyToTypeMap(wfType);
-        if (queryAttributeKeyToTypeMap == null) {
+        Map<String, Class<?>> queryDataObjectKeyToTypeMap = registry.getDataObjectKeyToTypeMap(wfType);
+        if (queryDataObjectKeyToTypeMap == null) {
             throw new IllegalArgumentException(
                     String.format("Workflow %s is not registered", wfType)
             );
         }
 
         // if attribute keys is null or empty, iwf server will return all query attributes
-        if (attributeKeys != null && !attributeKeys.isEmpty()) {
-            List<String> nonExistingQueryAttributeList = attributeKeys.stream()
-                    .filter(s -> !queryAttributeKeyToTypeMap.containsKey(s))
+        if (keys != null && !keys.isEmpty()) {
+            List<String> nonExistingDataObjectKeyList = keys.stream()
+                    .filter(s -> !queryDataObjectKeyToTypeMap.containsKey(s))
                     .collect(Collectors.toList());
-            if (!nonExistingQueryAttributeList.isEmpty()) {
+            if (!nonExistingDataObjectKeyList.isEmpty()) {
                 throw new IllegalArgumentException(
                         String.format(
                                 "Query attributes not registered: %s",
-                                String.join(", ", nonExistingQueryAttributeList)
+                                String.join(", ", nonExistingDataObjectKeyList)
                         )
                 );
             }
         }
 
-        final WorkflowGetDataObjectsResponse response = untypedClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, attributeKeys);
+        final WorkflowGetDataObjectsResponse response = untypedClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys);
 
         if (response.getObjects() == null) {
             throw new InternalServiceException("query attributes not returned");
@@ -205,7 +204,7 @@ public class Client {
             if (keyValue.getValue() != null) {
                 result.put(
                         keyValue.getKey(),
-                        clientOptions.getObjectEncoder().decode(keyValue.getValue(), queryAttributeKeyToTypeMap.get(keyValue.getKey()))
+                        clientOptions.getObjectEncoder().decode(keyValue.getValue(), queryDataObjectKeyToTypeMap.get(keyValue.getKey()))
                 );
             }
         }
@@ -241,7 +240,7 @@ public class Client {
             final List<String> attributeKeys) {
         final String wfType = workflowClass.getSimpleName();
 
-        final Map<String, SearchAttributeType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
+        final Map<String, SearchAttributeValueType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
         if (searchAttributeKeyToTypeMap == null) {
             throw new IllegalArgumentException(
                     String.format("Workflow %s is not registered", wfType)
@@ -269,15 +268,15 @@ public class Client {
             searchAttributeKeyToTypeMap.forEach((key, type) -> {
                 final SearchAttributeKeyAndType keyAndType = new SearchAttributeKeyAndType()
                         .key(key)
-                        .valueType(toGeneratedSearchAttributeType(type));
+                        .valueType(type);
                 keyAndTypes.add(keyAndType);
             });
         } else {
             attributeKeys.forEach((key) -> {
-                final SearchAttributeType saType = searchAttributeKeyToTypeMap.get(key);
+                final SearchAttributeValueType saType = searchAttributeKeyToTypeMap.get(key);
                 final SearchAttributeKeyAndType keyAndType = new SearchAttributeKeyAndType()
                         .key(key)
-                        .valueType(toGeneratedSearchAttributeType(saType));
+                        .valueType(saType);
                 keyAndTypes.add(keyAndType);
             });
         }
@@ -289,30 +288,27 @@ public class Client {
         }
         Map<String, Object> result = new HashMap<>();
         for (SearchAttribute searchAttribute : response.getSearchAttributes()) {
-            final SearchAttributeType saType = searchAttributeKeyToTypeMap.get(searchAttribute.getKey());
+            final SearchAttributeValueType saType = searchAttributeKeyToTypeMap.get(searchAttribute.getKey());
             Object value = getSearchAttributeValue(saType, searchAttribute);
             result.put(searchAttribute.getKey(), value);
         }
         return result;
     }
 
-    private Object getSearchAttributeValue(final SearchAttributeType saType, final SearchAttribute searchAttribute) {
+    private Object getSearchAttributeValue(final SearchAttributeValueType saType, final SearchAttribute searchAttribute) {
         switch (saType) {
-            case INT_64:
+            case INT:
                 return searchAttribute.getIntegerValue();
+            case DOUBLE:
+                return searchAttribute.getDoubleValue();
+            case BOOL:
+                return searchAttribute.getBoolValue();
             case KEYWORD:
+            case TEXT:
+            case DATETIME:
                 return searchAttribute.getStringValue();
-            default:
-                throw new InternalServiceException("unsupported type");
-        }
-    }
-
-    private SearchAttributeValueType toGeneratedSearchAttributeType(final SearchAttributeType saType) {
-        switch (saType) {
-            case INT_64:
-                return SearchAttributeValueType.INT;
-            case KEYWORD:
-                return SearchAttributeValueType.KEYWORD;
+            case KEYWORD_ARRAY:
+                return searchAttribute.getStringArrayValue();
             default:
                 throw new InternalServiceException("unsupported type");
         }
