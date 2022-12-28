@@ -58,6 +58,13 @@ public class UnregisteredClient {
             startOptions.retryPolicy(options.getWorkflowRetryPolicy().get());
         }
         if (options.getInitialSearchAttribute().isPresent()) {
+            options.getInitialSearchAttribute().get().forEach(sa -> {
+                assert sa.getValueType() != null;
+                final Object val = Client.getSearchAttributeValue(sa.getValueType(), sa);
+                if (val == null) {
+                    throw new IllegalArgumentException(String.format("search attribute value is not set correctly for key %s with value type %s", sa.getKey(), sa.getValueType()));
+                }
+            });
             startOptions.searchAttributes(options.getInitialSearchAttribute().get());
         }
 

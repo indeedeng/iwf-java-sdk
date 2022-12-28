@@ -62,11 +62,11 @@ public class Client {
         if (options.getInitialSearchAttribute().isPresent()) {
             options.getInitialSearchAttribute().get().forEach(sa -> {
                 if (!saTypes.containsKey(sa.getKey()) || saTypes.get(sa.getKey()) != sa.getValueType()) {
-                    throw new WorkflowDefinitionException(String.format("key %s is not defined as search attribute %s", sa.getKey(), saTypes.get(sa.getKey())));
+                    throw new WorkflowDefinitionException(String.format("key %s is not defined as search attribute value type %s", sa.getKey(), saTypes.get(sa.getKey())));
                 }
                 final Object val = getSearchAttributeValue(saTypes.get(sa.getKey()), sa);
                 if (val == null) {
-                    throw new IllegalArgumentException(String.format("search attribute value is not set for key %s", sa.getKey()));
+                    throw new IllegalArgumentException(String.format("search attribute value is not set correctly for key %s with value type %s", sa.getKey(), saTypes.get(sa.getKey())));
                 }
             });
         }
@@ -346,7 +346,7 @@ public class Client {
         return result;
     }
 
-    private Object getSearchAttributeValue(final SearchAttributeValueType saType, final SearchAttribute searchAttribute) {
+    static Object getSearchAttributeValue(final SearchAttributeValueType saType, final SearchAttribute searchAttribute) {
         switch (saType) {
             case INT:
                 return searchAttribute.getIntegerValue();
