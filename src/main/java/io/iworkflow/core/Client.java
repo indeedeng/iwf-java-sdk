@@ -24,7 +24,7 @@ public class Client {
     final ClientOptions clientOptions;
 
     /**
-     * return client
+     * return a full featured client. If you don't have the workflow Registry, you should use {@link UnregisteredClient} instead
      *
      * @param registry      registry is required so that this client can perform some validation checks (workflow types, channel names)
      * @param clientOptions
