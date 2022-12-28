@@ -226,6 +226,10 @@ public class UntypedClient {
         );
     }
 
+    public WorkflowSearchResponse searchWorkflow(final WorkflowSearchRequest request) {
+        return defaultApi.apiV1WorkflowSearchPost(request);
+    }
+
     public WorkflowGetSearchAttributesResponse getAnyWorkflowSearchAttributes(
             final String workflowId,
             final String workflowRunId,
