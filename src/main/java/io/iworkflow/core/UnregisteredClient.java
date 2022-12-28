@@ -57,6 +57,9 @@ public class UnregisteredClient {
         if (options.getWorkflowRetryPolicy().isPresent()) {
             startOptions.retryPolicy(options.getWorkflowRetryPolicy().get());
         }
+        if (options.getInitialSearchAttribute().isPresent()) {
+            startOptions.searchAttributes(options.getInitialSearchAttribute().get());
+        }
 
         final WorkflowStartRequest request = new WorkflowStartRequest()
                 .workflowId(workflowId)

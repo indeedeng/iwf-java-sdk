@@ -58,6 +58,18 @@ public class Client {
         if (stateDef == null || !stateDef.getCanStartWorkflow()) {
             throw new IllegalArgumentException("invalid start stateId " + startStateId);
         }
+        final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(wfType);
+        if (options.getInitialSearchAttribute().isPresent()) {
+            options.getInitialSearchAttribute().get().forEach(sa -> {
+                if (!saTypes.containsKey(sa.getKey()) || saTypes.get(sa.getKey()) != sa.getValueType()) {
+                    throw new WorkflowDefinitionException(String.format("key %s is not defined as search attribute %s", sa.getKey(), saTypes.get(sa.getKey())));
+                }
+                final Object val = getSearchAttributeValue(saTypes.get(sa.getKey()), sa);
+                if (val == null) {
+                    throw new IllegalArgumentException(String.format("search attribute value is not set for key %s", sa.getKey()));
+                }
+            });
+        }
 
         return unregisteredClient.startWorkflow(wfType, startStateId, input, workflowId, options);
     }
