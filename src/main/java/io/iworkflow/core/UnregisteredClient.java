@@ -17,6 +17,7 @@ import io.iworkflow.gen.models.WorkflowResetResponse;
 import io.iworkflow.gen.models.WorkflowSearchRequest;
 import io.iworkflow.gen.models.WorkflowSearchResponse;
 import io.iworkflow.gen.models.WorkflowSignalRequest;
+import io.iworkflow.gen.models.WorkflowStartOptions;
 import io.iworkflow.gen.models.WorkflowStartRequest;
 import io.iworkflow.gen.models.WorkflowStartResponse;
 import io.iworkflow.gen.models.WorkflowStopRequest;
@@ -46,7 +47,7 @@ public class UnregisteredClient {
             final String workflowId,
             final WorkflowOptions options) {
 
-        final io.iworkflow.gen.models.WorkflowStartOptions startOptions = new io.iworkflow.gen.models.WorkflowStartOptions();
+        final WorkflowStartOptions startOptions = new WorkflowStartOptions();
         if (options.getCronSchedule().isPresent()) {
             startOptions.cronSchedule(CronScheduleValidator.validate(options.getCronSchedule()));
         }
@@ -55,6 +56,16 @@ public class UnregisteredClient {
         }
         if (options.getWorkflowRetryPolicy().isPresent()) {
             startOptions.retryPolicy(options.getWorkflowRetryPolicy().get());
+        }
+        if (options.getInitialSearchAttribute().isPresent()) {
+            options.getInitialSearchAttribute().get().forEach(sa -> {
+                assert sa.getValueType() != null;
+                final Object val = Client.getSearchAttributeValue(sa.getValueType(), sa);
+                if (val == null) {
+                    throw new IllegalArgumentException(String.format("search attribute value is not set correctly for key %s with value type %s", sa.getKey(), sa.getValueType()));
+                }
+            });
+            startOptions.searchAttributes(options.getInitialSearchAttribute().get());
         }
 
         final WorkflowStartRequest request = new WorkflowStartRequest()

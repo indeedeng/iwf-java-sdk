@@ -58,6 +58,18 @@ public class Client {
         if (stateDef == null || !stateDef.getCanStartWorkflow()) {
             throw new IllegalArgumentException("invalid start stateId " + startStateId);
         }
+        final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(wfType);
+        if (options.getInitialSearchAttribute().isPresent()) {
+            options.getInitialSearchAttribute().get().forEach(sa -> {
+                if (!saTypes.containsKey(sa.getKey()) || saTypes.get(sa.getKey()) != sa.getValueType()) {
+                    throw new WorkflowDefinitionException(String.format("key %s is not defined as search attribute value type %s", sa.getKey(), saTypes.get(sa.getKey())));
+                }
+                final Object val = getSearchAttributeValue(saTypes.get(sa.getKey()), sa);
+                if (val == null) {
+                    throw new IllegalArgumentException(String.format("search attribute value is not set correctly for key %s with value type %s", sa.getKey(), saTypes.get(sa.getKey())));
+                }
+            });
+        }
 
         return unregisteredClient.startWorkflow(wfType, startStateId, input, workflowId, options);
     }
@@ -201,7 +213,7 @@ public class Client {
             );
         }
 
-        // if attribute keys is null or empty, iwf server will return all query attributes
+        // if attribute keys is null or empty, iwf server will return all data objects
         if (keys != null && !keys.isEmpty()) {
             List<String> nonExistingDataObjectKeyList = keys.stream()
                     .filter(s -> !queryDataObjectKeyToTypeMap.containsKey(s))
@@ -209,7 +221,7 @@ public class Client {
             if (!nonExistingDataObjectKeyList.isEmpty()) {
                 throw new IllegalArgumentException(
                         String.format(
-                                "Query attributes not registered: %s",
+                                "data objects not registered: %s",
                                 String.join(", ", nonExistingDataObjectKeyList)
                         )
                 );
@@ -219,7 +231,7 @@ public class Client {
         final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys);
 
         if (response.getObjects() == null) {
-            throw new InternalServiceException("query attributes not returned");
+            throw new InternalServiceException("data objects not returned");
         }
         Map<String, Object> result = new HashMap<>();
         for (KeyValue keyValue : response.getObjects()) {
@@ -286,7 +298,7 @@ public class Client {
             );
         }
 
-        // if attribute keys is null or empty, iwf server will return all query attributes
+        // if attribute keys is null or empty, iwf server will return all data objects
         if (attributeKeys != null && !attributeKeys.isEmpty()) {
             List<String> nonExistingSearchAttributeList = attributeKeys.stream()
                     .filter(s -> !searchAttributeKeyToTypeMap.containsKey(s))
@@ -323,7 +335,7 @@ public class Client {
         WorkflowGetSearchAttributesResponse response = unregisteredClient.getAnyWorkflowSearchAttributes(workflowId, workflowRunId, keyAndTypes);
 
         if (response.getSearchAttributes() == null) {
-            throw new InternalServiceException("query attributes not returned");
+            throw new InternalServiceException("data objects not returned");
         }
         Map<String, Object> result = new HashMap<>();
         for (SearchAttribute searchAttribute : response.getSearchAttributes()) {
@@ -334,7 +346,7 @@ public class Client {
         return result;
     }
 
-    private Object getSearchAttributeValue(final SearchAttributeValueType saType, final SearchAttribute searchAttribute) {
+    static Object getSearchAttributeValue(final SearchAttributeValueType saType, final SearchAttribute searchAttribute) {
         switch (saType) {
             case INT:
                 return searchAttribute.getIntegerValue();
