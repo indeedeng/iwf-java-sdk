@@ -7,6 +7,7 @@ import io.iworkflow.gen.models.SearchAttributeValueType;
 import io.iworkflow.gen.models.StateCompletionOutput;
 import io.iworkflow.gen.models.WorkflowGetDataObjectsResponse;
 import io.iworkflow.gen.models.WorkflowGetSearchAttributesResponse;
+import io.iworkflow.gen.models.WorkflowSearchRequest;
 import io.iworkflow.gen.models.WorkflowSearchResponse;
 
 import java.util.ArrayList;
@@ -211,8 +212,25 @@ public class Client {
         return result;
     }
 
+    /**
+     * This is a simplified API to search without pagination, use the other searchWorkflow API for pagination feature
+     *
+     * @param query
+     * @param pageSize
+     * @return
+     */
     public WorkflowSearchResponse searchWorkflow(final String query, final int pageSize) {
         return untypedClient.searchWorkflow(query, pageSize);
+    }
+
+    /**
+     * This search API support pagination
+     *
+     * @param request
+     * @return
+     */
+    public WorkflowSearchResponse searchWorkflow(final WorkflowSearchRequest request) {
+        return untypedClient.searchWorkflow(request);
     }
 
     public Map<String, Object> getWorkflowSearchAttributes(
