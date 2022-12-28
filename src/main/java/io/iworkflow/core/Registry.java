@@ -118,7 +118,7 @@ public class Registry {
             if (dataObjectKeyToTypeMap.containsKey(dataObjectField.getKey())) {
                 throw new WorkflowDefinitionException(
                         String.format(
-                                "Query attribute key %s already exists",
+                                "data object key %s already exists",
                                 dataObjectField.getDataObjectType())
                 );
             }

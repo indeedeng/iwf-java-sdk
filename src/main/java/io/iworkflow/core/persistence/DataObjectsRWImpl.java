@@ -28,7 +28,7 @@ public class DataObjectsRWImpl implements DataObjectsRW {
     @Override
     public <T> T getDataObject(String key, Class<T> type) {
         if (!keyToTypeMap.containsKey(key)) {
-            throw new IllegalArgumentException(String.format("Query attribute %s is not registered", key));
+            throw new IllegalArgumentException(String.format("data object %s is not registered", key));
         }
         if (!keyToEncodedObjectMap.containsKey(key)) {
             return null;
@@ -50,7 +50,7 @@ public class DataObjectsRWImpl implements DataObjectsRW {
     @Override
     public void setDataObject(String key, Object value) {
         if (!keyToTypeMap.containsKey(key)) {
-            throw new IllegalArgumentException(String.format("Query attribute %s is not registered", key));
+            throw new IllegalArgumentException(String.format("data object %s is not registered", key));
         }
 
         Class<?> registeredType = keyToTypeMap.get(key);
