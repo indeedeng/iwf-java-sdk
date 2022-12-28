@@ -12,7 +12,7 @@ public abstract class SearchAttributeDef implements PersistenceFieldDef {
      * The search attribute types are all from Cadence/Temporal
      * See doc https://cadenceworkflow.io/docs/concepts/search-workflows/ and https://docs.temporal.io/concepts/what-is-a-search-attribute/
      * to understand how to register new search attributes and run query
-     * NOTE that KEYWORD_ARRAY should be registered as KEYWORD in Cadence/Temporal
+     * NOTE that KEYWORD_ARRAY should be registered as KEYWORD in Cadence/Temporal. Cadence/Temporal use it interchangably. But in IWF, we like things to be explicit. 
      *
      * @param attributeType
      * @param key
