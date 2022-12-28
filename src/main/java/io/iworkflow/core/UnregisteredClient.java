@@ -25,16 +25,14 @@ import java.util.List;
 
 /**
  * UntypedClient will let you invoke the APIs to iWF server without much type validation checks(workflow type, signalChannelName, etc).
- * It's useful for :
- * 1) calling Client APIs without workflow registry(which may require to have all the workflow dependencies)
- * 2) some use cases like dynamic workflow instance that workflowType is not from class simple name.
+ * It's useful for calling Client APIs without workflow registry(which may require to have all the workflow dependencies)
  */
-public class UntypedClient {
+public class UnregisteredClient {
     private final DefaultApi defaultApi;
 
     private final ClientOptions clientOptions;
 
-    public UntypedClient(final ClientOptions clientOptions) {
+    public UnregisteredClient(final ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.defaultApi = new ApiClient()
                 .setBasePath(clientOptions.getServerUrl())
