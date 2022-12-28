@@ -71,7 +71,7 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 - [x] Get workflow API
 - [x] Search workflow API
 - [x] Cancel workflow API
-- [x] Reset workflow API 
+- [x] Reset workflow API
 - [x] Command type(s) for inter-state communications (e.g. internal channel)
 - [x] AnyCommandCompleted Decider trigger type
 - [x] More workflow start options: IdReusePolicy, cron schedule, retry
@@ -79,7 +79,11 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 - [x] Reset workflow by stateId/StateExecutionId
 
 ## 1.1
-- [ ] More workflow start options: initial search attributes/memo
+
+- [x] Workflow start options: initial search attributes
+
+## Future
+
 - [ ] Decider trigger type: AnyCommandClosed
 - [ ] WaitForMoreResults in StateDecision
 - [ ] Skip timer API for testing/operation
