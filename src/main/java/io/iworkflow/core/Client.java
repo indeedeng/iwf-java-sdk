@@ -19,18 +19,24 @@ import java.util.stream.Collectors;
 public class Client {
     private final Registry registry;
 
-    private final UntypedClient untypedClient;
+    private final UnregisteredClient unregisteredClient;
 
     final ClientOptions clientOptions;
 
+    /**
+     * return client
+     *
+     * @param registry      registry is required so that this client can perform some validation checks (workflow types, channel names)
+     * @param clientOptions
+     */
     public Client(final Registry registry, final ClientOptions clientOptions) {
         this.registry = registry;
         this.clientOptions = clientOptions;
-        this.untypedClient = new UntypedClient(clientOptions);
+        this.unregisteredClient = new UnregisteredClient(clientOptions);
     }
 
-    public UntypedClient getUntypedClient() {
-        return untypedClient;
+    public UnregisteredClient getUnregisteredClient() {
+        return unregisteredClient;
     }
 
     public String startWorkflow(
@@ -53,7 +59,22 @@ public class Client {
             throw new IllegalArgumentException("invalid start stateId " + startStateId);
         }
 
-        return untypedClient.startWorkflow(wfType, startStateId, input, workflowId, options);
+        return unregisteredClient.startWorkflow(wfType, startStateId, input, workflowId, options);
+    }
+
+    public String startWorkflow(
+            final Workflow workflow,
+            final String startStateId,
+            final Object input,
+            final String workflowId,
+            final WorkflowOptions options) {
+        final String wfType = Registry.getWorkflowType(workflow);
+        final StateDef stateDef = registry.getWorkflowState(wfType, startStateId);
+        if (stateDef == null || !stateDef.getCanStartWorkflow()) {
+            throw new IllegalArgumentException("invalid start stateId " + startStateId);
+        }
+
+        return unregisteredClient.startWorkflow(wfType, startStateId, input, workflowId, options);
     }
 
     /**
@@ -70,7 +91,7 @@ public class Client {
             Class<T> valueClass,
             final String workflowId,
             final String workflowRunId) {
-        return untypedClient.getSimpleWorkflowResultWithWait(valueClass, workflowId, workflowRunId);
+        return unregisteredClient.getSimpleWorkflowResultWithWait(valueClass, workflowId, workflowRunId);
     }
 
     public <T> T getSimpleWorkflowResultWithWait(
@@ -88,7 +109,7 @@ public class Client {
      */
     public List<StateCompletionOutput> getComplexWorkflowResultWithWait(
             final String workflowId, final String workflowRunId) {
-        return untypedClient.getComplexWorkflowResultWithWait(workflowId, workflowRunId);
+        return unregisteredClient.getComplexWorkflowResultWithWait(workflowId, workflowRunId);
     }
 
     public List<StateCompletionOutput> getComplexWorkflowResultWithWait(final String workflowId) {
@@ -118,7 +139,7 @@ public class Client {
             throw new IllegalArgumentException(String.format("Signal value is not of type %s", signalType.getName()));
         }
 
-        untypedClient.signalWorkflow(workflowId, workflowRunId, signalChannelName, signalValue);
+        unregisteredClient.signalWorkflow(workflowId, workflowRunId, signalChannelName, signalValue);
     }
 
     /**
@@ -133,7 +154,7 @@ public class Client {
             final ResetWorkflowTypeAndOptions resetWorkflowTypeAndOptions
     ) {
 
-        return untypedClient.resetWorkflow(workflowId, workflowRunId, resetWorkflowTypeAndOptions);
+        return unregisteredClient.resetWorkflow(workflowId, workflowRunId, resetWorkflowTypeAndOptions);
     }
 
     /**
@@ -145,7 +166,7 @@ public class Client {
     public void stopWorkflow(
             final String workflowId,
             final String workflowRunId) {
-        untypedClient.StopWorkflow(workflowId, workflowRunId);
+        unregisteredClient.StopWorkflow(workflowId, workflowRunId);
     }
 
     public Map<String, Object> getWorkflowDataObjects(
@@ -195,7 +216,7 @@ public class Client {
             }
         }
 
-        final WorkflowGetDataObjectsResponse response = untypedClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys);
+        final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys);
 
         if (response.getObjects() == null) {
             throw new InternalServiceException("query attributes not returned");
@@ -220,7 +241,7 @@ public class Client {
      * @return
      */
     public WorkflowSearchResponse searchWorkflow(final String query, final int pageSize) {
-        return untypedClient.searchWorkflow(query, pageSize);
+        return unregisteredClient.searchWorkflow(query, pageSize);
     }
 
     /**
@@ -230,7 +251,7 @@ public class Client {
      * @return
      */
     public WorkflowSearchResponse searchWorkflow(final WorkflowSearchRequest request) {
-        return untypedClient.searchWorkflow(request);
+        return unregisteredClient.searchWorkflow(request);
     }
 
     public Map<String, Object> getWorkflowSearchAttributes(
@@ -299,7 +320,7 @@ public class Client {
             });
         }
 
-        WorkflowGetSearchAttributesResponse response = untypedClient.getAnyWorkflowSearchAttributes(workflowId, workflowRunId, keyAndTypes);
+        WorkflowGetSearchAttributesResponse response = unregisteredClient.getAnyWorkflowSearchAttributes(workflowId, workflowRunId, keyAndTypes);
 
         if (response.getSearchAttributes() == null) {
             throw new InternalServiceException("query attributes not returned");

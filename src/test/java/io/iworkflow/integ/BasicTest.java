@@ -49,7 +49,7 @@ public class BasicTest {
                 .build();
         
         //client.StartWorkflow(EmptyInputWorkflow.class, EmptyInputWorkflowState1.StateId, null, wfId, startOptions);
-        client.getUntypedClient().startWorkflow(EmptyInputWorkflow.CUSTOM_WF_TYPE, EmptyInputWorkflowState1.StateId, null, wfId, startOptions);
+        client.getUnregisteredClient().startWorkflow(EmptyInputWorkflow.CUSTOM_WF_TYPE, EmptyInputWorkflowState1.StateId, null, wfId, startOptions);
         // wait for workflow to finish
         client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
     }

@@ -11,7 +11,7 @@ import java.util.List;
  * Most of the time, the implementation only needs to return static value for each method.
  * <p>
  * For a dynamic workflow definition, the implementation can return different values based on different constructor inputs.
- * To invokes/interact with a dynamic workflows, applications may need to use {@link UntypedClient} instead of {@link Client}
+ * To invokes/interact with a dynamic workflows, applications may need to use {@link UnregisteredClient} instead of {@link Client}
  */
 public interface Workflow {
     /**
