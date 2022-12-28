@@ -1,8 +1,8 @@
 package io.iworkflow.core;
 
-import io.iworkflow.gen.models.WorkflowStateOptions;
 import org.immutables.value.Value;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -55,13 +55,15 @@ public abstract class StateDecision {
         )).build();
     }
 
-    public static StateDecision singleNextState(final String stateId, final Object stateInput, final WorkflowStateOptions options) {
-        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
-                StateMovement.create(stateId, stateInput, options)
-        )).build();
-    }
-
     public static StateDecision multiNextStates(final StateMovement... stateMovements) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(stateMovements)).build();
+    }
+
+    public static StateDecision multiNextStates(final String... stateIds) {
+        final ArrayList<StateMovement> stateMovements = new ArrayList<StateMovement>();
+        Arrays.stream(stateIds).forEach(id -> {
+            stateMovements.add(StateMovement.create(id));
+        });
+        return ImmutableStateDecision.builder().nextStates(stateMovements).build();
     }
 }
