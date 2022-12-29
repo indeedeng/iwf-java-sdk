@@ -79,7 +79,7 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 - [x] Reset workflow by stateId/StateExecutionId
 
 ## 1.1
-
+- [x] New search attribute types: Double, Bool, Datetime, Keyword array, Text
 - [x] Workflow start options: initial search attributes
 
 ## Future
