@@ -23,4 +23,8 @@ public abstract class CommandRequest {
     public static CommandRequest forAnyCommandCompleted(final BaseCommand... commands) {
         return ImmutableCommandRequest.builder().addAllCommands(Arrays.asList(commands)).deciderTriggerType(DeciderTriggerType.ANY_COMMAND_COMPLETED).build();
     }
+
+    public static CommandRequest forAnyCommandCombinationCompleted(final BaseCommand... commands) {
+        return ImmutableCommandRequest.builder().addAllCommands(Arrays.asList(commands)).deciderTriggerType(DeciderTriggerType.ANY_COMMAND_COMPLETED).build();
+    }
 }

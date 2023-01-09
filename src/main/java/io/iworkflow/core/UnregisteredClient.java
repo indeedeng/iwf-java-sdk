@@ -45,7 +45,7 @@ public class UnregisteredClient {
      * @param startStateId           required
      * @param workflowId             required
      * @param workflowTimeoutSeconds required
-     * @return
+     * @return runId
      */
     public String startWorkflow(
             final String workflowType,
@@ -61,7 +61,7 @@ public class UnregisteredClient {
      * @param workflowId             required
      * @param workflowTimeoutSeconds required
      * @param input                  optional, can be null
-     * @return
+     * @return runId
      */
     public String startWorkflow(
             final String workflowType,
@@ -79,7 +79,7 @@ public class UnregisteredClient {
      * @param workflowTimeoutSeconds required
      * @param input                  optional, can be null
      * @param options                optional, can be null
-     * @return
+     * @return runId
      */
     public String startWorkflow(
             final String workflowType,
