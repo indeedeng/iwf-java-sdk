@@ -42,9 +42,12 @@ public class StateLocalsImpl implements StateLocals {
     }
 
     @Override
-    public void recordStateEvent(final String key, final Object eventData) {
+    public void recordStateEvent(final String key, final Object... eventData) {
         if (recordEvents.containsKey(key)) {
             throw new WorkflowDefinitionException("cannot record the same event for more than once");
+        }
+        if (eventData != null && eventData.length == 1) {
+            recordEvents.put(key, objectEncoder.encode(eventData[0]));
         }
         recordEvents.put(key, objectEncoder.encode(eventData));
     }
