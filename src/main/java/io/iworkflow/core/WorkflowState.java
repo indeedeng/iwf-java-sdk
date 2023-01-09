@@ -62,16 +62,16 @@ public interface WorkflowState<I> {
             final Communication communication);
 
     /**
-     * Optional configuration to adjust the state behaviors
-     * Default:
-     * LOAD_ALL_WITHOUT_LOCKING for dataObjects/searchAttributes,
-     * start/decide API:
-     * timeout:10s
-     * retryPolicy:
-     * InitialIntervalSeconds: 1
-     * MaxInternalSeconds:100
-     * MaximumAttempts: 0
-     * BackoffCoefficient: 2
+     * Optional configuration to adjust the state behaviors. Default values:
+     * - PersistenceLoadingPolicy for dataObjects/searchAttributes: LOAD_ALL_WITHOUT_LOCKING ,
+     * - start/decide API:
+     * -    timeout: 30s
+     * -    retryPolicy:
+     * -        InitialIntervalSeconds: 1
+     * -        MaxInternalSeconds:100
+     * -        MaximumAttempts: 0
+     * -        BackoffCoefficient: 2
+     *
      * @return the optional options
      */
     default WorkflowStateOptions getStateOptions() {
