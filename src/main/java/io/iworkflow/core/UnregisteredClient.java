@@ -40,45 +40,89 @@ public class UnregisteredClient {
                 .buildClient(DefaultApi.class);
     }
 
+    /**
+     * @param workflowType           required
+     * @param startStateId           required
+     * @param workflowId             required
+     * @param workflowTimeoutSeconds required
+     * @return
+     */
     public String startWorkflow(
             final String workflowType,
             final String startStateId,
-            final Object input,
             final String workflowId,
-            final WorkflowOptions options) {
+            final int workflowTimeoutSeconds) {
+        return this.startWorkflow(workflowType, startStateId, workflowId, workflowTimeoutSeconds, null, null);
+    }
 
-        final WorkflowStartOptions startOptions = new WorkflowStartOptions();
-        if (options.getCronSchedule().isPresent()) {
-            startOptions.cronSchedule(CronScheduleValidator.validate(options.getCronSchedule()));
-        }
-        if (options.getWorkflowIdReusePolicy().isPresent()) {
-            startOptions.workflowIDReusePolicy(options.getWorkflowIdReusePolicy().get());
-        }
-        if (options.getWorkflowRetryPolicy().isPresent()) {
-            startOptions.retryPolicy(options.getWorkflowRetryPolicy().get());
-        }
-        if (options.getInitialSearchAttribute().isPresent()) {
-            options.getInitialSearchAttribute().get().forEach(sa -> {
-                assert sa.getValueType() != null;
-                final Object val = Client.getSearchAttributeValue(sa.getValueType(), sa);
-                if (val == null) {
-                    throw new IllegalArgumentException(String.format("search attribute value is not set correctly for key %s with value type %s", sa.getKey(), sa.getValueType()));
-                }
-            });
-            startOptions.searchAttributes(options.getInitialSearchAttribute().get());
-        }
+    /**
+     * @param workflowType           required
+     * @param startStateId           required
+     * @param workflowId             required
+     * @param workflowTimeoutSeconds required
+     * @param input                  optional, can be null
+     * @return
+     */
+    public String startWorkflow(
+            final String workflowType,
+            final String startStateId,
+            final String workflowId,
+            final int workflowTimeoutSeconds,
+            final Object input) {
+        return this.startWorkflow(workflowType, startStateId, workflowId, workflowTimeoutSeconds, input, null);
+    }
+
+    /**
+     * @param workflowType           required
+     * @param startStateId           required
+     * @param workflowId             required
+     * @param workflowTimeoutSeconds required
+     * @param input                  optional, can be null
+     * @param options                optional, can be null
+     * @return
+     */
+    public String startWorkflow(
+            final String workflowType,
+            final String startStateId,
+            final String workflowId,
+            final int workflowTimeoutSeconds,
+            final Object input,
+            final UnregisteredWorkflowOptions options) {
 
         final WorkflowStartRequest request = new WorkflowStartRequest()
                 .workflowId(workflowId)
                 .iwfWorkerUrl(clientOptions.getWorkerUrl())
                 .iwfWorkflowType(workflowType)
-                .workflowTimeoutSeconds(options.getWorkflowTimeoutSeconds())
+                .workflowTimeoutSeconds(workflowTimeoutSeconds)
                 .stateInput(clientOptions.getObjectEncoder().encode(input))
-                .startStateId(startStateId)
-                .workflowStartOptions(startOptions);
+                .startStateId(startStateId);
 
-        if (options.getStartStateOptions().isPresent()) {
-            request.stateOptions(options.getStartStateOptions().get());
+        if (options != null) {
+            final WorkflowStartOptions startOptions = new WorkflowStartOptions();
+            if (options.getCronSchedule().isPresent()) {
+                startOptions.cronSchedule(CronScheduleValidator.validate(options.getCronSchedule()));
+            }
+            if (options.getWorkflowIdReusePolicy().isPresent()) {
+                startOptions.workflowIDReusePolicy(options.getWorkflowIdReusePolicy().get());
+            }
+            if (options.getWorkflowRetryPolicy().isPresent()) {
+                startOptions.retryPolicy(options.getWorkflowRetryPolicy().get());
+            }
+            if (options.getInitialSearchAttribute().size() > 0) {
+                options.getInitialSearchAttribute().forEach(sa -> {
+                    assert sa.getValueType() != null;
+                    final Object val = Client.getSearchAttributeValue(sa.getValueType(), sa);
+                    if (val == null) {
+                        throw new IllegalArgumentException(String.format("search attribute value is not set correctly for key %s with value type %s", sa.getKey(), sa.getValueType()));
+                    }
+                });
+                startOptions.searchAttributes(options.getInitialSearchAttribute());
+            }
+
+            if (options.getStartStateOptions().isPresent()) {
+                request.stateOptions(options.getStartStateOptions().get());
+            }
+            request.workflowStartOptions(startOptions);
         }
 
         WorkflowStartResponse workflowStartResponse = defaultApi.apiV1WorkflowStartPost(request);

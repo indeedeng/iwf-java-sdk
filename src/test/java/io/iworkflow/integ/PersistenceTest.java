@@ -3,9 +3,7 @@ package io.iworkflow.integ;
 import com.google.common.collect.ImmutableMap;
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
-import io.iworkflow.core.WorkflowOptions;
 import io.iworkflow.integ.persistence.BasicPersistenceWorkflow;
-import io.iworkflow.integ.persistence.BasicPersistenceWorkflowState1;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
 import org.junit.jupiter.api.Assertions;
@@ -30,9 +28,8 @@ public class PersistenceTest {
     public void testPersistenceWorkflow() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-persistence-test-id" + System.currentTimeMillis() / 1000;
-        final WorkflowOptions startOptions = WorkflowOptions.minimum(10);
         final String runId = client.startWorkflow(
-                BasicPersistenceWorkflow.class, BasicPersistenceWorkflowState1.STATE_ID, "start", wfId, startOptions);
+                BasicPersistenceWorkflow.class, wfId, 10, "start");
         final String output = client.getSimpleWorkflowResultWithWait(String.class, wfId);
         Map<String, Object> map =
                 client.getWorkflowDataObjects(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
