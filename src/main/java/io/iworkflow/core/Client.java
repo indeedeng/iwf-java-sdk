@@ -39,84 +39,206 @@ public class Client {
         return unregisteredClient;
     }
 
-//    public String startWorkflow(
-//            final Class<? extends Workflow> workflowClass,
-//            final String startStateId,
-//            final String workflowId,
-//            final WorkflowOptions options) {
-//        return startWorkflow(workflowClass, startStateId, null, workflowId, options);
-//    }
+    /**
+     * startWorkflow starts a workflow execution
+     *
+     * @param workflow               is required
+     * @param workflowId             is required
+     * @param workflowTimeoutSeconds is required
+     * @return runId
+     */
+    public String startWorkflow(
+            final Workflow workflow,
+            final String workflowId,
+            final int workflowTimeoutSeconds) {
+        return startWorkflow(workflow, workflowId, workflowTimeoutSeconds, null, null);
+    }
 
+    /**
+     * startWorkflow starts a workflow execution
+     *
+     * @param workflow               is required
+     * @param workflowId             is required
+     * @param workflowTimeoutSeconds is required
+     * @param input                  is optional, can be null
+     * @return runId
+     */
+    public String startWorkflow(
+            final Workflow workflow,
+            final String workflowId,
+            final int workflowTimeoutSeconds,
+            final Object input) {
+        return startWorkflow(workflow, workflowId, workflowTimeoutSeconds, input, null);
+    }
+
+    /**
+     * startWorkflow starts a workflow execution
+     *
+     * @param workflow               is required
+     * @param workflowId             is required
+     * @param workflowTimeoutSeconds is required
+     * @param input                  is optional, can be null
+     * @param options                is optional, can be null
+     * @return runId
+     */
+    public String startWorkflow(
+            final Workflow workflow,
+            final String workflowId,
+            final int workflowTimeoutSeconds,
+            final Object input,
+            final WorkflowOptions options) {
+        final String wfType = Registry.getWorkflowType(workflow);
+        return doStartWorkflow(wfType, workflowId, workflowTimeoutSeconds, input, options);
+    }
+
+    /**
+     * startWorkflow starts a workflow execution
+     *
+     * @param workflowClass          is required
+     * @param workflowId             is required
+     * @param workflowTimeoutSeconds is required
+     * @return runId
+     */
+    public String startWorkflow(
+            final Class<? extends Workflow> workflowClass,
+            final String workflowId,
+            final int workflowTimeoutSeconds) {
+        return startWorkflow(workflowClass, workflowId, workflowTimeoutSeconds, null, null);
+    }
+
+    /**
+     * startWorkflow starts a workflow execution
+     *
+     * @param workflowClass          is required
+     * @param workflowId             is required
+     * @param workflowTimeoutSeconds is required
+     * @param input                  is optional, can be null
+     * @return runId
+     */
+    public String startWorkflow(
+            final Class<? extends Workflow> workflowClass,
+            final String workflowId,
+            final int workflowTimeoutSeconds,
+            final Object input) {
+        return startWorkflow(workflowClass, workflowId, workflowTimeoutSeconds, input, null);
+    }
+
+    /**
+     * startWorkflow starts a workflow execution
+     *
+     * @param workflowClass          is required
+     * @param workflowId             is required
+     * @param workflowTimeoutSeconds is required
+     * @param input                  is optional, can be null
+     * @param option                 is optional, can be null
+     * @return runId
+     */
     public String startWorkflow(
             final Class<? extends Workflow> workflowClass,
             final String workflowId,
             final int workflowTimeoutSeconds,
             final Object input,
-            final WorkflowOptions options) {
+            final WorkflowOptions option) {
         final String wfType = workflowClass.getSimpleName();
+        return doStartWorkflow(wfType, workflowId, workflowTimeoutSeconds, input, option);
+    }
+
+    //final Class<? extends Workflow> workflowClass,
+    private String doStartWorkflow(
+            final String wfType,
+            final String workflowId,
+            final int workflowTimeoutSeconds,
+            final Object input,
+            final WorkflowOptions options) {
+
+        final ImmutableUnregisteredWorkflowOptions.Builder unregisterWorkflowOptions = ImmutableUnregisteredWorkflowOptions.builder();
 
         // validate
         final StateDef stateDef = registry.getWorkflowStartingState(wfType);
         final Class registeredInputType = stateDef.getWorkflowState().getInputType();
-        if (!input.getClass().isAssignableFrom(registeredInputType)) {
+        if (input != null && !input.getClass().isAssignableFrom(registeredInputType)) {
             throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType.getClass()));
         }
 
-        final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(wfType);
-        final List<SearchAttribute> convertedSAs = new ArrayList<>();
+        if (options != null) {
+            final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(wfType);
+            final List<SearchAttribute> convertedSAs = convertToSearchAttributeList(saTypes, options.getInitialSearchAttribute());
+            unregisterWorkflowOptions.workflowIdReusePolicy(options.getWorkflowIdReusePolicy());
+            unregisterWorkflowOptions.cronSchedule(options.getCronSchedule());
+            unregisterWorkflowOptions.workflowRetryPolicy(options.getWorkflowRetryPolicy());
+            if (stateDef.getWorkflowState().getStateOptions() != null) {
+                unregisterWorkflowOptions.startStateOptions(stateDef.getWorkflowState().getStateOptions());
+            }
+            unregisterWorkflowOptions.initialSearchAttribute(convertedSAs);
+        }
 
-        if (options.getInitialSearchAttribute().size() > 0) {
-            options.getInitialSearchAttribute().forEach(saKey -> {
+        return unregisteredClient.startWorkflow(wfType, stateDef.getWorkflowState().getStateId(), workflowId, workflowTimeoutSeconds, input, unregisterWorkflowOptions.build());
+    }
+
+    private List<SearchAttribute> convertToSearchAttributeList(final Map<String, SearchAttributeValueType> saTypes, final Map<String, Object> initialSearchAttribute) {
+        List<SearchAttribute> convertedSAs = new ArrayList<>();
+        if (initialSearchAttribute.size() > 0) {
+            initialSearchAttribute.forEach((saKey, val) -> {
                 if (!saTypes.containsKey(saKey)) {
                     throw new WorkflowDefinitionException(String.format("key %s is not defined as search attribute, all keys are: %s ", saKey, saTypes.keySet()));
                 }
-                final Object val = options.getInitialSearchAttribute().get(saKey);
                 final SearchAttributeValueType valType = saTypes.get(saKey);
+                final SearchAttribute newSa = new SearchAttribute().key(saKey).valueType(valType);
+                boolean isValCorrectType = false;
                 switch (valType) {
                     case INT:
                         if (val instanceof Integer) {
-                            convertedSAs.add(new SearchAttribute().integerValue((Long) val));
+                            Long lVal = ((Integer) val).longValue();
+                            convertedSAs.add(newSa.integerValue(lVal));
+                            isValCorrectType = true;
                         }
                         if (val instanceof Long) {
-                            convertedSAs.add(new SearchAttribute().integerValue(val))
+                            convertedSAs.add(newSa.integerValue((Long) val));
+                            isValCorrectType = true;
                         }
+                        break;
                     case DOUBLE:
-                        return searchAttribute.getDoubleValue();
+                        if (val instanceof Float) {
+                            Double lVal = ((Float) val).doubleValue();
+                            convertedSAs.add(newSa.doubleValue(lVal));
+                            isValCorrectType = true;
+                        }
+                        if (val instanceof Double) {
+                            convertedSAs.add(new SearchAttribute().doubleValue((Double) val));
+                            isValCorrectType = true;
+                        }
+                        break;
                     case BOOL:
-                        return searchAttribute.getBoolValue();
+                        if (val instanceof Boolean) {
+                            convertedSAs.add(newSa.boolValue((Boolean) val));
+                            isValCorrectType = true;
+                        }
+                        break;
                     case KEYWORD:
                     case TEXT:
                     case DATETIME:
-                        return searchAttribute.getStringValue();
+                        if (val instanceof String) {
+                            convertedSAs.add(newSa.stringValue((String) val));
+                            isValCorrectType = true;
+                        }
+                        break;
                     case KEYWORD_ARRAY:
-                        return searchAttribute.getStringArrayValue();
+                        if (val instanceof List) {
+                            final List<String> listArr = (List<String>) val;
+                            convertedSAs.add(newSa.stringArrayValue(listArr));
+                            isValCorrectType = true;
+                        }
+                        break;
                     default:
                         throw new InternalServiceException("unsupported type");
                 }
 
-                final Object val = getSearchAttributeValue(saTypes.get(saKey.getKey()), saKey);
-                if (val == null) {
-                    throw new IllegalArgumentException(String.format("search attribute value is not set correctly for key %s with value type %s", saKey.getKey(), saTypes.get(saKey.getKey())));
+                if (!isValCorrectType) {
+                    throw new IllegalArgumentException(String.format("search attribute value is not set correctly for key %s with value type %s", saKey, valType));
                 }
             });
         }
-
-        return unregisteredClient.startWorkflow(wfType, startStateId, input, workflowId, options);
-    }
-
-    public String startWorkflow(
-            final Workflow workflow,
-            final String startStateId,
-            final Object input,
-            final String workflowId,
-            final WorkflowOptions options) {
-        final String wfType = Registry.getWorkflowType(workflow);
-        final StateDef stateDef = registry.getWorkflowState(wfType, startStateId);
-        if (stateDef == null || !stateDef.getCanStartWorkflow()) {
-            throw new IllegalArgumentException("invalid start stateId " + startStateId);
-        }
-
-        return unregisteredClient.startWorkflow(wfType, startStateId, input, workflowId, options);
+        return convertedSAs;
     }
 
     /**

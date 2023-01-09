@@ -9,8 +9,6 @@ import java.util.Optional;
 
 @Value.Immutable
 public abstract class WorkflowOptions {
-    public abstract Integer getWorkflowTimeoutSeconds();
-
     public abstract Optional<WorkflowIDReusePolicy> getWorkflowIdReusePolicy();
 
     public abstract Optional<String> getCronSchedule();

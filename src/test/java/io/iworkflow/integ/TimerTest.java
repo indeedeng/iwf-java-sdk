@@ -2,9 +2,7 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
-import io.iworkflow.core.WorkflowOptions;
 import io.iworkflow.integ.timer.BasicTimerWorkflow;
-import io.iworkflow.integ.timer.BasicTimerWorkflowState1;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
 import org.junit.jupiter.api.Assertions;
@@ -25,11 +23,10 @@ public class TimerTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final long startTs = System.currentTimeMillis();
         final String wfId = "basic-timer-test-id" + startTs / 1000;
-        final WorkflowOptions startOptions = WorkflowOptions.minimum(10);
         final Integer input = 5;
 
         client.startWorkflow(
-                BasicTimerWorkflow.class, BasicTimerWorkflowState1.STATE_ID, input, wfId, startOptions);
+                BasicTimerWorkflow.class, wfId, 10, input);
 
         client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
         final long elapsed = System.currentTimeMillis() - startTs;
