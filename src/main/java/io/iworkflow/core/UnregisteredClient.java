@@ -17,6 +17,7 @@ import io.iworkflow.gen.models.WorkflowResetResponse;
 import io.iworkflow.gen.models.WorkflowSearchRequest;
 import io.iworkflow.gen.models.WorkflowSearchResponse;
 import io.iworkflow.gen.models.WorkflowSignalRequest;
+import io.iworkflow.gen.models.WorkflowSkipTimerRequest;
 import io.iworkflow.gen.models.WorkflowStartOptions;
 import io.iworkflow.gen.models.WorkflowStartRequest;
 import io.iworkflow.gen.models.WorkflowStartResponse;
@@ -45,7 +46,7 @@ public class UnregisteredClient {
      * @param startStateId           required
      * @param workflowId             required
      * @param workflowTimeoutSeconds required
-     * @return
+     * @return runId
      */
     public String startWorkflow(
             final String workflowType,
@@ -61,7 +62,7 @@ public class UnregisteredClient {
      * @param workflowId             required
      * @param workflowTimeoutSeconds required
      * @param input                  optional, can be null
-     * @return
+     * @return runId
      */
     public String startWorkflow(
             final String workflowType,
@@ -79,7 +80,7 @@ public class UnregisteredClient {
      * @param workflowTimeoutSeconds required
      * @param input                  optional, can be null
      * @param options                optional, can be null
-     * @return
+     * @return runId
      */
     public String startWorkflow(
             final String workflowType,
@@ -236,6 +237,34 @@ public class UnregisteredClient {
 
         final WorkflowResetResponse resp = defaultApi.apiV1WorkflowResetPost(request);
         return resp.getWorkflowRunId();
+    }
+
+    public void skipTimer(
+            final String workflowId,
+            final String workflowRunId,
+            final String workflowStateId,
+            final int stateExecutionNumber,
+            final String timerCommandId) {
+        final String stateExecutionId = String.format("%s-%s", workflowStateId, stateExecutionNumber);
+        defaultApi.apiV1WorkflowTimerSkipPost(new WorkflowSkipTimerRequest()
+                .workflowId(workflowId)
+                .workflowRunId(workflowRunId)
+                .workflowStateExecutionId(stateExecutionId)
+                .timerCommandId(timerCommandId));
+    }
+
+    public void skipTimer(
+            final String workflowId,
+            final String workflowRunId,
+            final String workflowStateId,
+            final int stateExecutionNumber,
+            final int timerCommandIndex) {
+        final String stateExecutionId = String.format("%s-%s", workflowStateId, stateExecutionNumber);
+        defaultApi.apiV1WorkflowTimerSkipPost(new WorkflowSkipTimerRequest()
+                .workflowId(workflowId)
+                .workflowRunId(workflowRunId)
+                .workflowStateExecutionId(stateExecutionId)
+                .timerCommandIndex(timerCommandIndex));
     }
 
     /**

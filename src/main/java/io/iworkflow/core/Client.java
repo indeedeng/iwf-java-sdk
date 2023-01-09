@@ -27,7 +27,7 @@ public class Client {
      * return a full featured client. If you don't have the workflow Registry, you should use {@link UnregisteredClient} instead
      *
      * @param registry      registry is required so that this client can perform some validation checks (workflow types, channel names)
-     * @param clientOptions
+     * @param clientOptions is for configuring the client
      */
     public Client(final Registry registry, final ClientOptions clientOptions) {
         this.registry = registry;
@@ -400,9 +400,9 @@ public class Client {
     /**
      * This is a simplified API to search without pagination, use the other searchWorkflow API for pagination feature
      *
-     * @param query
-     * @param pageSize
-     * @return
+     * @param query    the query of the search, see Cadence/Temporal search attributes doc
+     * @param pageSize the page size
+     * @return the results of the search, this will only return one page of the results
      */
     public WorkflowSearchResponse searchWorkflow(final String query, final int pageSize) {
         return unregisteredClient.searchWorkflow(query, pageSize);
@@ -411,8 +411,8 @@ public class Client {
     /**
      * This search API support pagination
      *
-     * @param request
-     * @return
+     * @param request the search request
+     * @return the results of the search
      */
     public WorkflowSearchResponse searchWorkflow(final WorkflowSearchRequest request) {
         return unregisteredClient.searchWorkflow(request);
@@ -515,5 +515,23 @@ public class Client {
             default:
                 throw new InternalServiceException("unsupported type");
         }
+    }
+
+    public void skipTimer(
+            final String workflowId,
+            final String workflowRunId,
+            final String workflowStateId,
+            final int stateExecutionNumber,
+            final String timerCommandId) {
+        unregisteredClient.skipTimer(workflowId, workflowRunId, workflowStateId, stateExecutionNumber, timerCommandId);
+    }
+
+    public void skipTimer(
+            final String workflowId,
+            final String workflowRunId,
+            final String workflowStateId,
+            final int stateExecutionNumber,
+            final int timerCommandIndex) {
+        unregisteredClient.skipTimer(workflowId, workflowRunId, workflowStateId, stateExecutionNumber, timerCommandIndex);
     }
 }

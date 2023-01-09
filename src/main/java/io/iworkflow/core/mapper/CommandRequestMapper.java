@@ -31,6 +31,7 @@ public class CommandRequestMapper {
 
         final io.iworkflow.gen.models.CommandRequest commandRequestResults = new io.iworkflow.gen.models.CommandRequest()
                 .deciderTriggerType(commandRequest.getDeciderTriggerType());
+
         if (signalCommands.size() > 0) {
             commandRequestResults.signalCommands(signalCommands);
         }
@@ -39,6 +40,9 @@ public class CommandRequestMapper {
         }
         if (interstateChannelCommands.size() > 0) {
             commandRequestResults.interStateChannelCommands(interstateChannelCommands);
+        }
+        if (commandRequest.getCommandCombinations().size() > 0) {
+            commandRequestResults.commandCombinations(commandRequest.getCommandCombinations());
         }
         return commandRequestResults;
     }
