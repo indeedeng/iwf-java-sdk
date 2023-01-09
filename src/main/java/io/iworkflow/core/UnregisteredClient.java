@@ -43,8 +43,9 @@ public class UnregisteredClient {
     public String startWorkflow(
             final String workflowType,
             final String startStateId,
-            final Object input,
             final String workflowId,
+            final int workflowTimeoutSeconds,
+            final Object input,
             final WorkflowOptions options) {
 
         final WorkflowStartOptions startOptions = new WorkflowStartOptions();
