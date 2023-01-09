@@ -516,4 +516,22 @@ public class Client {
                 throw new InternalServiceException("unsupported type");
         }
     }
+
+    public void skipTimer(
+            final String workflowId,
+            final String workflowRunId,
+            final String workflowStateId,
+            final int stateExecutionNumber,
+            final String timerCommandId) {
+        unregisteredClient.skipTimer(workflowId, workflowRunId, workflowStateId, stateExecutionNumber, timerCommandId);
+    }
+
+    public void skipTimer(
+            final String workflowId,
+            final String workflowRunId,
+            final String workflowStateId,
+            final int stateExecutionNumber,
+            final int timerCommandIndex) {
+        unregisteredClient.skipTimer(workflowId, workflowRunId, workflowStateId, stateExecutionNumber, timerCommandIndex);
+    }
 }

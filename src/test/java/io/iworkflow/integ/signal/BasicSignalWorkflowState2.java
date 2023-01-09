@@ -5,18 +5,25 @@ import io.iworkflow.core.StateDecision;
 import io.iworkflow.core.WorkflowState;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
+import io.iworkflow.core.command.TimerCommand;
+import io.iworkflow.core.command.TimerCommandResult;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.communication.SignalCommand;
 import io.iworkflow.core.communication.SignalCommandResult;
 import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.gen.models.ChannelRequestStatus;
+import io.iworkflow.gen.models.TimerStatus;
+
+import java.time.Duration;
+import java.util.Arrays;
 
 import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_NAME_1;
 import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_NAME_2;
 
-public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
-    public static final String STATE_ID = "signal-s1";
-    public static final String COMMAND_ID = "test-signal-id";
+public class BasicSignalWorkflowState2 implements WorkflowState<Integer> {
+    public static final String STATE_ID = "signal-s2";
+    public static final String SIGNAL_COMMAND_ID = "test-signal-id";
+    public static final String TIMER_COMMAND_ID = "test-timer-id";
 
     @Override
     public String getStateId() {
@@ -34,9 +41,13 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
             Integer input,
             Persistence persistence,
             final Communication communication) {
-        return CommandRequest.forAnyCommandCompleted(
-                SignalCommand.create(COMMAND_ID, SIGNAL_CHANNEL_NAME_1),
-                SignalCommand.create(COMMAND_ID, SIGNAL_CHANNEL_NAME_2)
+        return CommandRequest.forAnyCommandCombinationCompleted(
+                Arrays.asList(
+                        Arrays.asList(SIGNAL_COMMAND_ID, TIMER_COMMAND_ID)
+                ),
+                SignalCommand.create(SIGNAL_COMMAND_ID, SIGNAL_CHANNEL_NAME_1),
+                SignalCommand.create(SIGNAL_COMMAND_ID, SIGNAL_CHANNEL_NAME_2),
+                TimerCommand.createByDuration(TIMER_COMMAND_ID, Duration.ofDays(365))
         );
     }
 
@@ -54,6 +65,10 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
         if (signalCommandResult2.getSignalRequestStatusEnum() != ChannelRequestStatus.WAITING) {
             throw new RuntimeException("the second signal should be waiting");
         }
-        return StateDecision.singleNextState(BasicSignalWorkflowState2.STATE_ID, output);
+        final TimerCommandResult timerResult = commandResults.getAllTimerCommandResults().get(0);
+        if (timerResult.getTimerStatus() != TimerStatus.FIRED) {
+            throw new RuntimeException("the timer should be fired");
+        }
+        return StateDecision.gracefulCompleteWorkflow(output);
     }
 }
