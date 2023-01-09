@@ -12,9 +12,7 @@ public class WorkflowRegistry {
     public static final Registry registry = new Registry();
 
     public WorkflowRegistry(List<Workflow> workflows) {
-        for (Workflow wf : workflows) {
-            registry.addWorkflow(wf);
-        }
+        registry.addWorkflows(workflows);
     }
 
     public Registry getRegistry() {
