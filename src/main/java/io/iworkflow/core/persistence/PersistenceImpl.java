@@ -105,7 +105,7 @@ public class PersistenceImpl implements Persistence {
     }
 
     @Override
-    public void recordStateEvent(final String key, final Object eventData) {
+    public void recordStateEvent(final String key, final Object... eventData) {
         stateLocals.recordStateEvent(key, eventData);
     }
 }

@@ -28,5 +28,5 @@ public interface StateLocals {
      * @param key       the key of the event. Within a Start/Decide API, the same key cannot be used for more than once.
      * @param eventData the data of the event.
      */
-    void recordStateEvent(String key, Object eventData);
+    void recordStateEvent(String key, Object... eventData);
 }

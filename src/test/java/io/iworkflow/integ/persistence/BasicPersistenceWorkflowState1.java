@@ -34,6 +34,7 @@ public class BasicPersistenceWorkflowState1 implements WorkflowState<String> {
         persistence.setDataObject(TEST_DATA_OBJECT_KEY, "query-start");
         persistence.setStateLocal("test-key", "test-value-1");
         persistence.recordStateEvent("event-1", "event-1");
+        persistence.recordStateEvent("event-2", "event-1", 2, "event-3");
         persistence.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, 1L);
         persistence.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-1");
         return CommandRequest.empty;
