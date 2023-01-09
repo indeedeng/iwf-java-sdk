@@ -7,6 +7,7 @@ import io.iworkflow.core.persistence.PersistenceFieldDef;
 import io.iworkflow.core.persistence.SearchAttributeDef;
 import io.iworkflow.gen.models.SearchAttributeValueType;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,14 @@ public class Registry {
     private final Map<String, Map<String, SearchAttributeValueType>> searchAttributeTypeStore = new HashMap<>();
 
     private static final String DELIMITER = "_";
+
+    public void addWorkflows(final Workflow... wfs) {
+        Arrays.stream(wfs).forEach(this::addWorkflow);
+    }
+
+    public void addWorkflows(final List<Workflow> wfs) {
+        wfs.forEach(this::addWorkflow);
+    }
 
     public void addWorkflow(final Workflow wf) {
         registerWorkflow(wf);
