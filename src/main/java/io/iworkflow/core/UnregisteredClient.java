@@ -46,7 +46,7 @@ public class UnregisteredClient {
             final String workflowId,
             final int workflowTimeoutSeconds,
             final Object input,
-            final WorkflowOptions options) {
+            final UnregisteredWorkflowOptions options) {
 
         final WorkflowStartOptions startOptions = new WorkflowStartOptions();
         if (options.getCronSchedule().isPresent()) {

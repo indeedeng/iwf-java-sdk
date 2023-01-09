@@ -21,5 +21,5 @@ public abstract class UnregisteredWorkflowOptions {
     
     public abstract Optional<WorkflowStateOptions> getStartStateOptions();
 
-    public abstract Optional<List<SearchAttribute>> getInitialSearchAttribute();
+    public abstract List<SearchAttribute> getInitialSearchAttribute();
 }
