@@ -16,7 +16,9 @@ import java.util.stream.Collectors;
 public class Registry {
     private final Map<String, Workflow> workflowStore = new HashMap<>();
     // (workflow type, stateId)-> StateDef
-    private final Map<String, StateDef> workflowStateStore = new HashMap<>();
+    private final Map<String, StateDef> workflowStateStore = new HashMap<>(); // TODO refactor to use Map<String, Map<String, StateDef>> to be more clear
+
+    private final Map<String, StateDef> workflowStartStateStore = new HashMap<>();
     private final Map<String, Map<String, Class<?>>> signalTypeStore = new HashMap<>();
 
     private final Map<String, Map<String, Class<?>>> interstateChannelTypeStore = new HashMap<>();
@@ -53,17 +55,27 @@ public class Registry {
 
     private void registerWorkflowState(final Workflow wf) {
         String workflowType = getWorkflowType(wf);
-        if(wf.getStates() == null || wf.getStates().size() == 0){
+        if (wf.getStates() == null || wf.getStates().size() == 0) {
             throw new WorkflowDefinitionException(String.format("Workflow type %s must contain at least one state", workflowType));
         }
-        for (StateDef stateDef: wf.getStates()) {
+        int startingStates = 0;
+        StateDef startState = null;
+        for (StateDef stateDef : wf.getStates()) {
             String key = getStateDefKey(workflowType, stateDef.getWorkflowState().getStateId());
             if (workflowStateStore.containsKey(key)) {
                 throw new WorkflowDefinitionException(String.format("Workflow state definition %s already exists", key));
             } else {
                 workflowStateStore.put(key, stateDef);
+                if (stateDef.getCanStartWorkflow()) {
+                    startingStates++;
+                    startState = stateDef;
+                }
             }
         }
+        if (startingStates != 1) {
+            throw new WorkflowDefinitionException(String.format("Workflow must contain exactly one starting states, found %d", startingStates));
+        }
+        workflowStartStateStore.put(workflowType, startState);
     }
 
     private void registerWorkflowSignal(final Workflow wf) {
@@ -185,6 +197,14 @@ public class Registry {
 
     public StateDef getWorkflowState(final String workflowType, final String stateId) {
         return workflowStateStore.get(getStateDefKey(workflowType, stateId));
+    }
+
+    public StateDef getWorkflowStartingState(final String workflowType) {
+        final StateDef state = workflowStartStateStore.get(workflowType);
+        if (state == null) {
+            throw new WorkflowDefinitionException(String.format("workflow type %s is not registered, all registered types are: %s", workflowType, workflowStartStateStore.keySet()));
+        }
+        return state;
     }
 
     public Map<String, Class<?>> getSignalChannelNameToSignalTypeMap(final String workflowType) {

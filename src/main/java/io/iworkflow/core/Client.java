@@ -39,34 +39,64 @@ public class Client {
         return unregisteredClient;
     }
 
-    public String startWorkflow(
-            final Class<? extends Workflow> workflowClass,
-            final String startStateId,
-            final String workflowId,
-            final WorkflowOptions options) {
-        return startWorkflow(workflowClass, startStateId, null, workflowId, options);
-    }
+//    public String startWorkflow(
+//            final Class<? extends Workflow> workflowClass,
+//            final String startStateId,
+//            final String workflowId,
+//            final WorkflowOptions options) {
+//        return startWorkflow(workflowClass, startStateId, null, workflowId, options);
+//    }
 
     public String startWorkflow(
             final Class<? extends Workflow> workflowClass,
-            final String startStateId,
-            final Object input,
             final String workflowId,
+            final int workflowTimeoutSeconds,
+            final Object input,
             final WorkflowOptions options) {
         final String wfType = workflowClass.getSimpleName();
-        final StateDef stateDef = registry.getWorkflowState(wfType, startStateId);
-        if (stateDef == null || !stateDef.getCanStartWorkflow()) {
-            throw new IllegalArgumentException("invalid start stateId " + startStateId);
+
+        // validate
+        final StateDef stateDef = registry.getWorkflowStartingState(wfType);
+        final Class registeredInputType = stateDef.getWorkflowState().getInputType();
+        if (!input.getClass().isAssignableFrom(registeredInputType)) {
+            throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType.getClass()));
         }
+
         final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(wfType);
-        if (options.getInitialSearchAttribute().isPresent()) {
-            options.getInitialSearchAttribute().get().forEach(sa -> {
-                if (!saTypes.containsKey(sa.getKey()) || saTypes.get(sa.getKey()) != sa.getValueType()) {
-                    throw new WorkflowDefinitionException(String.format("key %s is not defined as search attribute value type %s", sa.getKey(), saTypes.get(sa.getKey())));
+        final List<SearchAttribute> convertedSAs = new ArrayList<>();
+
+        if (options.getInitialSearchAttribute().size() > 0) {
+            options.getInitialSearchAttribute().forEach(saKey -> {
+                if (!saTypes.containsKey(saKey)) {
+                    throw new WorkflowDefinitionException(String.format("key %s is not defined as search attribute, all keys are: %s ", saKey, saTypes.keySet()));
                 }
-                final Object val = getSearchAttributeValue(saTypes.get(sa.getKey()), sa);
+                final Object val = options.getInitialSearchAttribute().get(saKey);
+                final SearchAttributeValueType valType = saTypes.get(saKey);
+                switch (valType) {
+                    case INT:
+                        if (val instanceof Integer) {
+                            convertedSAs.add(new SearchAttribute().integerValue((Long) val));
+                        }
+                        if (val instanceof Long) {
+                            convertedSAs.add(new SearchAttribute().integerValue(val))
+                        }
+                    case DOUBLE:
+                        return searchAttribute.getDoubleValue();
+                    case BOOL:
+                        return searchAttribute.getBoolValue();
+                    case KEYWORD:
+                    case TEXT:
+                    case DATETIME:
+                        return searchAttribute.getStringValue();
+                    case KEYWORD_ARRAY:
+                        return searchAttribute.getStringArrayValue();
+                    default:
+                        throw new InternalServiceException("unsupported type");
+                }
+
+                final Object val = getSearchAttributeValue(saTypes.get(saKey.getKey()), saKey);
                 if (val == null) {
-                    throw new IllegalArgumentException(String.format("search attribute value is not set correctly for key %s with value type %s", sa.getKey(), saTypes.get(sa.getKey())));
+                    throw new IllegalArgumentException(String.format("search attribute value is not set correctly for key %s with value type %s", saKey.getKey(), saTypes.get(saKey.getKey())));
                 }
             });
         }
