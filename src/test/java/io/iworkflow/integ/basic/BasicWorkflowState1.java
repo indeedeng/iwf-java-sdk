@@ -10,13 +10,6 @@ import io.iworkflow.core.persistence.Persistence;
 
 public class BasicWorkflowState1 implements WorkflowState<Integer> {
 
-    public static final String StateId = "S1";
-
-    @Override
-    public String getStateId() {
-        return StateId;
-    }
-
     @Override
     public Class<Integer> getInputType() {
         return Integer.class;

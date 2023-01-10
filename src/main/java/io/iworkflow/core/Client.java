@@ -520,10 +520,28 @@ public class Client {
     public void skipTimer(
             final String workflowId,
             final String workflowRunId,
+            final Class<? extends WorkflowState> stateClass,
+            final int stateExecutionNumber,
+            final String timerCommandId) {
+        skipTimer(workflowId, workflowRunId, stateClass.getSimpleName(), stateExecutionNumber, timerCommandId);
+    }
+
+    public void skipTimer(
+            final String workflowId,
+            final String workflowRunId,
             final String workflowStateId,
             final int stateExecutionNumber,
             final String timerCommandId) {
         unregisteredClient.skipTimer(workflowId, workflowRunId, workflowStateId, stateExecutionNumber, timerCommandId);
+    }
+
+    public void skipTimer(
+            final String workflowId,
+            final String workflowRunId,
+            final Class<? extends WorkflowState> stateClass,
+            final int stateExecutionNumber,
+            final int timerCommandIndex) {
+        skipTimer(workflowId, workflowRunId, stateClass.getSimpleName(), stateExecutionNumber, timerCommandIndex);
     }
 
     public void skipTimer(

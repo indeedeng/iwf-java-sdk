@@ -43,12 +43,26 @@ public abstract class StateDecision {
         )).build();
     }
 
+    public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass) {
+        return singleNextState(stateClass.getSimpleName());
+    }
+
+    /**
+     * use the other one with Class<? extends WorkflowState> param if the StateId is provided by default, to make your code cleaner
+     */
     public static StateDecision singleNextState(final String stateId) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 StateMovement.create(stateId)
         )).build();
     }
 
+    public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass, final Object stateInput) {
+        return singleNextState(stateClass.getSimpleName(), stateInput);
+    }
+
+    /**
+     * use the other one with Class<? extends WorkflowState> param if the StateId is provided by default, to make your code cleaner
+     */
     public static StateDecision singleNextState(final String stateId, final Object stateInput) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 StateMovement.create(stateId, stateInput)
@@ -59,6 +73,15 @@ public abstract class StateDecision {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(stateMovements)).build();
     }
 
+    public static StateDecision multiNextStates(final Class<? extends WorkflowState>... states) {
+        List<String> stateIds = new ArrayList<>();
+        Arrays.stream(states).forEach(s -> stateIds.add(s.getSimpleName()));
+        return multiNextStates(stateIds.toArray(new String[0]));
+    }
+
+    /**
+     * use the other one with Class<? extends WorkflowState> param if the StateId is provided by default, to make your code cleaner
+     */
     public static StateDecision multiNextStates(final String... stateIds) {
         final ArrayList<StateMovement> stateMovements = new ArrayList<StateMovement>();
         Arrays.stream(stateIds).forEach(id -> {
