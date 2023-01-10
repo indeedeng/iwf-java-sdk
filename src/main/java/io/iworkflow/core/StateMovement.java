@@ -44,7 +44,7 @@ public abstract class StateMovement {
     }
 
     /**
-     * use the other one with Class<? extends WorkflowState> param if the StateId is provided by default, to make your code cleaner
+     * use the other one with WorkflowState class param if the StateId is provided by default, to make your code cleaner
      */
     public static StateMovement create(final String stateId, final Object stateInput) {
         if (stateId.startsWith(RESERVED_STATE_ID_PREFIX)) {
@@ -60,7 +60,7 @@ public abstract class StateMovement {
     }
 
     /**
-     * use the other one with Class<? extends WorkflowState> param if the StateId is provided by default, to make your code cleaner
+     * use the other one with WorkflowState class param if the StateId is provided by default, to make your code cleaner
      */
     public static StateMovement create(final String stateId) {
         if (stateId.startsWith(RESERVED_STATE_ID_PREFIX)) {

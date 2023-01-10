@@ -9,7 +9,7 @@ See [samples](https://github.com/indeedeng/iwf-java-samples) for how to use this
 ## Gradle
 ```gradle
 // https://mvnrepository.com/artifact/io.iworkflow/iwf-java-sdk
-implementation 'io.iworkflow:iwf-java-sdk:1.1.0'
+implementation 'io.iworkflow:iwf-java-sdk:1.2.0'
 ```
 ## Maven
 ```
@@ -17,7 +17,7 @@ implementation 'io.iworkflow:iwf-java-sdk:1.1.0'
 <dependency>
     <groupId>io.iworkflow</groupId>
     <artifactId>iwf-java-sdk</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <type>pom</type>
 </dependency>
 
@@ -79,14 +79,18 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 - [x] Reset workflow by stateId/StateExecutionId
 
 ## 1.1
+
 - [x] New search attribute types: Double, Bool, Datetime, Keyword array, Text
 - [x] Workflow start options: initial search attributes
 
+## 1.2
+
+- [x] Skip timer API for testing/operation
+- [x] Decider trigger type: any command combination
+
 ## Future
 
-- [ ] Decider trigger type: AnyCommandClosed
 - [ ] WaitForMoreResults in StateDecision
-- [ ] Skip timer API for testing/operation
 - [ ] LongRunningActivityCommand
 - [ ] Failing workflow details
 - [ ] Auto ContinueAsNew
