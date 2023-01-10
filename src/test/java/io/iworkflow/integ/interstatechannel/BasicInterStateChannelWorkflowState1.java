@@ -12,14 +12,8 @@ import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.gen.models.ChannelRequestStatus;
 
 public class BasicInterStateChannelWorkflowState1 implements WorkflowState<Integer> {
-    public static final String STATE_ID = "inter-state-s1";
     public static final String COMMAND_ID = "test-cmd-id";
-
-    @Override
-    public String getStateId() {
-        return STATE_ID;
-    }
-
+    
     @Override
     public Class<Integer> getInputType() {
         return Integer.class;

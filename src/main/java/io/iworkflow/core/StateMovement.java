@@ -39,6 +39,13 @@ public abstract class StateMovement {
                 .build();
     }
 
+    public static StateMovement create(final Class<? extends WorkflowState> stateClass, final Object stateInput) {
+        return create(stateClass.getSimpleName(), stateInput);
+    }
+
+    /**
+     * use the other one with Class<? extends WorkflowState> param if the StateId is provided by default, to make your code cleaner
+     */
     public static StateMovement create(final String stateId, final Object stateInput) {
         if (stateId.startsWith(RESERVED_STATE_ID_PREFIX)) {
             throw new WorkflowDefinitionException("Cannot use reserved stateId prefix for your stateId");
@@ -48,6 +55,13 @@ public abstract class StateMovement {
                 .build();
     }
 
+    public static StateMovement create(final Class<? extends WorkflowState> stateClass) {
+        return create(stateClass.getSimpleName());
+    }
+
+    /**
+     * use the other one with Class<? extends WorkflowState> param if the StateId is provided by default, to make your code cleaner
+     */
     public static StateMovement create(final String stateId) {
         if (stateId.startsWith(RESERVED_STATE_ID_PREFIX)) {
             throw new WorkflowDefinitionException("Cannot use reserved stateId prefix for your stateId");

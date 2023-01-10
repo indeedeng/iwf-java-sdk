@@ -21,15 +21,9 @@ import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_NAME_
 import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_NAME_2;
 
 public class BasicSignalWorkflowState2 implements WorkflowState<Integer> {
-    public static final String STATE_ID = "signal-s2";
     public static final String SIGNAL_COMMAND_ID = "test-signal-id";
     public static final String TIMER_COMMAND_ID = "test-timer-id";
-
-    @Override
-    public String getStateId() {
-        return STATE_ID;
-    }
-
+    
     @Override
     public Class<Integer> getInputType() {
         return Integer.class;

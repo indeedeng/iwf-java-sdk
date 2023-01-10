@@ -7,12 +7,6 @@ import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 
 public interface WorkflowState<I> {
-    /**
-     * a unique identifier of the state
-     *
-     * @return the Id of the state(must be unique in any workflow definition)
-     */
-    String getStateId();
 
     /**
      * This input type is needed for deserializing data back into Java object
@@ -60,6 +54,17 @@ public interface WorkflowState<I> {
             final CommandResults commandResults,
             final Persistence persistence,
             final Communication communication);
+
+    /**
+     * a unique identifier of the state
+     * It must be unique in any workflow definition
+     * By default just the simple name of the implementation class
+     *
+     * @return the StateId of the state
+     */
+    default String getStateId() {
+        return this.getClass().getSimpleName();
+    }
 
     /**
      * Optional configuration to adjust the state behaviors. Default values:

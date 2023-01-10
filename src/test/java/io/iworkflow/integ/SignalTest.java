@@ -36,7 +36,7 @@ public class SignalTest {
                 BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(2));
 
         Thread.sleep(1000);// wait for timer to be ready to skip
-        client.skipTimer(wfId, "", BasicSignalWorkflowState2.STATE_ID, 1, TIMER_COMMAND_ID);
+        client.skipTimer(wfId, "", BasicSignalWorkflowState2.class, 1, TIMER_COMMAND_ID);
 
         final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(5, output);

@@ -15,14 +15,8 @@ import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_NAME_
 import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_NAME_2;
 
 public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
-    public static final String STATE_ID = "signal-s1";
     public static final String COMMAND_ID = "test-signal-id";
-
-    @Override
-    public String getStateId() {
-        return STATE_ID;
-    }
-
+    
     @Override
     public Class<Integer> getInputType() {
         return Integer.class;
@@ -54,6 +48,6 @@ public class BasicSignalWorkflowState1 implements WorkflowState<Integer> {
         if (signalCommandResult2.getSignalRequestStatusEnum() != ChannelRequestStatus.WAITING) {
             throw new RuntimeException("the second signal should be waiting");
         }
-        return StateDecision.singleNextState(BasicSignalWorkflowState2.STATE_ID, output);
+        return StateDecision.singleNextState(BasicSignalWorkflowState2.class, output);
     }
 }
