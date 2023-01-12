@@ -143,7 +143,6 @@ public class Client {
         return doStartWorkflow(wfType, workflowId, workflowTimeoutSeconds, input, option);
     }
 
-    //final Class<? extends Workflow> workflowClass,
     private String doStartWorkflow(
             final String wfType,
             final String workflowId,
@@ -160,15 +159,16 @@ public class Client {
             throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType.getClass()));
         }
 
+        if (stateDef.getWorkflowState().getStateOptions() != null) {
+            unregisterWorkflowOptions.startStateOptions(stateDef.getWorkflowState().getStateOptions());
+        }
         if (options != null) {
-            final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(wfType);
-            final List<SearchAttribute> convertedSAs = convertToSearchAttributeList(saTypes, options.getInitialSearchAttribute());
             unregisterWorkflowOptions.workflowIdReusePolicy(options.getWorkflowIdReusePolicy());
             unregisterWorkflowOptions.cronSchedule(options.getCronSchedule());
             unregisterWorkflowOptions.workflowRetryPolicy(options.getWorkflowRetryPolicy());
-            if (stateDef.getWorkflowState().getStateOptions() != null) {
-                unregisterWorkflowOptions.startStateOptions(stateDef.getWorkflowState().getStateOptions());
-            }
+
+            final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(wfType);
+            final List<SearchAttribute> convertedSAs = convertToSearchAttributeList(saTypes, options.getInitialSearchAttribute());
             unregisterWorkflowOptions.initialSearchAttribute(convertedSAs);
         }
 
