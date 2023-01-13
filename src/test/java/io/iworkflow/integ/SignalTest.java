@@ -2,6 +2,8 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
+import io.iworkflow.core.ClientSideException;
+import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.integ.signal.BasicSignalWorkflow;
 import io.iworkflow.integ.signal.BasicSignalWorkflowState2;
 import io.iworkflow.spring.TestSingletonWorkerService;
@@ -40,5 +42,15 @@ public class SignalTest {
 
         final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(5, output);
+
+        try {
+            client.signalWorkflow(
+                    BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(2));
+        } catch (ClientSideException e) {
+            Assertions.assertEquals(ErrorSubStatus.WORKFLOW_NOT_EXISTS_SUB_STATUS, e.getErrorSubStatus());
+            Assertions.assertEquals(400, e.getStatusCode());
+            return;
+        }
+        Assertions.fail("signal closed workflow should fail");
     }
 }

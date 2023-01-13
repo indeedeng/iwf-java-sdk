@@ -23,6 +23,6 @@ public class BasicWorkflowState1 implements WorkflowState<Integer> {
     @Override
     public StateDecision decide(final Context context, final Integer input, final CommandResults commandResults, Persistence persistence, final Communication communication) {
         final int output = input + 1;
-        return StateDecision.singleNextState(BasicWorkflowState2.StateId, output);
+        return StateDecision.singleNextState(BasicWorkflowState2.class, output);
     }
 }

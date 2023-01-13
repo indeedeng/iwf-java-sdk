@@ -46,8 +46,9 @@ public class BasicTest {
         } catch (ClientSideException e) {
             Assertions.assertEquals(ErrorSubStatus.WORKFLOW_ALREADY_STARTED_SUB_STATUS, e.getErrorSubStatus());
             Assertions.assertEquals(400, e.getStatusCode());
+            return;
         }
-
+        Assertions.fail("get results from closed workflow should fail");
     }
 
     @Test
@@ -68,6 +69,8 @@ public class BasicTest {
         } catch (ClientSideException e) {
             Assertions.assertEquals(ErrorSubStatus.WORKFLOW_NOT_EXISTS_SUB_STATUS, e.getErrorSubStatus());
             Assertions.assertEquals(400, e.getStatusCode());
+            return;
         }
+        Assertions.fail("get results from a wrong workflow should fail");
     }
 }
