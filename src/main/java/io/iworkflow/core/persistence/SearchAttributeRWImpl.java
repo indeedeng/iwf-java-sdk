@@ -1,6 +1,5 @@
 package io.iworkflow.core.persistence;
 
-import io.iworkflow.core.InternalServiceException;
 import io.iworkflow.core.WorkflowDefinitionException;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeValueType;
@@ -54,7 +53,7 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
                         stringArrayAttributeMap.put(sa.getKey(), sa.getStringArrayValue());
                         break;
                     default:
-                        throw new InternalServiceException("empty search attribute value type shouldn't exist");
+                        throw new IllegalStateException("empty search attribute value type shouldn't exist");
                 }
             });
         }
