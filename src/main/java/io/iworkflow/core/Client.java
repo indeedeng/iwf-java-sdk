@@ -230,7 +230,7 @@ public class Client {
                         }
                         break;
                     default:
-                        throw new InternalServiceException("unsupported type");
+                        throw new IllegalStateException("unsupported type");
                 }
 
                 if (!isValCorrectType) {
@@ -383,7 +383,7 @@ public class Client {
         final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys);
 
         if (response.getObjects() == null) {
-            throw new InternalServiceException("data objects not returned");
+            throw new IllegalStateException("data objects not returned");
         }
         Map<String, Object> result = new HashMap<>();
         for (KeyValue keyValue : response.getObjects()) {
@@ -487,7 +487,7 @@ public class Client {
         WorkflowGetSearchAttributesResponse response = unregisteredClient.getAnyWorkflowSearchAttributes(workflowId, workflowRunId, keyAndTypes);
 
         if (response.getSearchAttributes() == null) {
-            throw new InternalServiceException("data objects not returned");
+            throw new IllegalStateException("search attributes not returned");
         }
         Map<String, Object> result = new HashMap<>();
         for (SearchAttribute searchAttribute : response.getSearchAttributes()) {
@@ -513,7 +513,7 @@ public class Client {
             case KEYWORD_ARRAY:
                 return searchAttribute.getStringArrayValue();
             default:
-                throw new InternalServiceException("unsupported type");
+                throw new IllegalStateException("unsupported type");
         }
     }
 

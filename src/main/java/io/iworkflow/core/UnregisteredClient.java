@@ -1,6 +1,7 @@
 package io.iworkflow.core;
 
 import com.google.common.base.Preconditions;
+import feign.FeignException;
 import io.iworkflow.core.validator.CronScheduleValidator;
 import io.iworkflow.gen.api.ApiClient;
 import io.iworkflow.gen.api.DefaultApi;
@@ -126,9 +127,12 @@ public class UnregisteredClient {
             request.workflowStartOptions(startOptions);
         }
 
-        WorkflowStartResponse workflowStartResponse = defaultApi.apiV1WorkflowStartPost(request);
-
-        return workflowStartResponse.getWorkflowRunId();
+        try {
+            WorkflowStartResponse workflowStartResponse = defaultApi.apiV1WorkflowStartPost(request);
+            return workflowStartResponse.getWorkflowRunId();
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
     }
 
     /**
@@ -145,12 +149,18 @@ public class UnregisteredClient {
             Class<T> valueClass,
             final String workflowId,
             final String workflowRunId) {
-        WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithWaitPost(
-                new WorkflowGetRequest()
-                        .needsResults(true)
-                        .workflowId(workflowId)
-                        .workflowRunId(workflowRunId)
-        );
+
+        WorkflowGetResponse workflowGetResponse;
+        try {
+            workflowGetResponse = defaultApi.apiV1WorkflowGetWithWaitPost(
+                    new WorkflowGetRequest()
+                            .needsResults(true)
+                            .workflowId(workflowId)
+                            .workflowRunId(workflowRunId)
+            );
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
 
         if (workflowGetResponse.getResults() == null || workflowGetResponse.getResults().size() == 0) {
             return null;
@@ -180,14 +190,19 @@ public class UnregisteredClient {
      */
     public List<StateCompletionOutput> getComplexWorkflowResultWithWait(
             final String workflowId, final String workflowRunId) {
-        WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithWaitPost(
-                new WorkflowGetRequest()
-                        .needsResults(true)
-                        .workflowId(workflowId)
-                        .workflowRunId(workflowRunId)
-        );
 
-        return workflowGetResponse.getResults();
+        try {
+            WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithWaitPost(
+                    new WorkflowGetRequest()
+                            .needsResults(true)
+                            .workflowId(workflowId)
+                            .workflowRunId(workflowRunId)
+            );
+
+            return workflowGetResponse.getResults();
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
     }
 
     public void signalWorkflow(
@@ -195,11 +210,16 @@ public class UnregisteredClient {
             final String workflowRunId,
             final String signalChannelName,
             final Object signalValue) {
-        defaultApi.apiV1WorkflowSignalPost(new WorkflowSignalRequest()
-                .workflowId(workflowId)
-                .workflowRunId(workflowRunId)
-                .signalChannelName(signalChannelName)
-                .signalValue(clientOptions.getObjectEncoder().encode(signalValue)));
+
+        try {
+            defaultApi.apiV1WorkflowSignalPost(new WorkflowSignalRequest()
+                    .workflowId(workflowId)
+                    .workflowRunId(workflowRunId)
+                    .signalChannelName(signalChannelName)
+                    .signalValue(clientOptions.getObjectEncoder().encode(signalValue)));
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
     }
 
     /**
@@ -235,8 +255,12 @@ public class UnregisteredClient {
             request.stateExecutionId(resetWorkflowTypeAndOptions.getStateExecutionId().get());
         }
 
-        final WorkflowResetResponse resp = defaultApi.apiV1WorkflowResetPost(request);
-        return resp.getWorkflowRunId();
+        try {
+            final WorkflowResetResponse resp = defaultApi.apiV1WorkflowResetPost(request);
+            return resp.getWorkflowRunId();
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
     }
 
     public void skipTimer(
@@ -246,11 +270,16 @@ public class UnregisteredClient {
             final int stateExecutionNumber,
             final String timerCommandId) {
         final String stateExecutionId = String.format("%s-%s", workflowStateId, stateExecutionNumber);
-        defaultApi.apiV1WorkflowTimerSkipPost(new WorkflowSkipTimerRequest()
-                .workflowId(workflowId)
-                .workflowRunId(workflowRunId)
-                .workflowStateExecutionId(stateExecutionId)
-                .timerCommandId(timerCommandId));
+
+        try {
+            defaultApi.apiV1WorkflowTimerSkipPost(new WorkflowSkipTimerRequest()
+                    .workflowId(workflowId)
+                    .workflowRunId(workflowRunId)
+                    .workflowStateExecutionId(stateExecutionId)
+                    .timerCommandId(timerCommandId));
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
     }
 
     public void skipTimer(
@@ -260,11 +289,16 @@ public class UnregisteredClient {
             final int stateExecutionNumber,
             final int timerCommandIndex) {
         final String stateExecutionId = String.format("%s-%s", workflowStateId, stateExecutionNumber);
-        defaultApi.apiV1WorkflowTimerSkipPost(new WorkflowSkipTimerRequest()
-                .workflowId(workflowId)
-                .workflowRunId(workflowRunId)
-                .workflowStateExecutionId(stateExecutionId)
-                .timerCommandIndex(timerCommandIndex));
+
+        try {
+            defaultApi.apiV1WorkflowTimerSkipPost(new WorkflowSkipTimerRequest()
+                    .workflowId(workflowId)
+                    .workflowRunId(workflowRunId)
+                    .workflowStateExecutionId(stateExecutionId)
+                    .timerCommandIndex(timerCommandIndex));
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
     }
 
     /**
@@ -276,9 +310,14 @@ public class UnregisteredClient {
     public void StopWorkflow(
             final String workflowId,
             final String workflowRunId) {
-        defaultApi.apiV1WorkflowStopPost(new WorkflowStopRequest()
-                .workflowId(workflowId)
-                .workflowRunId(workflowRunId));
+
+        try {
+            defaultApi.apiV1WorkflowStopPost(new WorkflowStopRequest()
+                    .workflowId(workflowId)
+                    .workflowRunId(workflowRunId));
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
     }
 
     /**
@@ -292,35 +331,52 @@ public class UnregisteredClient {
             final String workflowRunId,
             List<String> attributeKeys) {
 
-        return defaultApi.apiV1WorkflowDataobjectsGetPost(
-                new WorkflowGetDataObjectsRequest()
-                        .workflowId(workflowId)
-                        .workflowRunId(workflowRunId)
-                        .keys(attributeKeys)
-        );
+        try {
+            return defaultApi.apiV1WorkflowDataobjectsGetPost(
+                    new WorkflowGetDataObjectsRequest()
+                            .workflowId(workflowId)
+                            .workflowRunId(workflowRunId)
+                            .keys(attributeKeys)
+            );
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
     }
 
     public WorkflowSearchResponse searchWorkflow(final String query, final int pageSize) {
-        return defaultApi.apiV1WorkflowSearchPost(
-                new WorkflowSearchRequest()
-                        .query(query)
-                        .pageSize(pageSize)
-        );
+
+        try {
+            return defaultApi.apiV1WorkflowSearchPost(
+                    new WorkflowSearchRequest()
+                            .query(query)
+                            .pageSize(pageSize)
+            );
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
     }
 
     public WorkflowSearchResponse searchWorkflow(final WorkflowSearchRequest request) {
-        return defaultApi.apiV1WorkflowSearchPost(request);
+        try {
+            return defaultApi.apiV1WorkflowSearchPost(request);
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
     }
 
     public WorkflowGetSearchAttributesResponse getAnyWorkflowSearchAttributes(
             final String workflowId,
             final String workflowRunId,
             List<SearchAttributeKeyAndType> attributeKeys) {
-        return defaultApi.apiV1WorkflowSearchattributesGetPost(
-                new WorkflowGetSearchAttributesRequest()
-                        .workflowId(workflowId)
-                        .workflowRunId(workflowRunId)
-                        .keys(attributeKeys)
-        );
+        try {
+            return defaultApi.apiV1WorkflowSearchattributesGetPost(
+                    new WorkflowGetSearchAttributesRequest()
+                            .workflowId(workflowId)
+                            .workflowRunId(workflowRunId)
+                            .keys(attributeKeys)
+            );
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
     }
 }

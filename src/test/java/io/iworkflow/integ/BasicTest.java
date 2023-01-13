@@ -2,10 +2,12 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
+import io.iworkflow.core.ClientSideException;
 import io.iworkflow.core.ImmutableUnregisteredWorkflowOptions;
 import io.iworkflow.core.ImmutableWorkflowOptions;
 import io.iworkflow.core.UnregisteredWorkflowOptions;
 import io.iworkflow.core.WorkflowOptions;
+import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.gen.models.WorkflowIDReusePolicy;
 import io.iworkflow.integ.basic.BasicWorkflow;
 import io.iworkflow.integ.basic.EmptyInputWorkflow;
@@ -37,6 +39,15 @@ public class BasicTest {
         // wait for workflow to finish
         final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(input + 2, output);
+
+        // start the same workflow again should fail
+        try {
+            client.startWorkflow(BasicWorkflow.class, wfId, 10, input, startOptions);
+        } catch (ClientSideException e) {
+            Assertions.assertEquals(ErrorSubStatus.WORKFLOW_ALREADY_STARTED_SUB_STATUS, e.getErrorSubStatus());
+            Assertions.assertEquals(400, e.getStatusCode());
+        }
+
     }
 
     @Test
@@ -46,10 +57,17 @@ public class BasicTest {
         final UnregisteredWorkflowOptions startOptions = ImmutableUnregisteredWorkflowOptions.builder()
                 .workflowIdReusePolicy(WorkflowIDReusePolicy.ALLOW_DUPLICATE)
                 .build();
-        
+
         //client.StartWorkflow(EmptyInputWorkflow.class, EmptyInputWorkflowState1.StateId, null, wfId, startOptions);
         client.getUnregisteredClient().startWorkflow(EmptyInputWorkflow.CUSTOM_WF_TYPE, EmptyInputWorkflowState1.StateId, wfId, 10, null, startOptions);
         // wait for workflow to finish
         client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+
+        try {
+            client.getSimpleWorkflowResultWithWait(Integer.class, "a wrong workflowId");
+        } catch (ClientSideException e) {
+            Assertions.assertEquals(ErrorSubStatus.WORKFLOW_NOT_EXISTS_SUB_STATUS, e.getErrorSubStatus());
+            Assertions.assertEquals(400, e.getStatusCode());
+        }
     }
 }
