@@ -35,7 +35,7 @@ public class DataObjectsRWImpl implements DataObjectsRW {
         }
 
         Class<?> registeredType = keyToTypeMap.get(key);
-        if (!registeredType.isAssignableFrom(type)) {
+        if (!type.isAssignableFrom(registeredType)) {
             throw new IllegalArgumentException(
                     String.format(
                             "registered type %s is not assignable from %s",

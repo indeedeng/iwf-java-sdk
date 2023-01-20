@@ -35,12 +35,11 @@ public class PersistenceTest {
                 client.getWorkflowDataObjects(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 "query-start-query-decide", map.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
-        Map<String, Object> allQueryAttributes =
-                client.getAllDataObjects(BasicPersistenceWorkflow.class, wfId, runId);
-        Assertions.assertEquals(
-                "query-start-query-decide", allQueryAttributes.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
-        Assertions.assertEquals(
-                1, allQueryAttributes.size());
+        Map<String, Object> allDataObjects = client.getAllDataObjects(BasicPersistenceWorkflow.class, wfId, runId);
+        Assertions.assertEquals(3, allDataObjects.size());
+
+        Assertions.assertEquals("query-start-query-decide", allDataObjects.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+
         Assertions.assertEquals("test-value-2", output);
 
         final Map<String, Object> searchAttributes1 = client.getWorkflowSearchAttributes(BasicPersistenceWorkflow.class,
