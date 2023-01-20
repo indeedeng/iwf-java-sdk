@@ -10,13 +10,6 @@ import io.iworkflow.core.persistence.Persistence;
 
 public class EmptyInputWorkflowState1 implements WorkflowState<Void> {
 
-    public static final String StateId = "S1";
-
-    @Override
-    public String getStateId() {
-        return StateId;
-    }
-
     @Override
     public Class<Void> getInputType() {
         return Void.class;
