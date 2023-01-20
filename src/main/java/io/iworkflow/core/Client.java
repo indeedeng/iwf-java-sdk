@@ -155,8 +155,8 @@ public class Client {
         // validate
         final StateDef stateDef = registry.getWorkflowStartingState(wfType);
         final Class registeredInputType = stateDef.getWorkflowState().getInputType();
-        if (input != null && !input.getClass().isAssignableFrom(registeredInputType)) {
-            throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType.getClass()));
+        if (input != null && !registeredInputType.isAssignableFrom(input.getClass())) {
+            throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType));
         }
 
         if (stateDef.getWorkflowState().getStateOptions() != null) {
