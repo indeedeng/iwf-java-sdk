@@ -49,6 +49,9 @@ public abstract class StateDecision {
 
     /**
      * use the other one with WorkflowState class param if the StateId is provided by default, to make your code cleaner
+     *
+     * @param stateId stateId
+     * @return state decision
      */
     public static StateDecision singleNextState(final String stateId) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
@@ -62,6 +65,9 @@ public abstract class StateDecision {
 
     /**
      * use the other one with WorkflowState class param if the StateId is provided by default, to make your code cleaner
+     * @param stateId stateId of next state
+     * @param stateInput input for next state
+     * @return state decision
      */
     public static StateDecision singleNextState(final String stateId, final Object stateInput) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
@@ -81,6 +87,8 @@ public abstract class StateDecision {
 
     /**
      * use the other one with WorkflowState class param if the StateId is provided by default, to make your code cleaner
+     * @param stateIds stateIds of next states
+     * @return state decision
      */
     public static StateDecision multiNextStates(final String... stateIds) {
         final ArrayList<StateMovement> stateMovements = new ArrayList<StateMovement>();
