@@ -36,13 +36,13 @@ public class BasicPersistenceWorkflowState1 implements WorkflowState<String> {
     public CommandRequest start(Context context, String input, Persistence persistence, final Communication communication) {
         persistence.setDataObject(TEST_DATA_OBJECT_KEY, "query-start");
 
-        final io.iworkflow.gen.models.Context fkCtx = new FakContextImpl();
         // it's allowed to set a child class to a parent
-        persistence.setDataObject(TEST_DATA_OBJECT_MODEL_1, fkCtx);
+        persistence.setDataObject(TEST_DATA_OBJECT_MODEL_1, new FakContextImpl());
+        persistence.setDataObject(TEST_DATA_OBJECT_MODEL_1, new io.iworkflow.gen.models.Context());
 
         // but it's not allowed to set a parent to child
         //persistence.setDataObject(TEST_DATA_OBJECT_MODEL_2, new io.iworkflow.gen.models.Context());
-        persistence.setDataObject(TEST_DATA_OBJECT_MODEL_2, fkCtx);
+        persistence.setDataObject(TEST_DATA_OBJECT_MODEL_2, new FakContextImpl());
 
         persistence.setStateLocal("test-key", "test-value-1");
         persistence.recordStateEvent("event-1", "event-1");
@@ -61,6 +61,7 @@ public class BasicPersistenceWorkflowState1 implements WorkflowState<String> {
         persistence.getDataObject(TEST_DATA_OBJECT_MODEL_1, io.iworkflow.gen.models.Context.class);
         // but it's allowed to assign child to parent
         persistence.getDataObject(TEST_DATA_OBJECT_MODEL_2, io.iworkflow.gen.models.Context.class);
+        persistence.getDataObject(TEST_DATA_OBJECT_MODEL_2, FakContextImpl.class);
 
         String testVal2 = persistence.getStateLocal("test-key", String.class);
         if (testVal2.equals("test-value-1")) {
