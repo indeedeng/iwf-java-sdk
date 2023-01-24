@@ -169,7 +169,7 @@ public class UnregisteredClient {
         String checkErrorMessage = "this workflow should have one or zero state output for using this API";
         Preconditions.checkNotNull(workflowGetResponse.getResults(), checkErrorMessage);
         Preconditions.checkArgument(workflowGetResponse.getResults().size() == 1, checkErrorMessage);
-        Preconditions.checkNotNull(workflowGetResponse.getResults().get(0).getCompletedStateOutput(), checkErrorMessage);
+        //Preconditions.checkNotNull(workflowGetResponse.getResults().get(0).getCompletedStateOutput(), checkErrorMessage);
 
         final StateCompletionOutput output = workflowGetResponse.getResults().get(0);
         return clientOptions.getObjectEncoder().decode(output.getCompletedStateOutput(), valueClass);
