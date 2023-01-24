@@ -35,11 +35,13 @@ public abstract class StateDecision {
 
     public static StateDecision gracefulCompleteWorkflow() {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
+                StateMovement.gracefulCompleteWorkflow()
         )).build();
     }
 
     public static StateDecision forceCompleteWorkflow() {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
+                StateMovement.forceCompleteWorkflow()
         )).build();
     }
 
