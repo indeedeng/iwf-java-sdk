@@ -9,7 +9,7 @@ See [samples](https://github.com/indeedeng/iwf-java-samples) for how to use this
 ## Gradle
 ```gradle
 // https://mvnrepository.com/artifact/io.iworkflow/iwf-java-sdk
-implementation 'io.iworkflow:iwf-java-sdk:1.2.5'
+implementation 'io.iworkflow:iwf-java-sdk:1.2.6'
 ```
 ## Maven
 ```
@@ -17,7 +17,7 @@ implementation 'io.iworkflow:iwf-java-sdk:1.2.5'
 <dependency>
     <groupId>io.iworkflow</groupId>
     <artifactId>iwf-java-sdk</artifactId>
-    <version>1.2.5</version>
+    <version>1.2.6</version>
     <type>pom</type>
 </dependency>
 
