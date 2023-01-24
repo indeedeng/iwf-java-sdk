@@ -66,7 +66,9 @@ public class BasicTest {
         //client.StartWorkflow(EmptyInputWorkflow.class, EmptyInputWorkflowState1.StateId, null, wfId, startOptions);
         client.getUnregisteredClient().startWorkflow(EmptyInputWorkflow.CUSTOM_WF_TYPE, EmptyInputWorkflowState1.class.getSimpleName(), wfId, 10, null, startOptions);
         // wait for workflow to finish
-        client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        Integer out = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+
+        Assertions.assertNull(out);
 
         try {
             client.getSimpleWorkflowResultWithWait(Integer.class, "a wrong workflowId");
