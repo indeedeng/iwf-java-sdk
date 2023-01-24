@@ -299,7 +299,7 @@ public class Client {
             throw new IllegalArgumentException(String.format("Workflow %s doesn't have signal %s", wfType, signalChannelName));
         }
         Class<?> signalType = nameToTypeMap.get(signalChannelName);
-        if (!signalType.isInstance(signalValue)) {
+        if (signalValue != null && !signalType.isInstance(signalValue)) {
             throw new IllegalArgumentException(String.format("Signal value is not of type %s", signalType.getName()));
         }
 
