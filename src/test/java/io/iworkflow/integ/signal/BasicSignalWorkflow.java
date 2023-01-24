@@ -16,11 +16,14 @@ public class BasicSignalWorkflow implements Workflow {
 
     public static final String SIGNAL_CHANNEL_NAME_2 = "test-signal-2";
 
+    public static final String SIGNAL_CHANNEL_NAME_3 = "test-signal-3";
+
     @Override
     public List<CommunicationMethodDef> getCommunicationSchema() {
         return Arrays.asList(
                 SignalChannelDef.create(Integer.class, SIGNAL_CHANNEL_NAME_1),
-                SignalChannelDef.create(Integer.class, SIGNAL_CHANNEL_NAME_2)
+                SignalChannelDef.create(Integer.class, SIGNAL_CHANNEL_NAME_2),
+                SignalChannelDef.create(Void.class, SIGNAL_CHANNEL_NAME_3)
         );
     }
 

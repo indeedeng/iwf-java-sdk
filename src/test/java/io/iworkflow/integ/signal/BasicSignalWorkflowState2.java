@@ -19,11 +19,13 @@ import java.util.Arrays;
 
 import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_NAME_1;
 import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_NAME_2;
+import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_NAME_3;
 
 public class BasicSignalWorkflowState2 implements WorkflowState<Integer> {
-    public static final String SIGNAL_COMMAND_ID = "test-signal-id";
+    public static final String SIGNAL_COMMAND_ID_1 = "test-signal-1";
+    public static final String SIGNAL_COMMAND_ID_2 = "test-signal-2";
     public static final String TIMER_COMMAND_ID = "test-timer-id";
-    
+
     @Override
     public Class<Integer> getInputType() {
         return Integer.class;
@@ -37,10 +39,11 @@ public class BasicSignalWorkflowState2 implements WorkflowState<Integer> {
             final Communication communication) {
         return CommandRequest.forAnyCommandCombinationCompleted(
                 Arrays.asList(
-                        Arrays.asList(SIGNAL_COMMAND_ID, TIMER_COMMAND_ID)
+                        Arrays.asList(SIGNAL_COMMAND_ID_1, TIMER_COMMAND_ID)
                 ),
-                SignalCommand.create(SIGNAL_COMMAND_ID, SIGNAL_CHANNEL_NAME_1),
-                SignalCommand.create(SIGNAL_COMMAND_ID, SIGNAL_CHANNEL_NAME_2),
+                SignalCommand.create(SIGNAL_COMMAND_ID_1, SIGNAL_CHANNEL_NAME_1),
+                SignalCommand.create(SIGNAL_COMMAND_ID_1, SIGNAL_CHANNEL_NAME_2),
+                SignalCommand.create(SIGNAL_COMMAND_ID_2, SIGNAL_CHANNEL_NAME_3),
                 TimerCommand.createByDuration(TIMER_COMMAND_ID, Duration.ofDays(365))
         );
     }
@@ -59,6 +62,12 @@ public class BasicSignalWorkflowState2 implements WorkflowState<Integer> {
         if (signalCommandResult2.getSignalRequestStatusEnum() != ChannelRequestStatus.WAITING) {
             throw new RuntimeException("the second signal should be waiting");
         }
+
+        SignalCommandResult signalCommandResult3 = commandResults.getAllSignalCommandResults().get(2);
+        if (signalCommandResult3.getSignalRequestStatusEnum() != ChannelRequestStatus.RECEIVED || !signalCommandResult3.getCommandId().equals(SIGNAL_COMMAND_ID_2)) {
+            throw new RuntimeException("the 3 signal should be received");
+        }
+
         final TimerCommandResult timerResult = commandResults.getAllTimerCommandResults().get(0);
         if (timerResult.getTimerStatus() != TimerStatus.FIRED) {
             throw new RuntimeException("the timer should be fired");

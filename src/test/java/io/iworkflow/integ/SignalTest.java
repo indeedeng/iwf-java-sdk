@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.ExecutionException;
 
 import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_NAME_1;
+import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_NAME_3;
 import static io.iworkflow.integ.signal.BasicSignalWorkflowState2.TIMER_COMMAND_ID;
 
 public class SignalTest {
@@ -36,6 +37,10 @@ public class SignalTest {
 
         client.signalWorkflow(
                 BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(2));
+
+        // test sending null signal
+        client.signalWorkflow(
+                BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_3, null);
 
         Thread.sleep(1000);// wait for timer to be ready to skip
         client.skipTimer(wfId, "", BasicSignalWorkflowState2.class, 1, TIMER_COMMAND_ID);
