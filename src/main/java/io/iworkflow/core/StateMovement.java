@@ -15,11 +15,20 @@ public abstract class StateMovement {
     private final static String GRACEFUL_COMPLETING_WORKFLOW_STATE_ID = "_SYS_GRACEFUL_COMPLETING_WORKFLOW";
     private final static String FORCE_COMPLETING_WORKFLOW_STATE_ID = "_SYS_FORCE_COMPLETING_WORKFLOW";
     private final static String FORCE_FAILING_WORKFLOW_STATE_ID = "_SYS_FORCE_FAILING_WORKFLOW";
-    public static final StateMovement FORCE_FAILING_WORKFLOW_MOVEMENT = ImmutableStateMovement.builder().stateId(FORCE_FAILING_WORKFLOW_STATE_ID).build();
+
+    public static StateMovement gracefulCompleteWorkflow() {
+        return ImmutableStateMovement.builder().stateId(GRACEFUL_COMPLETING_WORKFLOW_STATE_ID)
+                .build();
+    }
 
     public static StateMovement gracefulCompleteWorkflow(final Object output) {
         return ImmutableStateMovement.builder().stateId(GRACEFUL_COMPLETING_WORKFLOW_STATE_ID)
                 .stateInput(output)
+                .build();
+    }
+
+    public static StateMovement forceCompleteWorkflow() {
+        return ImmutableStateMovement.builder().stateId(FORCE_COMPLETING_WORKFLOW_STATE_ID)
                 .build();
     }
 
@@ -29,13 +38,11 @@ public abstract class StateMovement {
                 .build();
     }
 
-    public static StateMovement gracefulCompleteWorkflow() {
-        return ImmutableStateMovement.builder().stateId(GRACEFUL_COMPLETING_WORKFLOW_STATE_ID)
-                .build();
-    }
+    public static final StateMovement FORCE_FAILING_WORKFLOW_MOVEMENT = ImmutableStateMovement.builder().stateId(FORCE_FAILING_WORKFLOW_STATE_ID).build();
 
-    public static StateMovement forceCompleteWorkflow() {
-        return ImmutableStateMovement.builder().stateId(FORCE_COMPLETING_WORKFLOW_STATE_ID)
+    public static StateMovement forceFailWorkflow(final Object output) {
+        return ImmutableStateMovement.builder().stateId(FORCE_FAILING_WORKFLOW_STATE_ID)
+                .stateInput(output)
                 .build();
     }
 
