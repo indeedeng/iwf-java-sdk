@@ -22,6 +22,7 @@ import io.iworkflow.gen.models.WorkflowSkipTimerRequest;
 import io.iworkflow.gen.models.WorkflowStartOptions;
 import io.iworkflow.gen.models.WorkflowStartRequest;
 import io.iworkflow.gen.models.WorkflowStartResponse;
+import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.gen.models.WorkflowStopRequest;
 
 import java.util.List;
@@ -162,6 +163,10 @@ public class UnregisteredClient {
             throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
         }
 
+        if (workflowGetResponse.getWorkflowStatus() != WorkflowStatus.COMPLETED) {
+            throwUncompletedException(workflowGetResponse);
+        }
+
         if (workflowGetResponse.getResults() == null || workflowGetResponse.getResults().size() == 0) {
             return null;
         }
@@ -169,10 +174,19 @@ public class UnregisteredClient {
         String checkErrorMessage = "this workflow should have one or zero state output for using this API";
         Preconditions.checkNotNull(workflowGetResponse.getResults(), checkErrorMessage);
         Preconditions.checkArgument(workflowGetResponse.getResults().size() == 1, checkErrorMessage);
-        //Preconditions.checkNotNull(workflowGetResponse.getResults().get(0).getCompletedStateOutput(), checkErrorMessage);
 
         final StateCompletionOutput output = workflowGetResponse.getResults().get(0);
         return clientOptions.getObjectEncoder().decode(output.getCompletedStateOutput(), valueClass);
+    }
+
+    private void throwUncompletedException(final WorkflowGetResponse workflowGetResponse) {
+        throw new WorkflowUncompletedException(
+                workflowGetResponse.getWorkflowRunId(),
+                workflowGetResponse.getWorkflowStatus(),
+                workflowGetResponse.getErrorType(),
+                workflowGetResponse.getErrorMessage(),
+                workflowGetResponse.getResults(),
+                this.clientOptions.getObjectEncoder());
     }
 
     public <T> T getSimpleWorkflowResultWithWait(
@@ -199,6 +213,10 @@ public class UnregisteredClient {
                             .workflowRunId(workflowRunId)
             );
 
+            if (workflowGetResponse.getWorkflowStatus() != WorkflowStatus.COMPLETED) {
+                throwUncompletedException(workflowGetResponse);
+            }
+            
             return workflowGetResponse.getResults();
         } catch (FeignException.FeignClientException exp) {
             throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
