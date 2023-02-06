@@ -43,6 +43,9 @@ public class WorkflowUncompletedException extends RuntimeException {
     }
 
     public int getStateResultsSize() {
+        if (stateResults == null) {
+            return 0;
+        }
         return stateResults.size();
     }
 
