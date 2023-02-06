@@ -6,6 +6,7 @@ import io.iworkflow.core.WorkflowUncompletedException;
 import io.iworkflow.gen.models.WorkflowErrorType;
 import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.integ.forcefail.ForceFailWorkflow;
+import io.iworkflow.integ.signal.BasicSignalWorkflow;
 import io.iworkflow.integ.stateapifail.StateApiFailWorkflow;
 import io.iworkflow.integ.stateapitimeout.StateApiTimeoutFailWorkflow;
 import io.iworkflow.spring.TestSingletonWorkerService;
@@ -21,6 +22,50 @@ public class WorkflowUncompletedTest {
     @BeforeEach
     public void setup() throws ExecutionException, InterruptedException {
         TestSingletonWorkerService.startWorkerIfNotUp();
+    }
+
+    @Test
+    public void testWorkflowTimeout() throws InterruptedException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "testWorkflowTimeout" + System.currentTimeMillis() / 1000;
+        final Integer input = 1;
+        final String runId = client.startWorkflow(
+                BasicSignalWorkflow.class, wfId, 1, input);
+
+        try {
+            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        } catch (WorkflowUncompletedException e) {
+            Assertions.assertEquals(runId, e.getRunId());
+            Assertions.assertEquals(WorkflowStatus.TIMEOUT, e.getClosedStatus());
+            Assertions.assertNull(e.getErrorSubType());
+            Assertions.assertNull(e.getErrorMessage());
+            Assertions.assertEquals(0, e.getStateResultsSize());
+            return;
+        }
+        Assertions.fail("no exception caught");
+    }
+
+    @Test
+    public void testWorkflowCanceled() throws InterruptedException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "testWorkflowTimeout" + System.currentTimeMillis() / 1000;
+        final Integer input = 1;
+        final String runId = client.startWorkflow(
+                BasicSignalWorkflow.class, wfId, 10, input);
+
+        client.stopWorkflow(wfId, "");
+
+        try {
+            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        } catch (WorkflowUncompletedException e) {
+            Assertions.assertEquals(runId, e.getRunId());
+            Assertions.assertEquals(WorkflowStatus.CANCELED, e.getClosedStatus());
+            Assertions.assertNull(e.getErrorSubType());
+            Assertions.assertNull(e.getErrorMessage());
+            Assertions.assertEquals(0, e.getStateResultsSize());
+            return;
+        }
+        Assertions.fail("no exception caught");
     }
 
     @Test
