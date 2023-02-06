@@ -13,10 +13,6 @@ public abstract class StateDecision {
 
     public static final StateDecision DEAD_END = ImmutableStateDecision.builder().build();
 
-    public static final StateDecision FORCE_FAILING_WORKFLOW = ImmutableStateDecision.builder()
-            .nextStates(Arrays.asList(StateMovement.FORCE_FAILING_WORKFLOW_MOVEMENT))
-            .build();
-
     public static ImmutableStateDecision.Builder builder() {
         return ImmutableStateDecision.builder();
     }
@@ -27,15 +23,15 @@ public abstract class StateDecision {
         )).build();
     }
 
-    public static StateDecision forceCompleteWorkflow(final Object output) {
-        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
-                StateMovement.forceCompleteWorkflow(output)
-        )).build();
-    }
-
     public static StateDecision gracefulCompleteWorkflow() {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 StateMovement.gracefulCompleteWorkflow()
+        )).build();
+    }
+
+    public static StateDecision forceCompleteWorkflow(final Object output) {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
+                StateMovement.forceCompleteWorkflow(output)
         )).build();
     }
 
@@ -44,6 +40,20 @@ public abstract class StateDecision {
                 StateMovement.forceCompleteWorkflow()
         )).build();
     }
+
+    public static StateDecision forceFailWorkflow(final Object output) {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
+                StateMovement.forceFailWorkflow(output)
+        )).build();
+    }
+
+    public static StateDecision forceFailWorkflow() {
+        return FORCE_FAILING_WORKFLOW;
+    }
+
+    public static final StateDecision FORCE_FAILING_WORKFLOW = ImmutableStateDecision.builder()
+            .nextStates(Arrays.asList(StateMovement.FORCE_FAILING_WORKFLOW_MOVEMENT))
+            .build();
 
     public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass) {
         return singleNextState(stateClass.getSimpleName());
