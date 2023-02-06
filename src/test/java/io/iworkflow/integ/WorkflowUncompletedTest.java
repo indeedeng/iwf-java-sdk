@@ -6,7 +6,8 @@ import io.iworkflow.core.WorkflowUncompletedException;
 import io.iworkflow.gen.models.WorkflowErrorType;
 import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.integ.forcefail.ForceFailWorkflow;
-import io.iworkflow.integ.stateapitimeout.StateApiFailWorkflow;
+import io.iworkflow.integ.stateapifail.StateApiFailWorkflow;
+import io.iworkflow.integ.stateapitimeout.StateApiTimeoutFailWorkflow;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
 import org.junit.jupiter.api.Assertions;
@@ -64,6 +65,32 @@ public class WorkflowUncompletedTest {
             Assertions.assertEquals(WorkflowStatus.FAILED, e.getClosedStatus());
             Assertions.assertEquals(WorkflowErrorType.STATE_API_FAIL_MAX_OUT_RETRY_ERROR_TYPE, e.getErrorSubType());
             Assertions.assertTrue(e.getErrorMessage().contains("/api/v1/workflowState/decide"));
+            Assertions.assertEquals(0, e.getStateResultsSize());
+            return;
+        }
+        Assertions.fail("no exception caught");
+    }
+
+    @Test
+    public void testStateApiTimeoutWorkflow() throws InterruptedException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final long startTs = System.currentTimeMillis();
+        final String wfId = "testStateApiTimeoutWorkflow" + startTs / 1000;
+        final Integer input = 5;
+
+        final String runId = client.startWorkflow(
+                StateApiTimeoutFailWorkflow.class, wfId, 10, input);
+
+        try {
+            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        } catch (WorkflowUncompletedException e) {
+            Assertions.assertEquals(runId, e.getRunId());
+            Assertions.assertEquals(WorkflowStatus.FAILED, e.getClosedStatus());
+            Assertions.assertEquals(WorkflowErrorType.STATE_API_FAIL_MAX_OUT_RETRY_ERROR_TYPE, e.getErrorSubType());
+            Assertions.assertTrue(
+                    e.getErrorMessage().contains("activity StartToClose timeout"),
+                    e.getErrorMessage()
+            );
             Assertions.assertEquals(0, e.getStateResultsSize());
             return;
         }
