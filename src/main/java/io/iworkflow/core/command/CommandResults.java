@@ -19,6 +19,8 @@ public abstract class CommandResults {
 
     public abstract List<InterStateChannelCommandResult> getAllInterStateChannelCommandResult();
 
+    public abstract boolean getStateStartApiSucceeded();
+
     // below are helpers
     public <T> T getSignalValueByIndex(int idx) {
         final List<SignalCommandResult> results = getAllSignalCommandResults();

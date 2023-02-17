@@ -36,6 +36,9 @@ public class BasicWorkflowState1 implements WorkflowState<Integer> {
         }
 
         final int output = input + 1;
-        return StateDecision.singleNextState(BasicWorkflowState2.class, output);
+        if (commandResults.getStateStartApiSucceeded())
+            return StateDecision.singleNextState(BasicWorkflowState2.class, output);
+        else
+            return StateDecision.singleNextState(BasicWorkflowState3.class, output);
     }
 }

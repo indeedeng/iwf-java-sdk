@@ -14,7 +14,8 @@ public class BasicWorkflow implements Workflow {
     public List<StateDef> getStates() {
         return Arrays.asList(
                 StateDef.startingState(new BasicWorkflowState1()),
-                StateDef.nonStartingState(new BasicWorkflowState2())
+                StateDef.nonStartingState(new BasicWorkflowState2()),
+                StateDef.nonStartingState(new BasicWorkflowState3())
         );
     }
 }
