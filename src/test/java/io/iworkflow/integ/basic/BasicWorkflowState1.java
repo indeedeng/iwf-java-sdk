@@ -7,6 +7,8 @@ import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
+import io.iworkflow.gen.models.StartApiFailurePolicy;
+import io.iworkflow.gen.models.WorkflowStateOptions;
 
 public class BasicWorkflowState1 implements WorkflowState<Integer> {
 
@@ -36,9 +38,14 @@ public class BasicWorkflowState1 implements WorkflowState<Integer> {
         }
 
         final int output = input + 1;
-        if (commandResults.getStateStartApiSucceeded())
+        if (commandResults.getStateStartApiSucceeded().get())
             return StateDecision.singleNextState(BasicWorkflowState2.class, output);
         else
             return StateDecision.singleNextState(BasicWorkflowState3.class, output);
+    }
+
+    @Override
+    public WorkflowStateOptions getStateOptions() {
+        return new WorkflowStateOptions().startApiFailurePolicy(StartApiFailurePolicy.PROCEED_TO_DECIDE_ON_START_API_FAILURE);
     }
 }

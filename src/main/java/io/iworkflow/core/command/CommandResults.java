@@ -5,6 +5,7 @@ import io.iworkflow.core.communication.SignalCommandResult;
 import org.immutables.value.Value;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is the container of all requested commands' results/statuses
@@ -19,7 +20,7 @@ public abstract class CommandResults {
 
     public abstract List<InterStateChannelCommandResult> getAllInterStateChannelCommandResult();
 
-    public abstract boolean getStateStartApiSucceeded();
+    public abstract Optional<Boolean> getStateStartApiSucceeded();
 
     // below are helpers
     public <T> T getSignalValueByIndex(int idx) {
