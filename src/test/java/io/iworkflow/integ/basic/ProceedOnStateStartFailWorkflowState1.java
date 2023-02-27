@@ -7,6 +7,7 @@ import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
+import io.iworkflow.gen.models.RetryPolicy;
 import io.iworkflow.gen.models.StartApiFailurePolicy;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 
@@ -39,6 +40,8 @@ public class ProceedOnStateStartFailWorkflowState1 implements WorkflowState<Stri
 
     @Override
     public WorkflowStateOptions getStateOptions() {
-        return new WorkflowStateOptions().startApiFailurePolicy(StartApiFailurePolicy.PROCEED_TO_DECIDE_ON_START_API_FAILURE);
+        return new WorkflowStateOptions()
+                .startApiRetryPolicy(new RetryPolicy().maximumAttempts(2))
+                .startApiFailurePolicy(StartApiFailurePolicy.PROCEED_TO_DECIDE_ON_START_API_FAILURE);
     }
 }
