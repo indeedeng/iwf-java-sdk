@@ -11,11 +11,7 @@ import io.iworkflow.core.WorkflowOptions;
 import io.iworkflow.gen.models.Context;
 import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.gen.models.WorkflowIDReusePolicy;
-import io.iworkflow.integ.basic.BasicWorkflow;
-import io.iworkflow.integ.basic.EmptyInputWorkflow;
-import io.iworkflow.integ.basic.EmptyInputWorkflowState1;
-import io.iworkflow.integ.basic.FakContextImpl;
-import io.iworkflow.integ.basic.ModelInputWorkflow;
+import io.iworkflow.integ.basic.*;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
 import org.junit.jupiter.api.Assertions;
@@ -93,5 +89,19 @@ public class BasicTest {
             return;
         }
         Assertions.fail("start workflow with wrong input type should fail");
+    }
+
+    @Test
+    public void testProceedOnStateStartFailWorkflow() throws InterruptedException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "proceed-on-state-start-fail-test-id" + System.currentTimeMillis() / 1000;
+        final WorkflowOptions startOptions = ImmutableWorkflowOptions.builder()
+                .workflowIdReusePolicy(WorkflowIDReusePolicy.REJECT_DUPLICATE)
+                .build();
+        final String input = "input";
+        client.startWorkflow(ProceedOnStateStartFailWorkflow.class, wfId, 10, input, startOptions);
+        // wait for workflow to finish
+        final String output = client.getSimpleWorkflowResultWithWait(String.class, wfId);
+        Assertions.assertEquals("input_state1_start_state1_decide_state2_start_state2_decide", output);
     }
 }

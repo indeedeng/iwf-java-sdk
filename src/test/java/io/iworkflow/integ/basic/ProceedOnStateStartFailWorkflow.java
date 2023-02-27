@@ -8,13 +8,12 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class BasicWorkflow implements Workflow {
-
+public class ProceedOnStateStartFailWorkflow implements Workflow {
     @Override
     public List<StateDef> getStates() {
         return Arrays.asList(
-                StateDef.startingState(new BasicWorkflowState1()),
-                StateDef.nonStartingState(new BasicWorkflowState2())
+                StateDef.startingState(new ProceedOnStateStartFailWorkflowState1()),
+                StateDef.nonStartingState(new ProceedOnStateStartFailWorkflowState2())
         );
     }
 }
