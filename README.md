@@ -93,6 +93,10 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 - [x] Support failing workflow with results
 - [x] Improve workflow uncompleted error return(canceled, failed, timeout, terminated)
 
+### 1.4
+
+- [x] Support PROCEED_TO_DECIDE_ON_START_API_FAILURE for StartApiFailurePolicy
+
 ## Future
 
 - [ ] WaitForMoreResults in StateDecision
