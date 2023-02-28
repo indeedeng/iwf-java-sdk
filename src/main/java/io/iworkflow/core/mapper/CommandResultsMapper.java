@@ -39,6 +39,9 @@ public class CommandResultsMapper {
                             objectEncoder))
                     .collect(Collectors.toList()));
         }
+        if(commandResults.getStateStartApiSucceeded() != null) {
+            builder.stateStartApiSucceeded(commandResults.getStateStartApiSucceeded());
+        }
         return builder.build();
     }
 }
