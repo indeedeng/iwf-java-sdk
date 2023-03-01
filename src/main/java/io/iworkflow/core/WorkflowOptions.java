@@ -1,7 +1,7 @@
 package io.iworkflow.core;
 
-import io.iworkflow.gen.models.RetryPolicy;
 import io.iworkflow.gen.models.WorkflowIDReusePolicy;
+import io.iworkflow.gen.models.WorkflowRetryPolicy;
 import org.immutables.value.Value;
 
 import java.util.Map;
@@ -13,7 +13,7 @@ public abstract class WorkflowOptions {
 
     public abstract Optional<String> getCronSchedule();
 
-    public abstract Optional<RetryPolicy> getWorkflowRetryPolicy();
+    public abstract Optional<WorkflowRetryPolicy> getWorkflowRetryPolicy();
 
     public abstract Map<String, Object> getInitialSearchAttribute();
 }
