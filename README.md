@@ -9,7 +9,7 @@ See [samples](https://github.com/indeedeng/iwf-java-samples) for how to use this
 ## Gradle
 ```gradle
 // https://mvnrepository.com/artifact/io.iworkflow/iwf-java-sdk
-implementation 'io.iworkflow:iwf-java-sdk:1.3.+'
+implementation 'io.iworkflow:iwf-java-sdk:1.4.+'
 ```
 ## Maven
 ```
@@ -17,7 +17,7 @@ implementation 'io.iworkflow:iwf-java-sdk:1.3.+'
 <dependency>
     <groupId>io.iworkflow</groupId>
     <artifactId>iwf-java-sdk</artifactId>
-    <version>1.3.+</version>
+    <version>1.4.+</version>
     <type>pom</type>
 </dependency>
 
@@ -92,6 +92,10 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 
 - [x] Support failing workflow with results
 - [x] Improve workflow uncompleted error return(canceled, failed, timeout, terminated)
+
+### 1.4
+
+- [x] Support PROCEED_TO_DECIDE_ON_START_API_FAILURE for StartApiFailurePolicy
 
 ## Future
 
