@@ -1,8 +1,8 @@
 package io.iworkflow.core;
 
-import io.iworkflow.gen.models.RetryPolicy;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.WorkflowIDReusePolicy;
+import io.iworkflow.gen.models.WorkflowRetryPolicy;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 import org.immutables.value.Value;
 
@@ -15,7 +15,7 @@ public abstract class UnregisteredWorkflowOptions {
 
     public abstract Optional<String> getCronSchedule();
 
-    public abstract Optional<RetryPolicy> getWorkflowRetryPolicy();
+    public abstract Optional<WorkflowRetryPolicy> getWorkflowRetryPolicy();
     
     public abstract Optional<WorkflowStateOptions> getStartStateOptions();
 
