@@ -1,17 +1,30 @@
-# iwf-java-sdk 
+# iwf-java-sdk
+
 Java SDK for [iWF workflow engine](https://github.com/indeedeng/iwf)
 
-See [samples](https://github.com/indeedeng/iwf-java-samples) for how to use this SDK to build your workflow. 
+See [samples](https://github.com/indeedeng/iwf-java-samples) for how to use this SDK to build your workflow.
 
-## Requirements 
+## Requirements
+
 - Java 1.8+
 
-## Gradle
+## How to use
+
+Here is
+the [link to all the versions](https://s01.oss.sonatype.org/content/repositories/releases/io/iworkflow/iwf-java-sdk/)
+available to use.
+For the latest version, [MVN Repository](https://mvnrepository.com/artifact/io.iworkflow/iwf-java-sdk) website may have
+1~2 days delay to show up.
+
+### Gradle
+
 ```gradle
 // https://mvnrepository.com/artifact/io.iworkflow/iwf-java-sdk
 implementation 'io.iworkflow:iwf-java-sdk:1.4.+'
 ```
-## Maven
+
+### Maven
+
 ```
 <!-- https://mvnrepository.com/artifact/io.iworkflow/iwf-java-sdk -->
 <dependency>
