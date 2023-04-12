@@ -114,7 +114,7 @@ public class BasicTest {
     @Test
     public void testWorkflowConfigOverride() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
-        final String wfId = "basic-test-id" + System.currentTimeMillis() / 1000;
+        final String wfId = "wf-config-override-test-id" + System.currentTimeMillis() / 1000;
         final WorkflowOptions startOptions = ImmutableWorkflowOptions.builder()
                 .workflowIdReusePolicy(WorkflowIDReusePolicy.REJECT_DUPLICATE)
                 .workflowConfigOverride(new WorkflowConfig().continueAsNewThreshold(1))
