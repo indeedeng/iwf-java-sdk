@@ -6,11 +6,11 @@ import io.iworkflow.core.communication.InterStateChannelCommand;
 import io.iworkflow.core.mapper.CommandRequestMapper;
 import io.iworkflow.core.mapper.CommandResultsMapper;
 import io.iworkflow.core.mapper.StateDecisionMapper;
-import io.iworkflow.core.persistence.DataObjectsRWImpl;
+import io.iworkflow.core.persistence.DataAttributesRWImpl;
 import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.core.persistence.PersistenceImpl;
 import io.iworkflow.core.persistence.SearchAttributeRWImpl;
-import io.iworkflow.core.persistence.StateLocalsImpl;
+import io.iworkflow.core.persistence.StateExecutionLocalsImpl;
 import io.iworkflow.gen.models.EncodedObject;
 import io.iworkflow.gen.models.InterStateChannelPublishing;
 import io.iworkflow.gen.models.KeyValue;
@@ -45,16 +45,16 @@ public class WorkerService {
         StateDef state = registry.getWorkflowState(req.getWorkflowType(), req.getWorkflowStateId());
         final EncodedObject stateInput = req.getStateInput();
         final Object input = workerOptions.getObjectEncoder().decode(stateInput, state.getWorkflowState().getInputType());
-        final DataObjectsRWImpl dataObjectsRW =
+        final DataAttributesRWImpl dataObjectsRW =
                 createDataObjectsRW(req.getWorkflowType(), req.getDataObjects());
         final Context context = fromIdlContext(req.getContext());
-        final StateLocalsImpl stateLocals = new StateLocalsImpl(toMap(null), workerOptions.getObjectEncoder());
+        final StateExecutionLocalsImpl stateExeLocals = new StateExecutionLocalsImpl(toMap(null), workerOptions.getObjectEncoder());
         final Map<String, SearchAttributeValueType> saTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(saTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
                 registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder());
 
-        Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateLocals);
+        Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateExeLocals);
         CommandRequest commandRequest = state.getWorkflowState().start(
                 context,
                 input,
@@ -76,11 +76,11 @@ public class WorkerService {
         if (dataObjectsRW.getToReturnToServer().size() > 0) {
             response.upsertDataObjects(dataObjectsRW.getToReturnToServer());
         }
-        if (stateLocals.getUpsertStateLocalAttributes().size() > 0) {
-            response.upsertStateLocals(stateLocals.getUpsertStateLocalAttributes());
+        if (stateExeLocals.getUpsertStateExecutionLocalAttributes().size() > 0) {
+            response.upsertStateLocals(stateExeLocals.getUpsertStateExecutionLocalAttributes());
         }
-        if (stateLocals.getRecordEvents().size() > 0) {
-            response.recordEvents(stateLocals.getRecordEvents());
+        if (stateExeLocals.getRecordEvents().size() > 0) {
+            response.recordEvents(stateExeLocals.getRecordEvents());
         }
         final List<SearchAttribute> upsertSAs = createUpsertSearchAttributes(
                 saTypeMap,
@@ -105,17 +105,17 @@ public class WorkerService {
         final Object input;
         final EncodedObject stateInput = req.getStateInput();
         input = workerOptions.getObjectEncoder().decode(stateInput, state.getWorkflowState().getInputType());
-        final DataObjectsRWImpl dataObjectsRW =
+        final DataAttributesRWImpl dataObjectsRW =
                 createDataObjectsRW(req.getWorkflowType(), req.getDataObjects());
 
         final Context context = fromIdlContext(req.getContext());
-        final StateLocalsImpl stateLocals = new StateLocalsImpl(toMap(req.getStateLocals()), workerOptions.getObjectEncoder());
+        final StateExecutionLocalsImpl stateExeLocals = new StateExecutionLocalsImpl(toMap(req.getStateLocals()), workerOptions.getObjectEncoder());
         final Map<String, SearchAttributeValueType> saTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(saTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
                 registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder());
 
-        Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateLocals);
+        Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateExeLocals);
 
         StateDecision stateDecision = state.getWorkflowState().decide(
                 context,
@@ -134,11 +134,11 @@ public class WorkerService {
         if (dataObjectsRW.getToReturnToServer().size() > 0) {
             response.upsertDataObjects(dataObjectsRW.getToReturnToServer());
         }
-        if (stateLocals.getUpsertStateLocalAttributes().size() > 0) {
-            response.upsertStateLocals(stateLocals.getUpsertStateLocalAttributes());
+        if (stateExeLocals.getUpsertStateExecutionLocalAttributes().size() > 0) {
+            response.upsertStateLocals(stateExeLocals.getUpsertStateExecutionLocalAttributes());
         }
-        if (stateLocals.getRecordEvents().size() > 0) {
-            response.recordEvents(stateLocals.getRecordEvents());
+        if (stateExeLocals.getRecordEvents().size() > 0) {
+            response.recordEvents(stateExeLocals.getRecordEvents());
         }
         final List<SearchAttribute> upsertSAs = createUpsertSearchAttributes(
                 saTypeMap,
@@ -173,9 +173,9 @@ public class WorkerService {
         return results;
     }
 
-    private DataObjectsRWImpl createDataObjectsRW(String workflowType, List<KeyValue> keyValues) {
+    private DataAttributesRWImpl createDataObjectsRW(String workflowType, List<KeyValue> keyValues) {
         final Map<String, EncodedObject> map = toMap(keyValues);
-        return new DataObjectsRWImpl(registry.getDataObjectKeyToTypeMap(workflowType), map, workerOptions.getObjectEncoder());
+        return new DataAttributesRWImpl(registry.getDataAttributeKeyToTypeMap(workflowType), map, workerOptions.getObjectEncoder());
     }
 
     private Map<String, EncodedObject> toMap(final List<KeyValue> keyValues) {

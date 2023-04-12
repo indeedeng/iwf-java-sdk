@@ -358,14 +358,14 @@ public class Client {
             List<String> keys) {
         final String wfType = workflowClass.getSimpleName();
 
-        Map<String, Class<?>> queryDataObjectKeyToTypeMap = registry.getDataObjectKeyToTypeMap(wfType);
+        Map<String, Class<?>> queryDataObjectKeyToTypeMap = registry.getDataAttributeKeyToTypeMap(wfType);
         if (queryDataObjectKeyToTypeMap == null) {
             throw new IllegalArgumentException(
                     String.format("Workflow %s is not registered", wfType)
             );
         }
 
-        // if attribute keys is null or empty, iwf server will return all data objects
+        // if attribute keys is null or empty, iwf server will return all data attributes
         if (keys != null && !keys.isEmpty()) {
             List<String> nonExistingDataObjectKeyList = keys.stream()
                     .filter(s -> !queryDataObjectKeyToTypeMap.containsKey(s))
@@ -373,7 +373,7 @@ public class Client {
             if (!nonExistingDataObjectKeyList.isEmpty()) {
                 throw new IllegalArgumentException(
                         String.format(
-                                "data objects not registered: %s",
+                                "data attributes not registered: %s",
                                 String.join(", ", nonExistingDataObjectKeyList)
                         )
                 );
@@ -383,7 +383,7 @@ public class Client {
         final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys);
 
         if (response.getObjects() == null) {
-            throw new IllegalStateException("data objects not returned");
+            throw new IllegalStateException("data attributes not returned");
         }
         Map<String, Object> result = new HashMap<>();
         for (KeyValue keyValue : response.getObjects()) {
@@ -450,7 +450,7 @@ public class Client {
             );
         }
 
-        // if attribute keys is null or empty, iwf server will return all data objects
+        // if attribute keys is null or empty, iwf server will return all data attributes
         if (attributeKeys != null && !attributeKeys.isEmpty()) {
             List<String> nonExistingSearchAttributeList = attributeKeys.stream()
                     .filter(s -> !searchAttributeKeyToTypeMap.containsKey(s))

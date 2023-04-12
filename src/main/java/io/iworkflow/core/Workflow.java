@@ -25,15 +25,16 @@ public interface Workflow {
 
     /**
      * defines all the persistence fields for this workflow, this includes:
-     * 1. Data objects
+     * 1. Data attributes
      * 2. Search attributes
      * <p>
-     * Data objects can be read/upsert in WorkflowState start/decide API
-     * Data objects  can also be read by getDataObjects API by external applications using {@link Client}
+     * Data attributes can be read/upsert in WorkflowState start/decide API
+     * Data attributes  can also be read by getDataObjects API by external applications using {@link Client}
      * <p>
      * Search attributes can be read/upsert in WorkflowState start/decide API
      * Search attributes can also be read by GetSearchAttributes Client API by external applications
      * External applications can also use "SearchWorkflow" API to find workflows by SQL-like query
+     *
      * @return the persistence schema
      */
     default List<PersistenceFieldDef> getPersistenceSchema() {
