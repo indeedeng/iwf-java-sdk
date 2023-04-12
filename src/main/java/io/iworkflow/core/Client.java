@@ -331,7 +331,21 @@ public class Client {
     public void stopWorkflow(
             final String workflowId,
             final String workflowRunId) {
-        unregisteredClient.StopWorkflow(workflowId, workflowRunId);
+        unregisteredClient.stopWorkflow(workflowId, workflowRunId);
+    }
+
+    /**
+     * Stop a workflow with options
+     *
+     * @param workflowId    required
+     * @param workflowRunId optional
+     * @param options       optional
+     */
+    public void stopWorkflow(
+            final String workflowId,
+            final String workflowRunId,
+            final StopWorkflowOptions options) {
+        unregisteredClient.stopWorkflow(workflowId, workflowRunId, options);
     }
 
     public Map<String, Object> getWorkflowDataObjects(

@@ -323,19 +323,41 @@ public class UnregisteredClient {
     }
 
     /**
-     * Stop a workflow, this is essentially terminate the workflow gracefully
+     * Stop a workflow, this is essentially cancel the workflow gracefully
      *
      * @param workflowId    required
      * @param workflowRunId optional
      */
-    public void StopWorkflow(
+    public void stopWorkflow(
             final String workflowId,
             final String workflowRunId) {
+        stopWorkflow(workflowId, workflowRunId, null);
+    }
 
+    /**
+     * Stop a workflow with options
+     *
+     * @param workflowId    required
+     * @param workflowRunId optional
+     * @param options       optional
+     */
+    public void stopWorkflow(
+            final String workflowId,
+            final String workflowRunId,
+            final StopWorkflowOptions options) {
         try {
-            defaultApi.apiV1WorkflowStopPost(new WorkflowStopRequest()
+            final WorkflowStopRequest request = new WorkflowStopRequest()
                     .workflowId(workflowId)
-                    .workflowRunId(workflowRunId));
+                    .workflowRunId(workflowRunId);
+            if (options != null) {
+                if (options.getWorkflowStopType().isPresent()) {
+                    request.stopType(options.getWorkflowStopType().get());
+                }
+                if (options.getReason().isPresent()) {
+                    request.reason(options.getReason().get());
+                }
+            }
+            defaultApi.apiV1WorkflowStopPost(request);
         } catch (FeignException.FeignClientException exp) {
             throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
         }
