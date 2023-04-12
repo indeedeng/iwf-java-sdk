@@ -111,6 +111,9 @@ public class UnregisteredClient {
             if (options.getWorkflowRetryPolicy().isPresent()) {
                 startOptions.retryPolicy(options.getWorkflowRetryPolicy().get());
             }
+            if (options.getWorkflowConfigOverride().isPresent()) {
+                startOptions.workflowConfigOverride(options.getWorkflowConfigOverride().get());
+            }
             if (options.getInitialSearchAttribute().size() > 0) {
                 options.getInitialSearchAttribute().forEach(sa -> {
                     assert sa.getValueType() != null;

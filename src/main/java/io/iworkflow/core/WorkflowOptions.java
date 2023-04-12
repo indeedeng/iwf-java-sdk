@@ -1,5 +1,6 @@
 package io.iworkflow.core;
 
+import io.iworkflow.gen.models.WorkflowConfig;
 import io.iworkflow.gen.models.WorkflowIDReusePolicy;
 import io.iworkflow.gen.models.WorkflowRetryPolicy;
 import org.immutables.value.Value;
@@ -16,4 +17,6 @@ public abstract class WorkflowOptions {
     public abstract Optional<WorkflowRetryPolicy> getWorkflowRetryPolicy();
 
     public abstract Map<String, Object> getInitialSearchAttribute();
+
+    public abstract Optional<WorkflowConfig> getWorkflowConfigOverride();
 }
