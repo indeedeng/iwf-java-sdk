@@ -7,6 +7,7 @@ import io.iworkflow.gen.models.StateMovement;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 
 import static io.iworkflow.core.StateMovement.RESERVED_STATE_ID_PREFIX;
+import static io.iworkflow.core.WorkflowState.shouldSkipWaitUntil;
 
 public class StateMovementMapper {
 
@@ -17,9 +18,16 @@ public class StateMovementMapper {
                 .stateInput(objectEncoder.encode(input));
         if (!stateMovement.getStateId().startsWith(RESERVED_STATE_ID_PREFIX)) {
             final StateDef stateDef = registry.getWorkflowState(workflowType, stateMovement.getStateId());
-            final WorkflowStateOptions options = stateDef.getWorkflowState().getStateOptions();
-            if (options != null) {
-                movement.stateOptions(options);
+            WorkflowStateOptions stateOptions = stateDef.getWorkflowState().getStateOptions();
+            if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
+                if (stateOptions == null) {
+                    stateOptions = new WorkflowStateOptions().skipWaitUntil(true);
+                } else {
+                    stateOptions.skipWaitUntil(true);
+                }
+            }
+            if (stateOptions != null) {
+                movement.stateOptions(stateOptions);
             }
         }
         return movement;

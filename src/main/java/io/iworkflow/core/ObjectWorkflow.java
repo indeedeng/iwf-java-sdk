@@ -8,10 +8,7 @@ import java.util.List;
 
 /**
  * This is the interface to define an object workflow definition.
- * Most of the time, the implementation only needs to return static value for each method.
- * <p>
- * For a dynamic workflow definition, the implementation can return different values based on different constructor inputs.
- * To invokes/interact with a dynamic workflows, applications may need to use {@link UnregisteredClient} instead of {@link Client}
+ * ObjectWorkflow is a top level concept in iWF. Any object that is long-lasting(at least a few seconds) can be modeled as an "ObjectWorkflow".
  */
 public interface ObjectWorkflow {
     /**
