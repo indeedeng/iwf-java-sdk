@@ -1,7 +1,7 @@
 package io.iworkflow.core.command;
 
 import io.iworkflow.gen.models.CommandCombination;
-import io.iworkflow.gen.models.DeciderTriggerType;
+import io.iworkflow.gen.models.CommandWaitingType;
 import org.immutables.value.Value;
 
 import java.util.ArrayList;
@@ -14,11 +14,11 @@ public abstract class CommandRequest {
 
     public abstract List<CommandCombination> getCommandCombinations();
 
-    public abstract DeciderTriggerType getDeciderTriggerType();
+    public abstract CommandWaitingType getCommandWaitingType();
 
     // empty command request will jump to decide stage immediately.
-    // It doesn't matter whatever DeciderTriggerType is provided. But it's required so we have to put one.
-    public static final CommandRequest empty = ImmutableCommandRequest.builder().deciderTriggerType(DeciderTriggerType.ALL_COMMAND_COMPLETED).build();
+    // It doesn't matter whatever CommandWaitingType is provided. But it's required so we have to put one.
+    public static final CommandRequest empty = ImmutableCommandRequest.builder().commandWaitingType(CommandWaitingType.ALL_COMPLETED).build();
 
     /**
      * forAllCommandCompleted will wait for all the commands to complete
@@ -27,7 +27,7 @@ public abstract class CommandRequest {
      * @return the command request
      */
     public static CommandRequest forAllCommandCompleted(final BaseCommand... commands) {
-        return ImmutableCommandRequest.builder().addAllCommands(Arrays.asList(commands)).deciderTriggerType(DeciderTriggerType.ALL_COMMAND_COMPLETED).build();
+        return ImmutableCommandRequest.builder().addAllCommands(Arrays.asList(commands)).commandWaitingType(CommandWaitingType.ALL_COMPLETED).build();
     }
 
     /**
@@ -37,7 +37,7 @@ public abstract class CommandRequest {
      * @return the command request
      */
     public static CommandRequest forAnyCommandCompleted(final BaseCommand... commands) {
-        return ImmutableCommandRequest.builder().addAllCommands(Arrays.asList(commands)).deciderTriggerType(DeciderTriggerType.ANY_COMMAND_COMPLETED).build();
+        return ImmutableCommandRequest.builder().addAllCommands(Arrays.asList(commands)).commandWaitingType(CommandWaitingType.ANY_COMPLETED).build();
     }
 
     /**
@@ -55,7 +55,7 @@ public abstract class CommandRequest {
         return ImmutableCommandRequest.builder()
                 .commandCombinations(combinations)
                 .addAllCommands(Arrays.asList(commands))
-                .deciderTriggerType(DeciderTriggerType.ANY_COMMAND_COMBINATION_COMPLETED)
+                .commandWaitingType(CommandWaitingType.ANY_COMBINATION_COMPLETED)
                 .build();
     }
 }

@@ -30,7 +30,7 @@ public class CommandRequestMapper {
                 .collect(Collectors.toList());
 
         final io.iworkflow.gen.models.CommandRequest commandRequestResults = new io.iworkflow.gen.models.CommandRequest()
-                .deciderTriggerType(commandRequest.getDeciderTriggerType());
+                .commandWaitingType(commandRequest.getDeciderTriggerType());
 
         if (signalCommands.size() > 0) {
             commandRequestResults.signalCommands(signalCommands);

@@ -20,7 +20,7 @@ public abstract class CommandResults {
 
     public abstract List<InterStateChannelCommandResult> getAllInterStateChannelCommandResult();
 
-    public abstract Optional<Boolean> getStateStartApiSucceeded();
+    public abstract Optional<Boolean> getWaitUntilApiSucceeded();
 
     // below are helpers
     public <T> T getSignalValueByIndex(int idx) {
