@@ -106,7 +106,7 @@ public interface WorkflowState<I> {
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }
-        if (waitUntilMethod.getDeclaringClass().equals(ObjectWorkflow.class)) {
+        if (waitUntilMethod.getDeclaringClass().equals(WorkflowState.class)) {
             return true;
         }
         return false;
