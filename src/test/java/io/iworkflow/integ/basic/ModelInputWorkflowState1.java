@@ -16,12 +16,12 @@ public class ModelInputWorkflowState1 implements WorkflowState<io.iworkflow.gen.
     }
 
     @Override
-    public CommandRequest start(final Context context, final io.iworkflow.gen.models.Context input, Persistence persistence, final Communication communication) {
+    public CommandRequest waitUntil(final Context context, final io.iworkflow.gen.models.Context input, Persistence persistence, final Communication communication) {
         return CommandRequest.empty;
     }
 
     @Override
-    public StateDecision decide(final Context context, final io.iworkflow.gen.models.Context input, final CommandResults commandResults, Persistence persistence, final Communication communication) {
+    public StateDecision execute(final Context context, final io.iworkflow.gen.models.Context input, final CommandResults commandResults, Persistence persistence, final Communication communication) {
         return StateDecision.gracefulCompleteWorkflow(1);
     }
 }

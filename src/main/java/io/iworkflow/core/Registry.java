@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Registry {
-    private final Map<String, Workflow> workflowStore = new HashMap<>();
+    private final Map<String, ObjectWorkflow> workflowStore = new HashMap<>();
     // (workflow type, stateId)-> StateDef
     private final Map<String, StateDef> workflowStateStore = new HashMap<>(); // TODO refactor to use Map<String, Map<String, StateDef>> to be more clear
 
@@ -29,15 +29,15 @@ public class Registry {
 
     private static final String DELIMITER = "_";
 
-    public void addWorkflows(final Workflow... wfs) {
+    public void addWorkflows(final ObjectWorkflow... wfs) {
         Arrays.stream(wfs).forEach(this::addWorkflow);
     }
 
-    public void addWorkflows(final List<Workflow> wfs) {
+    public void addWorkflows(final List<ObjectWorkflow> wfs) {
         wfs.forEach(this::addWorkflow);
     }
 
-    public void addWorkflow(final Workflow wf) {
+    public void addWorkflow(final ObjectWorkflow wf) {
         registerWorkflow(wf);
         registerWorkflowState(wf);
         registerWorkflowSignal(wf);
@@ -46,14 +46,14 @@ public class Registry {
         registerWorkflowSearchAttributes(wf);
     }
 
-    public static String getWorkflowType(final Workflow wf) {
+    public static String getWorkflowType(final ObjectWorkflow wf) {
         if (wf.getWorkflowType().isEmpty()) {
             return wf.getClass().getSimpleName();
         }
         return wf.getWorkflowType();
     }
 
-    private void registerWorkflow(final Workflow wf) {
+    private void registerWorkflow(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
 
         if (workflowStore.containsKey(workflowType)) {
@@ -62,14 +62,14 @@ public class Registry {
         workflowStore.put(workflowType, wf);
     }
 
-    private void registerWorkflowState(final Workflow wf) {
+    private void registerWorkflowState(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
-        if (wf.getStates() == null || wf.getStates().size() == 0) {
+        if (wf.getWorkflowStates() == null || wf.getWorkflowStates().size() == 0) {
             throw new WorkflowDefinitionException(String.format("Workflow type %s must contain at least one state", workflowType));
         }
         int startingStates = 0;
         StateDef startState = null;
-        for (StateDef stateDef : wf.getStates()) {
+        for (StateDef stateDef : wf.getWorkflowStates()) {
             String key = getStateDefKey(workflowType, stateDef.getWorkflowState().getStateId());
             if (workflowStateStore.containsKey(key)) {
                 throw new WorkflowDefinitionException(String.format("Workflow state definition %s already exists", key));
@@ -87,7 +87,7 @@ public class Registry {
         workflowStartStateStore.put(workflowType, startState);
     }
 
-    private void registerWorkflowSignal(final Workflow wf) {
+    private void registerWorkflowSignal(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
         final List<SignalChannelDef> channels = getSignalChannels(wf);
         if (channels == null || channels.isEmpty()) {
@@ -106,7 +106,7 @@ public class Registry {
         }
     }
 
-    private void registerWorkflowInterstateChannel(final Workflow wf) {
+    private void registerWorkflowInterstateChannel(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
         final List<InterStateChannelDef> channels = getInterStateChannels(wf);
         if (channels == null || channels.isEmpty()) {
@@ -125,7 +125,7 @@ public class Registry {
         }
     }
 
-    private void registerWorkflowDataAttributes(final Workflow wf) {
+    private void registerWorkflowDataAttributes(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
         final List<DataAttributeDef> fields = getDataAttributeFields(wf);
         if (fields == null || fields.isEmpty()) {
@@ -150,7 +150,7 @@ public class Registry {
         }
     }
 
-    private List<DataAttributeDef> getDataAttributeFields(final Workflow wf) {
+    private List<DataAttributeDef> getDataAttributeFields(final ObjectWorkflow wf) {
         final Set<String> keySet = wf.getPersistenceSchema().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
         if (keySet.size() != wf.getPersistenceSchema().size()) {
             throw new WorkflowDefinitionException("cannot have conflict key definition in persistence schema");
@@ -158,7 +158,7 @@ public class Registry {
         return wf.getPersistenceSchema().stream().filter((f) -> f instanceof DataAttributeDef).map(f -> (DataAttributeDef) f).collect(Collectors.toList());
     }
 
-    private List<SearchAttributeDef> getSearchAttributeFields(final Workflow wf) {
+    private List<SearchAttributeDef> getSearchAttributeFields(final ObjectWorkflow wf) {
         final Set<String> keySet = wf.getPersistenceSchema().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
         if (keySet.size() != wf.getPersistenceSchema().size()) {
             throw new WorkflowDefinitionException("cannot have conflict key definition in persistence schema");
@@ -166,15 +166,15 @@ public class Registry {
         return wf.getPersistenceSchema().stream().filter((f) -> f instanceof SearchAttributeDef).map(f -> (SearchAttributeDef) f).collect(Collectors.toList());
     }
 
-    private List<InterStateChannelDef> getInterStateChannels(final Workflow wf) {
+    private List<InterStateChannelDef> getInterStateChannels(final ObjectWorkflow wf) {
         return wf.getCommunicationSchema().stream().filter((f) -> f instanceof InterStateChannelDef).map(f -> (InterStateChannelDef) f).collect(Collectors.toList());
     }
 
-    private List<SignalChannelDef> getSignalChannels(final Workflow wf) {
+    private List<SignalChannelDef> getSignalChannels(final ObjectWorkflow wf) {
         return wf.getCommunicationSchema().stream().filter((f) -> f instanceof SignalChannelDef).map(f -> (SignalChannelDef) f).collect(Collectors.toList());
     }
 
-    private void registerWorkflowSearchAttributes(final Workflow wf) {
+    private void registerWorkflowSearchAttributes(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
         final List<SearchAttributeDef> fields = getSearchAttributeFields(wf);
         if (fields == null || fields.isEmpty()) {
@@ -200,7 +200,7 @@ public class Registry {
         }
     }
 
-    public Workflow getWorkflow(final String workflowType) {
+    public ObjectWorkflow getWorkflow(final String workflowType) {
         return workflowStore.get(workflowType);
     }
 

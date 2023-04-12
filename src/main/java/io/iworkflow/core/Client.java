@@ -48,7 +48,7 @@ public class Client {
      * @return runId
      */
     public String startWorkflow(
-            final Workflow workflow,
+            final ObjectWorkflow workflow,
             final String workflowId,
             final int workflowTimeoutSeconds) {
         return startWorkflow(workflow, workflowId, workflowTimeoutSeconds, null, null);
@@ -64,7 +64,7 @@ public class Client {
      * @return runId
      */
     public String startWorkflow(
-            final Workflow workflow,
+            final ObjectWorkflow workflow,
             final String workflowId,
             final int workflowTimeoutSeconds,
             final Object input) {
@@ -82,7 +82,7 @@ public class Client {
      * @return runId
      */
     public String startWorkflow(
-            final Workflow workflow,
+            final ObjectWorkflow workflow,
             final String workflowId,
             final int workflowTimeoutSeconds,
             final Object input,
@@ -100,7 +100,7 @@ public class Client {
      * @return runId
      */
     public String startWorkflow(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final int workflowTimeoutSeconds) {
         return startWorkflow(workflowClass, workflowId, workflowTimeoutSeconds, null, null);
@@ -116,7 +116,7 @@ public class Client {
      * @return runId
      */
     public String startWorkflow(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final int workflowTimeoutSeconds,
             final Object input) {
@@ -134,7 +134,7 @@ public class Client {
      * @return runId
      */
     public String startWorkflow(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final int workflowTimeoutSeconds,
             final Object input,
@@ -281,7 +281,7 @@ public class Client {
     }
 
     public void signalWorkflow(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
             final String signalChannelName,
@@ -334,7 +334,7 @@ public class Client {
     }
 
     public Map<String, Object> getWorkflowDataObjects(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
             List<String> keys) {
@@ -345,14 +345,14 @@ public class Client {
     }
 
     public Map<String, Object> getAllDataObjects(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId) {
         return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, null);
     }
 
     private Map<String, Object> doGetWorkflowDataObjects(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
             List<String> keys) {
@@ -419,7 +419,7 @@ public class Client {
     }
 
     public Map<String, Object> getWorkflowSearchAttributes(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
             List<String> attributeKeys) {
@@ -430,14 +430,14 @@ public class Client {
     }
 
     public Map<String, Object> getAllSearchAttributes(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId) {
         return doGetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, null);
     }
 
     private Map<String, Object> doGetWorkflowSearchAttributes(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
             final List<String> attributeKeys) {

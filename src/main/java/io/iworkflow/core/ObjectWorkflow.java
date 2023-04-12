@@ -7,13 +7,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This is the interface to define a workflow definition.
+ * This is the interface to define an object workflow definition.
  * Most of the time, the implementation only needs to return static value for each method.
  * <p>
  * For a dynamic workflow definition, the implementation can return different values based on different constructor inputs.
  * To invokes/interact with a dynamic workflows, applications may need to use {@link UnregisteredClient} instead of {@link Client}
  */
-public interface Workflow {
+public interface ObjectWorkflow {
     /**
      * defines the states of the workflow. A state represents a step of the workflow state machine.
      * A state can execute some commands (signal/timer) and wait for result
@@ -21,7 +21,7 @@ public interface Workflow {
      *
      * @return all the state definitions
      */
-    List<StateDef> getStates();
+    List<StateDef> getWorkflowStates();
 
     /**
      * defines all the persistence fields for this workflow, this includes:

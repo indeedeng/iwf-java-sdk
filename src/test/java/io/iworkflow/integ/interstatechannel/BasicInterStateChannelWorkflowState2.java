@@ -16,7 +16,7 @@ public class BasicInterStateChannelWorkflowState2 implements WorkflowState<Integ
     }
 
     @Override
-    public CommandRequest start(
+    public CommandRequest waitUntil(
             Context context,
             Integer input,
             Persistence persistence, final Communication communication) {
@@ -25,7 +25,7 @@ public class BasicInterStateChannelWorkflowState2 implements WorkflowState<Integ
     }
 
     @Override
-    public StateDecision decide(
+    public StateDecision execute(
             Context context,
             Integer input,
             CommandResults commandResults,

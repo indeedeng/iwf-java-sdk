@@ -16,7 +16,7 @@ public class BasicWorkflowState1 implements WorkflowState<Integer> {
     }
 
     @Override
-    public CommandRequest start(final Context context, final Integer input, Persistence persistence, final Communication communication) {
+    public CommandRequest waitUntil(final Context context, final Integer input, Persistence persistence, final Communication communication) {
         if (context.getAttempt() <= 0) {
             throw new RuntimeException("attempt must be greater than zero");
         }
@@ -27,7 +27,7 @@ public class BasicWorkflowState1 implements WorkflowState<Integer> {
     }
 
     @Override
-    public StateDecision decide(final Context context, final Integer input, final CommandResults commandResults, Persistence persistence, final Communication communication) {
+    public StateDecision execute(final Context context, final Integer input, final CommandResults commandResults, Persistence persistence, final Communication communication) {
         if (context.getAttempt() <= 0) {
             throw new RuntimeException("attempt must be greater than zero");
         }

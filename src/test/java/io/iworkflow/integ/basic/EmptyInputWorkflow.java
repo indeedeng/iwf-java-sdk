@@ -1,19 +1,19 @@
 package io.iworkflow.integ.basic;
 
+import io.iworkflow.core.ObjectWorkflow;
 import io.iworkflow.core.StateDef;
-import io.iworkflow.core.Workflow;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class EmptyInputWorkflow implements Workflow {
+public class EmptyInputWorkflow implements ObjectWorkflow {
 
     public static final String CUSTOM_WF_TYPE = "test-customized-wf-type";
 
     @Override
-    public List<StateDef> getStates() {
+    public List<StateDef> getWorkflowStates() {
         return Arrays.asList(
                 StateDef.startingState(new EmptyInputWorkflowState1()),
                 StateDef.nonStartingState(new EmptyInputWorkflowState2())

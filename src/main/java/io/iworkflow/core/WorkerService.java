@@ -55,7 +55,7 @@ public class WorkerService {
                 registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder());
 
         Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateExeLocals);
-        CommandRequest commandRequest = state.getWorkflowState().start(
+        CommandRequest commandRequest = state.getWorkflowState().waitUntil(
                 context,
                 input,
                 persistence,
@@ -117,7 +117,7 @@ public class WorkerService {
 
         Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateExeLocals);
 
-        StateDecision stateDecision = state.getWorkflowState().decide(
+        StateDecision stateDecision = state.getWorkflowState().execute(
                 context,
                 input,
                 CommandResultsMapper.fromGenerated(

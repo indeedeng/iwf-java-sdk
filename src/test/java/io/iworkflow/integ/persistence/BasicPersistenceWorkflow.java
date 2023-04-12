@@ -1,7 +1,7 @@
 package io.iworkflow.integ.persistence;
 
+import io.iworkflow.core.ObjectWorkflow;
 import io.iworkflow.core.StateDef;
-import io.iworkflow.core.Workflow;
 import io.iworkflow.core.persistence.DataAttributeDef;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
 import io.iworkflow.core.persistence.SearchAttributeDef;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class BasicPersistenceWorkflow implements Workflow {
+public class BasicPersistenceWorkflow implements ObjectWorkflow {
     public static final String TEST_DATA_OBJECT_KEY = "data-obj-1";
     public static final String TEST_DATA_OBJECT_MODEL_1 = "data-obj-2";
 
@@ -24,7 +24,7 @@ public class BasicPersistenceWorkflow implements Workflow {
     public static final String TEST_SEARCH_ATTRIBUTE_INT = "CustomIntField";
 
     @Override
-    public List<StateDef> getStates() {
+    public List<StateDef> getWorkflowStates() {
         return Arrays.asList(StateDef.startingState(new BasicPersistenceWorkflowState1()));
     }
 

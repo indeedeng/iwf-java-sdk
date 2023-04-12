@@ -33,7 +33,7 @@ public class BasicPersistenceWorkflowState1 implements WorkflowState<String> {
     }
 
     @Override
-    public CommandRequest start(Context context, String input, Persistence persistence, final Communication communication) {
+    public CommandRequest waitUntil(Context context, String input, Persistence persistence, final Communication communication) {
         persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, "query-start");
 
         // it's allowed to set a child class to a parent
@@ -53,7 +53,7 @@ public class BasicPersistenceWorkflowState1 implements WorkflowState<String> {
     }
 
     @Override
-    public StateDecision decide(Context context, String input, CommandResults commandResults, Persistence persistence, final Communication communication) {
+    public StateDecision execute(Context context, String input, CommandResults commandResults, Persistence persistence, final Communication communication) {
         String str = persistence.getDataAttribute(TEST_DATA_OBJECT_KEY, String.class);
         persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, str + "-query-decide");
 

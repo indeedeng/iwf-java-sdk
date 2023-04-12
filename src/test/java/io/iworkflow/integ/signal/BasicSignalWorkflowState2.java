@@ -32,7 +32,7 @@ public class BasicSignalWorkflowState2 implements WorkflowState<Integer> {
     }
 
     @Override
-    public CommandRequest start(
+    public CommandRequest waitUntil(
             Context context,
             Integer input,
             Persistence persistence,
@@ -49,7 +49,7 @@ public class BasicSignalWorkflowState2 implements WorkflowState<Integer> {
     }
 
     @Override
-    public StateDecision decide(
+    public StateDecision execute(
             Context context,
             Integer input,
             CommandResults commandResults,

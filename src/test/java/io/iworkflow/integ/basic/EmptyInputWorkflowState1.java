@@ -16,12 +16,12 @@ public class EmptyInputWorkflowState1 implements WorkflowState<Void> {
     }
 
     @Override
-    public CommandRequest start(final Context context, final Void input, Persistence persistence, final Communication communication) {
+    public CommandRequest waitUntil(final Context context, final Void input, Persistence persistence, final Communication communication) {
         return CommandRequest.empty;
     }
 
     @Override
-    public StateDecision decide(final Context context, final Void input, final CommandResults commandResults, Persistence persistence, final Communication communication) {
+    public StateDecision execute(final Context context, final Void input, final CommandResults commandResults, Persistence persistence, final Communication communication) {
         return StateDecision.singleNextState(EmptyInputWorkflowState2.StateId);
     }
 }

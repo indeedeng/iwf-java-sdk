@@ -9,7 +9,7 @@ public abstract class DataAttributeDef implements PersistenceFieldDef {
     public static DataAttributeDef create(Class dataType, String key) {
         return ImmutableDataAttributeDef.builder()
                 .key(key)
-                .dataObjectType(dataType)
+                .dataAttributeType(dataType)
                 .build();
     }
 }
