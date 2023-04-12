@@ -6,6 +6,8 @@ import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 
+import java.lang.reflect.Method;
+
 public interface WorkflowState<I> {
 
     /**
@@ -15,7 +17,13 @@ public interface WorkflowState<I> {
     Class<I> getInputType();
 
     /**
-     * Implement this method to execute the commands set up condition for the {@link #execute} API
+     * Optionally implement this method to set up condition for the state.
+     * If implemented, this will be the first API invoked when state started.
+     * Then the state will be waiting until the requested commands are completed.
+     * If not implemented, the state will invoke the {@link #execute} directly
+     * <p>
+     * The condition is setup using commands. There are three types commands in a {@link CommandRequest}: signal, timer and interStateChannel;
+     * Also with three types of {@link io.iworkflow.gen.models.CommandWaitingType}
      *
      * @param context       the context info of this API invocation, like workflow start time, workflowId, etc
      * @param input         the state input which is deserialized by {@link ObjectEncoder} with {@link #getInputType}
@@ -28,13 +36,20 @@ public interface WorkflowState<I> {
      *                      Note that any write API will be recorded to server after the whole start API response is accepted.
      * @return the requested commands for this step
      */
-    CommandRequest waitUntil(
+    default CommandRequest waitUntil(
             final Context context, I input,
             final Persistence persistence,
-            final Communication communication);
+            final Communication communication) {
+        /*
+         * leaving this method with default implementation means the state doesn't have any condition for setup.
+         * iWF will omit the waitUntil step and invoke the {@link #execute} API directly
+         */
+        throw new IllegalStateException("this exception will never be thrown.");
+    }
 
     /**
-     * Implement this method to execute the state business, when requested commands are ready
+     * Implement this method to execute the state business, when requested commands are ready if {@link #waitUntil} is implemented
+     * If {@link #waitUntil} is not implemented, the state will invoke this API directly
      *
      * @param context        the context info of this API invocation, like workflow start time, workflowId, etc
      * @param input          the state input which is deserialized by {@link ObjectEncoder} with {@link #getInputType}
@@ -81,6 +96,20 @@ public interface WorkflowState<I> {
      */
     default WorkflowStateOptions getStateOptions() {
         return null;
+    }
+
+    static boolean shouldSkipWaitUntil(final WorkflowState state) {
+        final Class<? extends WorkflowState> stateClass = state.getClass();
+        final Method waitUntilMethod;
+        try {
+            waitUntilMethod = stateClass.getMethod("waitUntil", Context.class, Object.class, Persistence.class, Communication.class);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
+        if (waitUntilMethod.getDeclaringClass().equals(ObjectWorkflow.class)) {
+            return true;
+        }
+        return false;
     }
 }
 
