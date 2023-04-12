@@ -1,7 +1,7 @@
 package io.iworkflow.integ.signal;
 
+import io.iworkflow.core.ObjectWorkflow;
 import io.iworkflow.core.StateDef;
-import io.iworkflow.core.Workflow;
 import io.iworkflow.core.communication.CommunicationMethodDef;
 import io.iworkflow.core.communication.SignalChannelDef;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class BasicSignalWorkflow implements Workflow {
+public class BasicSignalWorkflow implements ObjectWorkflow {
 
     public static final String SIGNAL_CHANNEL_NAME_1 = "test-signal-1";
 
@@ -28,7 +28,7 @@ public class BasicSignalWorkflow implements Workflow {
     }
 
     @Override
-    public List<StateDef> getStates() {
+    public List<StateDef> getWorkflowStates() {
         return Arrays.asList(
                 StateDef.startingState(new BasicSignalWorkflowState1()),
                 StateDef.nonStartingState(new BasicSignalWorkflowState2())

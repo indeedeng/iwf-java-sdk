@@ -18,7 +18,7 @@ public class StateApiFailWorkflowState1 implements WorkflowState<Integer> {
     }
 
     @Override
-    public CommandRequest start(
+    public CommandRequest waitUntil(
             Context context,
             Integer input,
             Persistence persistence,
@@ -27,7 +27,7 @@ public class StateApiFailWorkflowState1 implements WorkflowState<Integer> {
     }
 
     @Override
-    public StateDecision decide(
+    public StateDecision execute(
             Context context,
             Integer input,
             CommandResults commandResults,
@@ -38,7 +38,7 @@ public class StateApiFailWorkflowState1 implements WorkflowState<Integer> {
 
     @Override
     public WorkflowStateOptions getStateOptions() {
-        return new WorkflowStateOptions().decideApiRetryPolicy(
+        return new WorkflowStateOptions().executeApiRetryPolicy(
                 new RetryPolicy()
                         .maximumAttempts(1)
                         .backoffCoefficient(2f)

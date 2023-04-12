@@ -17,13 +17,13 @@ public class ProceedOnStateStartFailWorkflowState2 implements WorkflowState<Stri
     }
 
     @Override
-    public CommandRequest start(Context context, String input, Persistence persistence, Communication communication) {
+    public CommandRequest waitUntil(Context context, String input, Persistence persistence, Communication communication) {
         output = input + "_state2_start";
         return CommandRequest.empty;
     }
 
     @Override
-    public StateDecision decide(Context context, String input, CommandResults commandResults, Persistence persistence, Communication communication) {
+    public StateDecision execute(Context context, String input, CommandResults commandResults, Persistence persistence, Communication communication) {
         output = output + "_state2_decide";
         return StateDecision.gracefulCompleteWorkflow(output);
     }

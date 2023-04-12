@@ -7,13 +7,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This is the interface to define a workflow definition.
+ * This is the interface to define an object workflow definition.
  * Most of the time, the implementation only needs to return static value for each method.
  * <p>
  * For a dynamic workflow definition, the implementation can return different values based on different constructor inputs.
  * To invokes/interact with a dynamic workflows, applications may need to use {@link UnregisteredClient} instead of {@link Client}
  */
-public interface Workflow {
+public interface ObjectWorkflow {
     /**
      * defines the states of the workflow. A state represents a step of the workflow state machine.
      * A state can execute some commands (signal/timer) and wait for result
@@ -21,19 +21,20 @@ public interface Workflow {
      *
      * @return all the state definitions
      */
-    List<StateDef> getStates();
+    List<StateDef> getWorkflowStates();
 
     /**
      * defines all the persistence fields for this workflow, this includes:
-     * 1. Data objects
+     * 1. Data attributes
      * 2. Search attributes
      * <p>
-     * Data objects can be read/upsert in WorkflowState start/decide API
-     * Data objects  can also be read by getDataObjects API by external applications using {@link Client}
+     * Data attributes can be read/upsert in WorkflowState start/decide API
+     * Data attributes  can also be read by getDataObjects API by external applications using {@link Client}
      * <p>
      * Search attributes can be read/upsert in WorkflowState start/decide API
      * Search attributes can also be read by GetSearchAttributes Client API by external applications
      * External applications can also use "SearchWorkflow" API to find workflows by SQL-like query
+     *
      * @return the persistence schema
      */
     default List<PersistenceFieldDef> getPersistenceSchema() {

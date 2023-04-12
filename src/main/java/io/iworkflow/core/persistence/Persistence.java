@@ -1,4 +1,4 @@
 package io.iworkflow.core.persistence;
 
-public interface Persistence extends DataObjectsRW, SearchAttributesRW, StateLocals {
+public interface Persistence extends DataAttributesRW, SearchAttributesRW, StateExecutionLocals {
 }

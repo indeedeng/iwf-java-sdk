@@ -8,7 +8,7 @@ import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.gen.models.RetryPolicy;
-import io.iworkflow.gen.models.StartApiFailurePolicy;
+import io.iworkflow.gen.models.WaitUntilApiFailurePolicy;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 
 public class ProceedOnStateStartFailWorkflowState1 implements WorkflowState<String> {
@@ -20,13 +20,13 @@ public class ProceedOnStateStartFailWorkflowState1 implements WorkflowState<Stri
     }
 
     @Override
-    public CommandRequest start(Context context, String input, Persistence persistence, Communication communication) {
+    public CommandRequest waitUntil(Context context, String input, Persistence persistence, Communication communication) {
         output = input + "_state1_start";
         throw new RuntimeException("Start failed");
     }
 
     @Override
-    public StateDecision decide(Context context, String input, CommandResults commandResults, Persistence persistence, Communication communication) {
+    public StateDecision execute(Context context, String input, CommandResults commandResults, Persistence persistence, Communication communication) {
         if (context.getAttempt() <= 0) {
             throw new RuntimeException("attempt must be greater than zero");
         }
@@ -41,7 +41,7 @@ public class ProceedOnStateStartFailWorkflowState1 implements WorkflowState<Stri
     @Override
     public WorkflowStateOptions getStateOptions() {
         return new WorkflowStateOptions()
-                .startApiRetryPolicy(new RetryPolicy().maximumAttempts(2))
-                .startApiFailurePolicy(StartApiFailurePolicy.PROCEED_TO_DECIDE_ON_START_API_FAILURE);
+                .waitUntilApiRetryPolicy(new RetryPolicy().maximumAttempts(2))
+                .waitUntilApiFailurePolicy(WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE);
     }
 }

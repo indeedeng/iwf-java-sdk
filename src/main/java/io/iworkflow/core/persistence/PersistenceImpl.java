@@ -4,24 +4,24 @@ import java.util.List;
 
 public class PersistenceImpl implements Persistence {
 
-    private final DataObjectsRW dataObjectsRW;
+    private final DataAttributesRW dataAttributesRW;
     private final SearchAttributesRW searchAttributesRW;
-    private final StateLocals stateLocals;
+    private final StateExecutionLocals stateExecutionLocals;
 
-    public PersistenceImpl(final DataObjectsRW dataObjectsRW, final SearchAttributesRW searchAttributesRW, final StateLocals stateLocals) {
-        this.dataObjectsRW = dataObjectsRW;
+    public PersistenceImpl(final DataAttributesRW dataAttributesRW, final SearchAttributesRW searchAttributesRW, final StateExecutionLocals stateExecutionLocals) {
+        this.dataAttributesRW = dataAttributesRW;
         this.searchAttributesRW = searchAttributesRW;
-        this.stateLocals = stateLocals;
+        this.stateExecutionLocals = stateExecutionLocals;
     }
 
     @Override
-    public <T> T getDataObject(final String key, final Class<T> type) {
-        return dataObjectsRW.getDataObject(key, type);
+    public <T> T getDataAttribute(final String key, final Class<T> type) {
+        return dataAttributesRW.getDataAttribute(key, type);
     }
 
     @Override
-    public void setDataObject(final String key, final Object value) {
-        dataObjectsRW.setDataObject(key, value);
+    public void setDataAttribute(final String key, final Object value) {
+        dataAttributesRW.setDataAttribute(key, value);
     }
 
     @Override
@@ -95,17 +95,17 @@ public class PersistenceImpl implements Persistence {
     }
 
     @Override
-    public void setStateLocal(final String key, final Object value) {
-        stateLocals.setStateLocal(key, value);
+    public void setStateExecutionLocal(final String key, final Object value) {
+        stateExecutionLocals.setStateExecutionLocal(key, value);
     }
 
     @Override
-    public <T> T getStateLocal(final String key, final Class<T> type) {
-        return stateLocals.getStateLocal(key, type);
+    public <T> T getStateExecutionLocal(final String key, final Class<T> type) {
+        return stateExecutionLocals.getStateExecutionLocal(key, type);
     }
 
     @Override
-    public void recordStateEvent(final String key, final Object... eventData) {
-        stateLocals.recordStateEvent(key, eventData);
+    public void recordEvent(final String key, final Object... eventData) {
+        stateExecutionLocals.recordEvent(key, eventData);
     }
 }

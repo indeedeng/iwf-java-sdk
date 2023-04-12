@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class DataObjectsRWImpl implements DataObjectsRW {
+public class DataAttributesRWImpl implements DataAttributesRW {
     private final Map<String, Class<?>> keyToTypeMap;
     private final Map<String, EncodedObject> keyToEncodedObjectMap;
     private final Map<String, EncodedObject> toReturnToServer;
     private final ObjectEncoder objectEncoder;
 
-    public DataObjectsRWImpl(
+    public DataAttributesRWImpl(
             final Map<String, Class<?>> keyToTypeMap,
             final Map<String, EncodedObject> keyToValueMap,
             final ObjectEncoder objectEncoder) {
@@ -26,9 +26,9 @@ public class DataObjectsRWImpl implements DataObjectsRW {
     }
 
     @Override
-    public <T> T getDataObject(String key, Class<T> type) {
+    public <T> T getDataAttribute(String key, Class<T> type) {
         if (!keyToTypeMap.containsKey(key)) {
-            throw new IllegalArgumentException(String.format("data object %s is not registered", key));
+            throw new IllegalArgumentException(String.format("data attribute %s is not registered", key));
         }
         if (!keyToEncodedObjectMap.containsKey(key)) {
             return null;
@@ -48,9 +48,9 @@ public class DataObjectsRWImpl implements DataObjectsRW {
     }
 
     @Override
-    public void setDataObject(String key, Object value) {
+    public void setDataAttribute(String key, Object value) {
         if (!keyToTypeMap.containsKey(key)) {
-            throw new IllegalArgumentException(String.format("data object %s is not registered", key));
+            throw new IllegalArgumentException(String.format("data attribute %s is not registered", key));
         }
 
         Class<?> registeredType = keyToTypeMap.get(key);

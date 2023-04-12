@@ -48,7 +48,7 @@ public class Client {
      * @return runId
      */
     public String startWorkflow(
-            final Workflow workflow,
+            final ObjectWorkflow workflow,
             final String workflowId,
             final int workflowTimeoutSeconds) {
         return startWorkflow(workflow, workflowId, workflowTimeoutSeconds, null, null);
@@ -64,7 +64,7 @@ public class Client {
      * @return runId
      */
     public String startWorkflow(
-            final Workflow workflow,
+            final ObjectWorkflow workflow,
             final String workflowId,
             final int workflowTimeoutSeconds,
             final Object input) {
@@ -82,7 +82,7 @@ public class Client {
      * @return runId
      */
     public String startWorkflow(
-            final Workflow workflow,
+            final ObjectWorkflow workflow,
             final String workflowId,
             final int workflowTimeoutSeconds,
             final Object input,
@@ -100,7 +100,7 @@ public class Client {
      * @return runId
      */
     public String startWorkflow(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final int workflowTimeoutSeconds) {
         return startWorkflow(workflowClass, workflowId, workflowTimeoutSeconds, null, null);
@@ -116,7 +116,7 @@ public class Client {
      * @return runId
      */
     public String startWorkflow(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final int workflowTimeoutSeconds,
             final Object input) {
@@ -134,7 +134,7 @@ public class Client {
      * @return runId
      */
     public String startWorkflow(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final int workflowTimeoutSeconds,
             final Object input,
@@ -281,7 +281,7 @@ public class Client {
     }
 
     public void signalWorkflow(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
             final String signalChannelName,
@@ -334,7 +334,7 @@ public class Client {
     }
 
     public Map<String, Object> getWorkflowDataObjects(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
             List<String> keys) {
@@ -345,27 +345,27 @@ public class Client {
     }
 
     public Map<String, Object> getAllDataObjects(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId) {
         return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, null);
     }
 
     private Map<String, Object> doGetWorkflowDataObjects(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
             List<String> keys) {
         final String wfType = workflowClass.getSimpleName();
 
-        Map<String, Class<?>> queryDataObjectKeyToTypeMap = registry.getDataObjectKeyToTypeMap(wfType);
+        Map<String, Class<?>> queryDataObjectKeyToTypeMap = registry.getDataAttributeKeyToTypeMap(wfType);
         if (queryDataObjectKeyToTypeMap == null) {
             throw new IllegalArgumentException(
                     String.format("Workflow %s is not registered", wfType)
             );
         }
 
-        // if attribute keys is null or empty, iwf server will return all data objects
+        // if attribute keys is null or empty, iwf server will return all data attributes
         if (keys != null && !keys.isEmpty()) {
             List<String> nonExistingDataObjectKeyList = keys.stream()
                     .filter(s -> !queryDataObjectKeyToTypeMap.containsKey(s))
@@ -373,7 +373,7 @@ public class Client {
             if (!nonExistingDataObjectKeyList.isEmpty()) {
                 throw new IllegalArgumentException(
                         String.format(
-                                "data objects not registered: %s",
+                                "data attributes not registered: %s",
                                 String.join(", ", nonExistingDataObjectKeyList)
                         )
                 );
@@ -383,7 +383,7 @@ public class Client {
         final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys);
 
         if (response.getObjects() == null) {
-            throw new IllegalStateException("data objects not returned");
+            throw new IllegalStateException("data attributes not returned");
         }
         Map<String, Object> result = new HashMap<>();
         for (KeyValue keyValue : response.getObjects()) {
@@ -419,7 +419,7 @@ public class Client {
     }
 
     public Map<String, Object> getWorkflowSearchAttributes(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
             List<String> attributeKeys) {
@@ -430,14 +430,14 @@ public class Client {
     }
 
     public Map<String, Object> getAllSearchAttributes(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId) {
         return doGetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, null);
     }
 
     private Map<String, Object> doGetWorkflowSearchAttributes(
-            final Class<? extends Workflow> workflowClass,
+            final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
             final List<String> attributeKeys) {
@@ -450,7 +450,7 @@ public class Client {
             );
         }
 
-        // if attribute keys is null or empty, iwf server will return all data objects
+        // if attribute keys is null or empty, iwf server will return all data attributes
         if (attributeKeys != null && !attributeKeys.isEmpty()) {
             List<String> nonExistingSearchAttributeList = attributeKeys.stream()
                     .filter(s -> !searchAttributeKeyToTypeMap.containsKey(s))
