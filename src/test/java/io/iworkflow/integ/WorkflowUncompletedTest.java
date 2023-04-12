@@ -2,9 +2,11 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
+import io.iworkflow.core.ImmutableStopWorkflowOptions;
 import io.iworkflow.core.WorkflowUncompletedException;
 import io.iworkflow.gen.models.WorkflowErrorType;
 import io.iworkflow.gen.models.WorkflowStatus;
+import io.iworkflow.gen.models.WorkflowStopType;
 import io.iworkflow.integ.forcefail.ForceFailWorkflow;
 import io.iworkflow.integ.signal.BasicSignalWorkflow;
 import io.iworkflow.integ.stateapifail.StateApiFailWorkflow;
@@ -16,6 +18,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutionException;
+
+import static io.iworkflow.gen.models.WorkflowErrorType.CLIENT_API_FAILING_WORKFLOW_ERROR_TYPE;
 
 public class WorkflowUncompletedTest {
 
@@ -62,6 +66,52 @@ public class WorkflowUncompletedTest {
             Assertions.assertEquals(WorkflowStatus.CANCELED, e.getClosedStatus());
             Assertions.assertNull(e.getErrorSubType());
             Assertions.assertNull(e.getErrorMessage());
+            Assertions.assertEquals(0, e.getStateResultsSize());
+            return;
+        }
+        Assertions.fail("no exception caught");
+    }
+
+    @Test
+    public void testWorkflowTerminated() throws InterruptedException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "testWorkflowTerminated" + System.currentTimeMillis() / 1000;
+        final Integer input = 1;
+        final String runId = client.startWorkflow(
+                BasicSignalWorkflow.class, wfId, 10, input);
+
+        client.stopWorkflow(wfId, "", ImmutableStopWorkflowOptions.builder().workflowStopType(WorkflowStopType.TERMINATE).build());
+
+        try {
+            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        } catch (WorkflowUncompletedException e) {
+            Assertions.assertEquals(runId, e.getRunId());
+            Assertions.assertEquals(WorkflowStatus.TERMINATED, e.getClosedStatus());
+            Assertions.assertNull(e.getErrorSubType());
+            Assertions.assertNull(e.getErrorMessage());
+            Assertions.assertEquals(0, e.getStateResultsSize());
+            return;
+        }
+        Assertions.fail("no exception caught");
+    }
+
+    @Test
+    public void testWorkflowFailByAPI() throws InterruptedException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "testWorkflowTerminated" + System.currentTimeMillis() / 1000;
+        final Integer input = 1;
+        final String runId = client.startWorkflow(
+                BasicSignalWorkflow.class, wfId, 10, input);
+
+        client.stopWorkflow(wfId, "", ImmutableStopWorkflowOptions.builder().workflowStopType(WorkflowStopType.FAIL).reason("fail by API").build());
+
+        try {
+            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        } catch (WorkflowUncompletedException e) {
+            Assertions.assertEquals(runId, e.getRunId());
+            Assertions.assertEquals(WorkflowStatus.FAILED, e.getClosedStatus());
+            Assertions.assertEquals(CLIENT_API_FAILING_WORKFLOW_ERROR_TYPE, e.getErrorSubType());
+            Assertions.assertEquals("fail by API", e.getErrorMessage());
             Assertions.assertEquals(0, e.getStateResultsSize());
             return;
         }
