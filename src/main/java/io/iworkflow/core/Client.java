@@ -166,6 +166,7 @@ public class Client {
             unregisterWorkflowOptions.workflowIdReusePolicy(options.getWorkflowIdReusePolicy());
             unregisterWorkflowOptions.cronSchedule(options.getCronSchedule());
             unregisterWorkflowOptions.workflowRetryPolicy(options.getWorkflowRetryPolicy());
+            unregisterWorkflowOptions.workflowConfigOverride(options.getWorkflowConfigOverride());
 
             final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(wfType);
             final List<SearchAttribute> convertedSAs = convertToSearchAttributeList(saTypes, options.getInitialSearchAttribute());

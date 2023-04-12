@@ -1,6 +1,7 @@
 package io.iworkflow.core;
 
 import io.iworkflow.gen.models.SearchAttribute;
+import io.iworkflow.gen.models.WorkflowConfig;
 import io.iworkflow.gen.models.WorkflowIDReusePolicy;
 import io.iworkflow.gen.models.WorkflowRetryPolicy;
 import io.iworkflow.gen.models.WorkflowStateOptions;
@@ -16,8 +17,10 @@ public abstract class UnregisteredWorkflowOptions {
     public abstract Optional<String> getCronSchedule();
 
     public abstract Optional<WorkflowRetryPolicy> getWorkflowRetryPolicy();
-    
+
     public abstract Optional<WorkflowStateOptions> getStartStateOptions();
 
     public abstract List<SearchAttribute> getInitialSearchAttribute();
+
+    public abstract Optional<WorkflowConfig> getWorkflowConfigOverride();
 }
