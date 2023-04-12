@@ -40,7 +40,7 @@ public class CommandResultsMapper {
                     .collect(Collectors.toList()));
         }
         if(commandResults.getStateStartApiSucceeded() != null) {
-            builder.stateStartApiSucceeded(commandResults.getStateStartApiSucceeded());
+            builder.waitUntilApiSucceeded(commandResults.getStateStartApiSucceeded());
         }
         return builder.build();
     }
