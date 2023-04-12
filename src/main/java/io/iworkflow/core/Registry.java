@@ -2,7 +2,7 @@ package io.iworkflow.core;
 
 import io.iworkflow.core.communication.InterStateChannelDef;
 import io.iworkflow.core.communication.SignalChannelDef;
-import io.iworkflow.core.persistence.DataObjectDef;
+import io.iworkflow.core.persistence.DataAttributeDef;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
 import io.iworkflow.core.persistence.SearchAttributeDef;
 import io.iworkflow.gen.models.SearchAttributeValueType;
@@ -127,35 +127,35 @@ public class Registry {
 
     private void registerWorkflowDataObjects(final Workflow wf) {
         String workflowType = getWorkflowType(wf);
-        final List<DataObjectDef> fields = getDataObjectFields(wf);
+        final List<DataAttributeDef> fields = getDataObjectFields(wf);
         if (fields == null || fields.isEmpty()) {
             dataObjectTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        for (DataObjectDef dataObjectField : fields) {
+        for (DataAttributeDef dataObjectField : fields) {
             Map<String, Class<?>> dataObjectKeyToTypeMap =
                     dataObjectTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
             if (dataObjectKeyToTypeMap.containsKey(dataObjectField.getKey())) {
                 throw new WorkflowDefinitionException(
                         String.format(
-                                "data object key %s already exists",
-                                dataObjectField.getDataObjectType())
+                                "data attribute key %s already exists",
+                                dataObjectField.getDataAttributeType())
                 );
             }
             dataObjectKeyToTypeMap.put(
                     dataObjectField.getKey(),
-                    dataObjectField.getDataObjectType()
+                    dataObjectField.getDataAttributeType()
             );
         }
     }
 
-    private List<DataObjectDef> getDataObjectFields(final Workflow wf) {
+    private List<DataAttributeDef> getDataObjectFields(final Workflow wf) {
         final Set<String> keySet = wf.getPersistenceSchema().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
         if (keySet.size() != wf.getPersistenceSchema().size()) {
             throw new WorkflowDefinitionException("cannot have conflict key definition in persistence schema");
         }
-        return wf.getPersistenceSchema().stream().filter((f) -> f instanceof DataObjectDef).map(f -> (DataObjectDef) f).collect(Collectors.toList());
+        return wf.getPersistenceSchema().stream().filter((f) -> f instanceof DataAttributeDef).map(f -> (DataAttributeDef) f).collect(Collectors.toList());
     }
 
     private List<SearchAttributeDef> getSearchAttributeFields(final Workflow wf) {

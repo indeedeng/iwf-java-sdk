@@ -2,7 +2,7 @@ package io.iworkflow.integ.persistence;
 
 import io.iworkflow.core.StateDef;
 import io.iworkflow.core.Workflow;
-import io.iworkflow.core.persistence.DataObjectDef;
+import io.iworkflow.core.persistence.DataAttributeDef;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
 import io.iworkflow.core.persistence.SearchAttributeDef;
 import io.iworkflow.gen.models.Context;
@@ -31,9 +31,9 @@ public class BasicPersistenceWorkflow implements Workflow {
     @Override
     public List<PersistenceFieldDef> getPersistenceSchema() {
         return Arrays.asList(
-                DataObjectDef.create(String.class, TEST_DATA_OBJECT_KEY),
-                DataObjectDef.create(Context.class, TEST_DATA_OBJECT_MODEL_1),
-                DataObjectDef.create(FakContextImpl.class, TEST_DATA_OBJECT_MODEL_2),
+                DataAttributeDef.create(String.class, TEST_DATA_OBJECT_KEY),
+                DataAttributeDef.create(Context.class, TEST_DATA_OBJECT_MODEL_1),
+                DataAttributeDef.create(FakContextImpl.class, TEST_DATA_OBJECT_MODEL_2),
                 SearchAttributeDef.create(SearchAttributeValueType.INT, TEST_SEARCH_ATTRIBUTE_INT),
                 SearchAttributeDef.create(SearchAttributeValueType.KEYWORD, TEST_SEARCH_ATTRIBUTE_KEYWORD)
         );
