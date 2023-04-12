@@ -2,9 +2,11 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
+import io.iworkflow.core.ImmutableStopWorkflowOptions;
 import io.iworkflow.core.WorkflowUncompletedException;
 import io.iworkflow.gen.models.WorkflowErrorType;
 import io.iworkflow.gen.models.WorkflowStatus;
+import io.iworkflow.gen.models.WorkflowStopType;
 import io.iworkflow.integ.forcefail.ForceFailWorkflow;
 import io.iworkflow.integ.signal.BasicSignalWorkflow;
 import io.iworkflow.integ.stateapifail.StateApiFailWorkflow;
@@ -60,6 +62,29 @@ public class WorkflowUncompletedTest {
         } catch (WorkflowUncompletedException e) {
             Assertions.assertEquals(runId, e.getRunId());
             Assertions.assertEquals(WorkflowStatus.CANCELED, e.getClosedStatus());
+            Assertions.assertNull(e.getErrorSubType());
+            Assertions.assertNull(e.getErrorMessage());
+            Assertions.assertEquals(0, e.getStateResultsSize());
+            return;
+        }
+        Assertions.fail("no exception caught");
+    }
+
+    @Test
+    public void testWorkflowTerminated() throws InterruptedException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "testWorkflowTerminated" + System.currentTimeMillis() / 1000;
+        final Integer input = 1;
+        final String runId = client.startWorkflow(
+                BasicSignalWorkflow.class, wfId, 10, input);
+
+        client.stopWorkflow(wfId, "", ImmutableStopWorkflowOptions.builder().workflowStopType(WorkflowStopType.TERMINATE).build());
+
+        try {
+            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        } catch (WorkflowUncompletedException e) {
+            Assertions.assertEquals(runId, e.getRunId());
+            Assertions.assertEquals(WorkflowStatus.TERMINATED, e.getClosedStatus());
             Assertions.assertNull(e.getErrorSubType());
             Assertions.assertNull(e.getErrorMessage());
             Assertions.assertEquals(0, e.getStateResultsSize());
