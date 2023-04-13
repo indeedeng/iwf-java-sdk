@@ -1,6 +1,6 @@
 package io.iworkflow.core.command;
 
-import io.iworkflow.core.communication.InterStateChannelCommandResult;
+import io.iworkflow.core.communication.InternalChannelCommandResult;
 import io.iworkflow.core.communication.SignalCommandResult;
 import org.immutables.value.Value;
 
@@ -18,7 +18,7 @@ public abstract class CommandResults {
 
     public abstract List<TimerCommandResult> getAllTimerCommandResults();
 
-    public abstract List<InterStateChannelCommandResult> getAllInterStateChannelCommandResult();
+    public abstract List<InternalChannelCommandResult> getAllInternalChannelCommandResult();
 
     public abstract Optional<Boolean> getWaitUntilApiSucceeded();
 

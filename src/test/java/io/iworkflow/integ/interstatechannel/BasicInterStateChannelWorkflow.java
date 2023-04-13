@@ -3,7 +3,7 @@ package io.iworkflow.integ.interstatechannel;
 import io.iworkflow.core.ObjectWorkflow;
 import io.iworkflow.core.StateDef;
 import io.iworkflow.core.communication.CommunicationMethodDef;
-import io.iworkflow.core.communication.InterStateChannelDef;
+import io.iworkflow.core.communication.InternalChannelDef;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -18,8 +18,8 @@ public class BasicInterStateChannelWorkflow implements ObjectWorkflow {
     @Override
     public List<CommunicationMethodDef> getCommunicationSchema() {
         return Arrays.asList(
-                InterStateChannelDef.create(Integer.class, INTER_STATE_CHANNEL_NAME_1),
-                InterStateChannelDef.create(Integer.class, INTER_STATE_CHANNEL_NAME_2)
+                InternalChannelDef.create(Integer.class, INTER_STATE_CHANNEL_NAME_1),
+                InternalChannelDef.create(Integer.class, INTER_STATE_CHANNEL_NAME_2)
         );
     }
 

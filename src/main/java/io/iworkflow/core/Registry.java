@@ -1,6 +1,6 @@
 package io.iworkflow.core;
 
-import io.iworkflow.core.communication.InterStateChannelDef;
+import io.iworkflow.core.communication.InternalChannelDef;
 import io.iworkflow.core.communication.SignalChannelDef;
 import io.iworkflow.core.persistence.DataAttributeDef;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
@@ -22,7 +22,7 @@ public class Registry {
     private final Map<String, StateDef> workflowStartStateStore = new HashMap<>();
     private final Map<String, Map<String, Class<?>>> signalTypeStore = new HashMap<>();
 
-    private final Map<String, Map<String, Class<?>>> interstateChannelTypeStore = new HashMap<>();
+    private final Map<String, Map<String, Class<?>>> internalChannelTypeStore = new HashMap<>();
     private final Map<String, Map<String, Class<?>>> dataAttributeTypeStore = new HashMap<>();
 
     private final Map<String, Map<String, SearchAttributeValueType>> searchAttributeTypeStore = new HashMap<>();
@@ -41,7 +41,7 @@ public class Registry {
         registerWorkflow(wf);
         registerWorkflowState(wf);
         registerWorkflowSignal(wf);
-        registerWorkflowInterstateChannel(wf);
+        registerWorkflowInternalChannel(wf);
         registerWorkflowDataAttributes(wf);
         registerWorkflowSearchAttributes(wf);
     }
@@ -106,22 +106,22 @@ public class Registry {
         }
     }
 
-    private void registerWorkflowInterstateChannel(final ObjectWorkflow wf) {
+    private void registerWorkflowInternalChannel(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
-        final List<InterStateChannelDef> channels = getInterStateChannels(wf);
+        final List<InternalChannelDef> channels = getInternalChannels(wf);
         if (channels == null || channels.isEmpty()) {
-            interstateChannelTypeStore.put(workflowType, new HashMap<>());
+            internalChannelTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        for (InterStateChannelDef interstateChannelDef : channels) {
+        for (InternalChannelDef internalChannelDef : channels) {
             Map<String, Class<?>> nameToTypeMap =
-                    interstateChannelTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
-            if (nameToTypeMap.containsKey(interstateChannelDef.getChannelName())) {
+                    internalChannelTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
+            if (nameToTypeMap.containsKey(internalChannelDef.getChannelName())) {
                 throw new WorkflowDefinitionException(
-                        String.format("InterStateChannel name  %s already exists", interstateChannelDef.getChannelName()));
+                        String.format("InternalChannel name  %s already exists", internalChannelDef.getChannelName()));
             }
-            nameToTypeMap.put(interstateChannelDef.getChannelName(), interstateChannelDef.getValueType());
+            nameToTypeMap.put(internalChannelDef.getChannelName(), internalChannelDef.getValueType());
         }
     }
 
@@ -166,8 +166,8 @@ public class Registry {
         return wf.getPersistenceSchema().stream().filter((f) -> f instanceof SearchAttributeDef).map(f -> (SearchAttributeDef) f).collect(Collectors.toList());
     }
 
-    private List<InterStateChannelDef> getInterStateChannels(final ObjectWorkflow wf) {
-        return wf.getCommunicationSchema().stream().filter((f) -> f instanceof InterStateChannelDef).map(f -> (InterStateChannelDef) f).collect(Collectors.toList());
+    private List<InternalChannelDef> getInternalChannels(final ObjectWorkflow wf) {
+        return wf.getCommunicationSchema().stream().filter((f) -> f instanceof InternalChannelDef).map(f -> (InternalChannelDef) f).collect(Collectors.toList());
     }
 
     private List<SignalChannelDef> getSignalChannels(final ObjectWorkflow wf) {
@@ -220,8 +220,8 @@ public class Registry {
         return signalTypeStore.get(workflowType);
     }
 
-    public Map<String, Class<?>> getInterStateChannelNameToTypeMap(final String workflowType) {
-        return interstateChannelTypeStore.get(workflowType);
+    public Map<String, Class<?>> getInternalChannelNameToTypeMap(final String workflowType) {
+        return internalChannelTypeStore.get(workflowType);
     }
 
     public Map<String, Class<?>> getDataAttributeKeyToTypeMap(final String workflowType) {

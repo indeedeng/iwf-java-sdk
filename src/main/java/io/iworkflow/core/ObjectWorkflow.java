@@ -47,8 +47,9 @@ public interface ObjectWorkflow {
      * Workflow execution can listen on the signal in the WorkflowState start API and receive in
      * the WorkflowState decide API
      * <p>
-     * InterStateChannel is for synchronization communications between WorkflowStates.
-     * E.g. WorkflowStateA will continue after receiving a value from WorkflowStateB
+     * InternalChannel is for synchronization communications within the workflow execution internally.
+     * E.g. WorkflowStateA will continue after receiving a value from WorkflowStateB, or from an RPC
+     *
      * @return the communication schema
      */
     default List<CommunicationMethodDef> getCommunicationSchema() {

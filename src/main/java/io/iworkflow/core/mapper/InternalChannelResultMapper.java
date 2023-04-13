@@ -1,18 +1,18 @@
 package io.iworkflow.core.mapper;
 
 import io.iworkflow.core.ObjectEncoder;
-import io.iworkflow.core.communication.ImmutableInterStateChannelCommandResult;
-import io.iworkflow.core.communication.InterStateChannelCommandResult;
+import io.iworkflow.core.communication.ImmutableInternalChannelCommandResult;
+import io.iworkflow.core.communication.InternalChannelCommandResult;
 import io.iworkflow.gen.models.InterStateChannelResult;
 
 import java.util.Optional;
 
-public class InterStateChannelResultMapper {
-    public static InterStateChannelCommandResult fromGenerated(
+public class InternalChannelResultMapper {
+    public static InternalChannelCommandResult fromGenerated(
             InterStateChannelResult result,
             Class<?> type,
             ObjectEncoder objectEncoder) {
-        return ImmutableInterStateChannelCommandResult.builder()
+        return ImmutableInternalChannelCommandResult.builder()
                 .commandId(result.getCommandId())
                 .requestStatusEnum(result.getRequestStatus())
                 .channelName(result.getChannelName())

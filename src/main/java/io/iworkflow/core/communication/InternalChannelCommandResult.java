@@ -6,7 +6,7 @@ import org.immutables.value.Value;
 import java.util.Optional;
 
 @Value.Immutable
-public abstract class InterStateChannelCommandResult {
+public abstract class InternalChannelCommandResult {
 
     public abstract String getCommandId();
 

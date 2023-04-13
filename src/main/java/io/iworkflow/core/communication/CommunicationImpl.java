@@ -24,16 +24,16 @@ public class CommunicationImpl implements Communication {
     }
 
     @Override
-    public void publishInterstateChannel(final String channelName, final Object value) {
+    public void publishInternalChannel(final String channelName, final Object value) {
         final Class<?> type = nameToTypeMap.get(channelName);
         if (!type.isInstance(value)) {
-            throw new WorkflowDefinitionException(String.format("InterStateChannel value is not of type %s", type.getName()));
+            throw new WorkflowDefinitionException(String.format("InternalChannel value is not of type %s", type.getName()));
         }
         final List<EncodedObject> publish = toPublish.computeIfAbsent(channelName, s -> new ArrayList<>());
         publish.add(objectEncoder.encode(value));
     }
 
-    public Map<String, List<EncodedObject>> getToPublishInterStateChannels() {
+    public Map<String, List<EncodedObject>> getToPublishInternalChannels() {
         return toPublish;
     }
 }

@@ -2,7 +2,7 @@ package io.iworkflow.core.mapper;
 
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.TimerCommand;
-import io.iworkflow.core.communication.InterStateChannelCommand;
+import io.iworkflow.core.communication.InternalChannelCommand;
 import io.iworkflow.core.communication.SignalCommand;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public class CommandRequestMapper {
                 .collect(Collectors.toList());
 
         final List<io.iworkflow.gen.models.InterStateChannelCommand> interstateChannelCommands = commandRequest.getCommands().stream()
-                .filter(baseCommand -> baseCommand instanceof InterStateChannelCommand)
-                .map(baseCommand -> (InterStateChannelCommand) baseCommand)
+                .filter(baseCommand -> baseCommand instanceof InternalChannelCommand)
+                .map(baseCommand -> (InternalChannelCommand) baseCommand)
                 .map(InterStateChannelCommandMapper::toGenerated)
                 .collect(Collectors.toList());
 

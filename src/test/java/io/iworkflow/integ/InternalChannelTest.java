@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutionException;
 
-public class InterStateTest {
+public class InternalChannelTest {
 
     @BeforeEach
     public void setup() throws ExecutionException, InterruptedException {
