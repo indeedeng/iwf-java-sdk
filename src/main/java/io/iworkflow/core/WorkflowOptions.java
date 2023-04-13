@@ -1,7 +1,7 @@
 package io.iworkflow.core;
 
+import io.iworkflow.gen.models.IDReusePolicy;
 import io.iworkflow.gen.models.WorkflowConfig;
-import io.iworkflow.gen.models.WorkflowIDReusePolicy;
 import io.iworkflow.gen.models.WorkflowRetryPolicy;
 import org.immutables.value.Value;
 
@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Value.Immutable
 public abstract class WorkflowOptions {
-    public abstract Optional<WorkflowIDReusePolicy> getWorkflowIdReusePolicy();
+    public abstract Optional<IDReusePolicy> getWorkflowIdReusePolicy();
 
     public abstract Optional<String> getCronSchedule();
 
