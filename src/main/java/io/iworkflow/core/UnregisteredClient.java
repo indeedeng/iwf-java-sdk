@@ -106,7 +106,7 @@ public class UnregisteredClient {
                 startOptions.cronSchedule(CronScheduleValidator.validate(options.getCronSchedule()));
             }
             if (options.getWorkflowIdReusePolicy().isPresent()) {
-                startOptions.workflowIDReusePolicy(options.getWorkflowIdReusePolicy().get());
+                startOptions.idReusePolicy(options.getWorkflowIdReusePolicy().get());
             }
             if (options.getWorkflowRetryPolicy().isPresent()) {
                 startOptions.retryPolicy(options.getWorkflowRetryPolicy().get());

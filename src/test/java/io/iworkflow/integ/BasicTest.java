@@ -10,8 +10,8 @@ import io.iworkflow.core.WorkflowDefinitionException;
 import io.iworkflow.core.WorkflowOptions;
 import io.iworkflow.gen.models.Context;
 import io.iworkflow.gen.models.ErrorSubStatus;
+import io.iworkflow.gen.models.IDReusePolicy;
 import io.iworkflow.gen.models.WorkflowConfig;
-import io.iworkflow.gen.models.WorkflowIDReusePolicy;
 import io.iworkflow.integ.basic.BasicWorkflow;
 import io.iworkflow.integ.basic.EmptyInputWorkflow;
 import io.iworkflow.integ.basic.EmptyInputWorkflowState1;
@@ -38,7 +38,7 @@ public class BasicTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-test-id" + System.currentTimeMillis() / 1000;
         final WorkflowOptions startOptions = ImmutableWorkflowOptions.builder()
-                .workflowIdReusePolicy(WorkflowIDReusePolicy.REJECT_DUPLICATE)
+                .workflowIdReusePolicy(IDReusePolicy.DISALLOW_REUSE)
                 .build();
         final Integer input = 0;
         client.startWorkflow(BasicWorkflow.class, wfId, 10, input, startOptions);
@@ -62,7 +62,7 @@ public class BasicTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "empty-input-test-id" + System.currentTimeMillis() / 1000;
         final UnregisteredWorkflowOptions startOptions = ImmutableUnregisteredWorkflowOptions.builder()
-                .workflowIdReusePolicy(WorkflowIDReusePolicy.ALLOW_DUPLICATE)
+                .workflowIdReusePolicy(IDReusePolicy.ALLOW_IF_NO_RUNNING)
                 .build();
 
         //client.StartWorkflow(EmptyInputWorkflow.class, EmptyInputWorkflowState1.StateId, null, wfId, startOptions);
@@ -102,7 +102,7 @@ public class BasicTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "proceed-on-state-start-fail-test-id" + System.currentTimeMillis() / 1000;
         final WorkflowOptions startOptions = ImmutableWorkflowOptions.builder()
-                .workflowIdReusePolicy(WorkflowIDReusePolicy.REJECT_DUPLICATE)
+                .workflowIdReusePolicy(IDReusePolicy.DISALLOW_REUSE)
                 .build();
         final String input = "input";
         client.startWorkflow(ProceedOnStateStartFailWorkflow.class, wfId, 10, input, startOptions);
@@ -116,7 +116,7 @@ public class BasicTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "wf-config-override-test-id" + System.currentTimeMillis() / 1000;
         final WorkflowOptions startOptions = ImmutableWorkflowOptions.builder()
-                .workflowIdReusePolicy(WorkflowIDReusePolicy.REJECT_DUPLICATE)
+                .workflowIdReusePolicy(IDReusePolicy.DISALLOW_REUSE)
                 .workflowConfigOverride(new WorkflowConfig().continueAsNewThreshold(1))
                 .build();
         final int input = 0;
