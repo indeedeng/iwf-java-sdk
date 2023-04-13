@@ -16,10 +16,10 @@ import io.iworkflow.gen.models.InterStateChannelPublishing;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeValueType;
-import io.iworkflow.gen.models.WorkflowStateDecideRequest;
-import io.iworkflow.gen.models.WorkflowStateDecideResponse;
-import io.iworkflow.gen.models.WorkflowStateStartRequest;
-import io.iworkflow.gen.models.WorkflowStateStartResponse;
+import io.iworkflow.gen.models.WorkflowStateExecuteRequest;
+import io.iworkflow.gen.models.WorkflowStateExecuteResponse;
+import io.iworkflow.gen.models.WorkflowStateWaitUntilRequest;
+import io.iworkflow.gen.models.WorkflowStateWaitUntilResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +41,7 @@ public class WorkerService {
         this.workerOptions = workerOptions;
     }
 
-    public WorkflowStateStartResponse handleWorkflowStateStart(final WorkflowStateStartRequest req) {
+    public WorkflowStateWaitUntilResponse handleWorkflowStateStart(final WorkflowStateWaitUntilRequest req) {
         StateDef state = registry.getWorkflowState(req.getWorkflowType(), req.getWorkflowStateId());
         final EncodedObject stateInput = req.getStateInput();
         final Object input = workerOptions.getObjectEncoder().decode(stateInput, state.getWorkflowState().getInputType());
@@ -70,7 +70,7 @@ public class WorkerService {
             }
         });
 
-        final WorkflowStateStartResponse response = new WorkflowStateStartResponse()
+        final WorkflowStateWaitUntilResponse response = new WorkflowStateWaitUntilResponse()
                 .commandRequest(CommandRequestMapper.toGenerated(commandRequest));
 
         if (dataObjectsRW.getToReturnToServer().size() > 0) {
@@ -100,7 +100,7 @@ public class WorkerService {
         return response;
     }
 
-    public WorkflowStateDecideResponse handleWorkflowStateDecide(final WorkflowStateDecideRequest req) {
+    public WorkflowStateExecuteResponse handleWorkflowStateDecide(final WorkflowStateExecuteRequest req) {
         StateDef state = registry.getWorkflowState(req.getWorkflowType(), req.getWorkflowStateId());
         final Object input;
         final EncodedObject stateInput = req.getStateInput();
@@ -128,7 +128,7 @@ public class WorkerService {
                 persistence,
                 communication);
 
-        final WorkflowStateDecideResponse response = new WorkflowStateDecideResponse()
+        final WorkflowStateExecuteResponse response = new WorkflowStateExecuteResponse()
                 .stateDecision(StateDecisionMapper.toGenerated(stateDecision, req.getWorkflowType(), registry, workerOptions.getObjectEncoder()));
 
         if (dataObjectsRW.getToReturnToServer().size() > 0) {
