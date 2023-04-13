@@ -2,10 +2,10 @@ package io.iworkflow.spring.controller;
 
 import io.iworkflow.core.WorkerOptions;
 import io.iworkflow.core.WorkerService;
-import io.iworkflow.gen.models.WorkflowStateDecideRequest;
-import io.iworkflow.gen.models.WorkflowStateDecideResponse;
-import io.iworkflow.gen.models.WorkflowStateStartRequest;
-import io.iworkflow.gen.models.WorkflowStateStartResponse;
+import io.iworkflow.gen.models.WorkflowStateExecuteRequest;
+import io.iworkflow.gen.models.WorkflowStateExecuteResponse;
+import io.iworkflow.gen.models.WorkflowStateWaitUntilRequest;
+import io.iworkflow.gen.models.WorkflowStateWaitUntilResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,15 +27,15 @@ public class ApiController {
     }
 
     @PostMapping(WorkerService.WORKFLOW_STATE_START_API_PATH)
-    public ResponseEntity<WorkflowStateStartResponse> apiV1WorkflowStateStartPost(
-            final @RequestBody WorkflowStateStartRequest request
+    public ResponseEntity<WorkflowStateWaitUntilResponse> apiV1WorkflowStateStartPost(
+            final @RequestBody WorkflowStateWaitUntilRequest request
     ) {
         return ResponseEntity.ok(workerService.handleWorkflowStateStart(request));
     }
 
     @PostMapping(WorkerService.WORKFLOW_STATE_DECIDE_API_PATH)
-    public ResponseEntity<WorkflowStateDecideResponse> apiV1WorkflowStateDecidePost(
-            final @RequestBody WorkflowStateDecideRequest request
+    public ResponseEntity<WorkflowStateExecuteResponse> apiV1WorkflowStateDecidePost(
+            final @RequestBody WorkflowStateExecuteRequest request
     ) {
         return ResponseEntity.ok(workerService.handleWorkflowStateDecide(request));
     }
