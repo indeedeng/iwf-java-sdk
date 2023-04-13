@@ -52,7 +52,7 @@ public class WorkerService {
         final Map<String, SearchAttributeValueType> saTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(saTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
-                registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder());
+                registry.getInternalChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder());
 
         Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateExeLocals);
         CommandRequest commandRequest = state.getWorkflowState().waitUntil(
@@ -113,7 +113,7 @@ public class WorkerService {
         final Map<String, SearchAttributeValueType> saTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(saTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
-                registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder());
+                registry.getInternalChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder());
 
         Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateExeLocals);
 
@@ -123,7 +123,7 @@ public class WorkerService {
                 CommandResultsMapper.fromGenerated(
                         req.getCommandResults(),
                         registry.getSignalChannelNameToSignalTypeMap(req.getWorkflowType()),
-                        registry.getInterStateChannelNameToTypeMap(req.getWorkflowType()),
+                        registry.getInternalChannelNameToTypeMap(req.getWorkflowType()),
                         workerOptions.getObjectEncoder()),
                 persistence,
                 communication);

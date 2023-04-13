@@ -18,7 +18,7 @@ public abstract class CommandResults {
 
     public abstract List<TimerCommandResult> getAllTimerCommandResults();
 
-    public abstract List<InternalChannelCommandResult> getAllInterStateChannelCommandResult();
+    public abstract List<InternalChannelCommandResult> getAllInternalChannelCommandResult();
 
     public abstract Optional<Boolean> getWaitUntilApiSucceeded();
 

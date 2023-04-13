@@ -38,10 +38,10 @@ public class BasicInterStateChannelWorkflowState1 implements WorkflowState<Integ
             CommandResults commandResults,
             Persistence persistence,
             final Communication communication) {
-        final InternalChannelCommandResult result1 = commandResults.getAllInterStateChannelCommandResult().get(0);
+        final InternalChannelCommandResult result1 = commandResults.getAllInternalChannelCommandResult().get(0);
         Integer output = input + (Integer) result1.getValue().get();
 
-        final InternalChannelCommandResult result2 = commandResults.getAllInterStateChannelCommandResult().get(1);
+        final InternalChannelCommandResult result2 = commandResults.getAllInternalChannelCommandResult().get(1);
         if (result2.getRequestStatusEnum() != ChannelRequestStatus.WAITING) {
             throw new RuntimeException("the second command should be waiting");
         }

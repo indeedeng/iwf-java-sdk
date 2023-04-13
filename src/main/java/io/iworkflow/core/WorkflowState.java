@@ -22,7 +22,7 @@ public interface WorkflowState<I> {
      * Then the state will be waiting until the requested commands are completed.
      * If not implemented, the state will invoke the {@link #execute} directly
      * <p>
-     * The condition is setup using commands. There are three types commands in a {@link CommandRequest}: signal, timer and interStateChannel;
+     * The condition is setup using commands. There are three types commands in a {@link CommandRequest}: signal, timer and InternalChannel;
      * Also with three types of {@link io.iworkflow.gen.models.CommandWaitingType}
      *
      * @param context       the context info of this API invocation, like workflow start time, workflowId, etc
@@ -32,7 +32,7 @@ public interface WorkflowState<I> {
      *                      StateExecutionLocals are for passing data within the state execution from this start API to {@link #execute} API
      *                      RecordEvent is for storing some tracking info(e.g. RPC call input/output) when executing the API.
      *                      Note that any write API will be recorded to server after the whole start API response is accepted.
-     * @param communication communication API, right now only for publishing value to interstate channel
+     * @param communication communication API, right now only for publishing value to InternalChannel
      *                      Note that any write API will be recorded to server after the whole start API response is accepted.
      * @return the requested commands for this step
      */
@@ -59,7 +59,7 @@ public interface WorkflowState<I> {
      *                       StateExecutionLocals are for passing data within the state execution from this start API to {@link #execute} API
      *                       RecordEvent is for storing some tracking info(e.g. RPC call input/output) when executing the API.
      *                       Note that the write API will be recorded to server after the whole start API response is accepted.
-     * @param communication  communication API, right now only for publishing value to interstate channel
+     * @param communication  communication API, right now only for publishing value to InternalChannel
      *                       Note that the write API will be recorded to server after the whole decide API response is accepted.
      * @return the decision of what to do next(e.g. transition to next states)
      */
