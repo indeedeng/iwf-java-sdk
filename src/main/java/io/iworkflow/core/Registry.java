@@ -1,6 +1,6 @@
 package io.iworkflow.core;
 
-import io.iworkflow.core.communication.InterStateChannelDef;
+import io.iworkflow.core.communication.InternalChannelDef;
 import io.iworkflow.core.communication.SignalChannelDef;
 import io.iworkflow.core.persistence.DataAttributeDef;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
@@ -108,13 +108,13 @@ public class Registry {
 
     private void registerWorkflowInterstateChannel(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
-        final List<InterStateChannelDef> channels = getInterStateChannels(wf);
+        final List<InternalChannelDef> channels = getInterStateChannels(wf);
         if (channels == null || channels.isEmpty()) {
             interstateChannelTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        for (InterStateChannelDef interstateChannelDef : channels) {
+        for (InternalChannelDef interstateChannelDef : channels) {
             Map<String, Class<?>> nameToTypeMap =
                     interstateChannelTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
             if (nameToTypeMap.containsKey(interstateChannelDef.getChannelName())) {
@@ -166,8 +166,8 @@ public class Registry {
         return wf.getPersistenceSchema().stream().filter((f) -> f instanceof SearchAttributeDef).map(f -> (SearchAttributeDef) f).collect(Collectors.toList());
     }
 
-    private List<InterStateChannelDef> getInterStateChannels(final ObjectWorkflow wf) {
-        return wf.getCommunicationSchema().stream().filter((f) -> f instanceof InterStateChannelDef).map(f -> (InterStateChannelDef) f).collect(Collectors.toList());
+    private List<InternalChannelDef> getInterStateChannels(final ObjectWorkflow wf) {
+        return wf.getCommunicationSchema().stream().filter((f) -> f instanceof InternalChannelDef).map(f -> (InternalChannelDef) f).collect(Collectors.toList());
     }
 
     private List<SignalChannelDef> getSignalChannels(final ObjectWorkflow wf) {

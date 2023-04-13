@@ -6,8 +6,8 @@ import io.iworkflow.core.WorkflowState;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
-import io.iworkflow.core.communication.InterStateChannelCommand;
-import io.iworkflow.core.communication.InterStateChannelCommandResult;
+import io.iworkflow.core.communication.InternalChannelCommand;
+import io.iworkflow.core.communication.InternalChannelCommandResult;
 import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.gen.models.ChannelRequestStatus;
 
@@ -26,8 +26,8 @@ public class BasicInterStateChannelWorkflowState1 implements WorkflowState<Integ
             Persistence persistence,
             final Communication communication) {
         return CommandRequest.forAnyCommandCompleted(
-                InterStateChannelCommand.create(COMMAND_ID, BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_NAME_1),
-                InterStateChannelCommand.create(COMMAND_ID, BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_NAME_2)
+                InternalChannelCommand.create(COMMAND_ID, BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_NAME_1),
+                InternalChannelCommand.create(COMMAND_ID, BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_NAME_2)
         );
     }
 
@@ -38,10 +38,10 @@ public class BasicInterStateChannelWorkflowState1 implements WorkflowState<Integ
             CommandResults commandResults,
             Persistence persistence,
             final Communication communication) {
-        final InterStateChannelCommandResult result1 = commandResults.getAllInterStateChannelCommandResult().get(0);
+        final InternalChannelCommandResult result1 = commandResults.getAllInterStateChannelCommandResult().get(0);
         Integer output = input + (Integer) result1.getValue().get();
 
-        final InterStateChannelCommandResult result2 = commandResults.getAllInterStateChannelCommandResult().get(1);
+        final InternalChannelCommandResult result2 = commandResults.getAllInterStateChannelCommandResult().get(1);
         if (result2.getRequestStatusEnum() != ChannelRequestStatus.WAITING) {
             throw new RuntimeException("the second command should be waiting");
         }

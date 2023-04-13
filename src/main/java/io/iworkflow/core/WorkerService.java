@@ -2,7 +2,7 @@ package io.iworkflow.core;
 
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.communication.CommunicationImpl;
-import io.iworkflow.core.communication.InterStateChannelCommand;
+import io.iworkflow.core.communication.InternalChannelCommand;
 import io.iworkflow.core.mapper.CommandRequestMapper;
 import io.iworkflow.core.mapper.CommandResultsMapper;
 import io.iworkflow.core.mapper.StateDecisionMapper;
@@ -62,9 +62,9 @@ public class WorkerService {
                 communication);
 
         commandRequest.getCommands().forEach(cmd -> {
-            if (cmd instanceof InterStateChannelCommand) {
-                final String name = ((InterStateChannelCommand) cmd).getChannelName();
-                if (communication.getToPublishInterStateChannels().containsKey(name)) {
+            if (cmd instanceof InternalChannelCommand) {
+                final String name = ((InternalChannelCommand) cmd).getChannelName();
+                if (communication.getToPublishInternalChannels().containsKey(name)) {
                     throw new WorkflowDefinitionException("it's not allowed to publish and wait for the same interstate channel - " + name);
                 }
             }
@@ -93,7 +93,7 @@ public class WorkerService {
         if (upsertSAs.size() > 0) {
             response.upsertSearchAttributes(upsertSAs);
         }
-        final List<InterStateChannelPublishing> interStateChannelPublishing = toInterStateChannelPublishing(communication.getToPublishInterStateChannels());
+        final List<InterStateChannelPublishing> interStateChannelPublishing = toInterStateChannelPublishing(communication.getToPublishInternalChannels());
         if (interStateChannelPublishing.size() > 0) {
             response.publishToInterStateChannel(interStateChannelPublishing);
         }
@@ -151,7 +151,7 @@ public class WorkerService {
         if (upsertSAs.size() > 0) {
             response.upsertSearchAttributes(upsertSAs);
         }
-        final List<InterStateChannelPublishing> interStateChannelPublishing = toInterStateChannelPublishing(communication.getToPublishInterStateChannels());
+        final List<InterStateChannelPublishing> interStateChannelPublishing = toInterStateChannelPublishing(communication.getToPublishInternalChannels());
         if (interStateChannelPublishing.size() > 0) {
             response.publishToInterStateChannel(interStateChannelPublishing);
         }

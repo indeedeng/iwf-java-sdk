@@ -33,7 +33,7 @@ public class CommandResultsMapper {
         }
         if (commandResults.getInterStateChannelResults() != null) {
             builder.allInterStateChannelCommandResult(commandResults.getInterStateChannelResults().stream()
-                    .map(result -> InterStateChannelResultMapper.fromGenerated(
+                    .map(result -> InternalChannelResultMapper.fromGenerated(
                             result,
                             interstateChannelNameToTypeMap.get(result.getChannelName()),
                             objectEncoder))
