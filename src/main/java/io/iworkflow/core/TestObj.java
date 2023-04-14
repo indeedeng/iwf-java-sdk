@@ -26,11 +26,11 @@ public class TestObj implements ObjectWorkflow {
             dataAttributesLoadingType = PersistenceLoadingType.PARTIAL_WITHOUT_LOCKING,
             dataAttributesPartialLoadingKeys = {"123"}
     )
-    public Integer testRpc(String input, Persistence persistence, Communication communication) {
+    public Integer testRpc(Context context, String input, Persistence persistence, Communication communication) {
         throw new IllegalStateException("should not be called");
     }
 
-    public Integer testWrongRpc(String input, Persistence persistence, Communication communication) {
+    public Integer testWrongRpc(Context context, String input, Persistence persistence, Communication communication) {
         throw new IllegalStateException("should not be called");
     }
 

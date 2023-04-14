@@ -486,7 +486,7 @@ public class Client {
      * @return output
      */
     public <I, O> O invokeRPC(RpcDefinitions.RpcFunc1<I, O> rpcStubMethod, I input) {
-        return rpcStubMethod.execute(input, null, null);
+        return rpcStubMethod.execute(null, input, null, null);
     }
 
     /**
@@ -497,7 +497,7 @@ public class Client {
      * @return output
      */
     public <O> O invokeRPC(RpcDefinitions.RpcFunc0<O> rpcStubMethod) {
-        return rpcStubMethod.execute(null, null);
+        return rpcStubMethod.execute(null, null, null);
     }
 
     /**
@@ -508,7 +508,7 @@ public class Client {
      * @param <I>           the input type
      */
     public <I> void invokeRPC(RpcDefinitions.RpcProc1<I> rpcStubMethod, I input) {
-        rpcStubMethod.execute(input, null, null);
+        rpcStubMethod.execute(null, input, null, null);
     }
 
     /**
@@ -517,7 +517,7 @@ public class Client {
      * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
      */
     public void invokeRPC(RpcDefinitions.RpcProc0 rpcStubMethod) {
-        rpcStubMethod.execute(null, null);
+        rpcStubMethod.execute(null, null, null);
     }
 
     public Map<String, Object> getWorkflowSearchAttributes(

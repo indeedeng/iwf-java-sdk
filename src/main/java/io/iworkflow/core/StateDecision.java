@@ -91,6 +91,10 @@ public abstract class StateDecision {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(stateMovements)).build();
     }
 
+    public static StateDecision multiNextStates(final List<StateMovement> stateMovements) {
+        return ImmutableStateDecision.builder().nextStates(stateMovements).build();
+    }
+
     public static StateDecision multiNextStates(final Class<? extends WorkflowState>... states) {
         List<String> stateIds = new ArrayList<>();
         Arrays.stream(states).forEach(s -> stateIds.add(s.getSimpleName()));
