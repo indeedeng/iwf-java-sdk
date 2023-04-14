@@ -51,11 +51,10 @@ public class WorkerService {
 
     public WorkflowWorkerRpcResponse handleWorkflowWorkerRpc(final WorkflowWorkerRpcRequest req) {
         final Method method = registry.getWorkflowRpcMethod(req.getWorkflowType(), req.getRpcName());
-        final EncodedObject stateInput = req.getInput();
         Object input = null;
         if (method.getParameterTypes().length == PARAMETERS_WITH_INPUT) {
-            // the first one will be input
-            final Class<?> inputType = method.getParameterTypes()[0];
+            // the second one will be input
+            final Class<?> inputType = method.getParameterTypes()[1];
             input = workerOptions.getObjectEncoder().decode(req.getInput(), inputType);
         }
 
@@ -71,7 +70,7 @@ public class WorkerService {
         final StateExecutionLocalsImpl stateExeLocals = new StateExecutionLocalsImpl(toMap(null), workerOptions.getObjectEncoder());
         Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateExeLocals);
 
-        Object output = null;
+        Object output;
         try {
             if (method.getParameterTypes().length == PARAMETERS_WITH_INPUT) {
                 // with input
