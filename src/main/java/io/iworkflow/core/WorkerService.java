@@ -29,8 +29,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static io.iworkflow.core.RpcDefinitions.INDEX_OF_INPUT_PARAMETER;
 import static io.iworkflow.core.RpcDefinitions.PARAMETERS_WITH_INPUT;
 
 public class WorkerService {
@@ -50,11 +52,12 @@ public class WorkerService {
     }
 
     public WorkflowWorkerRpcResponse handleWorkflowWorkerRpc(final WorkflowWorkerRpcRequest req) {
+        final ObjectWorkflow workflow = registry.getWorkflow(req.getWorkflowType());
         final Method method = registry.getWorkflowRpcMethod(req.getWorkflowType(), req.getRpcName());
         Object input = null;
         if (method.getParameterTypes().length == PARAMETERS_WITH_INPUT) {
             // the second one will be input
-            final Class<?> inputType = method.getParameterTypes()[1];
+            Class<?> inputType = method.getParameterTypes()[INDEX_OF_INPUT_PARAMETER];
             input = workerOptions.getObjectEncoder().decode(req.getInput(), inputType);
         }
 
@@ -70,11 +73,11 @@ public class WorkerService {
         final StateExecutionLocalsImpl stateExeLocals = new StateExecutionLocalsImpl(toMap(null), workerOptions.getObjectEncoder());
         Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateExeLocals);
 
-        Object output;
+        Object output = null;
         try {
             if (method.getParameterTypes().length == PARAMETERS_WITH_INPUT) {
-                // with input
                 output = method.invoke(
+                        workflow,
                         context,
                         input,
                         persistence,
@@ -82,6 +85,7 @@ public class WorkerService {
             } else {
                 // without input
                 output = method.invoke(
+                        workflow,
                         context,
                         persistence,
                         communication);
@@ -341,7 +345,7 @@ public class WorkerService {
                 .workflowId(context.getWorkflowId())
                 .workflowRunId(context.getWorkflowRunId())
                 .workflowStartTimestampSeconds(context.getWorkflowStartedTimestamp())
-                .stateExecutionId(context.getStateExecutionId())
+                .stateExecutionId(Optional.ofNullable(context.getStateExecutionId()))
                 .attempt(attempt)
                 .firstAttemptTimestampSeconds(firstAttemptTimestamp)
                 .build();

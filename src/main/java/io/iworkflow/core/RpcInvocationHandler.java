@@ -8,6 +8,8 @@ import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import static io.iworkflow.core.RpcDefinitions.INDEX_OF_INPUT_PARAMETER;
+import static io.iworkflow.core.RpcDefinitions.PARAMETERS_WITH_INPUT;
 import static io.iworkflow.core.RpcDefinitions.validateRpcMethod;
 
 public class RpcInvocationHandler {
@@ -32,12 +34,10 @@ public class RpcInvocationHandler {
         }
         validateRpcMethod(method);
         Object input = null;
-        if (method.getParameterTypes().length == 4) {
-            input = allArguments[0];
+        if (method.getParameterTypes().length == PARAMETERS_WITH_INPUT) {
+            input = allArguments[INDEX_OF_INPUT_PARAMETER];
         }
-
-        System.out.println(workflowId + ", interceptor:" + method.getName() + " arg0:" + allArguments[0] + ", anno timeout" + rpcAnno.timeoutSeconds());
-
+        
         final Class<?> outputType = method.getReturnType();
 
         final Object output = unregisteredClient.invokeRpc(outputType, input, workflowId, workflowRunId, method.getName(), rpcAnno.timeoutSeconds(),

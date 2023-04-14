@@ -27,10 +27,10 @@ public class ProceedOnStateStartFailWorkflowState1 implements WorkflowState<Stri
 
     @Override
     public StateDecision execute(Context context, String input, CommandResults commandResults, Persistence persistence, Communication communication) {
-        if (context.getAttempt() <= 0) {
+        if (!context.getAttempt().isPresent()) {
             throw new RuntimeException("attempt must be greater than zero");
         }
-        if (context.getFirstAttemptTimestampSeconds() <= 0) {
+        if (!context.getFirstAttemptTimestampSeconds().isPresent()) {
             throw new RuntimeException("firstAttemptTimestampSeconds must be greater than zero");
         }
 

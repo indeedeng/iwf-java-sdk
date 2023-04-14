@@ -30,6 +30,7 @@ import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.gen.models.WorkflowStopRequest;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * UntypedClient will let you invoke the APIs to iWF server without much type validation checks(workflow type, signalChannelName, etc).
@@ -180,9 +181,16 @@ public class UnregisteredClient {
 
         String checkErrorMessage = "this workflow should have one or zero state output for using this API";
         Preconditions.checkNotNull(workflowGetResponse.getResults(), checkErrorMessage);
-        Preconditions.checkArgument(workflowGetResponse.getResults().size() == 1, checkErrorMessage);
+        final List<StateCompletionOutput> filteredResults = workflowGetResponse.getResults().stream().filter((res) -> res.getCompletedStateOutput() != null).collect(Collectors.toList());
 
-        final StateCompletionOutput output = workflowGetResponse.getResults().get(0);
+        Preconditions.checkArgument(workflowGetResponse.getResults().size() == 1 || filteredResults.size() == 1, checkErrorMessage + ", found " + workflowGetResponse.getResults().size() + ", with filtered NULL, " + filteredResults.size());
+
+        final StateCompletionOutput output;
+        if (filteredResults.size() == 1) {
+            output = filteredResults.get(0);
+        } else {
+            output = workflowGetResponse.getResults().get(0);
+        }
         return clientOptions.getObjectEncoder().decode(output.getCompletedStateOutput(), valueClass);
     }
 

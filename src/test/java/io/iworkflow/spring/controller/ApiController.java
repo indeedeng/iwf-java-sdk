@@ -6,6 +6,8 @@ import io.iworkflow.gen.models.WorkflowStateExecuteRequest;
 import io.iworkflow.gen.models.WorkflowStateExecuteResponse;
 import io.iworkflow.gen.models.WorkflowStateWaitUntilRequest;
 import io.iworkflow.gen.models.WorkflowStateWaitUntilResponse;
+import io.iworkflow.gen.models.WorkflowWorkerRpcRequest;
+import io.iworkflow.gen.models.WorkflowWorkerRpcResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,6 +40,13 @@ public class ApiController {
             final @RequestBody WorkflowStateExecuteRequest request
     ) {
         return ResponseEntity.ok(workerService.handleWorkflowStateDecide(request));
+    }
+
+    @PostMapping(WorkerService.WORKFLOW_WORKER_RPC_API_PATH)
+    public ResponseEntity<WorkflowWorkerRpcResponse> apiV1WorkflowWorkerRpcPost(
+            final @RequestBody WorkflowWorkerRpcRequest request
+    ) {
+        return ResponseEntity.ok(workerService.handleWorkflowWorkerRpc(request));
     }
 
 }

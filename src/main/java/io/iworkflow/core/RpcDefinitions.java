@@ -52,6 +52,8 @@ public final class RpcDefinitions {
     public static final int PARAMETERS_WITH_INPUT = 4;
     public static final int PARAMETERS_NO_INPUT = 3;
 
+    public static final int INDEX_OF_INPUT_PARAMETER = 1;
+
     public static void validateRpcMethod(final Method method) {
         final Class<?>[] paramTypes = method.getParameterTypes();
         final Class<?> persistenceType, communicationType, contextType;

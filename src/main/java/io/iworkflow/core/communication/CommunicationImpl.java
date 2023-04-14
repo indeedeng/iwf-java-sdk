@@ -33,7 +33,7 @@ public class CommunicationImpl implements Communication {
     @Override
     public void publishInternalChannel(final String channelName, final Object value) {
         final Class<?> type = nameToTypeMap.get(channelName);
-        if (!type.isInstance(value)) {
+        if (value != null && !type.isInstance(value)) {
             throw new WorkflowDefinitionException(String.format("InternalChannel value is not of type %s", type.getName()));
         }
         final List<EncodedObject> publish = toPublish.computeIfAbsent(channelName, s -> new ArrayList<>());
