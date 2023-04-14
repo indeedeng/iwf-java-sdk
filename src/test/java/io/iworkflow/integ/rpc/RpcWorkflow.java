@@ -18,6 +18,9 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 
+import static io.iworkflow.integ.RpcTest.HARDCODED_STR;
+import static io.iworkflow.integ.RpcTest.RPC_OUTPUT;
+
 @Component
 public class RpcWorkflow implements ObjectWorkflow {
 
@@ -52,16 +55,29 @@ public class RpcWorkflow implements ObjectWorkflow {
     }
 
     @RPC
-    public Integer testRpcFunc1(Context context, String input, Persistence persistence, Communication communication) {
+    public Long testRpcFunc1(Context context, String input, Persistence persistence, Communication communication) {
         if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
             throw new RuntimeException("invalid context");
         }
         persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, input);
         persistence.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, input);
-        persistence.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, 100L);
+        persistence.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, RPC_OUTPUT);
         communication.publishInternalChannel(INTERNAL_CHANNEL_NAME, null);
         communication.triggerStateMovements(StateMovement.create(RpcWorkflowState2.class));
-        return 100;
+        return RPC_OUTPUT;
+    }
+
+    @RPC
+    public Long testRpcFunc0(Context context, Persistence persistence, Communication communication) {
+        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+            throw new RuntimeException("invalid context");
+        }
+        persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, HARDCODED_STR);
+        persistence.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, HARDCODED_STR);
+        persistence.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, RPC_OUTPUT);
+        communication.publishInternalChannel(INTERNAL_CHANNEL_NAME, null);
+        communication.triggerStateMovements(StateMovement.create(RpcWorkflowState2.class));
+        return RPC_OUTPUT;
     }
 
 }
