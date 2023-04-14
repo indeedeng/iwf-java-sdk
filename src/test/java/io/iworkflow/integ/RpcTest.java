@@ -179,7 +179,7 @@ public class RpcTest {
                 RpcWorkflow.class, wfId, 10, 999);
 
         final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "");
-        final Long rpcOutput = client.invokeRPC(rpcStub::testRpcFunc1, RPC_INPUT);
+        final Long rpcOutput = client.invokeRPC(rpcStub::testRpcFunc1Readonly, RPC_INPUT);
 
         Assertions.assertEquals(RPC_OUTPUT, rpcOutput);
 
