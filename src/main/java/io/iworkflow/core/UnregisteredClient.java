@@ -5,6 +5,8 @@ import feign.FeignException;
 import io.iworkflow.core.validator.CronScheduleValidator;
 import io.iworkflow.gen.api.ApiClient;
 import io.iworkflow.gen.api.DefaultApi;
+import io.iworkflow.gen.models.EncodedObject;
+import io.iworkflow.gen.models.PersistenceLoadingPolicy;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
 import io.iworkflow.gen.models.StateCompletionOutput;
 import io.iworkflow.gen.models.WorkflowGetDataObjectsRequest;
@@ -15,6 +17,8 @@ import io.iworkflow.gen.models.WorkflowGetSearchAttributesRequest;
 import io.iworkflow.gen.models.WorkflowGetSearchAttributesResponse;
 import io.iworkflow.gen.models.WorkflowResetRequest;
 import io.iworkflow.gen.models.WorkflowResetResponse;
+import io.iworkflow.gen.models.WorkflowRpcRequest;
+import io.iworkflow.gen.models.WorkflowRpcResponse;
 import io.iworkflow.gen.models.WorkflowSearchRequest;
 import io.iworkflow.gen.models.WorkflowSearchResponse;
 import io.iworkflow.gen.models.WorkflowSignalRequest;
@@ -418,6 +422,33 @@ public class UnregisteredClient {
                             .workflowRunId(workflowRunId)
                             .keys(attributeKeys)
             );
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
+    }
+
+    public <T> T invokeRpc(
+            Class<T> valueClass,
+            final Object input,
+            final String workflowId,
+            final String workflowRunId,
+            final String rpcName,
+            final int timeoutSeconds,
+            final PersistenceLoadingPolicy dataAttributesLoadingPolicy,
+            final PersistenceLoadingPolicy searchAttributesLoadingPolicy) {
+        try {
+            final EncodedObject encodedInput = this.clientOptions.getObjectEncoder().encode(input);
+            final WorkflowRpcResponse response = defaultApi.apiV1WorkflowRpcPost(
+                    new WorkflowRpcRequest()
+                            .input(encodedInput)
+                            .workflowId(workflowId)
+                            .workflowRunId(workflowRunId)
+                            .rpcName(rpcName)
+                            .timeoutSeconds(timeoutSeconds)
+                            .dataAttributesLoadingPolicy(dataAttributesLoadingPolicy)
+                            .searchAttributesLoadingPolicy(searchAttributesLoadingPolicy)
+            );
+            return this.clientOptions.getObjectEncoder().decode(response.getOutput(), valueClass);
         } catch (FeignException.FeignClientException exp) {
             throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
         }
