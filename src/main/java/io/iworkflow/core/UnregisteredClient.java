@@ -183,7 +183,7 @@ public class UnregisteredClient {
         Preconditions.checkNotNull(workflowGetResponse.getResults(), checkErrorMessage);
         final List<StateCompletionOutput> filteredResults = workflowGetResponse.getResults().stream().filter((res) -> res.getCompletedStateOutput() != null).collect(Collectors.toList());
 
-        Preconditions.checkArgument(workflowGetResponse.getResults().size() == 1 || filteredResults.size() == 1, checkErrorMessage + ", found " + workflowGetResponse.getResults().size() + ", with filtered NULL, " + filteredResults.size());
+        Preconditions.checkArgument(workflowGetResponse.getResults().size() == 1 || filteredResults.size() == 1, checkErrorMessage + ", found " + workflowGetResponse.getResults().size() + ", after filtered NULL: " + filteredResults.size());
 
         final StateCompletionOutput output;
         if (filteredResults.size() == 1) {

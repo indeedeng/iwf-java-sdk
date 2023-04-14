@@ -10,7 +10,7 @@ import io.iworkflow.core.persistence.Persistence;
 
 public class RpcWorkflowState2 implements WorkflowState<Integer> {
 
-    private int counter = 0;
+    private static int counter = 0;
 
     @Override
     public Class<Integer> getInputType() {
@@ -39,5 +39,10 @@ public class RpcWorkflowState2 implements WorkflowState<Integer> {
         } else {
             return StateDecision.gracefulCompleteWorkflow();
         }
+    }
+
+    // reset counter so that new test can use it
+    public static void resetCounter() {
+        counter = 0;
     }
 }

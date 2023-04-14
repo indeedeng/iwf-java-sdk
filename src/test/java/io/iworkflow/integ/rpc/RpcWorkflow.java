@@ -80,4 +80,35 @@ public class RpcWorkflow implements ObjectWorkflow {
         return RPC_OUTPUT;
     }
 
+    @RPC
+    public void testRpcProc1(Context context, String input, Persistence persistence, Communication communication) {
+        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+            throw new RuntimeException("invalid context");
+        }
+        persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, input);
+        persistence.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, input);
+        persistence.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, RPC_OUTPUT);
+        communication.publishInternalChannel(INTERNAL_CHANNEL_NAME, null);
+        communication.triggerStateMovements(StateMovement.create(RpcWorkflowState2.class));
+    }
+
+    @RPC
+    public void testRpcProc0(Context context, Persistence persistence, Communication communication) {
+        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+            throw new RuntimeException("invalid context");
+        }
+        persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, HARDCODED_STR);
+        persistence.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, HARDCODED_STR);
+        persistence.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, RPC_OUTPUT);
+        communication.publishInternalChannel(INTERNAL_CHANNEL_NAME, null);
+        communication.triggerStateMovements(StateMovement.create(RpcWorkflowState2.class));
+    }
+
+    @RPC
+    public Long testRpcFunc1Readonly(Context context, String input, Persistence persistence, Communication communication) {
+        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+            throw new RuntimeException("invalid context");
+        }
+        return RPC_OUTPUT;
+    }
 }
