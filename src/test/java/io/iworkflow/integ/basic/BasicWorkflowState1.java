@@ -17,10 +17,10 @@ public class BasicWorkflowState1 implements WorkflowState<Integer> {
 
     @Override
     public CommandRequest waitUntil(final Context context, final Integer input, Persistence persistence, final Communication communication) {
-        if (context.getAttempt() <= 0) {
+        if (!context.getAttempt().isPresent()) {
             throw new RuntimeException("attempt must be greater than zero");
         }
-        if (context.getFirstAttemptTimestampSeconds() <= 0) {
+        if (!context.getFirstAttemptTimestampSeconds().isPresent()) {
             throw new RuntimeException("firstAttemptTimestampSeconds must be greater than zero");
         }
         return CommandRequest.empty;
@@ -28,10 +28,10 @@ public class BasicWorkflowState1 implements WorkflowState<Integer> {
 
     @Override
     public StateDecision execute(final Context context, final Integer input, final CommandResults commandResults, Persistence persistence, final Communication communication) {
-        if (context.getAttempt() <= 0) {
+        if (!context.getAttempt().isPresent()) {
             throw new RuntimeException("attempt must be greater than zero");
         }
-        if (context.getFirstAttemptTimestampSeconds() <= 0) {
+        if (!context.getFirstAttemptTimestampSeconds().isPresent()) {
             throw new RuntimeException("firstAttemptTimestampSeconds must be greater than zero");
         }
 

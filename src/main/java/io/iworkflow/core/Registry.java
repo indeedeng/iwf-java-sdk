@@ -7,6 +7,7 @@ import io.iworkflow.core.persistence.PersistenceFieldDef;
 import io.iworkflow.core.persistence.SearchAttributeDef;
 import io.iworkflow.gen.models.SearchAttributeValueType;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,8 @@ public class Registry {
 
     private final Map<String, Map<String, SearchAttributeValueType>> searchAttributeTypeStore = new HashMap<>();
 
+    private final Map<String, Map<String, Method>> rpcMethodStore = new HashMap<>();
+
     private static final String DELIMITER = "_";
 
     public void addWorkflows(final ObjectWorkflow... wfs) {
@@ -44,8 +47,8 @@ public class Registry {
         registerWorkflowInternalChannel(wf);
         registerWorkflowDataAttributes(wf);
         registerWorkflowSearchAttributes(wf);
+        registerWorkflowRPCs(wf);
     }
-
     public static String getWorkflowType(final ObjectWorkflow wf) {
         if (wf.getWorkflowType().isEmpty()) {
             return wf.getClass().getSimpleName();
@@ -85,6 +88,27 @@ public class Registry {
             throw new WorkflowDefinitionException(String.format("Workflow must contain exactly one starting states, found %d", startingStates));
         }
         workflowStartStateStore.put(workflowType, startState);
+    }
+
+    private void registerWorkflowRPCs(final ObjectWorkflow wf) {
+        String workflowType = getWorkflowType(wf);
+        final Method[] methods = wf.getClass().getDeclaredMethods();
+        if (methods.length == 0) {
+            rpcMethodStore.put(workflowType, new HashMap<>());
+            return;
+        }
+
+        Arrays.stream(methods).forEach(method -> {
+            final RPC rpcAnno = method.getAnnotation(RPC.class);
+            if (rpcAnno == null) {
+                // skip methods that are not RPC
+                return;
+            }
+            RpcDefinitions.validateRpcMethod(method);
+            Map<String, Method> rpcMap =
+                    rpcMethodStore.computeIfAbsent(workflowType, s -> new HashMap<>());
+            rpcMap.put(method.getName(), method);
+        });
     }
 
     private void registerWorkflowSignal(final ObjectWorkflow wf) {
@@ -202,6 +226,14 @@ public class Registry {
 
     public ObjectWorkflow getWorkflow(final String workflowType) {
         return workflowStore.get(workflowType);
+    }
+
+    public Method getWorkflowRpcMethod(final String workflowType, final String rpcName) {
+        final Map<String, Method> wfRRPCs = rpcMethodStore.get(workflowType);
+        if (wfRRPCs == null) {
+            throw new WorkflowDefinitionException(String.format("workflow type %s is not registered, all registered types are: %s", workflowType, workflowStartStateStore.keySet()));
+        }
+        return wfRRPCs.get(rpcName);
     }
 
     public StateDef getWorkflowState(final String workflowType, final String stateId) {

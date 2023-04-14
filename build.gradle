@@ -58,6 +58,7 @@ dependencies {
     implementation 'io.swagger:swagger-models:1.6.6'
     implementation 'io.swagger:swagger-core:1.6.6'
     implementation "org.openapitools:jackson-databind-nullable:0.2.1"
+    implementation "net.bytebuddy:byte-buddy:1.14.4"
 
     // jaskson
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"

@@ -10,6 +10,9 @@ import io.iworkflow.gen.models.WorkflowGetSearchAttributesResponse;
 import io.iworkflow.gen.models.WorkflowSearchRequest;
 import io.iworkflow.gen.models.WorkflowSearchResponse;
 import io.iworkflow.gen.models.WorkflowStateOptions;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.matcher.ElementMatchers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -442,6 +445,79 @@ public class Client {
      */
     public WorkflowSearchResponse searchWorkflow(final WorkflowSearchRequest request) {
         return unregisteredClient.searchWorkflow(request);
+    }
+
+    /**
+     * create a new stub for invoking RPC
+     *
+     * @param workflowClassForRpc the class of defining the RPCs to invoke
+     * @param workflowId          workflowId is required
+     * @param workflowRunId       optional
+     * @param <T>                 the class of defining the RPCs to invoke
+     * @return the result of the RPC
+     */
+    public <T> T newRpcStub(Class<T> workflowClassForRpc, String workflowId, String workflowRunId) {
+
+        Class<?> dynamicType = new ByteBuddy()
+                .subclass(workflowClassForRpc)
+                .method(ElementMatchers.any())
+                .intercept(MethodDelegation.to(new RpcInvocationHandler(this.unregisteredClient, workflowId, workflowRunId)))
+                .make()
+                .load(getClass().getClassLoader())
+                .getLoaded();
+
+        T result;
+        try {
+            result = (T) dynamicType.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
+
+        return result;
+    }
+
+    /**
+     * invoking the RPC through RPC stub
+     *
+     * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
+     * @param input         the input of the RPC method
+     * @param <I>           the input type
+     * @param <O>           the output type
+     * @return output
+     */
+    public <I, O> O invokeRPC(RpcDefinitions.RpcFunc1<I, O> rpcStubMethod, I input) {
+        return rpcStubMethod.execute(null, input, null, null);
+    }
+
+    /**
+     * invoking the RPC through RPC stub
+     *
+     * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
+     * @param <O>           the output type
+     * @return output
+     */
+    public <O> O invokeRPC(RpcDefinitions.RpcFunc0<O> rpcStubMethod) {
+        return rpcStubMethod.execute(null, null, null);
+    }
+
+    /**
+     * invoking the RPC through RPC stub
+     *
+     * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
+     * @param input         the input of the RPC method
+     * @param <I>           the input type
+     */
+    public <I> void invokeRPC(RpcDefinitions.RpcProc1<I> rpcStubMethod, I input) {
+        rpcStubMethod.execute(null, input, null, null);
+    }
+
+    /**
+     * invoking the RPC through RPC stub
+     *
+     * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
+     */
+    public void invokeRPC(RpcDefinitions.RpcProc0 rpcStubMethod) {
+        rpcStubMethod.execute(null, null, null);
     }
 
     public Map<String, Object> getWorkflowSearchAttributes(

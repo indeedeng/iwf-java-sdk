@@ -10,4 +10,5 @@ public abstract class StopWorkflowOptions {
     public abstract Optional<WorkflowStopType> getWorkflowStopType();
 
     public abstract Optional<String> getReason();
+
 }
