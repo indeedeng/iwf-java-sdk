@@ -18,7 +18,7 @@ public final class RpcDefinitions {
      */
     @FunctionalInterface
     public interface RpcFunc1<I, O> extends Serializable {
-        O execute(I input, Persistence persistence, Communication communication);
+        O execute(Context context, I input, Persistence persistence, Communication communication);
     }
 
     /**
@@ -28,7 +28,7 @@ public final class RpcDefinitions {
      */
     @FunctionalInterface
     public interface RpcFunc0<O> extends Serializable {
-        O execute(Persistence persistence, Communication communication);
+        O execute(Context context, Persistence persistence, Communication communication);
     }
 
     /**
@@ -38,7 +38,7 @@ public final class RpcDefinitions {
      */
     @FunctionalInterface
     public interface RpcProc1<I> extends Serializable {
-        void execute(I input, Persistence persistence, Communication communication);
+        void execute(Context context, I input, Persistence persistence, Communication communication);
     }
 
     /**
@@ -46,18 +46,23 @@ public final class RpcDefinitions {
      */
     @FunctionalInterface
     public interface RpcProc0 extends Serializable {
-        void execute(Persistence persistence, Communication communication);
+        void execute(Context context, Persistence persistence, Communication communication);
     }
+
+    public static final int PARAMETERS_WITH_INPUT = 4;
+    public static final int PARAMETERS_NO_INPUT = 3;
 
     public static void validateRpcMethod(final Method method) {
         final Class<?>[] paramTypes = method.getParameterTypes();
-        final Class<?> persistenceType, communicationType;
-        if (paramTypes.length == 2) {
-            persistenceType = paramTypes[0];
-            communicationType = paramTypes[1];
-        } else if (paramTypes.length == 3) {
+        final Class<?> persistenceType, communicationType, contextType;
+        if (paramTypes.length == PARAMETERS_NO_INPUT) {
+            contextType = paramTypes[0];
             persistenceType = paramTypes[1];
             communicationType = paramTypes[2];
+        } else if (paramTypes.length == PARAMETERS_WITH_INPUT) {
+            contextType = paramTypes[0];
+            persistenceType = paramTypes[2];
+            communicationType = paramTypes[3];
         } else {
             throw new WorkflowDefinitionException("An RPC method must be in the form of one of {@link RpcDefinitions}");
         }

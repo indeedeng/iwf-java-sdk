@@ -228,6 +228,14 @@ public class Registry {
         return workflowStore.get(workflowType);
     }
 
+    public Method getWorkflowRpcMethod(final String workflowType, final String rpcName) {
+        final Map<String, Method> wfRRPCs = rpcMethodStore.get(workflowType);
+        if (wfRRPCs == null) {
+            throw new WorkflowDefinitionException(String.format("workflow type %s is not registered, all registered types are: %s", workflowType, workflowStartStateStore.keySet()));
+        }
+        return wfRRPCs.get(rpcName);
+    }
+
     public StateDef getWorkflowState(final String workflowType, final String stateId) {
         return workflowStateStore.get(getStateDefKey(workflowType, stateId));
     }
