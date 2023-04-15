@@ -1,6 +1,6 @@
 package io.iworkflow.integ.interstatechannel;
 
-import io.iworkflow.core.ObjectWorkflow;
+import io.iworkflow.core.DEObject;
 import io.iworkflow.core.StateDef;
 import io.iworkflow.core.communication.CommunicationMethodDef;
 import io.iworkflow.core.communication.InternalChannelDef;
@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class BasicInterStateChannelWorkflow implements ObjectWorkflow {
+public class BasicInterStateChannelWorkflow implements DEObject {
     public static final String INTER_STATE_CHANNEL_NAME_1 = "test-inter-state-channel-1";
 
     public static final String INTER_STATE_CHANNEL_NAME_2 = "test-inter-state-channel-2";

@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This is for annotating an RPC method for an implementation of {@link ObjectWorkflow}
+ * This is for annotating an RPC method for an implementation of {@link DEObject}
  * The method must be in the form of one of {@link RpcDefinitions}
  */
 @Retention(RetentionPolicy.RUNTIME)

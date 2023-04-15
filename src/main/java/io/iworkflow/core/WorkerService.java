@@ -52,7 +52,7 @@ public class WorkerService {
     }
 
     public WorkflowWorkerRpcResponse handleWorkflowWorkerRpc(final WorkflowWorkerRpcRequest req) {
-        final ObjectWorkflow workflow = registry.getWorkflow(req.getWorkflowType());
+        final DEObject workflow = registry.getWorkflow(req.getWorkflowType());
         final Method method = registry.getWorkflowRpcMethod(req.getWorkflowType(), req.getRpcName());
         Object input = null;
         if (method.getParameterTypes().length == PARAMETERS_WITH_INPUT) {

@@ -1,6 +1,6 @@
 package io.iworkflow.integ.signal;
 
-import io.iworkflow.core.ObjectWorkflow;
+import io.iworkflow.core.DEObject;
 import io.iworkflow.core.StateDef;
 import io.iworkflow.core.communication.CommunicationMethodDef;
 import io.iworkflow.core.communication.SignalChannelDef;
@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class BasicSignalWorkflow implements ObjectWorkflow {
+public class BasicSignalWorkflow implements DEObject {
 
     public static final String SIGNAL_CHANNEL_NAME_1 = "test-signal-1";
 

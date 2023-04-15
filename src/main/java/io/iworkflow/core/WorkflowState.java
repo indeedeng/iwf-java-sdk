@@ -28,7 +28,7 @@ public interface WorkflowState<I> {
      * @param context       the context info of this API invocation, like workflow start time, workflowId, etc
      * @param input         the state input which is deserialized by {@link ObjectEncoder} with {@link #getInputType}
      * @param persistence   persistence API for 1) data attributes, 2) search attributes and 3) stateExecutionLocals 4) recordEvent
-     *                      DataObjects and SearchAttributes are defined by {@link ObjectWorkflow} interface.
+     *                      DataObjects and SearchAttributes are defined by {@link DEObject} interface.
      *                      StateExecutionLocals are for passing data within the state execution from this start API to {@link #execute} API
      *                      RecordEvent is for storing some tracking info(e.g. RPC call input/output) when executing the API.
      *                      Note that any write API will be recorded to server after the whole start API response is accepted.
@@ -55,7 +55,7 @@ public interface WorkflowState<I> {
      * @param input          the state input which is deserialized by {@link ObjectEncoder} with {@link #getInputType}
      * @param commandResults the results of the command that executed by {@link #waitUntil}
      * @param persistence    persistence API for 1) data attributes, 2) search attributes and 3) stateExecutionLocals 4) recordEvent
-     *                       DataObjects and SearchAttributes are defined by {@link ObjectWorkflow} interface.
+     *                       DataObjects and SearchAttributes are defined by {@link DEObject} interface.
      *                       StateExecutionLocals are for passing data within the state execution from this start API to {@link #execute} API
      *                       RecordEvent is for storing some tracking info(e.g. RPC call input/output) when executing the API.
      *                       Note that the write API will be recorded to server after the whole start API response is accepted.

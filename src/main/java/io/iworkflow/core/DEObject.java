@@ -7,10 +7,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This is the interface to define an object workflow definition.
+ * This is the interface to define a durable execution object.
  * ObjectWorkflow is a top level concept in iWF. Any object that is long-lasting(at least a few seconds) can be modeled as an "ObjectWorkflow".
  */
-public interface ObjectWorkflow {
+public interface DEObject {
     /**
      * defines the states of the workflow. A state represents a step of the workflow state machine.
      * A state can execute some commands (signal/timer) and wait for result

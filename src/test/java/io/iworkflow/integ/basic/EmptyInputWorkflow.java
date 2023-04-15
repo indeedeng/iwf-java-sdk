@@ -1,6 +1,6 @@
 package io.iworkflow.integ.basic;
 
-import io.iworkflow.core.ObjectWorkflow;
+import io.iworkflow.core.DEObject;
 import io.iworkflow.core.StateDef;
 import org.springframework.stereotype.Component;
 
@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class EmptyInputWorkflow implements ObjectWorkflow {
+public class EmptyInputWorkflow implements DEObject {
 
     public static final String CUSTOM_WF_TYPE = "test-customized-wf-type";
 

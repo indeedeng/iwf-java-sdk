@@ -1,7 +1,7 @@
 package io.iworkflow.integ.rpc;
 
 import io.iworkflow.core.Context;
-import io.iworkflow.core.ObjectWorkflow;
+import io.iworkflow.core.DEObject;
 import io.iworkflow.core.RPC;
 import io.iworkflow.core.StateDef;
 import io.iworkflow.core.StateMovement;
@@ -22,7 +22,7 @@ import static io.iworkflow.integ.RpcTest.HARDCODED_STR;
 import static io.iworkflow.integ.RpcTest.RPC_OUTPUT;
 
 @Component
-public class RpcWorkflow implements ObjectWorkflow {
+public class RpcWorkflow implements DEObject {
 
     public static final String INTERNAL_CHANNEL_NAME = "test-channel-1";
 

@@ -1,6 +1,6 @@
 package io.iworkflow.integ.persistence;
 
-import io.iworkflow.core.ObjectWorkflow;
+import io.iworkflow.core.DEObject;
 import io.iworkflow.core.StateDef;
 import io.iworkflow.core.persistence.DataAttributeDef;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class BasicPersistenceWorkflow implements ObjectWorkflow {
+public class BasicPersistenceWorkflow implements DEObject {
     public static final String TEST_DATA_OBJECT_KEY = "data-obj-1";
     public static final String TEST_DATA_OBJECT_MODEL_1 = "data-obj-2";
 
