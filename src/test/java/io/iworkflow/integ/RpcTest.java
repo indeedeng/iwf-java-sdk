@@ -37,7 +37,7 @@ public class RpcTest {
     @Test
     public void testRPCWorkflowFunc1() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
-        final String wfId = "rpc-test-id" + System.currentTimeMillis() / 1000;
+        final String wfId = "testRPCWorkflowFunc1" + System.currentTimeMillis() / 1000;
         final String runId = client.startWorkflow(
                 RpcWorkflow.class, wfId, 10, 999);
 
@@ -72,7 +72,7 @@ public class RpcTest {
     @Test
     public void testRPCWorkflowFunc0() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
-        final String wfId = "rpc-test-id" + System.currentTimeMillis() / 1000;
+        final String wfId = "testRPCWorkflowFunc0" + System.currentTimeMillis() / 1000;
         final String runId = client.startWorkflow(
                 RpcWorkflow.class, wfId, 10, 999);
 
@@ -108,7 +108,7 @@ public class RpcTest {
     @Test
     public void testRPCWorkflowProc1() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
-        final String wfId = "rpc-test-id" + System.currentTimeMillis() / 1000;
+        final String wfId = "testRPCWorkflowProc1" + System.currentTimeMillis() / 1000;
         final String runId = client.startWorkflow(
                 RpcWorkflow.class, wfId, 10, 999);
 
@@ -141,7 +141,7 @@ public class RpcTest {
     @Test
     public void testRPCWorkflowProc0() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
-        final String wfId = "rpc-test-id" + System.currentTimeMillis() / 1000;
+        final String wfId = "testRPCWorkflowProc0" + System.currentTimeMillis() / 1000;
         final String runId = client.startWorkflow(
                 RpcWorkflow.class, wfId, 10, 999);
 
@@ -174,7 +174,7 @@ public class RpcTest {
     @Test
     public void testRPCWorkflowFunc1ReadOnly() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
-        final String wfId = "rpc-test-id" + System.currentTimeMillis() / 1000;
+        final String wfId = "testRPCWorkflowFunc1ReadOnly" + System.currentTimeMillis() / 1000;
         final String runId = client.startWorkflow(
                 RpcWorkflow.class, wfId, 10, 999);
 
