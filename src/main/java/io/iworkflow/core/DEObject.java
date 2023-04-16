@@ -8,11 +8,11 @@ import java.util.List;
 
 /**
  * This is the interface to define a durable execution object.
- * ObjectWorkflow is a top level concept in iWF. Any object that is long-lasting(at least a few seconds) can be modeled as an "ObjectWorkflow".
+ * DEObject is a top level concept in iWF. Anything that is long-lasting(at least a few seconds) can be modeled as an "DEObject".
  */
 public interface DEObject {
     /**
-     * defines the states of the workflow. A state represents a step of the workflow state machine.
+     * defines the workflow states of the DEObject. A state represents a step of a workflow state machine.
      * A state can execute some commands (signal/timer) and wait for result
      * See more details in the {@link WorkflowState} definition.
      *
@@ -21,7 +21,7 @@ public interface DEObject {
     List<StateDef> getWorkflowStates();
 
     /**
-     * defines all the persistence fields for this workflow, this includes:
+     * defines all the persistence fields for this object, this includes:
      * 1. Data attributes
      * 2. Search attributes
      * <p>
@@ -30,7 +30,7 @@ public interface DEObject {
      * <p>
      * Search attributes can be read/upsert in WorkflowState start/decide API
      * Search attributes can also be read by GetSearchAttributes Client API by external applications
-     * External applications can also use "SearchWorkflow" API to find workflows by SQL-like query
+     * External applications can also use "SearchObject" API to find objects by SQL-like query
      *
      * @return the persistence schema
      */
@@ -39,15 +39,15 @@ public interface DEObject {
     }
 
     /**
-     * defines all the communication methods for this workflow, this includes
+     * defines all the communication methods for this object, this includes
      * 1. Signal channel
      * 2. Interstate channel
      * <p>
-     * Signal channel is for external applications to send signal to workflow execution.
-     * Workflow execution can listen on the signal in the WorkflowState start API and receive in
+     * Signal channel is for external applications to send signal to object execution.
+     * Object execution can listen on the signal in the WorkflowState start API and receive in
      * the WorkflowState decide API
      * <p>
-     * InternalChannel is for synchronization communications within the workflow execution internally.
+     * InternalChannel is for synchronization communications within the object execution internally.
      * E.g. WorkflowStateA will continue after receiving a value from WorkflowStateB, or from an RPC
      *
      * @return the communication schema
@@ -57,13 +57,12 @@ public interface DEObject {
     }
 
     /**
-     * Define the workflowType of this workflow definition. By default(when return empty string), it's the simple name of the workflow instance,
+     * Define the ObjectType of this object definition. By default(when return empty string), it's the simple name of the DEObject class instance,
      * which should be the case for most scenarios.
-     * <p>
-     * In case of dynamic workflow implementation, return customized values based on constructor input.
-     * @return the workflow type
+     *
+     * @return the object type
      */
-    default String getWorkflowType() {
+    default String getObjectType() {
         return "";
     }
 }

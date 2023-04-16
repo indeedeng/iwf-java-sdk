@@ -6,13 +6,13 @@ import java.util.Optional;
 
 @Value.Immutable
 public abstract class Context {
-    public abstract Long getWorkflowStartTimestampSeconds();
+    public abstract Long getObjectStartTimestampSeconds();
 
     public abstract Optional<String> getStateExecutionId();
 
-    public abstract String getWorkflowRunId();
+    public abstract String getObjectExecutionId();
 
-    public abstract String getWorkflowId();
+    public abstract String getObjectId();
 
     // this is the start time of the first attempt of the API call. It's from ScheduledTimestamp of Cadence/Temporal activity.GetInfo
     // require server version 1.2.2+, return -1 if server version is lower

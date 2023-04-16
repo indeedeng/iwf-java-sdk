@@ -342,9 +342,9 @@ public class WorkerService {
         }
 
         return ImmutableContext.builder()
-                .workflowId(context.getWorkflowId())
-                .workflowRunId(context.getWorkflowRunId())
-                .workflowStartTimestampSeconds(context.getWorkflowStartedTimestamp())
+                .objectId(context.getWorkflowId())
+                .objectExecutionId(context.getWorkflowRunId())
+                .objectStartTimestampSeconds(context.getWorkflowStartedTimestamp())
                 .stateExecutionId(Optional.ofNullable(context.getStateExecutionId()))
                 .attempt(attempt)
                 .firstAttemptTimestampSeconds(firstAttemptTimestamp)

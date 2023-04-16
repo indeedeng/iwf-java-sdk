@@ -3,7 +3,7 @@ package io.iworkflow.integ;
 import com.google.common.collect.ImmutableMap;
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
-import io.iworkflow.core.ImmutableStopWorkflowOptions;
+import io.iworkflow.core.ImmutableStopObjectExecutionOptions;
 import io.iworkflow.gen.models.WorkflowStopType;
 import io.iworkflow.integ.persistence.BasicPersistenceWorkflow;
 import io.iworkflow.integ.rpc.RpcWorkflow;
@@ -183,7 +183,7 @@ public class RpcTest {
 
         Assertions.assertEquals(RPC_OUTPUT, rpcOutput);
 
-        client.closeObjectExecution(wfId, "", ImmutableStopWorkflowOptions.builder()
+        client.closeObjectExecution(wfId, "", ImmutableStopObjectExecutionOptions.builder()
                 .workflowStopType(WorkflowStopType.FAIL)
                 .reason(HARDCODED_STR)
                 .build());

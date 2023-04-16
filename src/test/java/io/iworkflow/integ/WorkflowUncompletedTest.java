@@ -2,7 +2,7 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
-import io.iworkflow.core.ImmutableStopWorkflowOptions;
+import io.iworkflow.core.ImmutableStopObjectExecutionOptions;
 import io.iworkflow.core.WorkflowUncompletedException;
 import io.iworkflow.gen.models.WorkflowErrorType;
 import io.iworkflow.gen.models.WorkflowStatus;
@@ -80,7 +80,7 @@ public class WorkflowUncompletedTest {
         final String runId = client.createObject(
                 BasicSignalWorkflow.class, wfId, 10, input);
 
-        client.closeObjectExecution(wfId, "", ImmutableStopWorkflowOptions.builder().workflowStopType(WorkflowStopType.TERMINATE).build());
+        client.closeObjectExecution(wfId, "", ImmutableStopObjectExecutionOptions.builder().workflowStopType(WorkflowStopType.TERMINATE).build());
 
         try {
             client.getSingleResultWithWait(Integer.class, wfId);
@@ -103,7 +103,7 @@ public class WorkflowUncompletedTest {
         final String runId = client.createObject(
                 BasicSignalWorkflow.class, wfId, 10, input);
 
-        client.closeObjectExecution(wfId, "", ImmutableStopWorkflowOptions.builder().workflowStopType(WorkflowStopType.FAIL).reason("fail by API").build());
+        client.closeObjectExecution(wfId, "", ImmutableStopObjectExecutionOptions.builder().workflowStopType(WorkflowStopType.FAIL).reason("fail by API").build());
 
         try {
             client.getSingleResultWithWait(Integer.class, wfId);

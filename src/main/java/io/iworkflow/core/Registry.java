@@ -51,10 +51,10 @@ public class Registry {
     }
 
     public static String getObjectType(final DEObject wf) {
-        if (wf.getWorkflowType().isEmpty()) {
+        if (wf.getObjectType().isEmpty()) {
             return wf.getClass().getSimpleName();
         }
-        return wf.getWorkflowType();
+        return wf.getObjectType();
     }
 
     private void registerWorkflow(final DEObject wf) {

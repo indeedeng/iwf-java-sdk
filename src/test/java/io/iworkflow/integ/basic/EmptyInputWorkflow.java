@@ -21,7 +21,7 @@ public class EmptyInputWorkflow implements DEObject {
     }
 
     @Override
-    public String getWorkflowType() {
+    public String getObjectType() {
         return CUSTOM_WF_TYPE;
     }
 }

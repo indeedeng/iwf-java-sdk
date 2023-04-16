@@ -56,7 +56,7 @@ public class RpcWorkflow implements DEObject {
 
     @RPC
     public Long testRpcFunc1(Context context, String input, Persistence persistence, Communication communication) {
-        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+        if (context.getObjectId().isEmpty() || context.getObjectExecutionId().isEmpty()) {
             throw new RuntimeException("invalid context");
         }
         persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, input);
@@ -69,7 +69,7 @@ public class RpcWorkflow implements DEObject {
 
     @RPC
     public Long testRpcFunc0(Context context, Persistence persistence, Communication communication) {
-        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+        if (context.getObjectId().isEmpty() || context.getObjectExecutionId().isEmpty()) {
             throw new RuntimeException("invalid context");
         }
         persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, HARDCODED_STR);
@@ -82,7 +82,7 @@ public class RpcWorkflow implements DEObject {
 
     @RPC
     public void testRpcProc1(Context context, String input, Persistence persistence, Communication communication) {
-        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+        if (context.getObjectId().isEmpty() || context.getObjectExecutionId().isEmpty()) {
             throw new RuntimeException("invalid context");
         }
         persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, input);
@@ -94,7 +94,7 @@ public class RpcWorkflow implements DEObject {
 
     @RPC
     public void testRpcProc0(Context context, Persistence persistence, Communication communication) {
-        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+        if (context.getObjectId().isEmpty() || context.getObjectExecutionId().isEmpty()) {
             throw new RuntimeException("invalid context");
         }
         persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, HARDCODED_STR);
@@ -106,7 +106,7 @@ public class RpcWorkflow implements DEObject {
 
     @RPC
     public Long testRpcFunc1Readonly(Context context, String input, Persistence persistence, Communication communication) {
-        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+        if (context.getObjectId().isEmpty() || context.getObjectExecutionId().isEmpty()) {
             throw new RuntimeException("invalid context");
         }
         return RPC_OUTPUT;
