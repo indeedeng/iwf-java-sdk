@@ -1,7 +1,7 @@
 package io.iworkflow.core.persistence;
 
+import io.iworkflow.core.ObjectDefinitionException;
 import io.iworkflow.core.ObjectEncoder;
-import io.iworkflow.core.WorkflowDefinitionException;
 import io.iworkflow.gen.models.EncodedObject;
 import io.iworkflow.gen.models.KeyValue;
 
@@ -44,7 +44,7 @@ public class StateExecutionLocalsImpl implements StateExecutionLocals {
     @Override
     public void recordEvent(final String key, final Object... eventData) {
         if (recordEvents.containsKey(key)) {
-            throw new WorkflowDefinitionException("cannot record the same event for more than once");
+            throw new ObjectDefinitionException("cannot record the same event for more than once");
         }
         if (eventData != null && eventData.length == 1) {
             recordEvents.put(key, objectEncoder.encode(eventData[0]));

@@ -30,7 +30,7 @@ public class RpcInvocationHandler {
                             @Origin Method method) {
         final RPC rpcAnno = method.getAnnotation(RPC.class);
         if (rpcAnno == null) {
-            throw new WorkflowDefinitionException("An RPC method must be annotated by RPC annotation");
+            throw new ObjectDefinitionException("An RPC method must be annotated by RPC annotation");
         }
         validateRpcMethod(method);
         Object input = null;

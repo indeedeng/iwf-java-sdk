@@ -66,10 +66,10 @@ public final class RpcDefinitions {
             persistenceType = paramTypes[2];
             communicationType = paramTypes[3];
         } else {
-            throw new WorkflowDefinitionException("An RPC method must be in the form of one of {@link RpcDefinitions}");
+            throw new ObjectDefinitionException("An RPC method must be in the form of one of {@link RpcDefinitions}");
         }
         if (!persistenceType.equals(Persistence.class) || !communicationType.equals(Communication.class)) {
-            throw new WorkflowDefinitionException("An RPC method must be in the form of one of {@link RpcDefinitions}");
+            throw new ObjectDefinitionException("An RPC method must be in the form of one of {@link RpcDefinitions}");
         }
     }
 }

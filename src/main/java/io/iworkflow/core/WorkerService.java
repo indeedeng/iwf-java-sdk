@@ -155,7 +155,7 @@ public class WorkerService {
             if (cmd instanceof InternalChannelCommand) {
                 final String name = ((InternalChannelCommand) cmd).getChannelName();
                 if (communication.getToPublishInternalChannels().containsKey(name)) {
-                    throw new WorkflowDefinitionException("it's not allowed to publish and wait for the same interstate channel - " + name);
+                    throw new ObjectDefinitionException("it's not allowed to publish and wait for the same interstate channel - " + name);
                 }
             }
         });

@@ -55,12 +55,12 @@ public class UnregisteredClient {
      * @param workflowTimeoutSeconds required
      * @return runId
      */
-    public String startWorkflow(
+    public String startObject(
             final String workflowType,
             final String startStateId,
             final String workflowId,
             final int workflowTimeoutSeconds) {
-        return this.startWorkflow(workflowType, startStateId, workflowId, workflowTimeoutSeconds, null, null);
+        return this.startObject(workflowType, startStateId, workflowId, workflowTimeoutSeconds, null, null);
     }
 
     /**
@@ -71,13 +71,13 @@ public class UnregisteredClient {
      * @param input                  optional, can be null
      * @return runId
      */
-    public String startWorkflow(
+    public String startObject(
             final String workflowType,
             final String startStateId,
             final String workflowId,
             final int workflowTimeoutSeconds,
             final Object input) {
-        return this.startWorkflow(workflowType, startStateId, workflowId, workflowTimeoutSeconds, input, null);
+        return this.startObject(workflowType, startStateId, workflowId, workflowTimeoutSeconds, input, null);
     }
 
     /**
@@ -89,7 +89,7 @@ public class UnregisteredClient {
      * @param options                optional, can be null
      * @return runId
      */
-    public String startWorkflow(
+    public String startObject(
             final String workflowType,
             final String startStateId,
             final String workflowId,
@@ -261,7 +261,7 @@ public class UnregisteredClient {
      * @param resetTypeAndOptions the combination parameter for reset
      * @return the new runId after reset
      */
-    public String resetWorkflow(
+    public String resetObject(
             final String workflowId,
             final String workflowRunId,
             final ResetTypeAndOptions resetTypeAndOptions
@@ -356,7 +356,7 @@ public class UnregisteredClient {
     public void closeObjectExecution(
             final String workflowId,
             final String workflowRunId,
-            final StopWorkflowOptions options) {
+            final StopObjectExecutionOptions options) {
         try {
             final WorkflowStopRequest request = new WorkflowStopRequest()
                     .workflowId(workflowId)
@@ -419,7 +419,7 @@ public class UnregisteredClient {
         }
     }
 
-    public WorkflowGetSearchAttributesResponse getAnyWorkflowSearchAttributes(
+    public WorkflowGetSearchAttributesResponse getAnySearchAttributes(
             final String workflowId,
             final String workflowRunId,
             List<SearchAttributeKeyAndType> attributeKeys) {

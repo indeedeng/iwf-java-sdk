@@ -30,9 +30,9 @@ public class Client {
     final ClientOptions clientOptions;
 
     /**
-     * return a full featured client. If you don't have the workflow Registry, you should use {@link UnregisteredClient} instead
+     * return a full featured client. If you don't have the object Registry, you should use {@link UnregisteredClient} instead
      *
-     * @param registry      registry is required so that this client can perform some validation checks (workflow types, channel names)
+     * @param registry      registry is required so that this client can perform some validation checks (object types, channel names)
      * @param clientOptions is for configuring the client
      */
     public Client(final Registry registry, final ClientOptions clientOptions) {
@@ -156,13 +156,13 @@ public class Client {
             final Object input,
             final ObjectOptions options) {
 
-        final ImmutableUnregisteredObjectOptions.Builder unregisterWorkflowOptions = ImmutableUnregisteredObjectOptions.builder();
+        final ImmutableUnregisteredObjectOptions.Builder unregisterObjectOptions = ImmutableUnregisteredObjectOptions.builder();
 
         // validate
         final StateDef stateDef = registry.getWorkflowStartingState(objectType);
         final Class registeredInputType = stateDef.getWorkflowState().getInputType();
         if (input != null && !registeredInputType.isAssignableFrom(input.getClass())) {
-            throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType));
+            throw new ObjectDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType));
         }
 
         WorkflowStateOptions stateOptions = stateDef.getWorkflowState().getStateOptions();
@@ -174,20 +174,20 @@ public class Client {
             }
         }
         if (stateOptions != null) {
-            unregisterWorkflowOptions.startStateOptions(stateOptions);
+            unregisterObjectOptions.startStateOptions(stateOptions);
         }
         if (options != null) {
-            unregisterWorkflowOptions.objectIdReusePolicy(options.getObjectIdReusePolicy());
-            unregisterWorkflowOptions.cronSchedule(options.getCronSchedule());
-            unregisterWorkflowOptions.objectExecutionRetryPolicy(options.getObjectExecutionRetryPolicy());
-            unregisterWorkflowOptions.objectConfigOverride(options.getObjectConfigOverride());
+            unregisterObjectOptions.objectIdReusePolicy(options.getObjectIdReusePolicy());
+            unregisterObjectOptions.cronSchedule(options.getCronSchedule());
+            unregisterObjectOptions.objectExecutionRetryPolicy(options.getObjectExecutionRetryPolicy());
+            unregisterObjectOptions.objectConfigOverride(options.getObjectConfigOverride());
 
             final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(objectType);
             final List<SearchAttribute> convertedSAs = convertToSearchAttributeList(saTypes, options.getInitialSearchAttribute());
-            unregisterWorkflowOptions.initialSearchAttribute(convertedSAs);
+            unregisterObjectOptions.initialSearchAttribute(convertedSAs);
         }
 
-        return unregisteredClient.startWorkflow(objectType, stateDef.getWorkflowState().getStateId(), objectId, timeoutSeconds, input, unregisterWorkflowOptions.build());
+        return unregisteredClient.startObject(objectType, stateDef.getWorkflowState().getStateId(), objectId, timeoutSeconds, input, unregisterObjectOptions.build());
     }
 
     private List<SearchAttribute> convertToSearchAttributeList(final Map<String, SearchAttributeValueType> saTypes, final Map<String, Object> initialSearchAttribute) {
@@ -195,7 +195,7 @@ public class Client {
         if (initialSearchAttribute.size() > 0) {
             initialSearchAttribute.forEach((saKey, val) -> {
                 if (!saTypes.containsKey(saKey)) {
-                    throw new WorkflowDefinitionException(String.format("key %s is not defined as search attribute, all keys are: %s ", saKey, saTypes.keySet()));
+                    throw new ObjectDefinitionException(String.format("key %s is not defined as search attribute, all keys are: %s ", saKey, saTypes.keySet()));
                 }
                 final SearchAttributeValueType valType = saTypes.get(saKey);
                 final SearchAttribute newSa = new SearchAttribute().key(saKey).valueType(valType);
@@ -257,7 +257,7 @@ public class Client {
     }
 
     /**
-     * For most cases, a workflow only has one result(one completion state)
+     * For most cases, a object only has one result(one completion state)
      * Use this API to retrieve the output of the state
      *
      * @param valueClass        the type class of the output
@@ -280,7 +280,7 @@ public class Client {
     }
 
     /**
-     * In some cases, a workflow may have more than one completion states
+     * In some cases, a object may have more than one completion states
      *
      * @param objectId          objectId
      * @param objectExecutionId objectExecutionId
@@ -333,7 +333,7 @@ public class Client {
             final ResetTypeAndOptions resetTypeAndOptions
     ) {
 
-        return unregisteredClient.resetWorkflow(objectId, objectExecutionId, resetTypeAndOptions);
+        return unregisteredClient.resetObject(objectId, objectExecutionId, resetTypeAndOptions);
     }
 
     /**
@@ -349,7 +349,7 @@ public class Client {
     }
 
     /**
-     * Stop a workflow with options
+     * Stop a object with options
      *
      * @param objectId          required
      * @param objectExecutionId optional
@@ -358,7 +358,7 @@ public class Client {
     public void closeObjectExecution(
             final String objectId,
             final String objectExecutionId,
-            final StopWorkflowOptions options) {
+            final StopObjectExecutionOptions options) {
         unregisteredClient.closeObjectExecution(objectId, objectExecutionId, options);
     }
 
@@ -370,17 +370,17 @@ public class Client {
         if (keys == null || keys.isEmpty()) {
             throw new IllegalArgumentException("keys must contain at least one entry, or use getAllDataObjects API to get all");
         }
-        return doGetWorkflowDataAttributes(deObjectClass, objectId, objectExecutionId, keys);
+        return doGetObjectDataAttributes(deObjectClass, objectId, objectExecutionId, keys);
     }
 
     public Map<String, Object> getAllDataAttributes(
             final Class<? extends DEObject> deObjectClass,
             final String objectId,
             final String objectExecutionId) {
-        return doGetWorkflowDataAttributes(deObjectClass, objectId, objectExecutionId, null);
+        return doGetObjectDataAttributes(deObjectClass, objectId, objectExecutionId, null);
     }
 
-    private Map<String, Object> doGetWorkflowDataAttributes(
+    private Map<String, Object> doGetObjectDataAttributes(
             final Class<? extends DEObject> deObjectClass,
             final String objectId,
             final String objectExecutionId,
@@ -390,7 +390,7 @@ public class Client {
         Map<String, Class<?>> queryDataObjectKeyToTypeMap = registry.getDataAttributeKeyToTypeMap(objectType);
         if (queryDataObjectKeyToTypeMap == null) {
             throw new IllegalArgumentException(
-                    String.format("Workflow %s is not registered", objectType)
+                    String.format("Object %s is not registered", objectType)
             );
         }
 
@@ -427,7 +427,7 @@ public class Client {
     }
 
     /**
-     * This is a simplified API to search without pagination, use the other searchWorkflow API for pagination feature
+     * This is a simplified API to search without pagination, use the other searchObject API for pagination feature
      *
      * @param query    the query of the search, see Cadence/Temporal search attributes doc
      * @param pageSize the page size
@@ -548,7 +548,7 @@ public class Client {
         final Map<String, SearchAttributeValueType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
         if (searchAttributeKeyToTypeMap == null) {
             throw new IllegalArgumentException(
-                    String.format("Workflow %s is not registered", wfType)
+                    String.format("Object %s is not registered", wfType)
             );
         }
 
@@ -586,7 +586,7 @@ public class Client {
             });
         }
 
-        WorkflowGetSearchAttributesResponse response = unregisteredClient.getAnyWorkflowSearchAttributes(objectId, objectExecutionId, keyAndTypes);
+        WorkflowGetSearchAttributesResponse response = unregisteredClient.getAnySearchAttributes(objectId, objectExecutionId, keyAndTypes);
 
         if (response.getSearchAttributes() == null) {
             throw new IllegalStateException("search attributes not returned");

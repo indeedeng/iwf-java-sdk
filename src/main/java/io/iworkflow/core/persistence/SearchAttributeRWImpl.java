@@ -1,6 +1,6 @@
 package io.iworkflow.core.persistence;
 
-import io.iworkflow.core.WorkflowDefinitionException;
+import io.iworkflow.core.ObjectDefinitionException;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeValueType;
 
@@ -67,7 +67,7 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
     @Override
     public void setSearchAttributeInt64(final String key, final Long value) {
         if (!keyToTypeMap.containsKey(key) || keyToTypeMap.get(key) != SearchAttributeValueType.INT) {
-            throw new WorkflowDefinitionException(String.format(
+            throw new ObjectDefinitionException(String.format(
                     "key %s is not defined as int64", key));
         }
         int64AttributeMap.put(key, value);
@@ -82,7 +82,7 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
     @Override
     public void setSearchAttributeDouble(final String key, final Double value) {
         if (!keyToTypeMap.containsKey(key) || keyToTypeMap.get(key) != SearchAttributeValueType.DOUBLE) {
-            throw new WorkflowDefinitionException(String.format(
+            throw new ObjectDefinitionException(String.format(
                     "key %s is not defined as double", key));
         }
         doubleAttributeMap.put(key, value);
@@ -97,7 +97,7 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
     @Override
     public void setSearchAttributeBoolean(final String key, final Boolean value) {
         if (!keyToTypeMap.containsKey(key) || keyToTypeMap.get(key) != SearchAttributeValueType.BOOL) {
-            throw new WorkflowDefinitionException(String.format(
+            throw new ObjectDefinitionException(String.format(
                     "key %s is not defined as bool", key));
         }
         boolAttributeMap.put(key, value);
@@ -112,7 +112,7 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
     @Override
     public void setSearchAttributeKeyword(final String key, final String value) {
         if (!keyToTypeMap.containsKey(key) || keyToTypeMap.get(key) != SearchAttributeValueType.KEYWORD) {
-            throw new WorkflowDefinitionException(String.format(
+            throw new ObjectDefinitionException(String.format(
                     "key %s is not defined as keyword", key));
         }
         stringAttributeMap.put(key, value);
@@ -127,7 +127,7 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
     @Override
     public void setSearchAttributeText(final String key, final String value) {
         if (!keyToTypeMap.containsKey(key) || keyToTypeMap.get(key) != SearchAttributeValueType.TEXT) {
-            throw new WorkflowDefinitionException(String.format(
+            throw new ObjectDefinitionException(String.format(
                     "key %s is not defined as Text", key));
         }
         stringAttributeMap.put(key, value);
@@ -142,7 +142,7 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
     @Override
     public void setSearchAttributeDatetime(final String key, final String value) {
         if (!keyToTypeMap.containsKey(key) || keyToTypeMap.get(key) != SearchAttributeValueType.DATETIME) {
-            throw new WorkflowDefinitionException(String.format(
+            throw new ObjectDefinitionException(String.format(
                     "key %s is not defined as datetime", key));
         }
         stringAttributeMap.put(key, value);
@@ -157,7 +157,7 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
     @Override
     public void setSearchAttributeKeywordArray(final String key, final List<String> value) {
         if (!keyToTypeMap.containsKey(key) || keyToTypeMap.get(key) != SearchAttributeValueType.KEYWORD_ARRAY) {
-            throw new WorkflowDefinitionException(String.format(
+            throw new ObjectDefinitionException(String.format(
                     "key %s is not defined as keyword array", key));
         }
         stringArrayAttributeMap.put(key, value);

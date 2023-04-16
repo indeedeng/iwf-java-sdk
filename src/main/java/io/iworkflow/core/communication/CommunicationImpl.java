@@ -1,8 +1,8 @@
 package io.iworkflow.core.communication;
 
+import io.iworkflow.core.ObjectDefinitionException;
 import io.iworkflow.core.ObjectEncoder;
 import io.iworkflow.core.StateMovement;
-import io.iworkflow.core.WorkflowDefinitionException;
 import io.iworkflow.gen.models.EncodedObject;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class CommunicationImpl implements Communication {
     public void publishInternalChannel(final String channelName, final Object value) {
         final Class<?> type = nameToTypeMap.get(channelName);
         if (value != null && !type.isInstance(value)) {
-            throw new WorkflowDefinitionException(String.format("InternalChannel value is not of type %s", type.getName()));
+            throw new ObjectDefinitionException(String.format("InternalChannel value is not of type %s", type.getName()));
         }
         final List<EncodedObject> publish = toPublish.computeIfAbsent(channelName, s -> new ArrayList<>());
         publish.add(objectEncoder.encode(value));
@@ -43,7 +43,7 @@ public class CommunicationImpl implements Communication {
     @Override
     public void triggerStateMovements(final StateMovement... stateMovements) {
         if (!allowTriggerStateMovements) {
-            throw new WorkflowDefinitionException("triggerStateMovements is not allowed to be used here");
+            throw new ObjectDefinitionException("triggerStateMovements is not allowed to be used here");
         }
         this.stateMovements.addAll(Arrays.asList(stateMovements));
     }

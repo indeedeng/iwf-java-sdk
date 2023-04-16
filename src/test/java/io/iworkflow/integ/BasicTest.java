@@ -5,9 +5,9 @@ import io.iworkflow.core.ClientOptions;
 import io.iworkflow.core.ClientSideException;
 import io.iworkflow.core.ImmutableObjectOptions;
 import io.iworkflow.core.ImmutableUnregisteredObjectOptions;
+import io.iworkflow.core.ObjectDefinitionException;
 import io.iworkflow.core.ObjectOptions;
 import io.iworkflow.core.UnregisteredObjectOptions;
-import io.iworkflow.core.WorkflowDefinitionException;
 import io.iworkflow.gen.models.Context;
 import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.gen.models.IDReusePolicy;
@@ -66,7 +66,7 @@ public class BasicTest {
                 .build();
 
         //client.StartWorkflow(EmptyInputWorkflow.class, EmptyInputWorkflowState1.StateId, null, wfId, startOptions);
-        client.getUnregisteredClient().startWorkflow(EmptyInputWorkflow.CUSTOM_WF_TYPE, EmptyInputWorkflowState1.class.getSimpleName(), wfId, 10, null, startOptions);
+        client.getUnregisteredClient().startObject(EmptyInputWorkflow.CUSTOM_WF_TYPE, EmptyInputWorkflowState1.class.getSimpleName(), wfId, 10, null, startOptions);
         // wait for workflow to finish
         Integer out = client.getSingleResultWithWait(Integer.class, wfId);
 
@@ -91,7 +91,7 @@ public class BasicTest {
         client.getSingleResultWithWait(Integer.class, wfId);
         try {
             client.createObject(ModelInputWorkflow.class, wfId, 10, "123");
-        } catch (WorkflowDefinitionException e) {
+        } catch (ObjectDefinitionException e) {
             return;
         }
         Assertions.fail("start workflow with wrong input type should fail");

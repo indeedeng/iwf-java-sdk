@@ -59,7 +59,7 @@ public abstract class StateMovement {
      */
     public static StateMovement create(final String stateId, final Object stateInput) {
         if (stateId.startsWith(RESERVED_STATE_ID_PREFIX)) {
-            throw new WorkflowDefinitionException("Cannot use reserved stateId prefix for your stateId");
+            throw new ObjectDefinitionException("Cannot use reserved stateId prefix for your stateId");
         }
         return ImmutableStateMovement.builder().stateId(stateId)
                 .stateInput(stateInput)
@@ -77,7 +77,7 @@ public abstract class StateMovement {
      */
     public static StateMovement create(final String stateId) {
         if (stateId.startsWith(RESERVED_STATE_ID_PREFIX)) {
-            throw new WorkflowDefinitionException("Cannot use reserved stateId prefix for your stateId");
+            throw new ObjectDefinitionException("Cannot use reserved stateId prefix for your stateId");
         }
         return ImmutableStateMovement.builder().stateId(stateId)
                 .build();

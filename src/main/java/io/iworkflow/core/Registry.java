@@ -61,7 +61,7 @@ public class Registry {
         String workflowType = getObjectType(wf);
 
         if (workflowStore.containsKey(workflowType)) {
-            throw new WorkflowDefinitionException(String.format("Workflow type %s already exists", workflowType));
+            throw new ObjectDefinitionException(String.format("Workflow type %s already exists", workflowType));
         }
         workflowStore.put(workflowType, wf);
     }
@@ -69,14 +69,14 @@ public class Registry {
     private void registerWorkflowState(final DEObject wf) {
         String workflowType = getObjectType(wf);
         if (wf.getWorkflowStates() == null || wf.getWorkflowStates().size() == 0) {
-            throw new WorkflowDefinitionException(String.format("Workflow type %s must contain at least one state", workflowType));
+            throw new ObjectDefinitionException(String.format("Workflow type %s must contain at least one state", workflowType));
         }
         int startingStates = 0;
         StateDef startState = null;
         for (StateDef stateDef : wf.getWorkflowStates()) {
             String key = getStateDefKey(workflowType, stateDef.getWorkflowState().getStateId());
             if (workflowStateStore.containsKey(key)) {
-                throw new WorkflowDefinitionException(String.format("Workflow state definition %s already exists", key));
+                throw new ObjectDefinitionException(String.format("Workflow state definition %s already exists", key));
             } else {
                 workflowStateStore.put(key, stateDef);
                 if (stateDef.getCanStartWorkflow()) {
@@ -86,7 +86,7 @@ public class Registry {
             }
         }
         if (startingStates != 1) {
-            throw new WorkflowDefinitionException(String.format("Workflow must contain exactly one starting states, found %d", startingStates));
+            throw new ObjectDefinitionException(String.format("Workflow must contain exactly one starting states, found %d", startingStates));
         }
         workflowStartStateStore.put(workflowType, startState);
     }
@@ -124,7 +124,7 @@ public class Registry {
             Map<String, Class<?>> signalNameToTypeMap =
                     signalTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
             if (signalNameToTypeMap.containsKey(signalChannelDef.getSignalChannelName())) {
-                throw new WorkflowDefinitionException(
+                throw new ObjectDefinitionException(
                         String.format("Signal channel name  %s already exists", signalChannelDef.getSignalChannelName()));
             }
             signalNameToTypeMap.put(signalChannelDef.getSignalChannelName(), signalChannelDef.getSignalValueType());
@@ -143,7 +143,7 @@ public class Registry {
             Map<String, Class<?>> nameToTypeMap =
                     internalChannelTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
             if (nameToTypeMap.containsKey(internalChannelDef.getChannelName())) {
-                throw new WorkflowDefinitionException(
+                throw new ObjectDefinitionException(
                         String.format("InternalChannel name  %s already exists", internalChannelDef.getChannelName()));
             }
             nameToTypeMap.put(internalChannelDef.getChannelName(), internalChannelDef.getValueType());
@@ -162,7 +162,7 @@ public class Registry {
             Map<String, Class<?>> dataAttributeKeyToTypeMap =
                     dataAttributeTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
             if (dataAttributeKeyToTypeMap.containsKey(dataAttributeField.getKey())) {
-                throw new WorkflowDefinitionException(
+                throw new ObjectDefinitionException(
                         String.format(
                                 "data attribute key %s already exists",
                                 dataAttributeField.getDataAttributeType())
@@ -178,7 +178,7 @@ public class Registry {
     private List<DataAttributeDef> getDataAttributeFields(final DEObject wf) {
         final Set<String> keySet = wf.getPersistenceSchema().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
         if (keySet.size() != wf.getPersistenceSchema().size()) {
-            throw new WorkflowDefinitionException("cannot have conflict key definition in persistence schema");
+            throw new ObjectDefinitionException("cannot have conflict key definition in persistence schema");
         }
         return wf.getPersistenceSchema().stream().filter((f) -> f instanceof DataAttributeDef).map(f -> (DataAttributeDef) f).collect(Collectors.toList());
     }
@@ -186,7 +186,7 @@ public class Registry {
     private List<SearchAttributeDef> getSearchAttributeFields(final DEObject wf) {
         final Set<String> keySet = wf.getPersistenceSchema().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
         if (keySet.size() != wf.getPersistenceSchema().size()) {
-            throw new WorkflowDefinitionException("cannot have conflict key definition in persistence schema");
+            throw new ObjectDefinitionException("cannot have conflict key definition in persistence schema");
         }
         return wf.getPersistenceSchema().stream().filter((f) -> f instanceof SearchAttributeDef).map(f -> (SearchAttributeDef) f).collect(Collectors.toList());
     }
@@ -212,7 +212,7 @@ public class Registry {
                     searchAttributeTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
 
             if (searchAttributeKeyToTypeMap.containsKey(searchAttributeField.getKey())) {
-                throw new WorkflowDefinitionException(
+                throw new ObjectDefinitionException(
                         String.format(
                                 "Search attribute key %s already exists",
                                 searchAttributeField.getKey())
@@ -232,7 +232,7 @@ public class Registry {
     public Method getWorkflowRpcMethod(final String workflowType, final String rpcName) {
         final Map<String, Method> wfRRPCs = rpcMethodStore.get(workflowType);
         if (wfRRPCs == null) {
-            throw new WorkflowDefinitionException(String.format("workflow type %s is not registered, all registered types are: %s", workflowType, workflowStartStateStore.keySet()));
+            throw new ObjectDefinitionException(String.format("workflow type %s is not registered, all registered types are: %s", workflowType, workflowStartStateStore.keySet()));
         }
         return wfRRPCs.get(rpcName);
     }
@@ -244,7 +244,7 @@ public class Registry {
     public StateDef getWorkflowStartingState(final String workflowType) {
         final StateDef state = workflowStartStateStore.get(workflowType);
         if (state == null) {
-            throw new WorkflowDefinitionException(String.format("workflow type %s is not registered, all registered types are: %s", workflowType, workflowStartStateStore.keySet()));
+            throw new ObjectDefinitionException(String.format("workflow type %s is not registered, all registered types are: %s", workflowType, workflowStartStateStore.keySet()));
         }
         return state;
     }

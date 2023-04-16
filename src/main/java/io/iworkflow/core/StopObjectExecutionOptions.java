@@ -6,7 +6,7 @@ import org.immutables.value.Value;
 import java.util.Optional;
 
 @Value.Immutable
-public abstract class StopWorkflowOptions {
+public abstract class StopObjectExecutionOptions {
     public abstract Optional<WorkflowStopType> getWorkflowStopType();
 
     public abstract Optional<String> getReason();
