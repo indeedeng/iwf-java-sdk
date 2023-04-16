@@ -3,7 +3,7 @@ package io.iworkflow.integ;
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
 import io.iworkflow.integ.rpc.NoStartStateWorkflow;
-import io.iworkflow.integ.rpc.RpcWorkflow;
+import io.iworkflow.integ.rpc.NoStateWorkflow;
 import io.iworkflow.integ.rpc.RpcWorkflowState2;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
@@ -32,7 +32,7 @@ public class NoStartStateTest {
         client.startWorkflow(
                 NoStartStateWorkflow.class, wfId, 10, 999);
 
-        final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "");
+        final NoStartStateWorkflow rpcStub = client.newRpcStub(NoStartStateWorkflow.class, wfId, "");
         final Long rpcOutput = client.invokeRPC(rpcStub::testRpcFunc1, RPC_INPUT);
 
         Assertions.assertEquals(RPC_OUTPUT, rpcOutput);
@@ -42,6 +42,21 @@ public class NoStartStateTest {
         final int counter = RpcWorkflowState2.resetCounter();
         Assertions.assertEquals(1, counter);
 
+    }
+
+    @Test
+    public void testNoStateWorkflow() throws InterruptedException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "testNoStateWorkflow" + System.currentTimeMillis() / 1000;
+        client.startWorkflow(
+                NoStateWorkflow.class, wfId, 10, 999);
+
+        final NoStateWorkflow rpcStub = client.newRpcStub(NoStateWorkflow.class, wfId, "");
+        final Long rpcOutput = client.invokeRPC(rpcStub::testRpcFunc1, RPC_INPUT);
+
+        Assertions.assertEquals(RPC_OUTPUT, rpcOutput);
+
+        client.stopWorkflow(wfId, "");
     }
 
 }
