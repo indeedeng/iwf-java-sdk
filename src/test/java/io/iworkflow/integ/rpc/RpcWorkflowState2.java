@@ -42,7 +42,9 @@ public class RpcWorkflowState2 implements WorkflowState<Integer> {
     }
 
     // reset counter so that new test can use it
-    public static void resetCounter() {
+    public static int resetCounter() {
+        final int old = counter;
         counter = 0;
+        return old;
     }
 }

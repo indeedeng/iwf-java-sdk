@@ -3,6 +3,7 @@ package io.iworkflow.core;
 import io.iworkflow.core.communication.CommunicationMethodDef;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,10 +16,17 @@ public interface ObjectWorkflow {
      * defines the states of the workflow. A state represents a step of the workflow state machine.
      * A state can execute some commands (signal/timer) and wait for result
      * See more details in the {@link WorkflowState} definition.
+     * By default, this return an empty list, meaning no states.
+     * There can be at most one startingState in the list.
+     * If there is no startingState or with the default empty state list, the workflow
+     * will not start any state execution after workflow stated. However, application code can still
+     * use RPC to invoke new state execution in the future.
      *
      * @return all the state definitions
      */
-    List<StateDef> getWorkflowStates();
+    default List<StateDef> getWorkflowStates() {
+        return new ArrayList<>();
+    }
 
     /**
      * defines all the persistence fields for this workflow, this includes:
