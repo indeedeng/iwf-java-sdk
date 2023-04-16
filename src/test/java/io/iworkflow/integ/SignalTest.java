@@ -30,26 +30,26 @@ public class SignalTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-signal-test-id" + System.currentTimeMillis() / 1000;
         final Integer input = 1;
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 BasicSignalWorkflow.class, wfId, 10, input);
-        client.signalWorkflow(
+        client.sendSignal(
                 BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(2));
 
-        client.signalWorkflow(
+        client.sendSignal(
                 BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(2));
 
         // test sending null signal
-        client.signalWorkflow(
+        client.sendSignal(
                 BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_3, null);
 
         Thread.sleep(1000);// wait for timer to be ready to skip
         client.skipTimer(wfId, "", BasicSignalWorkflowState2.class, 1, TIMER_COMMAND_ID);
 
-        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        final Integer output = client.getSingleResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(5, output);
 
         try {
-            client.signalWorkflow(
+            client.sendSignal(
                     BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(2));
         } catch (ClientSideException e) {
             Assertions.assertEquals(ErrorSubStatus.WORKFLOW_NOT_EXISTS_SUB_STATUS, e.getErrorSubStatus());

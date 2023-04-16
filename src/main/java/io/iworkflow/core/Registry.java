@@ -50,7 +50,7 @@ public class Registry {
         registerWorkflowRPCs(wf);
     }
 
-    public static String getWorkflowType(final DEObject wf) {
+    public static String getObjectType(final DEObject wf) {
         if (wf.getWorkflowType().isEmpty()) {
             return wf.getClass().getSimpleName();
         }
@@ -58,7 +58,7 @@ public class Registry {
     }
 
     private void registerWorkflow(final DEObject wf) {
-        String workflowType = getWorkflowType(wf);
+        String workflowType = getObjectType(wf);
 
         if (workflowStore.containsKey(workflowType)) {
             throw new WorkflowDefinitionException(String.format("Workflow type %s already exists", workflowType));
@@ -67,7 +67,7 @@ public class Registry {
     }
 
     private void registerWorkflowState(final DEObject wf) {
-        String workflowType = getWorkflowType(wf);
+        String workflowType = getObjectType(wf);
         if (wf.getWorkflowStates() == null || wf.getWorkflowStates().size() == 0) {
             throw new WorkflowDefinitionException(String.format("Workflow type %s must contain at least one state", workflowType));
         }
@@ -92,7 +92,7 @@ public class Registry {
     }
 
     private void registerWorkflowRPCs(final DEObject wf) {
-        String workflowType = getWorkflowType(wf);
+        String workflowType = getObjectType(wf);
         final Method[] methods = wf.getClass().getDeclaredMethods();
         if (methods.length == 0) {
             rpcMethodStore.put(workflowType, new HashMap<>());
@@ -113,7 +113,7 @@ public class Registry {
     }
 
     private void registerWorkflowSignal(final DEObject wf) {
-        String workflowType = getWorkflowType(wf);
+        String workflowType = getObjectType(wf);
         final List<SignalChannelDef> channels = getSignalChannels(wf);
         if (channels == null || channels.isEmpty()) {
             signalTypeStore.put(workflowType, new HashMap<>());
@@ -132,7 +132,7 @@ public class Registry {
     }
 
     private void registerWorkflowInternalChannel(final DEObject wf) {
-        String workflowType = getWorkflowType(wf);
+        String workflowType = getObjectType(wf);
         final List<InternalChannelDef> channels = getInternalChannels(wf);
         if (channels == null || channels.isEmpty()) {
             internalChannelTypeStore.put(workflowType, new HashMap<>());
@@ -151,7 +151,7 @@ public class Registry {
     }
 
     private void registerWorkflowDataAttributes(final DEObject wf) {
-        String workflowType = getWorkflowType(wf);
+        String workflowType = getObjectType(wf);
         final List<DataAttributeDef> fields = getDataAttributeFields(wf);
         if (fields == null || fields.isEmpty()) {
             dataAttributeTypeStore.put(workflowType, new HashMap<>());
@@ -200,7 +200,7 @@ public class Registry {
     }
 
     private void registerWorkflowSearchAttributes(final DEObject wf) {
-        String workflowType = getWorkflowType(wf);
+        String workflowType = getObjectType(wf);
         final List<SearchAttributeDef> fields = getSearchAttributeFields(wf);
         if (fields == null || fields.isEmpty()) {
             searchAttributeTypeStore.put(workflowType, new HashMap<>());

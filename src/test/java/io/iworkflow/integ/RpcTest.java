@@ -38,7 +38,7 @@ public class RpcTest {
     public void testRPCWorkflowFunc1() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "rpc-test-id" + System.currentTimeMillis() / 1000;
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 RpcWorkflow.class, wfId, 10, 999);
 
         final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "");
@@ -47,20 +47,20 @@ public class RpcTest {
         Assertions.assertEquals(RPC_OUTPUT, rpcOutput);
 
         // output
-        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        final Integer output = client.getSingleResultWithWait(Integer.class, wfId);
         RpcWorkflowState2.resetCounter();
         Assertions.assertEquals(2, output);
 
         // data attrs
         Map<String, Object> dataAttrs =
-                client.getWorkflowDataObjects(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+                client.getDataAttributes(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 ImmutableMap.builder()
                         .put(TEST_DATA_OBJECT_KEY, RPC_INPUT)
                         .build(), dataAttrs);
 
         // search attrs
-        final Map<String, Object> searchAttributes = client.getWorkflowSearchAttributes(BasicPersistenceWorkflow.class,
+        final Map<String, Object> searchAttributes = client.getSearchAttributes(BasicPersistenceWorkflow.class,
                 wfId, "", Arrays.asList(TEST_SEARCH_ATTRIBUTE_KEYWORD, TEST_SEARCH_ATTRIBUTE_INT));
 
         Assertions.assertEquals(ImmutableMap.builder()
@@ -73,7 +73,7 @@ public class RpcTest {
     public void testRPCWorkflowFunc0() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "rpc-test-id" + System.currentTimeMillis() / 1000;
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 RpcWorkflow.class, wfId, 10, 999);
 
         final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "");
@@ -82,20 +82,20 @@ public class RpcTest {
         Assertions.assertEquals(RPC_OUTPUT, rpcOutput);
 
         // output
-        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        final Integer output = client.getSingleResultWithWait(Integer.class, wfId);
         RpcWorkflowState2.resetCounter();
         Assertions.assertEquals(2, output);
 
         // data attrs
         Map<String, Object> dataAttrs =
-                client.getWorkflowDataObjects(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+                client.getDataAttributes(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 ImmutableMap.builder()
                         .put(TEST_DATA_OBJECT_KEY, HARDCODED_STR)
                         .build(), dataAttrs);
 
         // search attrs
-        final Map<String, Object> searchAttributes = client.getWorkflowSearchAttributes(BasicPersistenceWorkflow.class,
+        final Map<String, Object> searchAttributes = client.getSearchAttributes(BasicPersistenceWorkflow.class,
                 wfId, "", Arrays.asList(TEST_SEARCH_ATTRIBUTE_KEYWORD, TEST_SEARCH_ATTRIBUTE_INT));
 
         Assertions.assertEquals(ImmutableMap.builder()
@@ -109,27 +109,27 @@ public class RpcTest {
     public void testRPCWorkflowProc1() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "rpc-test-id" + System.currentTimeMillis() / 1000;
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 RpcWorkflow.class, wfId, 10, 999);
 
         final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "");
         client.invokeRPC(rpcStub::testRpcProc1, RPC_INPUT);
 
         // output
-        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        final Integer output = client.getSingleResultWithWait(Integer.class, wfId);
         RpcWorkflowState2.resetCounter();
         Assertions.assertEquals(2, output);
 
         // data attrs
         Map<String, Object> dataAttrs =
-                client.getWorkflowDataObjects(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+                client.getDataAttributes(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 ImmutableMap.builder()
                         .put(TEST_DATA_OBJECT_KEY, RPC_INPUT)
                         .build(), dataAttrs);
 
         // search attrs
-        final Map<String, Object> searchAttributes = client.getWorkflowSearchAttributes(BasicPersistenceWorkflow.class,
+        final Map<String, Object> searchAttributes = client.getSearchAttributes(BasicPersistenceWorkflow.class,
                 wfId, "", Arrays.asList(TEST_SEARCH_ATTRIBUTE_KEYWORD, TEST_SEARCH_ATTRIBUTE_INT));
 
         Assertions.assertEquals(ImmutableMap.builder()
@@ -142,27 +142,27 @@ public class RpcTest {
     public void testRPCWorkflowProc0() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "rpc-test-id" + System.currentTimeMillis() / 1000;
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 RpcWorkflow.class, wfId, 10, 999);
 
         final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "");
         client.invokeRPC(rpcStub::testRpcProc0);
 
         // output
-        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        final Integer output = client.getSingleResultWithWait(Integer.class, wfId);
         RpcWorkflowState2.resetCounter();
         Assertions.assertEquals(2, output);
 
         // data attrs
         Map<String, Object> dataAttrs =
-                client.getWorkflowDataObjects(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+                client.getDataAttributes(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 ImmutableMap.builder()
                         .put(TEST_DATA_OBJECT_KEY, HARDCODED_STR)
                         .build(), dataAttrs);
 
         // search attrs
-        final Map<String, Object> searchAttributes = client.getWorkflowSearchAttributes(BasicPersistenceWorkflow.class,
+        final Map<String, Object> searchAttributes = client.getSearchAttributes(BasicPersistenceWorkflow.class,
                 wfId, "", Arrays.asList(TEST_SEARCH_ATTRIBUTE_KEYWORD, TEST_SEARCH_ATTRIBUTE_INT));
 
         Assertions.assertEquals(ImmutableMap.builder()
@@ -175,7 +175,7 @@ public class RpcTest {
     public void testRPCWorkflowFunc1ReadOnly() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "rpc-test-id" + System.currentTimeMillis() / 1000;
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 RpcWorkflow.class, wfId, 10, 999);
 
         final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "");
@@ -183,7 +183,7 @@ public class RpcTest {
 
         Assertions.assertEquals(RPC_OUTPUT, rpcOutput);
 
-        client.stopWorkflow(wfId, "", ImmutableStopWorkflowOptions.builder()
+        client.closeObjectExecution(wfId, "", ImmutableStopWorkflowOptions.builder()
                 .workflowStopType(WorkflowStopType.FAIL)
                 .reason(HARDCODED_STR)
                 .build());

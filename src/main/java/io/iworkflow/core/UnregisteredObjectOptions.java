@@ -11,16 +11,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Value.Immutable
-public abstract class UnregisteredWorkflowOptions {
-    public abstract Optional<IDReusePolicy> getWorkflowIdReusePolicy();
+public abstract class UnregisteredObjectOptions {
+    public abstract Optional<IDReusePolicy> getObjectIdReusePolicy();
 
     public abstract Optional<String> getCronSchedule();
 
-    public abstract Optional<WorkflowRetryPolicy> getWorkflowRetryPolicy();
+    public abstract Optional<WorkflowRetryPolicy> getObjectExecutionRetryPolicy();
 
     public abstract Optional<WorkflowStateOptions> getStartStateOptions();
 
     public abstract List<SearchAttribute> getInitialSearchAttribute();
 
-    public abstract Optional<WorkflowConfig> getWorkflowConfigOverride();
+    public abstract Optional<WorkflowConfig> getObjectConfigOverride();
 }

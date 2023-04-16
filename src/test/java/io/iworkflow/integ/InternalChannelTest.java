@@ -23,9 +23,9 @@ public class InternalChannelTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-inter-state-test-id" + System.currentTimeMillis() / 1000;
         final Integer input = 1;
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 BasicInterStateChannelWorkflow.class, wfId, 10, input);
-        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        final Integer output = client.getSingleResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(3, output);
     }
 }

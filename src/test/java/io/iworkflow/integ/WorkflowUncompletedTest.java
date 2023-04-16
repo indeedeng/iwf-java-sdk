@@ -33,11 +33,11 @@ public class WorkflowUncompletedTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "testWorkflowTimeout" + System.currentTimeMillis() / 1000;
         final Integer input = 1;
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 BasicSignalWorkflow.class, wfId, 1, input);
 
         try {
-            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+            client.getSingleResultWithWait(Integer.class, wfId);
         } catch (WorkflowUncompletedException e) {
             Assertions.assertEquals(runId, e.getRunId());
             Assertions.assertEquals(WorkflowStatus.TIMEOUT, e.getClosedStatus());
@@ -54,13 +54,13 @@ public class WorkflowUncompletedTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "testWorkflowTimeout" + System.currentTimeMillis() / 1000;
         final Integer input = 1;
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 BasicSignalWorkflow.class, wfId, 10, input);
 
-        client.stopWorkflow(wfId, "");
+        client.closeObjectExecution(wfId, "");
 
         try {
-            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+            client.getSingleResultWithWait(Integer.class, wfId);
         } catch (WorkflowUncompletedException e) {
             Assertions.assertEquals(runId, e.getRunId());
             Assertions.assertEquals(WorkflowStatus.CANCELED, e.getClosedStatus());
@@ -77,13 +77,13 @@ public class WorkflowUncompletedTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "testWorkflowTerminated" + System.currentTimeMillis() / 1000;
         final Integer input = 1;
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 BasicSignalWorkflow.class, wfId, 10, input);
 
-        client.stopWorkflow(wfId, "", ImmutableStopWorkflowOptions.builder().workflowStopType(WorkflowStopType.TERMINATE).build());
+        client.closeObjectExecution(wfId, "", ImmutableStopWorkflowOptions.builder().workflowStopType(WorkflowStopType.TERMINATE).build());
 
         try {
-            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+            client.getSingleResultWithWait(Integer.class, wfId);
         } catch (WorkflowUncompletedException e) {
             Assertions.assertEquals(runId, e.getRunId());
             Assertions.assertEquals(WorkflowStatus.TERMINATED, e.getClosedStatus());
@@ -100,13 +100,13 @@ public class WorkflowUncompletedTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "testWorkflowTerminated" + System.currentTimeMillis() / 1000;
         final Integer input = 1;
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 BasicSignalWorkflow.class, wfId, 10, input);
 
-        client.stopWorkflow(wfId, "", ImmutableStopWorkflowOptions.builder().workflowStopType(WorkflowStopType.FAIL).reason("fail by API").build());
+        client.closeObjectExecution(wfId, "", ImmutableStopWorkflowOptions.builder().workflowStopType(WorkflowStopType.FAIL).reason("fail by API").build());
 
         try {
-            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+            client.getSingleResultWithWait(Integer.class, wfId);
         } catch (WorkflowUncompletedException e) {
             Assertions.assertEquals(runId, e.getRunId());
             Assertions.assertEquals(WorkflowStatus.FAILED, e.getClosedStatus());
@@ -125,11 +125,11 @@ public class WorkflowUncompletedTest {
         final String wfId = "testForceFailWorkflow" + startTs / 1000;
         final Integer input = 5;
 
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 ForceFailWorkflow.class, wfId, 10, input);
 
         try {
-            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+            client.getSingleResultWithWait(Integer.class, wfId);
         } catch (WorkflowUncompletedException e) {
             Assertions.assertEquals(runId, e.getRunId());
             Assertions.assertEquals(WorkflowStatus.FAILED, e.getClosedStatus());
@@ -150,11 +150,11 @@ public class WorkflowUncompletedTest {
         final String wfId = "testStateApiFailWorkflow" + startTs / 1000;
         final Integer input = 5;
 
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 StateApiFailWorkflow.class, wfId, 10, input);
 
         try {
-            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+            client.getSingleResultWithWait(Integer.class, wfId);
         } catch (WorkflowUncompletedException e) {
             Assertions.assertEquals(runId, e.getRunId());
             Assertions.assertEquals(WorkflowStatus.FAILED, e.getClosedStatus());
@@ -173,11 +173,11 @@ public class WorkflowUncompletedTest {
         final String wfId = "testStateApiTimeoutWorkflow" + startTs / 1000;
         final Integer input = 5;
 
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 StateApiTimeoutFailWorkflow.class, wfId, 10, input);
 
         try {
-            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+            client.getSingleResultWithWait(Integer.class, wfId);
         } catch (WorkflowUncompletedException e) {
             Assertions.assertEquals(runId, e.getRunId());
             Assertions.assertEquals(WorkflowStatus.FAILED, e.getClosedStatus());

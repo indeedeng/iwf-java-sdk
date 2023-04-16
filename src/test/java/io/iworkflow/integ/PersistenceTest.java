@@ -28,21 +28,21 @@ public class PersistenceTest {
     public void testPersistenceWorkflow() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-persistence-test-id" + System.currentTimeMillis() / 1000;
-        final String runId = client.startWorkflow(
+        final String runId = client.createObject(
                 BasicPersistenceWorkflow.class, wfId, 10, "start");
-        final String output = client.getSimpleWorkflowResultWithWait(String.class, wfId);
+        final String output = client.getSingleResultWithWait(String.class, wfId);
         Map<String, Object> map =
-                client.getWorkflowDataObjects(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+                client.getDataAttributes(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 "query-start-query-decide", map.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
-        Map<String, Object> allDataObjects = client.getAllDataObjects(BasicPersistenceWorkflow.class, wfId, runId);
+        Map<String, Object> allDataObjects = client.getAllDataAttributes(BasicPersistenceWorkflow.class, wfId, runId);
         Assertions.assertEquals(3, allDataObjects.size());
 
         Assertions.assertEquals("query-start-query-decide", allDataObjects.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
 
         Assertions.assertEquals("test-value-2", output);
 
-        final Map<String, Object> searchAttributes1 = client.getWorkflowSearchAttributes(BasicPersistenceWorkflow.class,
+        final Map<String, Object> searchAttributes1 = client.getSearchAttributes(BasicPersistenceWorkflow.class,
                 wfId, "", Arrays.asList(TEST_SEARCH_ATTRIBUTE_KEYWORD, TEST_SEARCH_ATTRIBUTE_INT));
 
         final Map<String, Object> searchAttributes2 = client.getAllSearchAttributes(BasicPersistenceWorkflow.class,

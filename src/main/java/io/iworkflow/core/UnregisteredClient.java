@@ -95,7 +95,7 @@ public class UnregisteredClient {
             final String workflowId,
             final int workflowTimeoutSeconds,
             final Object input,
-            final UnregisteredWorkflowOptions options) {
+            final UnregisteredObjectOptions options) {
 
         final WorkflowStartRequest request = new WorkflowStartRequest()
                 .workflowId(workflowId)
@@ -110,14 +110,14 @@ public class UnregisteredClient {
             if (options.getCronSchedule().isPresent()) {
                 startOptions.cronSchedule(CronScheduleValidator.validate(options.getCronSchedule()));
             }
-            if (options.getWorkflowIdReusePolicy().isPresent()) {
-                startOptions.idReusePolicy(options.getWorkflowIdReusePolicy().get());
+            if (options.getObjectIdReusePolicy().isPresent()) {
+                startOptions.idReusePolicy(options.getObjectIdReusePolicy().get());
             }
-            if (options.getWorkflowRetryPolicy().isPresent()) {
-                startOptions.retryPolicy(options.getWorkflowRetryPolicy().get());
+            if (options.getObjectExecutionRetryPolicy().isPresent()) {
+                startOptions.retryPolicy(options.getObjectExecutionRetryPolicy().get());
             }
-            if (options.getWorkflowConfigOverride().isPresent()) {
-                startOptions.workflowConfigOverride(options.getWorkflowConfigOverride().get());
+            if (options.getObjectConfigOverride().isPresent()) {
+                startOptions.workflowConfigOverride(options.getObjectConfigOverride().get());
             }
             if (options.getInitialSearchAttribute().size() > 0) {
                 options.getInitialSearchAttribute().forEach(sa -> {
@@ -154,7 +154,7 @@ public class UnregisteredClient {
      * @param <T>           type of the output
      * @return the result
      */
-    public <T> T getSimpleWorkflowResultWithWait(
+    public <T> T getSingleResultWithWait(
             Class<T> valueClass,
             final String workflowId,
             final String workflowRunId) {
@@ -204,10 +204,10 @@ public class UnregisteredClient {
                 this.clientOptions.getObjectEncoder());
     }
 
-    public <T> T getSimpleWorkflowResultWithWait(
+    public <T> T getSingleResultWithWait(
             Class<T> valueClass,
             final String workflowId) {
-        return getSimpleWorkflowResultWithWait(valueClass, workflowId, "");
+        return getSingleResultWithWait(valueClass, workflowId, "");
     }
 
     /**
@@ -217,7 +217,7 @@ public class UnregisteredClient {
      * @param workflowRunId optional runId, can be empty string
      * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
      */
-    public List<StateCompletionOutput> getComplexWorkflowResultWithWait(
+    public List<StateCompletionOutput> getMultiResultsWithWait(
             final String workflowId, final String workflowRunId) {
 
         try {
@@ -238,7 +238,7 @@ public class UnregisteredClient {
         }
     }
 
-    public void signalWorkflow(
+    public void sendSignal(
             final String workflowId,
             final String workflowRunId,
             final String signalChannelName,
@@ -256,36 +256,36 @@ public class UnregisteredClient {
     }
 
     /**
-     * @param workflowId                  workflowId
-     * @param workflowRunId               workflowRunId
-     * @param resetWorkflowTypeAndOptions the combination parameter for reset
+     * @param workflowId          workflowId
+     * @param workflowRunId       workflowRunId
+     * @param resetTypeAndOptions the combination parameter for reset
      * @return the new runId after reset
      */
     public String resetWorkflow(
             final String workflowId,
             final String workflowRunId,
-            final ResetWorkflowTypeAndOptions resetWorkflowTypeAndOptions
+            final ResetTypeAndOptions resetTypeAndOptions
     ) {
 
         final WorkflowResetRequest request = new WorkflowResetRequest()
                 .workflowId(workflowId)
                 .workflowRunId(workflowRunId)
-                .resetType(resetWorkflowTypeAndOptions.getResetType())
-                .reason(resetWorkflowTypeAndOptions.getReason());
-        if (resetWorkflowTypeAndOptions.getHistoryEventId().isPresent()) {
-            request.historyEventId(resetWorkflowTypeAndOptions.getHistoryEventId().get());
+                .resetType(resetTypeAndOptions.getResetType())
+                .reason(resetTypeAndOptions.getReason());
+        if (resetTypeAndOptions.getHistoryEventId().isPresent()) {
+            request.historyEventId(resetTypeAndOptions.getHistoryEventId().get());
         }
-        if (resetWorkflowTypeAndOptions.getHistoryEventTime().isPresent()) {
-            request.historyEventTime(resetWorkflowTypeAndOptions.getHistoryEventTime().get());
+        if (resetTypeAndOptions.getHistoryEventTime().isPresent()) {
+            request.historyEventTime(resetTypeAndOptions.getHistoryEventTime().get());
         }
-        if (resetWorkflowTypeAndOptions.getSkipSignalReapply().isPresent()) {
-            request.skipSignalReapply(resetWorkflowTypeAndOptions.getSkipSignalReapply().get());
+        if (resetTypeAndOptions.getSkipSignalReapply().isPresent()) {
+            request.skipSignalReapply(resetTypeAndOptions.getSkipSignalReapply().get());
         }
-        if (resetWorkflowTypeAndOptions.getStateId().isPresent()) {
-            request.stateId(resetWorkflowTypeAndOptions.getStateId().get());
+        if (resetTypeAndOptions.getStateId().isPresent()) {
+            request.stateId(resetTypeAndOptions.getStateId().get());
         }
-        if (resetWorkflowTypeAndOptions.getStateExecutionId().isPresent()) {
-            request.stateExecutionId(resetWorkflowTypeAndOptions.getStateExecutionId().get());
+        if (resetTypeAndOptions.getStateExecutionId().isPresent()) {
+            request.stateExecutionId(resetTypeAndOptions.getStateExecutionId().get());
         }
 
         try {
@@ -340,10 +340,10 @@ public class UnregisteredClient {
      * @param workflowId    required
      * @param workflowRunId optional
      */
-    public void stopWorkflow(
+    public void closeObjectExecution(
             final String workflowId,
             final String workflowRunId) {
-        stopWorkflow(workflowId, workflowRunId, null);
+        closeObjectExecution(workflowId, workflowRunId, null);
     }
 
     /**
@@ -353,7 +353,7 @@ public class UnregisteredClient {
      * @param workflowRunId optional
      * @param options       optional
      */
-    public void stopWorkflow(
+    public void closeObjectExecution(
             final String workflowId,
             final String workflowRunId,
             final StopWorkflowOptions options) {
@@ -376,12 +376,12 @@ public class UnregisteredClient {
     }
 
     /**
-     * @param workflowId workflowId
-     * @param workflowRunId workflowRunId
+     * @param workflowId     workflowId
+     * @param workflowRunId  workflowRunId
      * @param attributeKeys, return all attributes if this is empty or null
      * @return the response
      */
-    public WorkflowGetDataObjectsResponse getAnyWorkflowDataObjects(
+    public WorkflowGetDataObjectsResponse getAnyDataAttributes(
             final String workflowId,
             final String workflowRunId,
             List<String> attributeKeys) {
@@ -398,7 +398,7 @@ public class UnregisteredClient {
         }
     }
 
-    public WorkflowSearchResponse searchWorkflow(final String query, final int pageSize) {
+    public WorkflowSearchResponse searcObjects(final String query, final int pageSize) {
 
         try {
             return defaultApi.apiV1WorkflowSearchPost(
@@ -411,7 +411,7 @@ public class UnregisteredClient {
         }
     }
 
-    public WorkflowSearchResponse searchWorkflow(final WorkflowSearchRequest request) {
+    public WorkflowSearchResponse searcObjects(final WorkflowSearchRequest request) {
         try {
             return defaultApi.apiV1WorkflowSearchPost(request);
         } catch (FeignException.FeignClientException exp) {

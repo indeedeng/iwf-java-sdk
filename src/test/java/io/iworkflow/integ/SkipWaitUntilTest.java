@@ -2,8 +2,8 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
-import io.iworkflow.core.ImmutableWorkflowOptions;
-import io.iworkflow.core.WorkflowOptions;
+import io.iworkflow.core.ImmutableObjectOptions;
+import io.iworkflow.core.ObjectOptions;
 import io.iworkflow.gen.models.IDReusePolicy;
 import io.iworkflow.gen.models.WorkflowConfig;
 import io.iworkflow.integ.basic.SkipWaitUntilWorkflow;
@@ -26,14 +26,14 @@ public class SkipWaitUntilTest {
     public void testSkipWaitUntil() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "testSkipWaitUntil-" + System.currentTimeMillis() / 1000;
-        final WorkflowOptions startOptions = ImmutableWorkflowOptions.builder()
-                .workflowIdReusePolicy(IDReusePolicy.DISALLOW_REUSE)
-                .workflowConfigOverride(new WorkflowConfig().continueAsNewThreshold(1))
+        final ObjectOptions startOptions = ImmutableObjectOptions.builder()
+                .objectIdReusePolicy(IDReusePolicy.DISALLOW_REUSE)
+                .objectConfigOverride(new WorkflowConfig().continueAsNewThreshold(1))
                 .build();
         final int input = 0;
-        client.startWorkflow(SkipWaitUntilWorkflow.class, wfId, 10, input, startOptions);
+        client.createObject(SkipWaitUntilWorkflow.class, wfId, 10, input, startOptions);
         // wait for workflow to finish
-        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        final Integer output = client.getSingleResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(input + 2, output);
     }
 }

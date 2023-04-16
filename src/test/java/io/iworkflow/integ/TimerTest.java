@@ -25,10 +25,10 @@ public class TimerTest {
         final String wfId = "basic-timer-test-id" + startTs / 1000;
         final Integer input = 5;
 
-        client.startWorkflow(
+        client.createObject(
                 BasicTimerWorkflow.class, wfId, 10, input);
 
-        client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        client.getSingleResultWithWait(Integer.class, wfId);
         final long elapsed = System.currentTimeMillis() - startTs;
         Assertions.assertTrue(elapsed >= 4000 && elapsed <= 7000, String.format("actual duration: %d", elapsed));
     }

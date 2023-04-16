@@ -46,120 +46,120 @@ public class Client {
     }
 
     /**
-     * startWorkflow starts a workflow execution
+     * createObject creates an DEObject
      *
-     * @param workflow               is required
-     * @param workflowId             is required
-     * @param workflowTimeoutSeconds is required
-     * @return runId
+     * @param objectDefinition is required
+     * @param objectId         is required
+     * @param timeoutSeconds   is required
+     * @return objectExecutionId
      */
-    public String startWorkflow(
-            final DEObject workflow,
-            final String workflowId,
-            final int workflowTimeoutSeconds) {
-        return startWorkflow(workflow, workflowId, workflowTimeoutSeconds, null, null);
+    public String createObject(
+            final DEObject objectDefinition,
+            final String objectId,
+            final int timeoutSeconds) {
+        return createObject(objectDefinition, objectId, timeoutSeconds, null, null);
     }
 
     /**
-     * startWorkflow starts a workflow execution
+     * createObject creates an DEObject
      *
-     * @param workflow               is required
-     * @param workflowId             is required
-     * @param workflowTimeoutSeconds is required
-     * @param input                  is optional, can be null
-     * @return runId
+     * @param deObject       is required
+     * @param objectId       is required
+     * @param timeoutSeconds is required
+     * @param input          is optional, can be null
+     * @return objectExecutionId
      */
-    public String startWorkflow(
-            final DEObject workflow,
-            final String workflowId,
-            final int workflowTimeoutSeconds,
+    public String createObject(
+            final DEObject deObject,
+            final String objectId,
+            final int timeoutSeconds,
             final Object input) {
-        return startWorkflow(workflow, workflowId, workflowTimeoutSeconds, input, null);
+        return createObject(deObject, objectId, timeoutSeconds, input, null);
     }
 
     /**
-     * startWorkflow starts a workflow execution
+     * createObject creates an DEObject
      *
-     * @param workflow               is required
-     * @param workflowId             is required
-     * @param workflowTimeoutSeconds is required
-     * @param input                  is optional, can be null
-     * @param options                is optional, can be null
-     * @return runId
+     * @param deObject       is required
+     * @param objectId       is required
+     * @param timeoutSeconds is required
+     * @param input          is optional, can be null
+     * @param options        is optional, can be null
+     * @return objectExecutionId
      */
-    public String startWorkflow(
-            final DEObject workflow,
-            final String workflowId,
-            final int workflowTimeoutSeconds,
+    public String createObject(
+            final DEObject deObject,
+            final String objectId,
+            final int timeoutSeconds,
             final Object input,
-            final WorkflowOptions options) {
-        final String wfType = Registry.getWorkflowType(workflow);
-        return doStartWorkflow(wfType, workflowId, workflowTimeoutSeconds, input, options);
+            final ObjectOptions options) {
+        final String objectType = Registry.getObjectType(deObject);
+        return doCreateObject(objectType, objectId, timeoutSeconds, input, options);
     }
 
     /**
-     * startWorkflow starts a workflow execution
+     * createObject creates an DEObject
      *
-     * @param workflowClass          is required
-     * @param workflowId             is required
-     * @param workflowTimeoutSeconds is required
-     * @return runId
+     * @param deObjectClass  is required
+     * @param objectId       is required
+     * @param timeoutSeconds is required
+     * @return objectExecutionId
      */
-    public String startWorkflow(
-            final Class<? extends DEObject> workflowClass,
-            final String workflowId,
-            final int workflowTimeoutSeconds) {
-        return startWorkflow(workflowClass, workflowId, workflowTimeoutSeconds, null, null);
+    public String createObject(
+            final Class<? extends DEObject> deObjectClass,
+            final String objectId,
+            final int timeoutSeconds) {
+        return createObject(deObjectClass, objectId, timeoutSeconds, null, null);
     }
 
     /**
-     * startWorkflow starts a workflow execution
+     * createObject creates an DEObject
      *
-     * @param workflowClass          is required
-     * @param workflowId             is required
-     * @param workflowTimeoutSeconds is required
-     * @param input                  is optional, can be null
-     * @return runId
+     * @param deObjectClass  is required
+     * @param objectId       is required
+     * @param timeoutSeconds is required
+     * @param input          is optional, can be null
+     * @return objectExecutionId
      */
-    public String startWorkflow(
-            final Class<? extends DEObject> workflowClass,
-            final String workflowId,
-            final int workflowTimeoutSeconds,
+    public String createObject(
+            final Class<? extends DEObject> deObjectClass,
+            final String objectId,
+            final int timeoutSeconds,
             final Object input) {
-        return startWorkflow(workflowClass, workflowId, workflowTimeoutSeconds, input, null);
+        return createObject(deObjectClass, objectId, timeoutSeconds, input, null);
     }
 
     /**
-     * startWorkflow starts a workflow execution
+     * createObject creates an DEObject
      *
-     * @param workflowClass          is required
-     * @param workflowId             is required
-     * @param workflowTimeoutSeconds is required
-     * @param input                  is optional, can be null
-     * @param option                 is optional, can be null
-     * @return runId
+     * @param deObjectClass  is required
+     * @param objectId       is required
+     * @param timeoutSeconds is required
+     * @param input          is optional, can be null
+     * @param option         is optional, can be null
+     * @return objectExecutionId
      */
-    public String startWorkflow(
-            final Class<? extends DEObject> workflowClass,
-            final String workflowId,
-            final int workflowTimeoutSeconds,
+    public String createObject(
+            final Class<? extends DEObject> deObjectClass,
+            final String objectId,
+            final int timeoutSeconds,
             final Object input,
-            final WorkflowOptions option) {
-        final String wfType = workflowClass.getSimpleName();
-        return doStartWorkflow(wfType, workflowId, workflowTimeoutSeconds, input, option);
+            final ObjectOptions option) {
+        final String objectType = deObjectClass.getSimpleName();
+        return doCreateObject(objectType, objectId, timeoutSeconds, input, option);
     }
 
-    private String doStartWorkflow(
-            final String wfType,
-            final String workflowId,
-            final int workflowTimeoutSeconds,
+    private String doCreateObject(
+            final String objectType,
+            final String objectId,
+            final int timeoutSeconds,
             final Object input,
-            final WorkflowOptions options) {
+            final ObjectOptions options) {
 
-        final ImmutableUnregisteredWorkflowOptions.Builder unregisterWorkflowOptions = ImmutableUnregisteredWorkflowOptions.builder();
+        final ImmutableUnregisteredObjectOptions.Builder unregisterWorkflowOptions = ImmutableUnregisteredObjectOptions.builder();
 
         // validate
-        final StateDef stateDef = registry.getWorkflowStartingState(wfType);
+        final StateDef stateDef = registry.getWorkflowStartingState(objectType);
         final Class registeredInputType = stateDef.getWorkflowState().getInputType();
         if (input != null && !registeredInputType.isAssignableFrom(input.getClass())) {
             throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType));
@@ -177,17 +177,17 @@ public class Client {
             unregisterWorkflowOptions.startStateOptions(stateOptions);
         }
         if (options != null) {
-            unregisterWorkflowOptions.workflowIdReusePolicy(options.getWorkflowIdReusePolicy());
+            unregisterWorkflowOptions.objectIdReusePolicy(options.getObjectIdReusePolicy());
             unregisterWorkflowOptions.cronSchedule(options.getCronSchedule());
-            unregisterWorkflowOptions.workflowRetryPolicy(options.getWorkflowRetryPolicy());
-            unregisterWorkflowOptions.workflowConfigOverride(options.getWorkflowConfigOverride());
+            unregisterWorkflowOptions.objectExecutionRetryPolicy(options.getObjectExecutionRetryPolicy());
+            unregisterWorkflowOptions.objectConfigOverride(options.getObjectConfigOverride());
 
-            final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(wfType);
+            final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(objectType);
             final List<SearchAttribute> convertedSAs = convertToSearchAttributeList(saTypes, options.getInitialSearchAttribute());
             unregisterWorkflowOptions.initialSearchAttribute(convertedSAs);
         }
 
-        return unregisteredClient.startWorkflow(wfType, stateDef.getWorkflowState().getStateId(), workflowId, workflowTimeoutSeconds, input, unregisterWorkflowOptions.build());
+        return unregisteredClient.startWorkflow(objectType, stateDef.getWorkflowState().getStateId(), objectId, timeoutSeconds, input, unregisterWorkflowOptions.build());
     }
 
     private List<SearchAttribute> convertToSearchAttributeList(final Map<String, SearchAttributeValueType> saTypes, final Map<String, Object> initialSearchAttribute) {
@@ -260,137 +260,137 @@ public class Client {
      * For most cases, a workflow only has one result(one completion state)
      * Use this API to retrieve the output of the state
      *
-     * @param valueClass    the type class of the output
-     * @param workflowId    the workflowId
-     * @param workflowRunId optional runId, can be empty
-     * @param <T>           type of the output
+     * @param valueClass        the type class of the output
+     * @param objectId          the objectId
+     * @param objectExecutionId optional runId, can be empty
+     * @param <T>               type of the output
      * @return the output result
      */
-    public <T> T getSimpleWorkflowResultWithWait(
+    public <T> T getSingleResultWithWait(
             Class<T> valueClass,
-            final String workflowId,
-            final String workflowRunId) {
-        return unregisteredClient.getSimpleWorkflowResultWithWait(valueClass, workflowId, workflowRunId);
+            final String objectId,
+            final String objectExecutionId) {
+        return unregisteredClient.getSingleResultWithWait(valueClass, objectId, objectExecutionId);
     }
 
-    public <T> T getSimpleWorkflowResultWithWait(
+    public <T> T getSingleResultWithWait(
             Class<T> valueClass,
-            final String workflowId) {
-        return getSimpleWorkflowResultWithWait(valueClass, workflowId, "");
+            final String objectId) {
+        return getSingleResultWithWait(valueClass, objectId, "");
     }
 
     /**
      * In some cases, a workflow may have more than one completion states
      *
-     * @param workflowId    workflowId
-     * @param workflowRunId workflowRunId
+     * @param objectId          objectId
+     * @param objectExecutionId objectExecutionId
      * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
      */
-    public List<StateCompletionOutput> getComplexWorkflowResultWithWait(
-            final String workflowId, final String workflowRunId) {
-        return unregisteredClient.getComplexWorkflowResultWithWait(workflowId, workflowRunId);
+    public List<StateCompletionOutput> getMultiResultsWithWait(
+            final String objectId, final String objectExecutionId) {
+        return unregisteredClient.getMultiResultsWithWait(objectId, objectExecutionId);
     }
 
-    public List<StateCompletionOutput> getComplexWorkflowResultWithWait(final String workflowId) {
-        return getComplexWorkflowResultWithWait(workflowId, "");
+    public List<StateCompletionOutput> getMultiResultsWithWait(final String objectId) {
+        return getMultiResultsWithWait(objectId, "");
     }
 
-    public void signalWorkflow(
-            final Class<? extends DEObject> workflowClass,
-            final String workflowId,
-            final String workflowRunId,
+    public void sendSignal(
+            final Class<? extends DEObject> deObjectClass,
+            final String objectId,
+            final String objectExecutionId,
             final String signalChannelName,
             final Object signalValue) {
-        final String wfType = workflowClass.getSimpleName();
+        final String wfType = deObjectClass.getSimpleName();
 
         Map<String, Class<?>> nameToTypeMap = registry.getSignalChannelNameToSignalTypeMap(wfType);
         if (nameToTypeMap == null) {
             throw new IllegalArgumentException(
-                    String.format("Workflow %s is not registered", wfType)
+                    String.format("Object type %s is not registered", wfType)
             );
         }
 
         if (!nameToTypeMap.containsKey(signalChannelName)) {
-            throw new IllegalArgumentException(String.format("Workflow %s doesn't have signal %s", wfType, signalChannelName));
+            throw new IllegalArgumentException(String.format("Object type %s doesn't have signal %s", wfType, signalChannelName));
         }
         Class<?> signalType = nameToTypeMap.get(signalChannelName);
         if (signalValue != null && !signalType.isInstance(signalValue)) {
             throw new IllegalArgumentException(String.format("Signal value is not of type %s", signalType.getName()));
         }
 
-        unregisteredClient.signalWorkflow(workflowId, workflowRunId, signalChannelName, signalValue);
+        unregisteredClient.sendSignal(objectId, objectExecutionId, signalChannelName, signalValue);
     }
 
     /**
-     * @param workflowId workflowId
-     * @param workflowRunId workflowRunId
-     * @param resetWorkflowTypeAndOptions the combination parameter for reset
-     * @return the new runId after reset
+     * @param objectId            objectId
+     * @param objectExecutionId   objectExecutionId
+     * @param resetTypeAndOptions the combination parameter for reset
+     * @return the new internal RunId after reset
      */
-    public String resetWorkflow(
-            final String workflowId,
-            final String workflowRunId,
-            final ResetWorkflowTypeAndOptions resetWorkflowTypeAndOptions
+    public String resetObject(
+            final String objectId,
+            final String objectExecutionId,
+            final ResetTypeAndOptions resetTypeAndOptions
     ) {
 
-        return unregisteredClient.resetWorkflow(workflowId, workflowRunId, resetWorkflowTypeAndOptions);
+        return unregisteredClient.resetWorkflow(objectId, objectExecutionId, resetTypeAndOptions);
     }
 
     /**
-     * Stop a workflow, this is essentially terminate the workflow gracefully
+     * close an object execution
      *
-     * @param workflowId    required
-     * @param workflowRunId optional, can be empty
+     * @param objectId          required
+     * @param objectExecutionId optional, can be empty
      */
-    public void stopWorkflow(
-            final String workflowId,
-            final String workflowRunId) {
-        unregisteredClient.stopWorkflow(workflowId, workflowRunId);
+    public void closeObjectExecution(
+            final String objectId,
+            final String objectExecutionId) {
+        unregisteredClient.closeObjectExecution(objectId, objectExecutionId);
     }
 
     /**
      * Stop a workflow with options
      *
-     * @param workflowId    required
-     * @param workflowRunId optional
-     * @param options       optional
+     * @param objectId          required
+     * @param objectExecutionId optional
+     * @param options           optional
      */
-    public void stopWorkflow(
-            final String workflowId,
-            final String workflowRunId,
+    public void closeObjectExecution(
+            final String objectId,
+            final String objectExecutionId,
             final StopWorkflowOptions options) {
-        unregisteredClient.stopWorkflow(workflowId, workflowRunId, options);
+        unregisteredClient.closeObjectExecution(objectId, objectExecutionId, options);
     }
 
-    public Map<String, Object> getWorkflowDataObjects(
-            final Class<? extends DEObject> workflowClass,
-            final String workflowId,
-            final String workflowRunId,
+    public Map<String, Object> getDataAttributes(
+            final Class<? extends DEObject> deObjectClass,
+            final String objectId,
+            final String objectExecutionId,
             List<String> keys) {
         if (keys == null || keys.isEmpty()) {
             throw new IllegalArgumentException("keys must contain at least one entry, or use getAllDataObjects API to get all");
         }
-        return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, keys);
+        return doGetWorkflowDataAttributes(deObjectClass, objectId, objectExecutionId, keys);
     }
 
-    public Map<String, Object> getAllDataObjects(
-            final Class<? extends DEObject> workflowClass,
-            final String workflowId,
-            final String workflowRunId) {
-        return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, null);
+    public Map<String, Object> getAllDataAttributes(
+            final Class<? extends DEObject> deObjectClass,
+            final String objectId,
+            final String objectExecutionId) {
+        return doGetWorkflowDataAttributes(deObjectClass, objectId, objectExecutionId, null);
     }
 
-    private Map<String, Object> doGetWorkflowDataObjects(
-            final Class<? extends DEObject> workflowClass,
-            final String workflowId,
-            final String workflowRunId,
+    private Map<String, Object> doGetWorkflowDataAttributes(
+            final Class<? extends DEObject> deObjectClass,
+            final String objectId,
+            final String objectExecutionId,
             List<String> keys) {
-        final String wfType = workflowClass.getSimpleName();
+        final String objectType = deObjectClass.getSimpleName();
 
-        Map<String, Class<?>> queryDataObjectKeyToTypeMap = registry.getDataAttributeKeyToTypeMap(wfType);
+        Map<String, Class<?>> queryDataObjectKeyToTypeMap = registry.getDataAttributeKeyToTypeMap(objectType);
         if (queryDataObjectKeyToTypeMap == null) {
             throw new IllegalArgumentException(
-                    String.format("Workflow %s is not registered", wfType)
+                    String.format("Workflow %s is not registered", objectType)
             );
         }
 
@@ -409,7 +409,7 @@ public class Client {
             }
         }
 
-        final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys);
+        final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyDataAttributes(objectId, objectExecutionId, keys);
 
         if (response.getObjects() == null) {
             throw new IllegalStateException("data attributes not returned");
@@ -433,8 +433,8 @@ public class Client {
      * @param pageSize the page size
      * @return the results of the search, this will only return one page of the results
      */
-    public WorkflowSearchResponse searchWorkflow(final String query, final int pageSize) {
-        return unregisteredClient.searchWorkflow(query, pageSize);
+    public WorkflowSearchResponse searchObjects(final String query, final int pageSize) {
+        return unregisteredClient.searcObjects(query, pageSize);
     }
 
     /**
@@ -443,25 +443,25 @@ public class Client {
      * @param request the search request
      * @return the results of the search
      */
-    public WorkflowSearchResponse searchWorkflow(final WorkflowSearchRequest request) {
-        return unregisteredClient.searchWorkflow(request);
+    public WorkflowSearchResponse searchObjects(final WorkflowSearchRequest request) {
+        return unregisteredClient.searcObjects(request);
     }
 
     /**
      * create a new stub for invoking RPC
      *
-     * @param workflowClassForRpc the class of defining the RPCs to invoke
-     * @param workflowId          workflowId is required
-     * @param workflowRunId       optional
-     * @param <T>                 the class of defining the RPCs to invoke
+     * @param objectClassForRpc the class of defining the RPCs to invoke
+     * @param objectId          objectId is required
+     * @param objectExecutionId optional
+     * @param <T>               the class of defining the RPCs to invoke
      * @return the result of the RPC
      */
-    public <T> T newRpcStub(Class<T> workflowClassForRpc, String workflowId, String workflowRunId) {
+    public <T> T newRpcStub(Class<T> objectClassForRpc, String objectId, String objectExecutionId) {
 
         Class<?> dynamicType = new ByteBuddy()
-                .subclass(workflowClassForRpc)
+                .subclass(objectClassForRpc)
                 .method(ElementMatchers.any())
-                .intercept(MethodDelegation.to(new RpcInvocationHandler(this.unregisteredClient, workflowId, workflowRunId)))
+                .intercept(MethodDelegation.to(new RpcInvocationHandler(this.unregisteredClient, objectId, objectExecutionId)))
                 .make()
                 .load(getClass().getClassLoader())
                 .getLoaded();
@@ -520,30 +520,30 @@ public class Client {
         rpcStubMethod.execute(null, null, null);
     }
 
-    public Map<String, Object> getWorkflowSearchAttributes(
-            final Class<? extends DEObject> workflowClass,
-            final String workflowId,
-            final String workflowRunId,
+    public Map<String, Object> getSearchAttributes(
+            final Class<? extends DEObject> deObjectClass,
+            final String objectId,
+            final String objectExecutionId,
             List<String> attributeKeys) {
         if (attributeKeys == null || attributeKeys.isEmpty()) {
             throw new IllegalArgumentException("attributeKeys must contain at least one entry, or use GetAllSearchAttributes API to get all");
         }
-        return doGetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, attributeKeys);
+        return doGetSearchAttributes(deObjectClass, objectId, objectExecutionId, attributeKeys);
     }
 
     public Map<String, Object> getAllSearchAttributes(
-            final Class<? extends DEObject> workflowClass,
-            final String workflowId,
-            final String workflowRunId) {
-        return doGetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, null);
+            final Class<? extends DEObject> deObjectClass,
+            final String objectId,
+            final String objectExecutionId) {
+        return doGetSearchAttributes(deObjectClass, objectId, objectExecutionId, null);
     }
 
-    private Map<String, Object> doGetWorkflowSearchAttributes(
-            final Class<? extends DEObject> workflowClass,
-            final String workflowId,
-            final String workflowRunId,
+    private Map<String, Object> doGetSearchAttributes(
+            final Class<? extends DEObject> deObjectClass,
+            final String objectId,
+            final String objectExecutionId,
             final List<String> attributeKeys) {
-        final String wfType = workflowClass.getSimpleName();
+        final String wfType = deObjectClass.getSimpleName();
 
         final Map<String, SearchAttributeValueType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
         if (searchAttributeKeyToTypeMap == null) {
@@ -586,7 +586,7 @@ public class Client {
             });
         }
 
-        WorkflowGetSearchAttributesResponse response = unregisteredClient.getAnyWorkflowSearchAttributes(workflowId, workflowRunId, keyAndTypes);
+        WorkflowGetSearchAttributesResponse response = unregisteredClient.getAnyWorkflowSearchAttributes(objectId, objectExecutionId, keyAndTypes);
 
         if (response.getSearchAttributes() == null) {
             throw new IllegalStateException("search attributes not returned");
@@ -620,38 +620,38 @@ public class Client {
     }
 
     public void skipTimer(
-            final String workflowId,
-            final String workflowRunId,
+            final String objectId,
+            final String objectExecutionId,
             final Class<? extends WorkflowState> stateClass,
             final int stateExecutionNumber,
             final String timerCommandId) {
-        skipTimer(workflowId, workflowRunId, stateClass.getSimpleName(), stateExecutionNumber, timerCommandId);
+        skipTimer(objectId, objectExecutionId, stateClass.getSimpleName(), stateExecutionNumber, timerCommandId);
     }
 
     public void skipTimer(
-            final String workflowId,
-            final String workflowRunId,
+            final String objectId,
+            final String objectExecutionId,
             final String workflowStateId,
             final int stateExecutionNumber,
             final String timerCommandId) {
-        unregisteredClient.skipTimer(workflowId, workflowRunId, workflowStateId, stateExecutionNumber, timerCommandId);
+        unregisteredClient.skipTimer(objectId, objectExecutionId, workflowStateId, stateExecutionNumber, timerCommandId);
     }
 
     public void skipTimer(
-            final String workflowId,
-            final String workflowRunId,
+            final String objectId,
+            final String objectExecutionId,
             final Class<? extends WorkflowState> stateClass,
             final int stateExecutionNumber,
             final int timerCommandIndex) {
-        skipTimer(workflowId, workflowRunId, stateClass.getSimpleName(), stateExecutionNumber, timerCommandIndex);
+        skipTimer(objectId, objectExecutionId, stateClass.getSimpleName(), stateExecutionNumber, timerCommandIndex);
     }
 
     public void skipTimer(
-            final String workflowId,
-            final String workflowRunId,
+            final String objectId,
+            final String objectExecutionId,
             final String workflowStateId,
             final int stateExecutionNumber,
             final int timerCommandIndex) {
-        unregisteredClient.skipTimer(workflowId, workflowRunId, workflowStateId, stateExecutionNumber, timerCommandIndex);
+        unregisteredClient.skipTimer(objectId, objectExecutionId, workflowStateId, stateExecutionNumber, timerCommandIndex);
     }
 }

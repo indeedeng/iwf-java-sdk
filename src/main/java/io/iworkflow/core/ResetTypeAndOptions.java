@@ -6,7 +6,7 @@ import org.immutables.value.Value;
 import java.util.Optional;
 
 @Value.Immutable
-public abstract class ResetWorkflowTypeAndOptions {
+public abstract class ResetTypeAndOptions {
 
     public abstract WorkflowResetType getResetType();
 
@@ -22,14 +22,14 @@ public abstract class ResetWorkflowTypeAndOptions {
 
     public abstract Optional<Boolean> getSkipSignalReapply();
 
-    public static ResetWorkflowTypeAndOptions resetToBeginning(final String reason) {
+    public static ResetTypeAndOptions resetToBeginning(final String reason) {
         return builder()
                 .resetType(WorkflowResetType.BEGINNING)
                 .reason(reason)
                 .build();
     }
 
-    public static ResetWorkflowTypeAndOptions resetToHistoryEventId(final int historyEventId, final String reason) {
+    public static ResetTypeAndOptions resetToHistoryEventId(final int historyEventId, final String reason) {
         return builder()
                 .resetType(WorkflowResetType.HISTORY_EVENT_ID)
                 .historyEventId(historyEventId)
@@ -37,7 +37,7 @@ public abstract class ResetWorkflowTypeAndOptions {
                 .build();
     }
 
-    public static ResetWorkflowTypeAndOptions resetToHistoryEventId(final String historyEventTime, final String reason) {
+    public static ResetTypeAndOptions resetToHistoryEventId(final String historyEventTime, final String reason) {
         return builder()
                 .resetType(WorkflowResetType.HISTORY_EVENT_ID)
                 .historyEventTime(historyEventTime)
@@ -45,7 +45,7 @@ public abstract class ResetWorkflowTypeAndOptions {
                 .build();
     }
 
-    public static ResetWorkflowTypeAndOptions resetToStateId(final String stateId, final String reason) {
+    public static ResetTypeAndOptions resetToStateId(final String stateId, final String reason) {
         return builder()
                 .resetType(WorkflowResetType.STATE_ID)
                 .stateId(stateId)
@@ -53,7 +53,7 @@ public abstract class ResetWorkflowTypeAndOptions {
                 .build();
     }
 
-    public static ResetWorkflowTypeAndOptions resetToStateExecutionId(final String stateExecution, final String reason) {
+    public static ResetTypeAndOptions resetToStateExecutionId(final String stateExecution, final String reason) {
         return builder()
                 .resetType(WorkflowResetType.STATE_EXECUTION_ID)
                 .stateExecutionId(stateExecution)
@@ -61,7 +61,7 @@ public abstract class ResetWorkflowTypeAndOptions {
                 .build();
     }
 
-    public static ImmutableResetWorkflowTypeAndOptions.Builder builder() {
-        return ImmutableResetWorkflowTypeAndOptions.builder();
+    public static ImmutableResetTypeAndOptions.Builder builder() {
+        return ImmutableResetTypeAndOptions.builder();
     }
 }

@@ -9,14 +9,14 @@ import java.util.Map;
 import java.util.Optional;
 
 @Value.Immutable
-public abstract class WorkflowOptions {
-    public abstract Optional<IDReusePolicy> getWorkflowIdReusePolicy();
+public abstract class ObjectOptions {
+    public abstract Optional<IDReusePolicy> getObjectIdReusePolicy();
 
     public abstract Optional<String> getCronSchedule();
 
-    public abstract Optional<WorkflowRetryPolicy> getWorkflowRetryPolicy();
+    public abstract Optional<WorkflowRetryPolicy> getObjectExecutionRetryPolicy();
 
     public abstract Map<String, Object> getInitialSearchAttribute();
 
-    public abstract Optional<WorkflowConfig> getWorkflowConfigOverride();
+    public abstract Optional<WorkflowConfig> getObjectConfigOverride();
 }
