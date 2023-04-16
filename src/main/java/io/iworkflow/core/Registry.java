@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Registry {
-    private final Map<String, DEObject> workflowStore = new HashMap<>();
+    private final Map<String, DEObject> objectDefinitionStore = new HashMap<>();
     // (workflow type, stateId)-> StateDef
     private final Map<String, StateDef> workflowStateStore = new HashMap<>(); // TODO refactor to use Map<String, Map<String, StateDef>> to be more clear
 
@@ -32,15 +32,15 @@ public class Registry {
 
     private static final String DELIMITER = "_";
 
-    public void addWorkflows(final DEObject... wfs) {
-        Arrays.stream(wfs).forEach(this::addWorkflow);
+    public void addDEObjects(final DEObject... wfs) {
+        Arrays.stream(wfs).forEach(this::addDEObject);
     }
 
-    public void addWorkflows(final List<DEObject> wfs) {
-        wfs.forEach(this::addWorkflow);
+    public void addDEObjects(final List<DEObject> wfs) {
+        wfs.forEach(this::addDEObject);
     }
 
-    public void addWorkflow(final DEObject wf) {
+    public void addDEObject(final DEObject wf) {
         registerWorkflow(wf);
         registerWorkflowState(wf);
         registerWorkflowSignal(wf);
@@ -60,10 +60,10 @@ public class Registry {
     private void registerWorkflow(final DEObject wf) {
         String workflowType = getObjectType(wf);
 
-        if (workflowStore.containsKey(workflowType)) {
+        if (objectDefinitionStore.containsKey(workflowType)) {
             throw new ObjectDefinitionException(String.format("Workflow type %s already exists", workflowType));
         }
-        workflowStore.put(workflowType, wf);
+        objectDefinitionStore.put(workflowType, wf);
     }
 
     private void registerWorkflowState(final DEObject wf) {
@@ -225,14 +225,14 @@ public class Registry {
         }
     }
 
-    public DEObject getWorkflow(final String workflowType) {
-        return workflowStore.get(workflowType);
+    public DEObject getDEObject(final String objectType) {
+        return objectDefinitionStore.get(objectType);
     }
 
-    public Method getWorkflowRpcMethod(final String workflowType, final String rpcName) {
-        final Map<String, Method> wfRRPCs = rpcMethodStore.get(workflowType);
+    public Method getObjectRpcMethod(final String objectType, final String rpcName) {
+        final Map<String, Method> wfRRPCs = rpcMethodStore.get(objectType);
         if (wfRRPCs == null) {
-            throw new ObjectDefinitionException(String.format("workflow type %s is not registered, all registered types are: %s", workflowType, workflowStartStateStore.keySet()));
+            throw new ObjectDefinitionException(String.format("workflow type %s is not registered, all registered types are: %s", objectType, workflowStartStateStore.keySet()));
         }
         return wfRRPCs.get(rpcName);
     }

@@ -12,7 +12,7 @@ public class WorkflowRegistry {
     public static final Registry registry = new Registry();
 
     public WorkflowRegistry(List<DEObject> workflows) {
-        registry.addWorkflows(workflows);
+        registry.addDEObjects(workflows);
     }
 
     public Registry getRegistry() {

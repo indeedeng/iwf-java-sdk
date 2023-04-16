@@ -6,6 +6,7 @@ import io.iworkflow.core.validator.CronScheduleValidator;
 import io.iworkflow.gen.api.ApiClient;
 import io.iworkflow.gen.api.DefaultApi;
 import io.iworkflow.gen.models.EncodedObject;
+import io.iworkflow.gen.models.ObjectSearchRequest;
 import io.iworkflow.gen.models.PersistenceLoadingPolicy;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
 import io.iworkflow.gen.models.StateCompletionOutput;
@@ -19,8 +20,6 @@ import io.iworkflow.gen.models.WorkflowResetRequest;
 import io.iworkflow.gen.models.WorkflowResetResponse;
 import io.iworkflow.gen.models.WorkflowRpcRequest;
 import io.iworkflow.gen.models.WorkflowRpcResponse;
-import io.iworkflow.gen.models.WorkflowSearchRequest;
-import io.iworkflow.gen.models.WorkflowSearchResponse;
 import io.iworkflow.gen.models.WorkflowSignalRequest;
 import io.iworkflow.gen.models.WorkflowSkipTimerRequest;
 import io.iworkflow.gen.models.WorkflowStartOptions;
@@ -29,7 +28,9 @@ import io.iworkflow.gen.models.WorkflowStartResponse;
 import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.gen.models.WorkflowStopRequest;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -398,25 +399,42 @@ public class UnregisteredClient {
         }
     }
 
-    public WorkflowSearchResponse searcObjects(final String query, final int pageSize) {
+    public ObjectSearchResponse searchObjects(final String query, final int pageSize) {
 
+        final ObjectSearchRequest request = new ObjectSearchRequest()
+                .query(query)
+                .pageSize(pageSize);
+        return searchObjects(request);
+    }
+
+    public ObjectSearchResponse searchObjects(final ObjectSearchRequest request) {
         try {
-            return defaultApi.apiV1WorkflowSearchPost(
-                    new WorkflowSearchRequest()
-                            .query(query)
-                            .pageSize(pageSize)
-            );
+            final io.iworkflow.gen.models.ObjectSearchResponse internalResp = defaultApi.apiV1WorkflowSearchPost(request);
+
+            return ImmutableObjectSearchResponse.builder()
+                    .nextPageToken(Optional.ofNullable(internalResp.getNextPageToken()))
+                    .objectExecutions(toExternalExecutions(internalResp))
+                    .build();
         } catch (FeignException.FeignClientException exp) {
             throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
         }
     }
 
-    public WorkflowSearchResponse searcObjects(final WorkflowSearchRequest request) {
-        try {
-            return defaultApi.apiV1WorkflowSearchPost(request);
-        } catch (FeignException.FeignClientException exp) {
-            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+    private List<ObjectExecution> toExternalExecutions(final io.iworkflow.gen.models.ObjectSearchResponse resp) {
+        final ArrayList<ObjectExecution> out = new ArrayList<>();
+        if (resp == null || resp.getWorkflowExecutions() == null) {
+            return out;
         }
+        resp.getWorkflowExecutions().forEach((intEx) -> {
+
+                    final ObjectExecution extExe = ImmutableObjectExecution.builder()
+                            .objectId(intEx.getWorkflowId())
+                            .internalRunId(intEx.getWorkflowRunId())
+                            .build();
+                    out.add(extExe);
+                }
+        );
+        return out;
     }
 
     public WorkflowGetSearchAttributesResponse getAnySearchAttributes(

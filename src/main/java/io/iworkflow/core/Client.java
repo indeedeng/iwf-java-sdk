@@ -1,14 +1,13 @@
 package io.iworkflow.core;
 
 import io.iworkflow.gen.models.KeyValue;
+import io.iworkflow.gen.models.ObjectSearchRequest;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
 import io.iworkflow.gen.models.SearchAttributeValueType;
 import io.iworkflow.gen.models.StateCompletionOutput;
 import io.iworkflow.gen.models.WorkflowGetDataObjectsResponse;
 import io.iworkflow.gen.models.WorkflowGetSearchAttributesResponse;
-import io.iworkflow.gen.models.WorkflowSearchRequest;
-import io.iworkflow.gen.models.WorkflowSearchResponse;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodDelegation;
@@ -433,8 +432,8 @@ public class Client {
      * @param pageSize the page size
      * @return the results of the search, this will only return one page of the results
      */
-    public WorkflowSearchResponse searchObjects(final String query, final int pageSize) {
-        return unregisteredClient.searcObjects(query, pageSize);
+    public ObjectSearchResponse searchObjects(final String query, final int pageSize) {
+        return unregisteredClient.searchObjects(query, pageSize);
     }
 
     /**
@@ -443,8 +442,8 @@ public class Client {
      * @param request the search request
      * @return the results of the search
      */
-    public WorkflowSearchResponse searchObjects(final WorkflowSearchRequest request) {
-        return unregisteredClient.searcObjects(request);
+    public ObjectSearchResponse searchObjects(final ObjectSearchRequest request) {
+        return unregisteredClient.searchObjects(request);
     }
 
     /**
