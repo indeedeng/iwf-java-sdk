@@ -45,6 +45,6 @@ public class BasicInterStateChannelWorkflowState1 implements WorkflowState<Integ
         if (result2.getRequestStatusEnum() != ChannelRequestStatus.WAITING) {
             throw new RuntimeException("the second command should be waiting");
         }
-        return StateDecision.gracefulCompleteWorkflow(output);
+        return StateDecision.gracefulCompleteObjectExecution(output);
     }
 }

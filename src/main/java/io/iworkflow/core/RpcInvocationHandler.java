@@ -14,15 +14,15 @@ import static io.iworkflow.core.RpcDefinitions.validateRpcMethod;
 
 public class RpcInvocationHandler {
 
-    private final String workflowId;
-    private final String workflowRunId;
+    private final String objectId;
+    private final String objectExecutionId;
 
     final UnregisteredClient unregisteredClient;
 
-    public RpcInvocationHandler(final UnregisteredClient unregisteredClient, final String workflowId, final String workflowRunId) {
+    public RpcInvocationHandler(final UnregisteredClient unregisteredClient, final String objectId, final String objectExecutionId) {
         this.unregisteredClient = unregisteredClient;
-        this.workflowId = workflowId;
-        this.workflowRunId = workflowRunId;
+        this.objectId = objectId;
+        this.objectExecutionId = objectExecutionId;
     }
 
     @RuntimeType
@@ -40,7 +40,7 @@ public class RpcInvocationHandler {
         
         final Class<?> outputType = method.getReturnType();
 
-        final Object output = unregisteredClient.invokeRpc(outputType, input, workflowId, workflowRunId, method.getName(), rpcAnno.timeoutSeconds(),
+        final Object output = unregisteredClient.invokeRpc(outputType, input, objectId, objectExecutionId, method.getName(), rpcAnno.timeoutSeconds(),
                 new PersistenceLoadingPolicy()
                         .persistenceLoadingType(rpcAnno.dataAttributesLoadingType())
                         .partialLoadingKeys(Arrays.asList(rpcAnno.dataAttributesPartialLoadingKeys())),

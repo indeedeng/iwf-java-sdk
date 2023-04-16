@@ -72,6 +72,6 @@ public class BasicSignalWorkflowState2 implements WorkflowState<Integer> {
         if (timerResult.getTimerStatus() != TimerStatus.FIRED) {
             throw new RuntimeException("the timer should be fired");
         }
-        return StateDecision.gracefulCompleteWorkflow(output);
+        return StateDecision.gracefulCompleteObjectExecution(output);
     }
 }

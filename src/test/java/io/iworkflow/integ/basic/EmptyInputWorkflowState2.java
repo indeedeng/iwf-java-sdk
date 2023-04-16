@@ -29,6 +29,6 @@ public class EmptyInputWorkflowState2 implements WorkflowState<Void> {
 
     @Override
     public StateDecision execute(final Context context, final Void input, final CommandResults commandResults, Persistence persistence, final Communication communication) {
-        return StateDecision.gracefulCompleteWorkflow();
+        return StateDecision.gracefulCompleteObjectExecution();
     }
 }

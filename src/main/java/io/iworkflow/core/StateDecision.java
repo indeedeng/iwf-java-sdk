@@ -17,43 +17,41 @@ public abstract class StateDecision {
         return ImmutableStateDecision.builder();
     }
 
-    public static StateDecision gracefulCompleteWorkflow(final Object output) {
+    public static StateDecision gracefulCompleteObjectExecution(final Object output) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 StateMovement.gracefulCompleteWorkflow(output)
         )).build();
     }
 
-    public static StateDecision gracefulCompleteWorkflow() {
+    public static StateDecision gracefulCompleteObjectExecution() {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 StateMovement.gracefulCompleteWorkflow()
         )).build();
     }
 
-    public static StateDecision forceCompleteWorkflow(final Object output) {
+    public static StateDecision forceCompleteObjectExecution(final Object output) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 StateMovement.forceCompleteWorkflow(output)
         )).build();
     }
 
-    public static StateDecision forceCompleteWorkflow() {
+    public static StateDecision forceCompleteObjectExecution() {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 StateMovement.forceCompleteWorkflow()
         )).build();
     }
 
-    public static StateDecision forceFailWorkflow(final Object output) {
+    public static StateDecision forceFailObjectExecution(final Object output) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 StateMovement.forceFailWorkflow(output)
         )).build();
     }
 
-    public static StateDecision forceFailWorkflow() {
-        return FORCE_FAILING_WORKFLOW;
+    public static StateDecision forceFailObjectExecution() {
+        return ImmutableStateDecision.builder()
+                .nextStates(Arrays.asList(StateMovement.FORCE_FAILING_WORKFLOW_MOVEMENT))
+                .build();
     }
-
-    public static final StateDecision FORCE_FAILING_WORKFLOW = ImmutableStateDecision.builder()
-            .nextStates(Arrays.asList(StateMovement.FORCE_FAILING_WORKFLOW_MOVEMENT))
-            .build();
 
     public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass) {
         return singleNextState(stateClass.getSimpleName());

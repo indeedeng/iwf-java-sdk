@@ -35,9 +35,9 @@ public class RpcWorkflowState2 implements WorkflowState<Integer> {
             final Communication communication) {
         counter++;
         if (counter == 2) {
-            return StateDecision.gracefulCompleteWorkflow(counter);
+            return StateDecision.gracefulCompleteObjectExecution(counter);
         } else {
-            return StateDecision.gracefulCompleteWorkflow();
+            return StateDecision.gracefulCompleteObjectExecution();
         }
     }
 

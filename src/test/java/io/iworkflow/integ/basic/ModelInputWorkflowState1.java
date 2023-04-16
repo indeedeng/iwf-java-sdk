@@ -22,6 +22,6 @@ public class ModelInputWorkflowState1 implements WorkflowState<io.iworkflow.gen.
 
     @Override
     public StateDecision execute(final Context context, final io.iworkflow.gen.models.Context input, final CommandResults commandResults, Persistence persistence, final Communication communication) {
-        return StateDecision.gracefulCompleteWorkflow(1);
+        return StateDecision.gracefulCompleteObjectExecution(1);
     }
 }

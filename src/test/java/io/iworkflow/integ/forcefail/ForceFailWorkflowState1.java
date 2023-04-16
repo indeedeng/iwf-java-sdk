@@ -31,6 +31,6 @@ public class ForceFailWorkflowState1 implements WorkflowState<Integer> {
             CommandResults commandResults,
             Persistence persistence,
             final Communication communication) {
-        return StateDecision.forceFailWorkflow("a failing message");
+        return StateDecision.forceFailObjectExecution("a failing message");
     }
 }

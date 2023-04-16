@@ -41,6 +41,6 @@ public class BasicTimerWorkflowState1 implements WorkflowState<Integer> {
             CommandResults commandResults,
             Persistence persistence,
             final Communication communication) {
-        return StateDecision.gracefulCompleteWorkflow();
+        return StateDecision.gracefulCompleteObjectExecution();
     }
 }

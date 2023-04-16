@@ -23,6 +23,6 @@ public class BasicWorkflowState2 implements WorkflowState<Integer> {
     @Override
     public StateDecision execute(final Context context, final Integer input, final CommandResults commandResults, Persistence persistence, final Communication communication) {
         final int output = input + 1;
-        return StateDecision.gracefulCompleteWorkflow(output);
+        return StateDecision.gracefulCompleteObjectExecution(output);
     }
 }

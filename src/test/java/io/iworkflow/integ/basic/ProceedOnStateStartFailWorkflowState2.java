@@ -25,6 +25,6 @@ public class ProceedOnStateStartFailWorkflowState2 implements WorkflowState<Stri
     @Override
     public StateDecision execute(Context context, String input, CommandResults commandResults, Persistence persistence, Communication communication) {
         output = output + "_state2_decide";
-        return StateDecision.gracefulCompleteWorkflow(output);
+        return StateDecision.gracefulCompleteObjectExecution(output);
     }
 }
