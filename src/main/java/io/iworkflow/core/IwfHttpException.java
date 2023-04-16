@@ -49,6 +49,10 @@ public abstract class IwfHttpException extends RuntimeException {
         return errorResponse.getSubStatus();
     }
 
+    public ErrorResponse getErrorResponse() {
+        return errorResponse;
+    }
+
     public static IwfHttpException fromFeignException(final ObjectEncoder objectEncoder, final FeignException.FeignClientException exception) {
         if (exception.status() >= 400 && exception.status() < 500) {
             return new ClientSideException(objectEncoder, exception);

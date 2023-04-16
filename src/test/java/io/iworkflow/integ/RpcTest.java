@@ -3,9 +3,12 @@ package io.iworkflow.integ;
 import com.google.common.collect.ImmutableMap;
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
+import io.iworkflow.core.ClientSideException;
 import io.iworkflow.core.ImmutableStopWorkflowOptions;
+import io.iworkflow.gen.models.ErrorResponse;
 import io.iworkflow.gen.models.WorkflowStopType;
 import io.iworkflow.integ.persistence.BasicPersistenceWorkflow;
+import io.iworkflow.integ.rpc.NoStateWorkflow;
 import io.iworkflow.integ.rpc.RpcWorkflow;
 import io.iworkflow.integ.rpc.RpcWorkflowState2;
 import io.iworkflow.spring.TestSingletonWorkerService;
@@ -188,6 +191,28 @@ public class RpcTest {
                 .reason(HARDCODED_STR)
                 .build());
 
+    }
+
+    @Test
+    public void testRpcError() throws InterruptedException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "testRpcError" + System.currentTimeMillis() / 1000;
+        client.startWorkflow(
+                NoStateWorkflow.class, wfId, 10, 999);
+
+        final NoStateWorkflow rpcStub = client.newRpcStub(NoStateWorkflow.class, wfId, "");
+
+        try {
+            client.invokeRPC(rpcStub::testRpcFunc1Error, RPC_INPUT);
+        } catch (ClientSideException e) {
+            Assertions.assertEquals(420, e.getStatusCode());
+            final ErrorResponse errResp = e.getErrorResponse();
+            Assertions.assertEquals(501, errResp.getOriginalWorkerErrorStatus());
+            Assertions.assertEquals("this is an error", errResp.getOriginalWorkerErrorDetail());
+            Assertions.assertEquals("java.lang.RuntimeException", errResp.getOriginalWorkerErrorType());
+            Assertions.assertEquals("worker API error, status:501, errorType:java.lang.RuntimeException", errResp.getDetail());
+        }
+        client.stopWorkflow(wfId, "");
     }
 
 }

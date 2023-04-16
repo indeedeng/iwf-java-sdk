@@ -90,8 +90,13 @@ public class WorkerService {
                         persistence,
                         communication);
             }
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            if (e.getTargetException() instanceof RuntimeException) {
+                throw (RuntimeException) e.getTargetException();
+            }
+            throw new RuntimeException(e.getTargetException());
         }
 
         final EncodedObject encodedOutput = this.workerOptions.getObjectEncoder().encode(output);
