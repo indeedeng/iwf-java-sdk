@@ -2,12 +2,12 @@ package io.iworkflow.spring.controller;
 
 import io.iworkflow.core.WorkerOptions;
 import io.iworkflow.core.WorkerService;
+import io.iworkflow.gen.models.WorkerErrorResponse;
 import io.iworkflow.gen.models.WorkflowStateExecuteRequest;
 import io.iworkflow.gen.models.WorkflowStateExecuteResponse;
 import io.iworkflow.gen.models.WorkflowStateWaitUntilRequest;
 import io.iworkflow.gen.models.WorkflowStateWaitUntilResponse;
 import io.iworkflow.gen.models.WorkflowWorkerRpcRequest;
-import io.iworkflow.gen.models.WorkflowWorkerRpcResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,10 +43,17 @@ public class ApiController {
     }
 
     @PostMapping(WorkerService.WORKFLOW_WORKER_RPC_API_PATH)
-    public ResponseEntity<WorkflowWorkerRpcResponse> apiV1WorkflowWorkerRpcPost(
+    public ResponseEntity<?> apiV1WorkflowWorkerRpcPost(
             final @RequestBody WorkflowWorkerRpcRequest request
     ) {
-        return ResponseEntity.ok(workerService.handleWorkflowWorkerRpc(request));
+        try {
+            return ResponseEntity.ok(workerService.handleWorkflowWorkerRpc(request));
+        } catch (RuntimeException e) {
+            final WorkerErrorResponse errResp = new WorkerErrorResponse()
+                    .detail(e.getMessage())
+                    .errorType(e.getClass().getName());
+            return ResponseEntity.status(501).body(errResp);
+        }
     }
 
 }

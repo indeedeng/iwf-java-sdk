@@ -18,4 +18,9 @@ public class NoStateWorkflow implements ObjectWorkflow {
         }
         return RPC_OUTPUT;
     }
+
+    @RPC
+    public Long testRpcFunc1Error(Context context, String input, Persistence persistence, Communication communication) {
+        throw new RuntimeException("this is an error");
+    }
 }
