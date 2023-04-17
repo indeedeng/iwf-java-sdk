@@ -30,7 +30,8 @@ public class BasicInterStateChannelWorkflowState2 implements WorkflowState<Integ
             Integer input,
             CommandResults commandResults,
             Persistence persistence, final Communication communication) {
-        // TODO fix to test StateDecision.deadEnd();
-        return StateDecision.gracefulCompleteWorkflow();
+        // TODO fix to test StateDecision.deadEnd(); and then use stop to complete
+        //return StateDecision.deadEnd();
+         return StateDecision.gracefulCompleteWorkflow();
     }
 }
