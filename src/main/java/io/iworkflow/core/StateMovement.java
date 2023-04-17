@@ -16,6 +16,9 @@ public abstract class StateMovement {
     private final static String FORCE_COMPLETING_WORKFLOW_STATE_ID = "_SYS_FORCE_COMPLETING_WORKFLOW";
     private final static String FORCE_FAILING_WORKFLOW_STATE_ID = "_SYS_FORCE_FAILING_WORKFLOW";
 
+    // a dead end will just complete its thread, without triggering any closing workflow
+    private final static String DEAD_END_WORKFLOW_STATE_ID = "_SYS_DEAD_END";
+
     public static StateMovement gracefulCompleteWorkflow() {
         return ImmutableStateMovement.builder().stateId(GRACEFUL_COMPLETING_WORKFLOW_STATE_ID)
                 .build();
@@ -38,6 +41,7 @@ public abstract class StateMovement {
                 .build();
     }
 
+    public static final StateMovement DEAD_END_WORKFLOW_MOVEMENT = ImmutableStateMovement.builder().stateId(DEAD_END_WORKFLOW_STATE_ID).build();
     public static final StateMovement FORCE_FAILING_WORKFLOW_MOVEMENT = ImmutableStateMovement.builder().stateId(FORCE_FAILING_WORKFLOW_STATE_ID).build();
 
     public static StateMovement forceFailWorkflow(final Object output) {

@@ -10,6 +10,9 @@ import java.lang.annotation.Target;
 /**
  * This is for annotating an RPC method for an implementation of {@link ObjectWorkflow}
  * The method must be in the form of one of {@link RpcDefinitions}
+ * An RPC implementation can call any APIs to update external systems directly.
+ * However, it can also trigger some state execution (using {@link io.iworkflow.core.communication.Communication} API)
+ * to update in the background to ensure the consistency across systems.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

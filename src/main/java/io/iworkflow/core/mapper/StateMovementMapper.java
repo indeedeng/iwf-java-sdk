@@ -18,6 +18,9 @@ public class StateMovementMapper {
                 .stateInput(objectEncoder.encode(input));
         if (!stateMovement.getStateId().startsWith(RESERVED_STATE_ID_PREFIX)) {
             final StateDef stateDef = registry.getWorkflowState(workflowType, stateMovement.getStateId());
+            if(stateDef == null){
+                throw new IllegalArgumentException("state "+stateMovement.getStateId() +" is not registered in the workflow "+workflowType);
+            }
             WorkflowStateOptions stateOptions = stateDef.getWorkflowState().getStateOptions();
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
                 if (stateOptions == null) {

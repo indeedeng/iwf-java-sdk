@@ -16,6 +16,7 @@ import java.util.Arrays;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_DATA_OBJECT_MODEL_1;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_DATA_OBJECT_MODEL_2;
+import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_DATE_TIME;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_INT;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_KEYWORD;
 
@@ -49,11 +50,23 @@ public class BasicPersistenceWorkflowState1 implements WorkflowState<String> {
         persistence.recordEvent("event-2", "event-1", 2, "event-3");
         persistence.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, 1L);
         persistence.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-1");
+        // test setting by timestamp
+        // 1681766269 is "2023-04-17T14:17:49-07:00" or "2023-04-17T21:17:49-07:00"
+        persistence.setSearchAttributeDatetime(TEST_SEARCH_ATTRIBUTE_DATE_TIME, "1681766269");
+
         return CommandRequest.empty;
     }
 
+    public static final String testDateTimeValue = "2023-04-17T14:17:49-07:00";
+
     @Override
     public StateDecision execute(Context context, String input, CommandResults commandResults, Persistence persistence, final Communication communication) {
+        final String dt = persistence.getSearchAttributeDatetime(TEST_SEARCH_ATTRIBUTE_DATE_TIME);
+        if (!dt.equals("1681766269")){
+            throw new RuntimeException("datatime is in correct");
+        }
+        persistence.setSearchAttributeDatetime(TEST_SEARCH_ATTRIBUTE_DATE_TIME, testDateTimeValue);
+
         String str = persistence.getDataAttribute(TEST_DATA_OBJECT_KEY, String.class);
         persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, str + "-query-decide");
 

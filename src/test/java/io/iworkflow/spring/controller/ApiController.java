@@ -28,18 +28,18 @@ public class ApiController {
         return ResponseEntity.ok("Hello, world!");
     }
 
-    @PostMapping(WorkerService.WORKFLOW_STATE_START_API_PATH)
+    @PostMapping(WorkerService.WORKFLOW_STATE_WAIT_UNTIL_API_PATH)
     public ResponseEntity<WorkflowStateWaitUntilResponse> apiV1WorkflowStateStartPost(
             final @RequestBody WorkflowStateWaitUntilRequest request
     ) {
-        return ResponseEntity.ok(workerService.handleWorkflowStateStart(request));
+        return ResponseEntity.ok(workerService.handleWorkflowStateWaitUntil(request));
     }
 
-    @PostMapping(WorkerService.WORKFLOW_STATE_DECIDE_API_PATH)
+    @PostMapping(WorkerService.WORKFLOW_STATE_EXECUTE_API_PATH)
     public ResponseEntity<WorkflowStateExecuteResponse> apiV1WorkflowStateDecidePost(
             final @RequestBody WorkflowStateExecuteRequest request
     ) {
-        return ResponseEntity.ok(workerService.handleWorkflowStateDecide(request));
+        return ResponseEntity.ok(workerService.handleWorkflowStateExecute(request));
     }
 
     @PostMapping(WorkerService.WORKFLOW_WORKER_RPC_API_PATH)
