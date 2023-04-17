@@ -23,6 +23,8 @@ public class BasicPersistenceWorkflow implements ObjectWorkflow {
     public static final String TEST_SEARCH_ATTRIBUTE_KEYWORD = "CustomKeywordField";
     public static final String TEST_SEARCH_ATTRIBUTE_INT = "CustomIntField";
 
+    public static final String TEST_SEARCH_ATTRIBUTE_DATE_TIME = "CustomDatetimeField";
+
     @Override
     public List<StateDef> getWorkflowStates() {
         return Arrays.asList(StateDef.startingState(new BasicPersistenceWorkflowState1()));
@@ -35,7 +37,8 @@ public class BasicPersistenceWorkflow implements ObjectWorkflow {
                 DataAttributeDef.create(Context.class, TEST_DATA_OBJECT_MODEL_1),
                 DataAttributeDef.create(FakContextImpl.class, TEST_DATA_OBJECT_MODEL_2),
                 SearchAttributeDef.create(SearchAttributeValueType.INT, TEST_SEARCH_ATTRIBUTE_INT),
-                SearchAttributeDef.create(SearchAttributeValueType.KEYWORD, TEST_SEARCH_ATTRIBUTE_KEYWORD)
+                SearchAttributeDef.create(SearchAttributeValueType.KEYWORD, TEST_SEARCH_ATTRIBUTE_KEYWORD),
+                SearchAttributeDef.create(SearchAttributeValueType.DATETIME, TEST_SEARCH_ATTRIBUTE_DATE_TIME)
         );
     }
 }

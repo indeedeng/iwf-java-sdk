@@ -14,8 +14,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_DATE_TIME;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_INT;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_KEYWORD;
+import static io.iworkflow.integ.persistence.BasicPersistenceWorkflowState1.testDateTimeValue;
 
 public class PersistenceTest {
 
@@ -48,11 +50,16 @@ public class PersistenceTest {
         final Map<String, Object> searchAttributes2 = client.getAllSearchAttributes(BasicPersistenceWorkflow.class,
                 wfId, "");
 
-        Assertions.assertEquals(searchAttributes1, searchAttributes2);
         Assertions.assertEquals(ImmutableMap.builder()
                 .put(TEST_SEARCH_ATTRIBUTE_INT, 2L)
                 .put(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-2")
                 .build(), searchAttributes1);
+
+        Assertions.assertEquals(ImmutableMap.builder()
+                .put(TEST_SEARCH_ATTRIBUTE_INT, 2L)
+                .put(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-2")
+                .put(TEST_SEARCH_ATTRIBUTE_DATE_TIME, testDateTimeValue)
+                .build(), searchAttributes2);
     }
 
 }

@@ -26,7 +26,11 @@ public interface SearchAttributesRW {
 
     String getSearchAttributeDatetime(String key);
 
-    // NOTE: TODO: only UTC format is allowed for now for upsert
+    String DateTimeFormat = "2006-01-02T15:04:05-07:00";
+    /**
+     * @param key the search attribute key
+     * @param value must be timestamp seconds, or in the {@link #DateTimeFormat}
+     */
     void setSearchAttributeDatetime(String key, String value);
 
     List<String> getSearchAttributeKeywordArray(String key);

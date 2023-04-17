@@ -11,6 +11,7 @@ import static io.iworkflow.integ.RpcTest.RPC_OUTPUT;
 
 @Component
 public class NoStateWorkflow implements ObjectWorkflow {
+
     @RPC
     public Long testRpcFunc1(Context context, String input, Persistence persistence, Communication communication) {
         if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {

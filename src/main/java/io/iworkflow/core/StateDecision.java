@@ -11,7 +11,12 @@ public abstract class StateDecision {
 
     public abstract List<StateMovement> getNextStates();
 
-    public static final StateDecision DEAD_END = ImmutableStateDecision.builder().build();
+    // a dead end will just complete its thread, without triggering any closing workflow
+    public static StateDecision deadEnd(){
+        return ImmutableStateDecision.builder()
+                .nextStates(Arrays.asList(StateMovement.DEAD_END_WORKFLOW_MOVEMENT))
+                .build();
+    }
 
     public static ImmutableStateDecision.Builder builder() {
         return ImmutableStateDecision.builder();
@@ -48,12 +53,10 @@ public abstract class StateDecision {
     }
 
     public static StateDecision forceFailWorkflow() {
-        return FORCE_FAILING_WORKFLOW;
+        return ImmutableStateDecision.builder()
+                .nextStates(Arrays.asList(StateMovement.FORCE_FAILING_WORKFLOW_MOVEMENT))
+                .build();
     }
-
-    public static final StateDecision FORCE_FAILING_WORKFLOW = ImmutableStateDecision.builder()
-            .nextStates(Arrays.asList(StateMovement.FORCE_FAILING_WORKFLOW_MOVEMENT))
-            .build();
 
     public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass) {
         return singleNextState(stateClass.getSimpleName());
