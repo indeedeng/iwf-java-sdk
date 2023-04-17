@@ -37,8 +37,8 @@ import static io.iworkflow.core.RpcDefinitions.PARAMETERS_WITH_INPUT;
 
 public class WorkerService {
 
-    public static final String WORKFLOW_STATE_START_API_PATH = "/api/v1/workflowState/start";
-    public static final String WORKFLOW_STATE_DECIDE_API_PATH = "/api/v1/workflowState/decide";
+    public static final String WORKFLOW_STATE_WAIT_UNTIL_API_PATH = "/api/v1/workflowState/start";
+    public static final String WORKFLOW_STATE_EXECUTE_API_PATH = "/api/v1/workflowState/decide";
 
     public static final String WORKFLOW_WORKER_RPC_API_PATH = "/api/v1/workflowWorker/rpc";
 
@@ -135,7 +135,7 @@ public class WorkerService {
         return response;
     }
 
-    public WorkflowStateWaitUntilResponse handleWorkflowStateStart(final WorkflowStateWaitUntilRequest req) {
+    public WorkflowStateWaitUntilResponse handleWorkflowStateWaitUntil(final WorkflowStateWaitUntilRequest req) {
         StateDef state = registry.getWorkflowState(req.getWorkflowType(), req.getWorkflowStateId());
         final EncodedObject stateInput = req.getStateInput();
         final Object input = workerOptions.getObjectEncoder().decode(stateInput, state.getWorkflowState().getInputType());
@@ -195,7 +195,7 @@ public class WorkerService {
         return response;
     }
 
-    public WorkflowStateExecuteResponse handleWorkflowStateDecide(final WorkflowStateExecuteRequest req) {
+    public WorkflowStateExecuteResponse handleWorkflowStateExecute(final WorkflowStateExecuteRequest req) {
         StateDef state = registry.getWorkflowState(req.getWorkflowType(), req.getWorkflowStateId());
         final Object input;
         final EncodedObject stateInput = req.getStateInput();
