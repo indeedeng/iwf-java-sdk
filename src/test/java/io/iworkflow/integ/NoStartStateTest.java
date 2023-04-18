@@ -2,6 +2,7 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
+import io.iworkflow.integ.rpc.DeadEndStateWorkflow;
 import io.iworkflow.integ.rpc.NoStartStateWorkflow;
 import io.iworkflow.integ.rpc.NoStateWorkflow;
 import io.iworkflow.integ.rpc.RpcWorkflowState2;
@@ -57,6 +58,24 @@ public class NoStartStateTest {
         Assertions.assertEquals(RPC_OUTPUT, rpcOutput);
 
         client.stopWorkflow(wfId, "");
+    }
+
+    @Test
+    public void testDeadEndWorkflow() throws InterruptedException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "testDeadEndWorkflow" + System.currentTimeMillis() / 1000;
+        client.startWorkflow(
+                DeadEndStateWorkflow.class, wfId, 10);
+
+        Thread.sleep(2000);
+        final DeadEndStateWorkflow rpcStub = client.newRpcStub(DeadEndStateWorkflow.class, wfId, "");
+        final Long rpcOutput = client.invokeRPC(rpcStub::testRpcFunc1, RPC_INPUT);
+        RpcWorkflowState2.resetCounter();
+
+        Assertions.assertEquals(RPC_OUTPUT, rpcOutput);
+
+        Integer out = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        Assertions.assertNull(out);
     }
 
 }

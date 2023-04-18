@@ -20,7 +20,7 @@ For the latest version, [MVN Repository](https://mvnrepository.com/artifact/io.i
 
 ```gradle
 // https://mvnrepository.com/artifact/io.iworkflow/iwf-java-sdk
-implementation 'io.iworkflow:iwf-java-sdk:1.4.+'
+implementation 'io.iworkflow:iwf-java-sdk:2.0.+'
 ```
 
 ### Maven
@@ -30,7 +30,7 @@ implementation 'io.iworkflow:iwf-java-sdk:1.4.+'
 <dependency>
     <groupId>io.iworkflow</groupId>
     <artifactId>iwf-java-sdk</artifactId>
-    <version>1.4.+</version>
+    <version>2.0.+</version>
     <type>pom</type>
 </dependency>
 
