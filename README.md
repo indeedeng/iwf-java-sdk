@@ -40,7 +40,7 @@ implementation 'io.iworkflow:iwf-java-sdk:2.0.+'
 
 To implement a workflow, the two most core interfaces are
 
-* [Workflow interface](https://github.com/indeedeng/iwf-java-sdk/blob/main/src/main/java/io/iworkflow/core/Workflow.java)
+* [Workflow interface](https://github.com/indeedeng/iwf-java-sdk/blob/main/src/main/java/io/iworkflow/core/ObjectWorkflow.java)
   defines the workflow definition
 
 * [WorkflowState interface](https://github.com/indeedeng/iwf-java-sdk/blob/main/src/main/java/io/iworkflow/core/WorkflowState.java)
