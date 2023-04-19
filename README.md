@@ -76,19 +76,19 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 - [x] Parallel execution of multiple states
 - [x] Timer command
 - [x] Signal command
-- [x] SearchAttributeRW
-- [x] DataObjectRW
-- [x] StateLocal
+- [x] SearchAttribute
+- [x] DataAttribute
+- [x] StateExecutionLocal
 - [x] Signal workflow API
-- [x] Get workflow DataObjects/SearchAttributes API
+- [x] Get workflow DataAttributes/SearchAttributes API
 - [x] Get workflow API
 - [x] Search workflow API
 - [x] Cancel workflow API
 - [x] Reset workflow API
-- [x] Command type(s) for inter-state communications (e.g. internal channel)
+- [x] InternalChannel command
 - [x] AnyCommandCompleted Decider trigger type
 - [x] More workflow start options: IdReusePolicy, cron schedule, retry
-- [x] StateOption: Start/Decide API timeout and retry policy
+- [x] StateOption: WaitUntil/Execute API timeout and retry policy
 - [x] Reset workflow by stateId/StateExecutionId
 
 ## 1.1
@@ -108,13 +108,10 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 
 ### 1.4
 
-- [x] Support PROCEED_TO_DECIDE_ON_START_API_FAILURE for StartApiFailurePolicy
+- [x] Support PROCEED_ON_FAILURE for WaitUntilApiFailurePolicy
 
-## Future
+### 2.0
 
-- [ ] WaitForMoreResults in StateDecision
-- [ ] LongRunningActivityCommand
-- [ ] Failing workflow details
-- [ ] Auto ContinueAsNew
-- [ ] StateOption: more AttributeLoadingPolicy
-- [ ] StateOption: more CommandCarryOverPolicy
+- [x] Renaming some concepts/APIs with breaking changes(see releaste notes)
+- [x] Support workflow RPC
+
