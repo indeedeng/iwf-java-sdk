@@ -13,6 +13,7 @@ See [samples](https://github.com/indeedeng/iwf-java-samples) for how to use this
 Here is
 the [link to all the versions](https://s01.oss.sonatype.org/content/repositories/releases/io/iworkflow/iwf-java-sdk/)
 available to use.
+Also the [Java docs for the latest version](https://www.javadoc.io/doc/io.iworkflow/iwf-java-sdk/latest/index.html).
 For the latest version, [MVN Repository](https://mvnrepository.com/artifact/io.iworkflow/iwf-java-sdk) website may have
 1~2 days delay to show up.
 
