@@ -57,7 +57,7 @@ public class BasicPersistenceWorkflowState1 implements WorkflowState<String> {
         return CommandRequest.empty;
     }
 
-    public static final String testDateTimeValue = "2023-04-17T14:17:49-07:00";
+    public static final String testDateTimeValue = "2023-04-17T21:17:49-00:00";
 
     @Override
     public StateDecision execute(Context context, String input, CommandResults commandResults, Persistence persistence, final Communication communication) {

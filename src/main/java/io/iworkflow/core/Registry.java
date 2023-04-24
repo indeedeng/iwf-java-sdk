@@ -61,24 +61,10 @@ public class Registry {
     private void registerWorkflow(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
 
-        if(!hasParameterlessPublicConstructor(wf.getClass())){
-            throw new WorkflowDefinitionException(String.format("Workflow type %s must have an public default(parameterless) constructor", workflowType));
-        }
-
         if (workflowStore.containsKey(workflowType)) {
             throw new WorkflowDefinitionException(String.format("Workflow type %s already exists", workflowType));
         }
         workflowStore.put(workflowType, wf);
-    }
-
-    private boolean hasParameterlessPublicConstructor(Class<?> clazz) {
-        for (Constructor<?> constructor : clazz.getConstructors()) {
-            // In Java 7-, use getParameterTypes and check the length of the array returned
-            if (constructor.getParameterCount() == 0) {
-                return true;
-            }
-        }
-        return false;
     }
     private void registerWorkflowState(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
