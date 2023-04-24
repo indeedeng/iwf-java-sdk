@@ -14,6 +14,8 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.matcher.ElementMatchers;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -475,8 +477,15 @@ public class Client {
 
         T result;
         try {
-            result = (T) dynamicType.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            if(dynamicType.getConstructors().length ==0){
+                throw new WorkflowDefinitionException("workflow must define at least a constructor");
+            }
+            final Constructor<?> constructor = dynamicType.getConstructors()[0];
+            final int parameterCount = constructor.getParameterCount();
+            final Object[] params = new Object[parameterCount];
+
+            result = (T) constructor.newInstance(params);
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
 
