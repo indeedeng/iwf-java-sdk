@@ -75,7 +75,6 @@ public class Registry {
             if (workflowStateStore.containsKey(key)) {
                 throw new WorkflowDefinitionException(String.format("Workflow state definition %s already exists", key));
             } else {
-                workflowStateStore.put(key, stateDef);
                 if (stateDef.getCanStartWorkflow()) {
                     startingStates++;
                     startState = stateDef;
@@ -84,6 +83,13 @@ public class Registry {
         }
         if (startingStates > 1) {
             throw new WorkflowDefinitionException(String.format("Workflow cannot have more than one starting states, found %d", startingStates));
+        } else if (startingStates == 0) {
+            throw new WorkflowDefinitionException(String.format("Workflow must have at least one starting state"));
+        } else {
+            wf.getWorkflowStates().forEach(stateDef -> {
+                String key = getStateDefKey(workflowType, stateDef.getWorkflowState().getStateId());
+                workflowStateStore.put(key, stateDef);
+            });
         }
         workflowStartStateStore.put(workflowType, startState);
     }
