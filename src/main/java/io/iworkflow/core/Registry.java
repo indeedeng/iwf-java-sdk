@@ -69,6 +69,10 @@ public class Registry {
     private void registerWorkflowState(final ObjectWorkflow wf) {
         wf.getWorkflowStates().forEach(stateDef -> {
             String key = getStateDefKey(getWorkflowType(wf), stateDef.getWorkflowState().getStateId());
+            if (workflowStateStore.containsKey(key)) {
+                throw new WorkflowDefinitionException(
+                        String.format("Workflow state %s already exists", stateDef.getWorkflowState().getStateId()));
+            }
             workflowStateStore.put(key, stateDef);
             if (stateDef.getCanStartWorkflow()) {
                 workflowStartStateStore.put(getWorkflowType(wf), stateDef);
