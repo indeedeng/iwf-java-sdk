@@ -90,8 +90,8 @@ public class Registry {
                 String key = getStateDefKey(workflowType, stateDef.getWorkflowState().getStateId());
                 workflowStateStore.put(key, stateDef);
             });
+            workflowStartStateStore.put(workflowType, startState);
         }
-        workflowStartStateStore.put(workflowType, startState);
     }
 
     private void registerWorkflowRPCs(final ObjectWorkflow wf) {
