@@ -67,31 +67,13 @@ public class Registry {
         workflowStore.put(workflowType, wf);
     }
     private void registerWorkflowState(final ObjectWorkflow wf) {
-        String workflowType = getWorkflowType(wf);
-        int startingStates = 0;
-        StateDef startState = null;
-        for (StateDef stateDef : wf.getWorkflowStates()) {
-            String key = getStateDefKey(workflowType, stateDef.getWorkflowState().getStateId());
-            if (workflowStateStore.containsKey(key)) {
-                throw new WorkflowDefinitionException(String.format("Workflow state definition %s already exists", key));
-            } else {
-                if (stateDef.getCanStartWorkflow()) {
-                    startingStates++;
-                    startState = stateDef;
-                }
+        wf.getWorkflowStates().forEach(stateDef -> {
+            String key = getStateDefKey(getWorkflowType(wf), stateDef.getWorkflowState().getStateId());
+            workflowStateStore.put(key, stateDef);
+            if (stateDef.getCanStartWorkflow()) {
+                workflowStartStateStore.put(getWorkflowType(wf), stateDef);
             }
-        }
-        if (startingStates > 1) {
-            throw new WorkflowDefinitionException(String.format("Workflow cannot have more than one starting states, found %d", startingStates));
-        } else if (startingStates == 0) {
-            throw new WorkflowDefinitionException(String.format("Workflow must have at least one starting state"));
-        } else {
-            wf.getWorkflowStates().forEach(stateDef -> {
-                String key = getStateDefKey(workflowType, stateDef.getWorkflowState().getStateId());
-                workflowStateStore.put(key, stateDef);
-            });
-            workflowStartStateStore.put(workflowType, startState);
-        }
+        });
     }
 
     private void registerWorkflowRPCs(final ObjectWorkflow wf) {
