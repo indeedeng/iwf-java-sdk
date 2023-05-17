@@ -17,7 +17,7 @@ public abstract class ClientOptions {
         return ImmutableApiRetryConfig.builder()
                 .initialIntervalMills(100)
                 .maximumIntervalMills(SECONDS.toMillis(1))
-                .maximumAttempts(30)
+                .maximumAttempts(10)
                 .build();
     }
     public static final String defaultWorkerUrl = "http://localhost:8802";

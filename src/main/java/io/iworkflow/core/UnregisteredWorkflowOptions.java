@@ -7,11 +7,8 @@ import io.iworkflow.gen.models.WorkflowRetryPolicy;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 import org.immutables.value.Value;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Value.Immutable
 public abstract class UnregisteredWorkflowOptions {
