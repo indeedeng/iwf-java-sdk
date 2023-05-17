@@ -97,4 +97,9 @@ public class JacksonJsonObjectEncoder implements ObjectEncoder {
       throw new ObjectEncoderException(e);
     }
   }
+
+  @Override
+  public ObjectMapper getObjectMapper() {
+    return this.mapper;
+  }
 }

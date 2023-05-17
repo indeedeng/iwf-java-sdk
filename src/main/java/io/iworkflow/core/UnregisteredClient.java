@@ -1,7 +1,9 @@
 package io.iworkflow.core;
 
 import com.google.common.base.Preconditions;
+import feign.Feign;
 import feign.FeignException;
+import feign.Retryer;
 import io.iworkflow.core.validator.CronScheduleValidator;
 import io.iworkflow.gen.api.ApiClient;
 import io.iworkflow.gen.api.DefaultApi;
@@ -30,6 +32,7 @@ import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.gen.models.WorkflowStopRequest;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 /**
@@ -43,9 +46,20 @@ public class UnregisteredClient {
 
     public UnregisteredClient(final ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
-        this.defaultApi = new ApiClient()
-                .setBasePath(clientOptions.getServerUrl())
-                .buildClient(DefaultApi.class);
+
+        final ApiClient apiClient = new ApiClient()
+                .setBasePath(clientOptions.getServerUrl());
+        apiClient.setObjectMapper(clientOptions.getObjectEncoder().getObjectMapper());
+
+        final ApiRetryConfig apiRetryConfig = clientOptions.getApiRetryConfig();
+        final Feign.Builder feignBuilder = apiClient.getFeignBuilder();
+        feignBuilder.retryer(
+                new Retryer.Default(apiRetryConfig.getInitialIntervalMills(), apiRetryConfig.getMaximumIntervalMills(), apiRetryConfig.getMaximumAttempts())
+        );
+        feignBuilder.errorDecoder(new ServerErrorRetryDecoder());
+        apiClient.setFeignBuilder(feignBuilder);
+
+        this.defaultApi = apiClient.buildClient(DefaultApi.class);
     }
 
     /**
