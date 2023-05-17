@@ -19,6 +19,7 @@
  */
 package io.iworkflow.core;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.iworkflow.gen.models.EncodedObject;
 
 public interface ObjectEncoder {
@@ -45,4 +46,6 @@ public interface ObjectEncoder {
      * @return decoded Java object
      */
     <T> T decode(EncodedObject encodedObject, Class<T> type);
+
+    ObjectMapper getObjectMapper();
 }
