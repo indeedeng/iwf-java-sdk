@@ -34,10 +34,10 @@ public interface ObjectWorkflow {
      * 2. Search attributes
      * <p>
      * Data attributes can be read/upsert in WorkflowState start/decide API
-     * Data attributes  can also be read by getDataObjects API by external applications using {@link Client}
+     * Data attributes  can also be read by RPC/GetDataAttributes API by external applications using {@link Client}
      * <p>
      * Search attributes can be read/upsert in WorkflowState start/decide API
-     * Search attributes can also be read by GetSearchAttributes Client API by external applications
+     * Search attributes can also be read by RPC/GetSearchAttributes Client API by external applications
      * External applications can also use "SearchWorkflow" API to find workflows by SQL-like query
      *
      * @return the persistence schema

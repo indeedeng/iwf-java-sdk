@@ -2,8 +2,6 @@ package io.iworkflow.core;
 
 import org.immutables.value.Value;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 @Value.Immutable
 public abstract class ApiRetryConfig {
 
