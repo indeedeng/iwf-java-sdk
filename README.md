@@ -1,4 +1,5 @@
 # iwf-java-sdk
+[![Build status](https://github.com/indeedeng/iwf-java-sdk/actions/workflows/ci-integ-test.yml/badge.svg?branch=main)](https://github.com/indeedeng/iwf-java-sdk/actions/workflows/ci-integ-test.yml)
 
 Java SDK for [iWF workflow engine](https://github.com/indeedeng/iwf)
 
