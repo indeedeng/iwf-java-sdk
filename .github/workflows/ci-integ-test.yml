@@ -19,7 +19,7 @@ jobs:
           java-version: 11
       - uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: release-candidate
+          gradle-version: 7.5
       - run: git submodule update --init --recursive && sleep 30 && gradle build
       - name: Dump docker logs
         if: always()
