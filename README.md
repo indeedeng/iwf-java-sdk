@@ -1,4 +1,5 @@
 # iwf-java-sdk
+[![Coverage Status](https://codecov.io/github/indeedeng/iwf-java-sdk/coverage.svg?branch=main)](https://app.codecov.io/gh/indeedeng/iwf-java-sdk/branch/main)
 [![Build status](https://github.com/indeedeng/iwf-java-sdk/actions/workflows/ci-integ-test.yml/badge.svg?branch=main)](https://github.com/indeedeng/iwf-java-sdk/actions/workflows/ci-integ-test.yml)
 
 Java SDK for [iWF workflow engine](https://github.com/indeedeng/iwf)

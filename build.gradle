@@ -15,6 +15,7 @@ plugins {
     id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
     id "maven-publish"
     id 'signing'
+    id 'jacoco'
 }
 
 bootJar {
@@ -106,6 +107,15 @@ openApiGenerate {
     ]
 
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
+}
+
+check.dependsOn jacocoTestReport
 
 compileJava.dependsOn tasks.openApiGenerate
 

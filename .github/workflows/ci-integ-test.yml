@@ -15,8 +15,8 @@ jobs:
         run: docker compose -f script/docker-compose.yml up -d
       - uses: actions/setup-java@v3
         with:
-          distribution: temurin
-          java-version: 11
+          distribution: zulu
+          java-version: 8
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.5
@@ -24,3 +24,5 @@ jobs:
       - name: Dump docker logs
         if: always()
         uses: jwalton/gh-docker-logs@v2
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
