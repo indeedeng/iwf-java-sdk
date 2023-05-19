@@ -1,0 +1,26 @@
+name: Integration Test
+on:
+  pull_request:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  tests:
+    name: "Integration testing"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Set up iWF environment"
+        run: docker compose -f script/docker-compose.yml up -d && sleep 30
+      - uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 11
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: release-candidate
+      - run: gradle build
+      - name: Dump docker logs
+        if: always()
+        uses: jwalton/gh-docker-logs@v2
