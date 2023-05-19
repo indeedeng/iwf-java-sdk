@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: "Set up iWF environment"
-        run: docker compose -f script/docker-compose.yml up -d && sleep 30
+        run: docker compose -f script/docker-compose.yml up -d
       - uses: actions/setup-java@v3
         with:
           distribution: temurin
@@ -20,7 +20,7 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: release-candidate
-      - run: gradle build
+      - run: git submodule update --init --recursive && sleep 30 && gradle build
       - name: Dump docker logs
         if: always()
         uses: jwalton/gh-docker-logs@v2
