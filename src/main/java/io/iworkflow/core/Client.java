@@ -158,6 +158,7 @@ public class Client {
             final int workflowTimeoutSeconds,
             final Object input,
             final WorkflowOptions options) {
+        checkWorkflowTypeExists(wfType);
 
         final ImmutableUnregisteredWorkflowOptions.Builder unregisterWorkflowOptions = ImmutableUnregisteredWorkflowOptions.builder();
 
@@ -197,6 +198,13 @@ public class Client {
         }
 
         return unregisteredClient.startWorkflow(wfType, startStateId, workflowId, workflowTimeoutSeconds, input, unregisterWorkflowOptions.build());
+    }
+
+    private void checkWorkflowTypeExists(String wfType) {
+        final ObjectWorkflow wf = registry.getWorkflow(wfType);
+        if (wf == null) {
+            throw new IllegalArgumentException("Workflow " + wfType + " is not registered");
+        }
     }
 
     private List<SearchAttribute> convertToSearchAttributeList(final Map<String, SearchAttributeValueType> saTypes, final Map<String, Object> initialSearchAttribute) {
@@ -312,12 +320,9 @@ public class Client {
             final Object signalValue) {
         final String wfType = workflowClass.getSimpleName();
 
+        checkWorkflowTypeExists(wfType);
+
         Map<String, Class<?>> nameToTypeMap = registry.getSignalChannelNameToSignalTypeMap(wfType);
-        if (nameToTypeMap == null) {
-            throw new IllegalArgumentException(
-                    String.format("Workflow %s is not registered", wfType)
-            );
-        }
 
         if (!nameToTypeMap.containsKey(signalChannelName)) {
             throw new IllegalArgumentException(String.format("Workflow %s doesn't have signal %s", wfType, signalChannelName));
@@ -376,6 +381,7 @@ public class Client {
             final String workflowId,
             final String workflowRunId,
             List<String> keys) {
+
         if (keys == null || keys.isEmpty()) {
             throw new IllegalArgumentException("keys must contain at least one entry, or use getAllDataObjects API to get all");
         }
@@ -395,13 +401,9 @@ public class Client {
             final String workflowRunId,
             List<String> keys) {
         final String wfType = workflowClass.getSimpleName();
+        checkWorkflowTypeExists(wfType);
 
         Map<String, Class<?>> queryDataObjectKeyToTypeMap = registry.getDataAttributeKeyToTypeMap(wfType);
-        if (queryDataObjectKeyToTypeMap == null) {
-            throw new IllegalArgumentException(
-                    String.format("Workflow %s is not registered", wfType)
-            );
-        }
 
         // if attribute keys is null or empty, iwf server will return all data attributes
         if (keys != null && !keys.isEmpty()) {
@@ -560,13 +562,9 @@ public class Client {
             final String workflowRunId,
             final List<String> attributeKeys) {
         final String wfType = workflowClass.getSimpleName();
+        checkWorkflowTypeExists(wfType);
 
         final Map<String, SearchAttributeValueType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
-        if (searchAttributeKeyToTypeMap == null) {
-            throw new IllegalArgumentException(
-                    String.format("Workflow %s is not registered", wfType)
-            );
-        }
 
         // if attribute keys is null or empty, iwf server will return all data attributes
         if (attributeKeys != null && !attributeKeys.isEmpty()) {
