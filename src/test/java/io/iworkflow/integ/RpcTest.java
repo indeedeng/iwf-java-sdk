@@ -53,6 +53,13 @@ public class RpcTest {
         value = client.invokeRPC(rpcStub::testRpcGetDataAttribute);
         Assertions.assertNull(value);
 
+        client.invokeRPC(rpcStub::testRpcSetKeyword, "test-value");
+        value = client.invokeRPC(rpcStub::testRpcGetKeyword);
+        Assertions.assertEquals("test-value", value);
+        client.invokeRPC(rpcStub::testRpcSetKeyword, null);
+        value = client.invokeRPC(rpcStub::testRpcGetKeyword);
+        Assertions.assertNull(value);
+
         final Long rpcOutput = client.invokeRPC(rpcStub::testRpcFunc1, RPC_INPUT);
 
         Assertions.assertEquals(RPC_OUTPUT, rpcOutput);
