@@ -1,7 +1,7 @@
 package io.iworkflow.core;
 
 import io.iworkflow.core.communication.CommunicationMethodDef;
-import io.iworkflow.core.persistence.PersistenceFieldDef;
+import io.iworkflow.core.persistence.PersistenceSchema;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,8 +42,8 @@ public interface ObjectWorkflow {
      *
      * @return the persistence schema
      */
-    default List<PersistenceFieldDef> getPersistenceSchema() {
-        return Collections.emptyList();
+    default PersistenceSchema getPersistenceSchema() {
+        return PersistenceSchema.empty();
     }
 
     /**

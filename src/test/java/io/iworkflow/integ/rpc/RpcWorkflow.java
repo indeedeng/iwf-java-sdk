@@ -10,7 +10,7 @@ import io.iworkflow.core.communication.CommunicationMethodDef;
 import io.iworkflow.core.communication.InternalChannelDef;
 import io.iworkflow.core.persistence.DataAttributeDef;
 import io.iworkflow.core.persistence.Persistence;
-import io.iworkflow.core.persistence.PersistenceFieldDef;
+import io.iworkflow.core.persistence.PersistenceSchema;
 import io.iworkflow.core.persistence.SearchAttributeDef;
 import io.iworkflow.gen.models.SearchAttributeValueType;
 import org.springframework.stereotype.Component;
@@ -46,8 +46,8 @@ public class RpcWorkflow implements ObjectWorkflow {
     public static final String TEST_SEARCH_ATTRIBUTE_INT = "CustomIntField";
 
     @Override
-    public List<PersistenceFieldDef> getPersistenceSchema() {
-        return Arrays.asList(
+    public PersistenceSchema getPersistenceSchema() {
+        return PersistenceSchema.create(
                 DataAttributeDef.create(String.class, TEST_DATA_OBJECT_KEY),
                 SearchAttributeDef.create(SearchAttributeValueType.INT, TEST_SEARCH_ATTRIBUTE_INT),
                 SearchAttributeDef.create(SearchAttributeValueType.KEYWORD, TEST_SEARCH_ATTRIBUTE_KEYWORD)

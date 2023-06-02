@@ -3,7 +3,7 @@ package io.iworkflow.integ.persistence;
 import io.iworkflow.core.ObjectWorkflow;
 import io.iworkflow.core.StateDef;
 import io.iworkflow.core.persistence.DataAttributeDef;
-import io.iworkflow.core.persistence.PersistenceFieldDef;
+import io.iworkflow.core.persistence.PersistenceSchema;
 import io.iworkflow.core.persistence.SearchAttributeDef;
 import io.iworkflow.gen.models.Context;
 import io.iworkflow.gen.models.SearchAttributeValueType;
@@ -31,8 +31,8 @@ public class BasicPersistenceWorkflow implements ObjectWorkflow {
     }
 
     @Override
-    public List<PersistenceFieldDef> getPersistenceSchema() {
-        return Arrays.asList(
+    public PersistenceSchema getPersistenceSchema() {
+        return PersistenceSchema.create(
                 DataAttributeDef.create(String.class, TEST_DATA_OBJECT_KEY),
                 DataAttributeDef.create(Context.class, TEST_DATA_OBJECT_MODEL_1),
                 DataAttributeDef.create(FakContextImpl.class, TEST_DATA_OBJECT_MODEL_2),
