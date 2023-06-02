@@ -59,6 +59,7 @@ public class RpcWorkflow implements ObjectWorkflow {
         if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
             throw new RuntimeException("invalid context");
         }
+        persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, null);// test setting to null
         persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, input);
         persistence.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, input);
         persistence.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, RPC_OUTPUT);

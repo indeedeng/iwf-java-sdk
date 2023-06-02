@@ -54,7 +54,7 @@ public class DataAttributesRWImpl implements DataAttributesRW {
         }
 
         Class<?> registeredType = keyToTypeMap.get(key);
-        if (!registeredType.isInstance(value)) {
+        if (value != null && !registeredType.isAssignableFrom(value.getClass())) {
             throw new IllegalArgumentException(String.format("Input is not an instance of class %s", registeredType.getName()));
         }
 
