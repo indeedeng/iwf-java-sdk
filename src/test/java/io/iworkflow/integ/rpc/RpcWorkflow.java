@@ -59,6 +59,7 @@ public class RpcWorkflow implements ObjectWorkflow {
         if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
             throw new RuntimeException("invalid context");
         }
+        persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, null);// test setting to null
         persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, input);
         persistence.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, input);
         persistence.setSearchAttributeInt64(TEST_SEARCH_ATTRIBUTE_INT, RPC_OUTPUT);
@@ -110,5 +111,37 @@ public class RpcWorkflow implements ObjectWorkflow {
             throw new RuntimeException("invalid context");
         }
         return RPC_OUTPUT;
+    }
+
+    @RPC
+    public void testRpcSetDataAttribute(Context context, String input, Persistence persistence, Communication communication) {
+        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+            throw new RuntimeException("invalid context");
+        }
+        persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, input);
+    }
+
+    @RPC
+    public String testRpcGetDataAttribute(Context context, Persistence persistence, Communication communication) {
+        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+            throw new RuntimeException("invalid context");
+        }
+        return persistence.getDataAttribute(TEST_DATA_OBJECT_KEY, String.class);
+    }
+
+    @RPC
+    public void testRpcSetKeyword(Context context, String input, Persistence persistence, Communication communication) {
+        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+            throw new RuntimeException("invalid context");
+        }
+        persistence.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, input);
+    }
+
+    @RPC
+    public String testRpcGetKeyword(Context context, Persistence persistence, Communication communication) {
+        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+            throw new RuntimeException("invalid context");
+        }
+        return persistence.getSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD);
     }
 }
