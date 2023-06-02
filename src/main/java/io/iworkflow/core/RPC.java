@@ -28,4 +28,9 @@ public @interface RPC {
 
     // used when searchAttributesPartialLoadingKeys is PARTIAL_WITHOUT_LOCKING
     String[] searchAttributesPartialLoadingKeys() default {};
+
+    // Only used with PersistenceSchemaOptions.UsingMemoForCachingDataAttributes
+    // by default it's false for high throughput support
+    // flip to true to bypass the cache for a strong consistent read
+    boolean strongConsistencyReadWithCaching() default false;
 }

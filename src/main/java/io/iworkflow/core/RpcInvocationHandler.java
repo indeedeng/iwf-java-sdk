@@ -41,9 +41,13 @@ public class RpcInvocationHandler {
         if (method.getParameterTypes().length == PARAMETERS_WITH_INPUT) {
             input = allArguments[INDEX_OF_INPUT_PARAMETER];
         }
-        
+
         final Class<?> outputType = method.getReturnType();
 
+        boolean useMemo = schemaOptions.getUsingMemoForCachingDataAttributes();
+        if (rpcAnno.strongConsistencyReadWithCaching()) {
+            useMemo = false;
+        }
         final Object output = unregisteredClient.invokeRpc(outputType, input, workflowId, workflowRunId, method.getName(), rpcAnno.timeoutSeconds(),
                 new PersistenceLoadingPolicy()
                         .persistenceLoadingType(rpcAnno.dataAttributesLoadingType())
@@ -51,7 +55,7 @@ public class RpcInvocationHandler {
                 new PersistenceLoadingPolicy()
                         .persistenceLoadingType(rpcAnno.searchAttributesLoadingType())
                         .partialLoadingKeys(Arrays.asList(rpcAnno.searchAttributesPartialLoadingKeys())),
-                schemaOptions.getUsingMemoForDataAttributes()
+                useMemo
         );
         return output;
     }
