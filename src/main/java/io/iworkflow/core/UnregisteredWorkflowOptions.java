@@ -23,4 +23,6 @@ public abstract class UnregisteredWorkflowOptions {
     public abstract List<SearchAttribute> getInitialSearchAttribute();
 
     public abstract Optional<WorkflowConfig> getWorkflowConfigOverride();
+
+    public abstract Optional<Boolean> getUsingMemoForDataAttributes();
 }

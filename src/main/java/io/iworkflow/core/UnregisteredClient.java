@@ -32,7 +32,6 @@ import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.gen.models.WorkflowStopRequest;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 /**
@@ -147,6 +146,10 @@ public class UnregisteredClient {
             if (options.getStartStateOptions().isPresent()) {
                 request.stateOptions(options.getStartStateOptions().get());
             }
+            if (options.getUsingMemoForDataAttributes().isPresent()) {
+                startOptions.useMemoForDataAttributes(options.getUsingMemoForDataAttributes().get());
+            }
+
             request.workflowStartOptions(startOptions);
         }
 
@@ -399,13 +402,21 @@ public class UnregisteredClient {
             final String workflowId,
             final String workflowRunId,
             List<String> attributeKeys) {
+        return getAnyWorkflowDataObjects(workflowId, workflowRunId, attributeKeys, false);
+    }
 
+    public WorkflowGetDataObjectsResponse getAnyWorkflowDataObjects(
+            final String workflowId,
+            final String workflowRunId,
+            List<String> attributeKeys,
+            boolean usingMemoForDataAttributes) {
         try {
             return defaultApi.apiV1WorkflowDataobjectsGetPost(
                     new WorkflowGetDataObjectsRequest()
                             .workflowId(workflowId)
                             .workflowRunId(workflowRunId)
                             .keys(attributeKeys)
+                            .useMemoForDataAttributes(usingMemoForDataAttributes)
             );
         } catch (FeignException.FeignClientException exp) {
             throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
@@ -458,6 +469,19 @@ public class UnregisteredClient {
             final int timeoutSeconds,
             final PersistenceLoadingPolicy dataAttributesLoadingPolicy,
             final PersistenceLoadingPolicy searchAttributesLoadingPolicy) {
+        return invokeRpc(valueClass, input, workflowId, workflowRunId, rpcName, timeoutSeconds, dataAttributesLoadingPolicy, searchAttributesLoadingPolicy, false);
+    }
+
+    public <T> T invokeRpc(
+            Class<T> valueClass,
+            final Object input,
+            final String workflowId,
+            final String workflowRunId,
+            final String rpcName,
+            final int timeoutSeconds,
+            final PersistenceLoadingPolicy dataAttributesLoadingPolicy,
+            final PersistenceLoadingPolicy searchAttributesLoadingPolicy,
+            final boolean usingMemoForDataAttributes) {
         try {
             final EncodedObject encodedInput = this.clientOptions.getObjectEncoder().encode(input);
             final WorkflowRpcResponse response = defaultApi.apiV1WorkflowRpcPost(
@@ -469,6 +493,7 @@ public class UnregisteredClient {
                             .timeoutSeconds(timeoutSeconds)
                             .dataAttributesLoadingPolicy(dataAttributesLoadingPolicy)
                             .searchAttributesLoadingPolicy(searchAttributesLoadingPolicy)
+                            .useMemoForDataAttributes(usingMemoForDataAttributes)
             );
             return this.clientOptions.getObjectEncoder().decode(response.getOutput(), valueClass);
         } catch (FeignException.FeignClientException exp) {

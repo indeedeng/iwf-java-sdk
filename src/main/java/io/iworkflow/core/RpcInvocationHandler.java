@@ -1,5 +1,6 @@
 package io.iworkflow.core;
 
+import io.iworkflow.core.persistence.PersistenceSchemaOptions;
 import io.iworkflow.gen.models.PersistenceLoadingPolicy;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;
@@ -19,10 +20,13 @@ public class RpcInvocationHandler {
 
     final UnregisteredClient unregisteredClient;
 
-    public RpcInvocationHandler(final UnregisteredClient unregisteredClient, final String workflowId, final String workflowRunId) {
+    final PersistenceSchemaOptions schemaOptions;
+
+    public RpcInvocationHandler(final UnregisteredClient unregisteredClient, final String workflowId, final String workflowRunId, final PersistenceSchemaOptions schemaOptions) {
         this.unregisteredClient = unregisteredClient;
         this.workflowId = workflowId;
         this.workflowRunId = workflowRunId;
+        this.schemaOptions = schemaOptions;
     }
 
     @RuntimeType
@@ -46,7 +50,9 @@ public class RpcInvocationHandler {
                         .partialLoadingKeys(Arrays.asList(rpcAnno.dataAttributesPartialLoadingKeys())),
                 new PersistenceLoadingPolicy()
                         .persistenceLoadingType(rpcAnno.searchAttributesLoadingType())
-                        .partialLoadingKeys(Arrays.asList(rpcAnno.searchAttributesPartialLoadingKeys())));
+                        .partialLoadingKeys(Arrays.asList(rpcAnno.searchAttributesPartialLoadingKeys())),
+                schemaOptions.getUsingMemoForDataAttributes()
+        );
         return output;
     }
 }

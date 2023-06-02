@@ -1,5 +1,6 @@
 package io.iworkflow.core;
 
+import io.iworkflow.core.persistence.PersistenceSchemaOptions;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
@@ -195,6 +196,11 @@ public class Client {
             if (stateOptions != null) {
                 unregisterWorkflowOptions.startStateOptions(stateOptions);
             }
+        }
+
+        final PersistenceSchemaOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
+        if (schemaOptions.getUsingMemoForDataAttributes()) {
+            unregisterWorkflowOptions.usingMemoForDataAttributes(schemaOptions.getUsingMemoForDataAttributes());
         }
 
         return unregisteredClient.startWorkflow(wfType, startStateId, workflowId, workflowTimeoutSeconds, input, unregisterWorkflowOptions.build());
@@ -420,7 +426,9 @@ public class Client {
             }
         }
 
-        final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys);
+        final PersistenceSchemaOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
+
+        final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys, schemaOptions.getUsingMemoForDataAttributes());
 
         if (response.getObjects() == null) {
             throw new IllegalStateException("data attributes not returned");
@@ -469,10 +477,12 @@ public class Client {
      */
     public <T> T newRpcStub(Class<T> workflowClassForRpc, String workflowId, String workflowRunId) {
 
+        final PersistenceSchemaOptions schemaOptions = registry.getPersistenceSchemaOptions(workflowClassForRpc.getSimpleName());
+
         Class<?> dynamicType = new ByteBuddy()
                 .subclass(workflowClassForRpc)
                 .method(ElementMatchers.any())
-                .intercept(MethodDelegation.to(new RpcInvocationHandler(this.unregisteredClient, workflowId, workflowRunId)))
+                .intercept(MethodDelegation.to(new RpcInvocationHandler(this.unregisteredClient, workflowId, workflowRunId, schemaOptions)))
                 .make()
                 .load(getClass().getClassLoader())
                 .getLoaded();
