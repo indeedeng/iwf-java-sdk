@@ -45,6 +45,14 @@ public class RpcTest {
                 RpcWorkflow.class, wfId, 10, 999);
 
         final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "");
+
+        client.invokeRPC(rpcStub::testRpcSetDataAttribute, "test-value");
+        String value = client.invokeRPC(rpcStub::testRpcGetDataAttribute);
+        Assertions.assertEquals("test-value", value);
+        client.invokeRPC(rpcStub::testRpcSetDataAttribute, null);
+        value = client.invokeRPC(rpcStub::testRpcGetDataAttribute);
+        Assertions.assertNull(value);
+
         final Long rpcOutput = client.invokeRPC(rpcStub::testRpcFunc1, RPC_INPUT);
 
         Assertions.assertEquals(RPC_OUTPUT, rpcOutput);

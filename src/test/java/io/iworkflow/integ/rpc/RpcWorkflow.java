@@ -112,4 +112,20 @@ public class RpcWorkflow implements ObjectWorkflow {
         }
         return RPC_OUTPUT;
     }
+
+    @RPC
+    public void testRpcSetDataAttribute(Context context, String input, Persistence persistence, Communication communication) {
+        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+            throw new RuntimeException("invalid context");
+        }
+        persistence.setDataAttribute(TEST_DATA_OBJECT_KEY, input);
+    }
+
+    @RPC
+    public String testRpcGetDataAttribute(Context context, Persistence persistence, Communication communication) {
+        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+            throw new RuntimeException("invalid context");
+        }
+        return persistence.getDataAttribute(TEST_DATA_OBJECT_KEY, String.class);
+    }
 }
