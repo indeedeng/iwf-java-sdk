@@ -176,23 +176,23 @@ public class Registry {
 
     private void registerPersistenceSchemaOptions(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
-        this.persistenceSchemaOptionsMap.put(workflowType, wf.getPersistenceSchema().getPersistenceSchemaOptions());
+        this.persistenceSchemaOptionsMap.put(workflowType, wf.getPersistenceSchemaOptions());
     }
 
     private List<DataAttributeDef> getDataAttributeFields(final ObjectWorkflow wf) {
-        final Set<String> keySet = wf.getPersistenceSchema().getFields().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
-        if (keySet.size() != wf.getPersistenceSchema().getFields().size()) {
+        final Set<String> keySet = wf.getPersistenceSchema().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
+        if (keySet.size() != wf.getPersistenceSchema().size()) {
             throw new WorkflowDefinitionException("cannot have conflict key definition in persistence schema");
         }
-        return wf.getPersistenceSchema().getFields().stream().filter((f) -> f instanceof DataAttributeDef).map(f -> (DataAttributeDef) f).collect(Collectors.toList());
+        return wf.getPersistenceSchema().stream().filter((f) -> f instanceof DataAttributeDef).map(f -> (DataAttributeDef) f).collect(Collectors.toList());
     }
 
     private List<SearchAttributeDef> getSearchAttributeFields(final ObjectWorkflow wf) {
-        final Set<String> keySet = wf.getPersistenceSchema().getFields().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
-        if (keySet.size() != wf.getPersistenceSchema().getFields().size()) {
+        final Set<String> keySet = wf.getPersistenceSchema().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
+        if (keySet.size() != wf.getPersistenceSchema().size()) {
             throw new WorkflowDefinitionException("cannot have conflict key definition in persistence schema");
         }
-        return wf.getPersistenceSchema().getFields().stream().filter((f) -> f instanceof SearchAttributeDef).map(f -> (SearchAttributeDef) f).collect(Collectors.toList());
+        return wf.getPersistenceSchema().stream().filter((f) -> f instanceof SearchAttributeDef).map(f -> (SearchAttributeDef) f).collect(Collectors.toList());
     }
 
     private List<InternalChannelDef> getInternalChannels(final ObjectWorkflow wf) {
