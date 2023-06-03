@@ -469,7 +469,7 @@ public class UnregisteredClient {
             final int timeoutSeconds,
             final PersistenceLoadingPolicy dataAttributesLoadingPolicy,
             final PersistenceLoadingPolicy searchAttributesLoadingPolicy) {
-        return invokeRpc(valueClass, input, workflowId, workflowRunId, rpcName, timeoutSeconds, dataAttributesLoadingPolicy, searchAttributesLoadingPolicy, false);
+        return invokeRpc(valueClass, input, workflowId, workflowRunId, rpcName, timeoutSeconds, dataAttributesLoadingPolicy, searchAttributesLoadingPolicy, false, null);
     }
 
     public <T> T invokeRpc(
@@ -481,7 +481,8 @@ public class UnregisteredClient {
             final int timeoutSeconds,
             final PersistenceLoadingPolicy dataAttributesLoadingPolicy,
             final PersistenceLoadingPolicy searchAttributesLoadingPolicy,
-            final boolean usingMemoForDataAttributes) {
+            final boolean usingMemoForDataAttributes,
+            final List<SearchAttributeKeyAndType> allSearchAttributes) {
         try {
             final EncodedObject encodedInput = this.clientOptions.getObjectEncoder().encode(input);
             final WorkflowRpcResponse response = defaultApi.apiV1WorkflowRpcPost(
@@ -494,6 +495,7 @@ public class UnregisteredClient {
                             .dataAttributesLoadingPolicy(dataAttributesLoadingPolicy)
                             .searchAttributesLoadingPolicy(searchAttributesLoadingPolicy)
                             .useMemoForDataAttributes(usingMemoForDataAttributes)
+                            .searchAttributes(allSearchAttributes)
             );
             return this.clientOptions.getObjectEncoder().decode(response.getOutput(), valueClass);
         } catch (FeignException.FeignClientException exp) {

@@ -59,11 +59,18 @@ public class RpcWithMemoTest {
         Assertions.assertNull(value);
 
         client.invokeRPC(rpcStub::testRpcSetKeyword, "test-value");
+        value = client.invokeRPC(rpcStub::testRpcGetKeywordStrongConsistency);
+        Assertions.assertEquals("test-value", value);
+        Thread.sleep(100);
         value = client.invokeRPC(rpcStub::testRpcGetKeyword);
         Assertions.assertEquals("test-value", value);
+
         client.invokeRPC(rpcStub::testRpcSetKeyword, null);
-        value = client.invokeRPC(rpcStub::testRpcGetKeyword);
+        value = client.invokeRPC(rpcStub::testRpcGetKeywordStrongConsistency);
         Assertions.assertNull(value);
+        Thread.sleep(100);
+        value = client.invokeRPC(rpcStub::testRpcGetKeyword);
+        Assertions.assertTrue(value == null || value.isEmpty());
 
         final Long rpcOutput = client.invokeRPC(rpcStub::testRpcFunc1, RPC_INPUT);
 

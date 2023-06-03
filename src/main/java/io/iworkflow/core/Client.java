@@ -477,12 +477,22 @@ public class Client {
      */
     public <T> T newRpcStub(Class<T> workflowClassForRpc, String workflowId, String workflowRunId) {
 
-        final PersistenceSchemaOptions schemaOptions = registry.getPersistenceSchemaOptions(workflowClassForRpc.getSimpleName());
+        final String wfType = workflowClassForRpc.getSimpleName();
+        final PersistenceSchemaOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
+        final Map<String, SearchAttributeValueType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
+        List<SearchAttributeKeyAndType> keyAndTypes = new ArrayList<>();
+
+        searchAttributeKeyToTypeMap.forEach((key, type) -> {
+            final SearchAttributeKeyAndType keyAndType = new SearchAttributeKeyAndType()
+                    .key(key)
+                    .valueType(type);
+            keyAndTypes.add(keyAndType);
+        });
 
         Class<?> dynamicType = new ByteBuddy()
                 .subclass(workflowClassForRpc)
                 .method(ElementMatchers.any())
-                .intercept(MethodDelegation.to(new RpcInvocationHandler(this.unregisteredClient, workflowId, workflowRunId, schemaOptions)))
+                .intercept(MethodDelegation.to(new RpcInvocationHandler(this.unregisteredClient, workflowId, workflowRunId, schemaOptions, keyAndTypes)))
                 .make()
                 .load(getClass().getClassLoader())
                 .getLoaded();
@@ -576,7 +586,7 @@ public class Client {
 
         final Map<String, SearchAttributeValueType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
 
-        // if attribute keys is null or empty, iwf server will return all data attributes
+        // if attribute keys is null or empty, iwf server will return all search attributes
         if (attributeKeys != null && !attributeKeys.isEmpty()) {
             List<String> nonExistingSearchAttributeList = attributeKeys.stream()
                     .filter(s -> !searchAttributeKeyToTypeMap.containsKey(s))

@@ -2,12 +2,14 @@ package io.iworkflow.core;
 
 import io.iworkflow.core.persistence.PersistenceSchemaOptions;
 import io.iworkflow.gen.models.PersistenceLoadingPolicy;
+import io.iworkflow.gen.models.SearchAttributeKeyAndType;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 
 import static io.iworkflow.core.RpcDefinitions.INDEX_OF_INPUT_PARAMETER;
 import static io.iworkflow.core.RpcDefinitions.PARAMETERS_WITH_INPUT;
@@ -22,11 +24,14 @@ public class RpcInvocationHandler {
 
     final PersistenceSchemaOptions schemaOptions;
 
-    public RpcInvocationHandler(final UnregisteredClient unregisteredClient, final String workflowId, final String workflowRunId, final PersistenceSchemaOptions schemaOptions) {
+    final List<SearchAttributeKeyAndType> searchAttributeKeyAndTypes;
+
+    public RpcInvocationHandler(final UnregisteredClient unregisteredClient, final String workflowId, final String workflowRunId, final PersistenceSchemaOptions schemaOptions, final List<SearchAttributeKeyAndType> searchAttributeKeyAndTypes) {
         this.unregisteredClient = unregisteredClient;
         this.workflowId = workflowId;
         this.workflowRunId = workflowRunId;
         this.schemaOptions = schemaOptions;
+        this.searchAttributeKeyAndTypes = searchAttributeKeyAndTypes;
     }
 
     @RuntimeType
@@ -55,7 +60,8 @@ public class RpcInvocationHandler {
                 new PersistenceLoadingPolicy()
                         .persistenceLoadingType(rpcAnno.searchAttributesLoadingType())
                         .partialLoadingKeys(Arrays.asList(rpcAnno.searchAttributesPartialLoadingKeys())),
-                useMemo
+                useMemo,
+                searchAttributeKeyAndTypes
         );
         return output;
     }

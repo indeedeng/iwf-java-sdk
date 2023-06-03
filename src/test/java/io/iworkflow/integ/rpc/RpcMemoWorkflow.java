@@ -153,6 +153,14 @@ public class RpcMemoWorkflow implements ObjectWorkflow {
     }
 
     @RPC(strongConsistencyReadWithCaching = true)
+    public String testRpcGetKeywordStrongConsistency(Context context, Persistence persistence, Communication communication) {
+        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+            throw new RuntimeException("invalid context");
+        }
+        return persistence.getSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD);
+    }
+
+    @RPC
     public String testRpcGetKeyword(Context context, Persistence persistence, Communication communication) {
         if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
             throw new RuntimeException("invalid context");
