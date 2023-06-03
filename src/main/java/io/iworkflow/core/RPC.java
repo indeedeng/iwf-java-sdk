@@ -31,7 +31,7 @@ public @interface RPC {
     String[] searchAttributesPartialLoadingKeys() default {};
 
     /**
-     * Only used when workflow has enabled {@link PersistenceSchemaOptions} CachingDataAttributesByMemo
+     * Only used when workflow has enabled {@link PersistenceSchemaOptions} CachingPersistenceByMemo
      * By default, it's false for high throughput support
      * flip to true to bypass the caching for a strong consistent read
      */

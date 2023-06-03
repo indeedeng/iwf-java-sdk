@@ -49,7 +49,7 @@ public class RpcInvocationHandler {
 
         final Class<?> outputType = method.getReturnType();
 
-        boolean useMemo = schemaOptions.getCachingDataAttributesByMemo();
+        boolean useMemo = schemaOptions.getCachingPersistenceByMemo();
         if (rpcAnno.bypassCachingForStrongConsistency()) {
             useMemo = false;
         }
