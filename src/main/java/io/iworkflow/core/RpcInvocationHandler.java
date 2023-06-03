@@ -1,12 +1,15 @@
 package io.iworkflow.core;
 
+import io.iworkflow.core.persistence.PersistenceSchemaOptions;
 import io.iworkflow.gen.models.PersistenceLoadingPolicy;
+import io.iworkflow.gen.models.SearchAttributeKeyAndType;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 
 import static io.iworkflow.core.RpcDefinitions.INDEX_OF_INPUT_PARAMETER;
 import static io.iworkflow.core.RpcDefinitions.PARAMETERS_WITH_INPUT;
@@ -19,10 +22,16 @@ public class RpcInvocationHandler {
 
     final UnregisteredClient unregisteredClient;
 
-    public RpcInvocationHandler(final UnregisteredClient unregisteredClient, final String workflowId, final String workflowRunId) {
+    final PersistenceSchemaOptions schemaOptions;
+
+    final List<SearchAttributeKeyAndType> searchAttributeKeyAndTypes;
+
+    public RpcInvocationHandler(final UnregisteredClient unregisteredClient, final String workflowId, final String workflowRunId, final PersistenceSchemaOptions schemaOptions, final List<SearchAttributeKeyAndType> searchAttributeKeyAndTypes) {
         this.unregisteredClient = unregisteredClient;
         this.workflowId = workflowId;
         this.workflowRunId = workflowRunId;
+        this.schemaOptions = schemaOptions;
+        this.searchAttributeKeyAndTypes = searchAttributeKeyAndTypes;
     }
 
     @RuntimeType
@@ -37,16 +46,23 @@ public class RpcInvocationHandler {
         if (method.getParameterTypes().length == PARAMETERS_WITH_INPUT) {
             input = allArguments[INDEX_OF_INPUT_PARAMETER];
         }
-        
+
         final Class<?> outputType = method.getReturnType();
 
+        boolean useMemo = schemaOptions.getCachingDataAttributesByMemo();
+        if (rpcAnno.bypassCachingForStrongConsistency()) {
+            useMemo = false;
+        }
         final Object output = unregisteredClient.invokeRpc(outputType, input, workflowId, workflowRunId, method.getName(), rpcAnno.timeoutSeconds(),
                 new PersistenceLoadingPolicy()
                         .persistenceLoadingType(rpcAnno.dataAttributesLoadingType())
                         .partialLoadingKeys(Arrays.asList(rpcAnno.dataAttributesPartialLoadingKeys())),
                 new PersistenceLoadingPolicy()
                         .persistenceLoadingType(rpcAnno.searchAttributesLoadingType())
-                        .partialLoadingKeys(Arrays.asList(rpcAnno.searchAttributesPartialLoadingKeys())));
+                        .partialLoadingKeys(Arrays.asList(rpcAnno.searchAttributesPartialLoadingKeys())),
+                useMemo,
+                searchAttributeKeyAndTypes
+        );
         return output;
     }
 }

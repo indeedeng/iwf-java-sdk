@@ -1,5 +1,6 @@
 package io.iworkflow.core;
 
+import io.iworkflow.core.persistence.PersistenceSchemaOptions;
 import io.iworkflow.gen.models.PersistenceLoadingType;
 
 import java.lang.annotation.ElementType;
@@ -28,4 +29,11 @@ public @interface RPC {
 
     // used when searchAttributesPartialLoadingKeys is PARTIAL_WITHOUT_LOCKING
     String[] searchAttributesPartialLoadingKeys() default {};
+
+    /**
+     * Only used when workflow has enabled {@link PersistenceSchemaOptions} CachingDataAttributesByMemo
+     * By default, it's false for high throughput support
+     * flip to true to bypass the caching for a strong consistent read
+     */
+    boolean bypassCachingForStrongConsistency() default false;
 }

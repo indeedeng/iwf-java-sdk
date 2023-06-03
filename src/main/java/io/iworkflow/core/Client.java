@@ -1,5 +1,6 @@
 package io.iworkflow.core;
 
+import io.iworkflow.core.persistence.PersistenceSchemaOptions;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
@@ -195,6 +196,11 @@ public class Client {
             if (stateOptions != null) {
                 unregisterWorkflowOptions.startStateOptions(stateOptions);
             }
+        }
+
+        final PersistenceSchemaOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
+        if (schemaOptions.getCachingDataAttributesByMemo()) {
+            unregisterWorkflowOptions.usingMemoForDataAttributes(schemaOptions.getCachingDataAttributesByMemo());
         }
 
         return unregisteredClient.startWorkflow(wfType, startStateId, workflowId, workflowTimeoutSeconds, input, unregisterWorkflowOptions.build());
@@ -420,7 +426,9 @@ public class Client {
             }
         }
 
-        final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys);
+        final PersistenceSchemaOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
+
+        final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys, schemaOptions.getCachingDataAttributesByMemo());
 
         if (response.getObjects() == null) {
             throw new IllegalStateException("data attributes not returned");
@@ -469,10 +477,22 @@ public class Client {
      */
     public <T> T newRpcStub(Class<T> workflowClassForRpc, String workflowId, String workflowRunId) {
 
+        final String wfType = workflowClassForRpc.getSimpleName();
+        final PersistenceSchemaOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
+        final Map<String, SearchAttributeValueType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
+        List<SearchAttributeKeyAndType> keyAndTypes = new ArrayList<>();
+
+        searchAttributeKeyToTypeMap.forEach((key, type) -> {
+            final SearchAttributeKeyAndType keyAndType = new SearchAttributeKeyAndType()
+                    .key(key)
+                    .valueType(type);
+            keyAndTypes.add(keyAndType);
+        });
+
         Class<?> dynamicType = new ByteBuddy()
                 .subclass(workflowClassForRpc)
                 .method(ElementMatchers.any())
-                .intercept(MethodDelegation.to(new RpcInvocationHandler(this.unregisteredClient, workflowId, workflowRunId)))
+                .intercept(MethodDelegation.to(new RpcInvocationHandler(this.unregisteredClient, workflowId, workflowRunId, schemaOptions, keyAndTypes)))
                 .make()
                 .load(getClass().getClassLoader())
                 .getLoaded();
@@ -566,7 +586,7 @@ public class Client {
 
         final Map<String, SearchAttributeValueType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
 
-        // if attribute keys is null or empty, iwf server will return all data attributes
+        // if attribute keys is null or empty, iwf server will return all search attributes
         if (attributeKeys != null && !attributeKeys.isEmpty()) {
             List<String> nonExistingSearchAttributeList = attributeKeys.stream()
                     .filter(s -> !searchAttributeKeyToTypeMap.containsKey(s))
