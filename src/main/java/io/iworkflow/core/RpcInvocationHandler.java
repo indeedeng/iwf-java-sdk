@@ -49,8 +49,8 @@ public class RpcInvocationHandler {
 
         final Class<?> outputType = method.getReturnType();
 
-        boolean useMemo = schemaOptions.getUsingMemoForCachingDataAttributes();
-        if (rpcAnno.strongConsistencyReadWithCaching()) {
+        boolean useMemo = schemaOptions.getCachingDataAttributesByMemo();
+        if (rpcAnno.bypassCachingForStrongConsistency()) {
             useMemo = false;
         }
         final Object output = unregisteredClient.invokeRpc(outputType, input, workflowId, workflowRunId, method.getName(), rpcAnno.timeoutSeconds(),

@@ -58,7 +58,7 @@ public class RpcMemoWorkflow implements ObjectWorkflow {
     @Override
     public PersistenceSchemaOptions getPersistenceSchemaOptions() {
         return PersistenceSchemaOptions.builder()
-                .usingMemoForCachingDataAttributes(true).build();
+                .cachingDataAttributesByMemo(true).build();
     }
 
     @RPC
@@ -136,7 +136,7 @@ public class RpcMemoWorkflow implements ObjectWorkflow {
         return persistence.getDataAttribute(TEST_DATA_OBJECT_KEY, String.class);
     }
 
-    @RPC(strongConsistencyReadWithCaching = true)
+    @RPC(bypassCachingForStrongConsistency = true)
     public String testRpcGetDataAttributeStrongConsistent(Context context, Persistence persistence, Communication communication) {
         if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
             throw new RuntimeException("invalid context");
@@ -152,7 +152,7 @@ public class RpcMemoWorkflow implements ObjectWorkflow {
         persistence.setSearchAttributeKeyword(TEST_SEARCH_ATTRIBUTE_KEYWORD, input);
     }
 
-    @RPC(strongConsistencyReadWithCaching = true)
+    @RPC(bypassCachingForStrongConsistency = true)
     public String testRpcGetKeywordStrongConsistency(Context context, Persistence persistence, Communication communication) {
         if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
             throw new RuntimeException("invalid context");
