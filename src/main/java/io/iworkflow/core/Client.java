@@ -199,8 +199,8 @@ public class Client {
         }
 
         final PersistenceSchemaOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
-        if (schemaOptions.getCachingDataAttributesByMemo()) {
-            unregisterWorkflowOptions.usingMemoForDataAttributes(schemaOptions.getCachingDataAttributesByMemo());
+        if (schemaOptions.getCachingPersistenceByMemo()) {
+            unregisterWorkflowOptions.usingMemoForDataAttributes(schemaOptions.getCachingPersistenceByMemo());
         }
 
         return unregisteredClient.startWorkflow(wfType, startStateId, workflowId, workflowTimeoutSeconds, input, unregisterWorkflowOptions.build());
@@ -428,7 +428,7 @@ public class Client {
 
         final PersistenceSchemaOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
 
-        final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys, schemaOptions.getCachingDataAttributesByMemo());
+        final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys, schemaOptions.getCachingPersistenceByMemo());
 
         if (response.getObjects() == null) {
             throw new IllegalStateException("data attributes not returned");

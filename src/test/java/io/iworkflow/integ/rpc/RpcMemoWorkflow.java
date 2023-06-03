@@ -58,7 +58,7 @@ public class RpcMemoWorkflow implements ObjectWorkflow {
     @Override
     public PersistenceSchemaOptions getPersistenceSchemaOptions() {
         return PersistenceSchemaOptions.builder()
-                .cachingDataAttributesByMemo(true).build();
+                .cachingPersistenceByMemo(true).build();
     }
 
     @RPC
