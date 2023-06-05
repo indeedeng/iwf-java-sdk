@@ -120,4 +120,4 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 
 ### 2.1
 
-- [x] Support caching data attributes
+- [x] Support caching on persistence
