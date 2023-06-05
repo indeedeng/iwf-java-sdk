@@ -1,6 +1,6 @@
 package io.iworkflow.core;
 
-import io.iworkflow.core.persistence.PersistenceSchemaOptions;
+import io.iworkflow.core.persistence.PersistenceOptions;
 import io.iworkflow.gen.models.PersistenceLoadingPolicy;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
@@ -22,11 +22,11 @@ public class RpcInvocationHandler {
 
     final UnregisteredClient unregisteredClient;
 
-    final PersistenceSchemaOptions schemaOptions;
+    final PersistenceOptions schemaOptions;
 
     final List<SearchAttributeKeyAndType> searchAttributeKeyAndTypes;
 
-    public RpcInvocationHandler(final UnregisteredClient unregisteredClient, final String workflowId, final String workflowRunId, final PersistenceSchemaOptions schemaOptions, final List<SearchAttributeKeyAndType> searchAttributeKeyAndTypes) {
+    public RpcInvocationHandler(final UnregisteredClient unregisteredClient, final String workflowId, final String workflowRunId, final PersistenceOptions schemaOptions, final List<SearchAttributeKeyAndType> searchAttributeKeyAndTypes) {
         this.unregisteredClient = unregisteredClient;
         this.workflowId = workflowId;
         this.workflowRunId = workflowRunId;
@@ -49,7 +49,7 @@ public class RpcInvocationHandler {
 
         final Class<?> outputType = method.getReturnType();
 
-        boolean useMemo = schemaOptions.getCachingPersistenceByMemo();
+        boolean useMemo = schemaOptions.getEnableCaching();
         if (rpcAnno.bypassCachingForStrongConsistency()) {
             useMemo = false;
         }

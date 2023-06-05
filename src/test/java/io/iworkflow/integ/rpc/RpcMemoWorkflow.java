@@ -11,7 +11,7 @@ import io.iworkflow.core.communication.InternalChannelDef;
 import io.iworkflow.core.persistence.DataAttributeDef;
 import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
-import io.iworkflow.core.persistence.PersistenceSchemaOptions;
+import io.iworkflow.core.persistence.PersistenceOptions;
 import io.iworkflow.core.persistence.SearchAttributeDef;
 import io.iworkflow.gen.models.SearchAttributeValueType;
 import org.springframework.stereotype.Component;
@@ -56,9 +56,9 @@ public class RpcMemoWorkflow implements ObjectWorkflow {
     }
 
     @Override
-    public PersistenceSchemaOptions getPersistenceSchemaOptions() {
-        return PersistenceSchemaOptions.builder()
-                .cachingPersistenceByMemo(true).build();
+    public PersistenceOptions getPersistenceOptions() {
+        return PersistenceOptions.builder()
+                .enableCaching(true).build();
     }
 
     @RPC
