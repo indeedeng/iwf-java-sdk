@@ -50,7 +50,7 @@ public class UnregisteredClient {
                 .setBasePath(clientOptions.getServerUrl());
         apiClient.setObjectMapper(clientOptions.getObjectEncoder().getObjectMapper());
 
-        final ApiRetryConfig apiRetryConfig = clientOptions.getApiRetryConfig();
+        final ServiceApiRetryConfig apiRetryConfig = clientOptions.getServiceApiRetryConfig();
         final Feign.Builder feignBuilder = apiClient.getFeignBuilder();
         feignBuilder.retryer(
                 new Retryer.Default(apiRetryConfig.getInitialIntervalMills(), apiRetryConfig.getMaximumIntervalMills(), apiRetryConfig.getMaximumAttempts())

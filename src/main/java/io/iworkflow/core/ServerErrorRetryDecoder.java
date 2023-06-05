@@ -21,7 +21,7 @@ public class ServerErrorRetryDecoder implements ErrorDecoder {
                     exception,
                     null,
                     response.request());
-        }
+        } // TODO need to use another status code for rpc as retryable error
         return new ErrorDecoder.Default().decode(methodKey, response);
     }
 }

@@ -13,8 +13,8 @@ public abstract class ClientOptions {
     public abstract ObjectEncoder getObjectEncoder();
 
     @Value.Default
-    public ApiRetryConfig getApiRetryConfig(){
-        return ImmutableApiRetryConfig.builder()
+    public ServiceApiRetryConfig getServiceApiRetryConfig() {
+        return ImmutableServiceApiRetryConfig.builder()
                 .initialIntervalMills(100)
                 .maximumIntervalMills(SECONDS.toMillis(1))
                 .maximumAttempts(10)
