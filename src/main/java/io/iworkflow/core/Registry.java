@@ -30,7 +30,7 @@ public class Registry {
 
     private final Map<String, Map<String, SearchAttributeValueType>> searchAttributeTypeStore = new HashMap<>();
 
-    private final Map<String, PersistenceOptions> persistenceSchemaOptionsMap = new HashMap<>();
+    private final Map<String, PersistenceOptions> persistenceOptionsMap = new HashMap<>();
     private final Map<String, Map<String, Method>> rpcMethodStore = new HashMap<>();
 
     private static final String DELIMITER = "_";
@@ -50,7 +50,7 @@ public class Registry {
         registerWorkflowInternalChannel(wf);
         registerWorkflowDataAttributes(wf);
         registerWorkflowSearchAttributes(wf);
-        registerPersistenceSchemaOptions(wf);
+        registerPersistenceOptions(wf);
         registerWorkflowRPCs(wf);
     }
     public static String getWorkflowType(final ObjectWorkflow wf) {
@@ -174,9 +174,9 @@ public class Registry {
         }
     }
 
-    private void registerPersistenceSchemaOptions(final ObjectWorkflow wf) {
+    private void registerPersistenceOptions(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
-        this.persistenceSchemaOptionsMap.put(workflowType, wf.getPersistenceOptions());
+        this.persistenceOptionsMap.put(workflowType, wf.getPersistenceOptions());
     }
 
     private List<DataAttributeDef> getDataAttributeFields(final ObjectWorkflow wf) {
@@ -266,8 +266,8 @@ public class Registry {
         return searchAttributeTypeStore.get(workflowType);
     }
 
-    public PersistenceOptions getPersistenceSchemaOptions(final String workflowType) {
-        return persistenceSchemaOptionsMap.get(workflowType);
+    public PersistenceOptions getPersistenceOptions(final String workflowType) {
+        return persistenceOptionsMap.get(workflowType);
     }
 
     private String getStateDefKey(final String workflowType, final String stateId) {

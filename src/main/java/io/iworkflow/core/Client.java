@@ -198,7 +198,7 @@ public class Client {
             }
         }
 
-        final PersistenceOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
+        final PersistenceOptions schemaOptions = registry.getPersistenceOptions(wfType);
         if (schemaOptions.getEnableCaching()) {
             unregisterWorkflowOptions.usingMemoForDataAttributes(schemaOptions.getEnableCaching());
         }
@@ -426,7 +426,7 @@ public class Client {
             }
         }
 
-        final PersistenceOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
+        final PersistenceOptions schemaOptions = registry.getPersistenceOptions(wfType);
 
         final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys, schemaOptions.getEnableCaching());
 
@@ -478,7 +478,7 @@ public class Client {
     public <T> T newRpcStub(Class<T> workflowClassForRpc, String workflowId, String workflowRunId) {
 
         final String wfType = workflowClassForRpc.getSimpleName();
-        final PersistenceOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
+        final PersistenceOptions schemaOptions = registry.getPersistenceOptions(wfType);
         final Map<String, SearchAttributeValueType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
         List<SearchAttributeKeyAndType> keyAndTypes = new ArrayList<>();
 
