@@ -4,7 +4,7 @@ import io.iworkflow.core.communication.InternalChannelDef;
 import io.iworkflow.core.communication.SignalChannelDef;
 import io.iworkflow.core.persistence.DataAttributeDef;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
-import io.iworkflow.core.persistence.PersistenceSchemaOptions;
+import io.iworkflow.core.persistence.PersistenceOptions;
 import io.iworkflow.core.persistence.SearchAttributeDef;
 import io.iworkflow.gen.models.SearchAttributeValueType;
 
@@ -30,7 +30,7 @@ public class Registry {
 
     private final Map<String, Map<String, SearchAttributeValueType>> searchAttributeTypeStore = new HashMap<>();
 
-    private final Map<String, PersistenceSchemaOptions> persistenceSchemaOptionsMap = new HashMap<>();
+    private final Map<String, PersistenceOptions> persistenceSchemaOptionsMap = new HashMap<>();
     private final Map<String, Map<String, Method>> rpcMethodStore = new HashMap<>();
 
     private static final String DELIMITER = "_";
@@ -176,7 +176,7 @@ public class Registry {
 
     private void registerPersistenceSchemaOptions(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
-        this.persistenceSchemaOptionsMap.put(workflowType, wf.getPersistenceSchemaOptions());
+        this.persistenceSchemaOptionsMap.put(workflowType, wf.getPersistenceOptions());
     }
 
     private List<DataAttributeDef> getDataAttributeFields(final ObjectWorkflow wf) {
@@ -266,7 +266,7 @@ public class Registry {
         return searchAttributeTypeStore.get(workflowType);
     }
 
-    public PersistenceSchemaOptions getPersistenceSchemaOptions(final String workflowType) {
+    public PersistenceOptions getPersistenceSchemaOptions(final String workflowType) {
         return persistenceSchemaOptionsMap.get(workflowType);
     }
 

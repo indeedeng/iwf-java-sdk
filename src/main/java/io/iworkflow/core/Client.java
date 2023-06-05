@@ -1,6 +1,6 @@
 package io.iworkflow.core;
 
-import io.iworkflow.core.persistence.PersistenceSchemaOptions;
+import io.iworkflow.core.persistence.PersistenceOptions;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
@@ -198,9 +198,9 @@ public class Client {
             }
         }
 
-        final PersistenceSchemaOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
-        if (schemaOptions.getCachingPersistenceByMemo()) {
-            unregisterWorkflowOptions.usingMemoForDataAttributes(schemaOptions.getCachingPersistenceByMemo());
+        final PersistenceOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
+        if (schemaOptions.getEnableCaching()) {
+            unregisterWorkflowOptions.usingMemoForDataAttributes(schemaOptions.getEnableCaching());
         }
 
         return unregisteredClient.startWorkflow(wfType, startStateId, workflowId, workflowTimeoutSeconds, input, unregisterWorkflowOptions.build());
@@ -426,9 +426,9 @@ public class Client {
             }
         }
 
-        final PersistenceSchemaOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
+        final PersistenceOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
 
-        final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys, schemaOptions.getCachingPersistenceByMemo());
+        final WorkflowGetDataObjectsResponse response = unregisteredClient.getAnyWorkflowDataObjects(workflowId, workflowRunId, keys, schemaOptions.getEnableCaching());
 
         if (response.getObjects() == null) {
             throw new IllegalStateException("data attributes not returned");
@@ -478,7 +478,7 @@ public class Client {
     public <T> T newRpcStub(Class<T> workflowClassForRpc, String workflowId, String workflowRunId) {
 
         final String wfType = workflowClassForRpc.getSimpleName();
-        final PersistenceSchemaOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
+        final PersistenceOptions schemaOptions = registry.getPersistenceSchemaOptions(wfType);
         final Map<String, SearchAttributeValueType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
         List<SearchAttributeKeyAndType> keyAndTypes = new ArrayList<>();
 
