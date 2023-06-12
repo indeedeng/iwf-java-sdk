@@ -8,7 +8,7 @@ import io.iworkflow.core.persistence.Persistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static io.iworkflow.integ.RpcTest.RPC_OUTPUT;
+import static io.iworkflow.integ.rpc.Keys.RPC_OUTPUT;
 
 @Component
 public class NoStateWorkflow implements ObjectWorkflow {
@@ -29,8 +29,4 @@ public class NoStateWorkflow implements ObjectWorkflow {
         return RPC_OUTPUT;
     }
 
-    @RPC
-    public Long testRpcFunc1Error(Context context, String input, Persistence persistence, Communication communication) {
-        throw new RuntimeException("this is an error");
-    }
 }

@@ -9,13 +9,15 @@ import io.iworkflow.core.StateMovement;
 import io.iworkflow.core.WorkflowState;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
+import io.iworkflow.core.persistence.DataAttributeDef;
 import io.iworkflow.core.persistence.Persistence;
+import io.iworkflow.core.persistence.PersistenceFieldDef;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static io.iworkflow.integ.RpcTest.RPC_OUTPUT;
+import static io.iworkflow.integ.rpc.Keys.*;
 
 @Component
 public class DeadEndStateWorkflow implements ObjectWorkflow {
@@ -24,6 +26,15 @@ public class DeadEndStateWorkflow implements ObjectWorkflow {
         return Arrays.asList(
                 StateDef.startingState(new DeadEndState()),
                 StateDef.nonStartingState(new RpcWorkflowState2())
+        );
+    }
+
+
+    @Override
+    public List<PersistenceFieldDef> getPersistenceSchema() {
+        return Arrays.asList(
+                DataAttributeDef.create(Integer.class, COUNTER_KEY),
+                DataAttributeDef.create(Integer.class, MAX_COUNTER)
         );
     }
 

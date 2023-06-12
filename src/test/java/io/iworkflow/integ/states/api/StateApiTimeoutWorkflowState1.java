@@ -1,4 +1,4 @@
-package io.iworkflow.integ.stateapitimeout;
+package io.iworkflow.integ.states.api;
 
 import io.iworkflow.core.Context;
 import io.iworkflow.core.StateDecision;

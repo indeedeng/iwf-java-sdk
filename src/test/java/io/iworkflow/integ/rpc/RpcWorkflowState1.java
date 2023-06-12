@@ -9,7 +9,7 @@ import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.communication.InternalChannelCommand;
 import io.iworkflow.core.persistence.Persistence;
 
-import static io.iworkflow.integ.rpc.RpcWorkflow.INTERNAL_CHANNEL_NAME;
+import static io.iworkflow.integ.rpc.Keys.INTERNAL_CHANNEL_NAME;
 
 public class RpcWorkflowState1 implements WorkflowState<Integer> {
 

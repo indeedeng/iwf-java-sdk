@@ -1,4 +1,4 @@
-package io.iworkflow.integ.rpc;
+package io.iworkflow.integ.memo;
 
 import io.iworkflow.core.Context;
 import io.iworkflow.core.ObjectWorkflow;
@@ -14,18 +14,17 @@ import io.iworkflow.core.persistence.PersistenceFieldDef;
 import io.iworkflow.core.persistence.PersistenceOptions;
 import io.iworkflow.core.persistence.SearchAttributeDef;
 import io.iworkflow.gen.models.SearchAttributeValueType;
+import io.iworkflow.integ.rpc.RpcWorkflowState1;
+import io.iworkflow.integ.rpc.RpcWorkflowState2;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static io.iworkflow.integ.RpcTest.HARDCODED_STR;
-import static io.iworkflow.integ.RpcTest.RPC_OUTPUT;
+import static io.iworkflow.integ.rpc.Keys.*;
 
 @Component
 public class RpcMemoWorkflow implements ObjectWorkflow {
-
-    public static final String INTERNAL_CHANNEL_NAME = "test-channel-1";
 
     @Override
     public List<CommunicationMethodDef> getCommunicationSchema() {
@@ -42,14 +41,13 @@ public class RpcMemoWorkflow implements ObjectWorkflow {
         );
     }
 
-    public static final String TEST_DATA_OBJECT_KEY = "data-obj-1";
-    public static final String TEST_SEARCH_ATTRIBUTE_KEYWORD = "CustomKeywordField";
-    public static final String TEST_SEARCH_ATTRIBUTE_INT = "CustomIntField";
 
     @Override
     public List<PersistenceFieldDef> getPersistenceSchema() {
         return Arrays.asList(
                 DataAttributeDef.create(String.class, TEST_DATA_OBJECT_KEY),
+                DataAttributeDef.create(Integer.class, COUNTER_KEY),
+                DataAttributeDef.create(Integer.class, MAX_COUNTER),
                 SearchAttributeDef.create(SearchAttributeValueType.INT, TEST_SEARCH_ATTRIBUTE_INT),
                 SearchAttributeDef.create(SearchAttributeValueType.KEYWORD, TEST_SEARCH_ATTRIBUTE_KEYWORD)
         );
@@ -59,6 +57,13 @@ public class RpcMemoWorkflow implements ObjectWorkflow {
     public PersistenceOptions getPersistenceOptions() {
         return PersistenceOptions.builder()
                 .enableCaching(true).build();
+    }
+
+
+    @RPC
+    public void initializeStateDataAttributes(Context context, Integer maxCount, Persistence persistence, Communication communication) {
+        persistence.setDataAttribute(COUNTER_KEY,0);
+        persistence.setDataAttribute(MAX_COUNTER, maxCount);
     }
 
     @RPC

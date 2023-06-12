@@ -8,9 +8,14 @@ import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
 
+import java.util.Optional;
+
+import static io.iworkflow.integ.rpc.Keys.*;
+
 public class RpcWorkflowState2 implements WorkflowState<Integer> {
 
-    private static int counter = 0;
+
+
 
     @Override
     public Class<Integer> getInputType() {
@@ -27,24 +32,26 @@ public class RpcWorkflowState2 implements WorkflowState<Integer> {
     }
 
     @Override
-    public StateDecision execute(
+    public synchronized StateDecision execute(
             Context context,
             Integer input,
             CommandResults commandResults,
             Persistence persistence,
             final Communication communication) {
+        Integer counter = Optional.ofNullable(
+                persistence.getDataAttribute(COUNTER_KEY, Integer.class)
+        ).orElse(0);
+        Integer maxDecisionCount = Optional.ofNullable(
+                persistence.getDataAttribute(MAX_COUNTER, Integer.class)
+        ).orElse(Integer.MAX_VALUE);
+        counter ++;
+        persistence.setDataAttribute(COUNTER_KEY, counter);
         counter++;
-        if (counter == 2) {
+        if (counter == maxDecisionCount) {
             return StateDecision.gracefulCompleteWorkflow(counter);
         } else {
             return StateDecision.gracefulCompleteWorkflow();
         }
     }
 
-    // reset counter so that new test can use it
-    public static int resetCounter() {
-        final int old = counter;
-        counter = 0;
-        return old;
-    }
 }
