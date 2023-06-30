@@ -193,8 +193,6 @@ public class UnregisteredClient {
             return null;
         }
 
-        String checkErrorMessage = "this workflow should have one or zero state output for using this API";
-        Preconditions.checkNotNull(workflowGetResponse.getResults(), checkErrorMessage);
         final List<StateCompletionOutput> filteredResults = workflowGetResponse.getResults().stream().filter((res) -> res.getCompletedStateOutput() != null).collect(Collectors.toList());
 
         Preconditions.checkArgument(workflowGetResponse.getResults().size() == 1 || filteredResults.size() == 1, checkErrorMessage + ", found " + workflowGetResponse.getResults().size() + ", after filtered NULL: " + filteredResults.size());
