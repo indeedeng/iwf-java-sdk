@@ -29,6 +29,29 @@ public class WorkflowUncompletedTest {
     }
 
     @Test
+    public void testWorkflowWaitTimeout() throws InterruptedException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "testWorkflowTimeout" + System.currentTimeMillis() / 1000;
+        final Integer input = 1;
+        final String runId = client.startWorkflow(
+                BasicSignalWorkflow.class, wfId, 350, input);
+
+        try {
+            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        } catch (WorkflowUncompletedException e) {
+            Assertions.assertEquals(runId, e.getRunId());
+            Assertions.assertEquals(WorkflowStatus.TIMEOUT, e.getClosedStatus());
+            Assertions.assertNull(e.getErrorSubType());
+            Assertions.assertNull(e.getErrorMessage());
+            Assertions.assertEquals(0, e.getStateResultsSize());
+            return;
+        } catch (Exception e) {
+            Assertions.fail("no exception caught");
+        }
+
+    }
+
+    @Test
     public void testWorkflowTimeout() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "testWorkflowTimeout" + System.currentTimeMillis() / 1000;
