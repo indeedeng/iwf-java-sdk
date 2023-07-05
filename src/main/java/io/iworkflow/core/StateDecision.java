@@ -1,18 +1,22 @@
 package io.iworkflow.core;
 
+import io.iworkflow.gen.models.WorkflowConditionalCloseType;
 import org.immutables.value.Value;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Value.Immutable
 public abstract class StateDecision {
 
+    public abstract Optional<InternalConditionalClose> getWorkflowConditionalClose();
+
     public abstract List<StateMovement> getNextStates();
 
     // a dead end will just complete its thread, without triggering any closing workflow
-    public static StateDecision deadEnd(){
+    public static StateDecision deadEnd() {
         return ImmutableStateDecision.builder()
                 .nextStates(Arrays.asList(StateMovement.DEAD_END_WORKFLOW_MOVEMENT))
                 .build();
@@ -55,6 +59,57 @@ public abstract class StateDecision {
     public static StateDecision forceFailWorkflow() {
         return ImmutableStateDecision.builder()
                 .nextStates(Arrays.asList(StateMovement.FORCE_FAILING_WORKFLOW_MOVEMENT))
+                .build();
+    }
+
+
+    public static StateDecision forceCompleteIfInternalChannelEmptyOrElse(final String internalChannelName, final Class<? extends WorkflowState> stateClass) {
+        return forceCompleteIfInternalChannelEmptyOrElse(internalChannelName, stateClass, null);
+    }
+
+    public static StateDecision forceCompleteIfInternalChannelEmptyOrElse(final String internalChannelName, final Class<? extends WorkflowState> stateClass, final Object stateInput) {
+        return forceCompleteWithOutputIfInternalChannelEmptyOrElse(null, internalChannelName, StateMovement.create(stateClass, stateInput));
+    }
+
+    public static StateDecision forceCompleteIfInternalChannelEmptyOrElse(final String internalChannelName, final StateMovement... orElseStateMovements) {
+        return forceCompleteWithOutputIfInternalChannelEmptyOrElse(null, internalChannelName, orElseStateMovements);
+    }
+
+    public static StateDecision forceCompleteWithOutputIfInternalChannelEmptyOrElse(final Object output, final String internalChannelName, final StateMovement... orElseStateMovements) {
+        return ImmutableStateDecision.builder()
+                .workflowConditionalClose(
+                        ImmutableInternalConditionalClose.builder()
+                                .workflowConditionalCloseType(WorkflowConditionalCloseType.FORCE_COMPLETE_ON_INTERNAL_CHANNEL_EMPTY)
+                                .channelName(internalChannelName)
+                                .closeInput(Optional.ofNullable(output))
+                                .build()
+                )
+                .nextStates(Arrays.asList(orElseStateMovements))
+                .build();
+    }
+
+    public static StateDecision forceCompleteIfSignalChannelEmptyOrElse(final String signalChannelName, final Class<? extends WorkflowState> stateClass) {
+        return forceCompleteIfSignalChannelEmptyOrElse(signalChannelName, stateClass, null);
+    }
+
+    public static StateDecision forceCompleteIfSignalChannelEmptyOrElse(final String signalChannelName, final Class<? extends WorkflowState> stateClass, final Object stateInput) {
+        return forceCompleteWithOutputIfSignalChannelEmptyOrElse(null, signalChannelName, StateMovement.create(stateClass, stateInput));
+    }
+
+    public static StateDecision forceCompleteIfSignalChannelEmptyOrElse(final String signalChannelName, final StateMovement... orElseStateMovements) {
+        return forceCompleteWithOutputIfSignalChannelEmptyOrElse(null, signalChannelName, orElseStateMovements);
+    }
+
+    public static StateDecision forceCompleteWithOutputIfSignalChannelEmptyOrElse(final Object output, final String signalChannelName, final StateMovement... orElseStateMovements) {
+        return ImmutableStateDecision.builder()
+                .workflowConditionalClose(
+                        ImmutableInternalConditionalClose.builder()
+                                .workflowConditionalCloseType(WorkflowConditionalCloseType.FORCE_COMPLETE_ON_INTERNAL_CHANNEL_EMPTY)
+                                .channelName(signalChannelName)
+                                .closeInput(Optional.ofNullable(output))
+                                .build()
+                )
+                .nextStates(Arrays.asList(orElseStateMovements))
                 .build();
     }
 
