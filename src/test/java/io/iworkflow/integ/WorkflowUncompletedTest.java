@@ -44,7 +44,7 @@ public class WorkflowUncompletedTest {
             Assertions.assertEquals(ErrorSubStatus.LONG_POLL_TIME_OUT_SUB_STATUS, e.getErrorSubStatus());
             Assertions.assertEquals(420, e.getStatusCode());
 
-            elapsedMs = System.currentTimeMillis() - startMs;
+            elapsedMs = (System.currentTimeMillis() - startMs) / 1000;
             // NOTE: because the default poll timeout is 60-2 = 28s in iWF service
             Assertions.assertTrue(elapsedMs >= 55 && elapsedMs <= 62, "expect to poll for 58 seconds, actual is %d " + elapsedMs);
             return;
