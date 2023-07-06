@@ -63,16 +63,24 @@ public abstract class StateDecision {
     }
 
 
-    public static StateDecision forceCompleteIfInternalChannelEmptyOrElse(final String internalChannelName, final Class<? extends WorkflowState> stateClass) {
-        return forceCompleteIfInternalChannelEmptyOrElse(internalChannelName, stateClass, null);
+    public static StateDecision forceCompleteIfInternalChannelEmptyOrElse(final String internalChannelName, final Class<? extends WorkflowState> orElseStateClass) {
+        return forceCompleteIfInternalChannelEmptyOrElse(internalChannelName, orElseStateClass, null);
     }
 
-    public static StateDecision forceCompleteIfInternalChannelEmptyOrElse(final String internalChannelName, final Class<? extends WorkflowState> stateClass, final Object stateInput) {
-        return forceCompleteWithOutputIfInternalChannelEmptyOrElse(null, internalChannelName, StateMovement.create(stateClass, stateInput));
+    public static StateDecision forceCompleteIfInternalChannelEmptyOrElse(final String internalChannelName, final Class<? extends WorkflowState> orElseStateClass, final Object stateInput) {
+        return forceCompleteWithOutputIfInternalChannelEmptyOrElse(null, internalChannelName, StateMovement.create(orElseStateClass, stateInput));
     }
 
     public static StateDecision forceCompleteIfInternalChannelEmptyOrElse(final String internalChannelName, final StateMovement... orElseStateMovements) {
         return forceCompleteWithOutputIfInternalChannelEmptyOrElse(null, internalChannelName, orElseStateMovements);
+    }
+
+    public static StateDecision forceCompleteWithOutputIfInternalChannelEmptyOrElse(final Object output, final String internalChannelName, final Class<? extends WorkflowState> orElseStateClass) {
+        return forceCompleteWithOutputIfInternalChannelEmptyOrElse(output, internalChannelName, orElseStateClass, null);
+    }
+
+    public static StateDecision forceCompleteWithOutputIfInternalChannelEmptyOrElse(final Object output, final String internalChannelName, final Class<? extends WorkflowState> orElseStateClass, final Object stateInput) {
+        return forceCompleteWithOutputIfInternalChannelEmptyOrElse(output, internalChannelName, StateMovement.create(orElseStateClass, stateInput));
     }
 
     public static StateDecision forceCompleteWithOutputIfInternalChannelEmptyOrElse(final Object output, final String internalChannelName, final StateMovement... orElseStateMovements) {
@@ -88,23 +96,31 @@ public abstract class StateDecision {
                 .build();
     }
 
-    public static StateDecision forceCompleteIfSignalChannelEmptyOrElse(final String signalChannelName, final Class<? extends WorkflowState> stateClass) {
-        return forceCompleteIfSignalChannelEmptyOrElse(signalChannelName, stateClass, null);
+    public static StateDecision forceCompleteIfSignalChannelEmptyOrElse(final String signalChannelName, final Class<? extends WorkflowState> orElseStateClass) {
+        return forceCompleteIfSignalChannelEmptyOrElse(signalChannelName, orElseStateClass, null);
     }
 
-    public static StateDecision forceCompleteIfSignalChannelEmptyOrElse(final String signalChannelName, final Class<? extends WorkflowState> stateClass, final Object stateInput) {
-        return forceCompleteWithOutputIfSignalChannelEmptyOrElse(null, signalChannelName, StateMovement.create(stateClass, stateInput));
+    public static StateDecision forceCompleteIfSignalChannelEmptyOrElse(final String signalChannelName, final Class<? extends WorkflowState> orElseStateClass, final Object stateInput) {
+        return forceCompleteWithOutputIfSignalChannelEmptyOrElse(null, signalChannelName, StateMovement.create(orElseStateClass, stateInput));
     }
 
     public static StateDecision forceCompleteIfSignalChannelEmptyOrElse(final String signalChannelName, final StateMovement... orElseStateMovements) {
         return forceCompleteWithOutputIfSignalChannelEmptyOrElse(null, signalChannelName, orElseStateMovements);
     }
 
+    public static StateDecision forceCompleteWithOutputIfSignalChannelEmptyOrElse(final Object output, final String signalChannelName, final Class<? extends WorkflowState> orElseStateClass) {
+        return forceCompleteWithOutputIfSignalChannelEmptyOrElse(output, signalChannelName, orElseStateClass, null);
+    }
+
+    public static StateDecision forceCompleteWithOutputIfSignalChannelEmptyOrElse(final Object output, final String signalChannelName, final Class<? extends WorkflowState> orElseStateClass, final Object stateInput) {
+        return forceCompleteWithOutputIfSignalChannelEmptyOrElse(output, signalChannelName, StateMovement.create(orElseStateClass, stateInput));
+    }
+
     public static StateDecision forceCompleteWithOutputIfSignalChannelEmptyOrElse(final Object output, final String signalChannelName, final StateMovement... orElseStateMovements) {
         return ImmutableStateDecision.builder()
                 .workflowConditionalClose(
                         ImmutableInternalConditionalClose.builder()
-                                .workflowConditionalCloseType(WorkflowConditionalCloseType.FORCE_COMPLETE_ON_INTERNAL_CHANNEL_EMPTY)
+                                .workflowConditionalCloseType(WorkflowConditionalCloseType.FORCE_COMPLETE_ON_SIGNAL_CHANNEL_EMPTY)
                                 .channelName(signalChannelName)
                                 .closeInput(Optional.ofNullable(output))
                                 .build()
