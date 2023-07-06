@@ -99,9 +99,9 @@ class WorkflowState1 implements WorkflowState<Boolean> {
             }
         }
         if (useSignal) {
-            return StateDecision.forceCompleteWithOutputIfSignalChannelEmptyOrElse(counter, ConditionalCompleteWorkflow.SIGNAL_CHANNEL_NAME, WorkflowState1.class, useSignal);
+            return StateDecision.forceCompleteIfSignalChannelEmptyOrElse(counter, ConditionalCompleteWorkflow.SIGNAL_CHANNEL_NAME, WorkflowState1.class, useSignal);
         } else {
-            return StateDecision.forceCompleteWithOutputIfInternalChannelEmptyOrElse(counter, ConditionalCompleteWorkflow.INTERNAL_CHANNEL_NAME, WorkflowState1.class, useSignal);
+            return StateDecision.forceCompleteIfInternalChannelEmptyOrElse(counter, ConditionalCompleteWorkflow.INTERNAL_CHANNEL_NAME, WorkflowState1.class, useSignal);
         }
     }
 }
