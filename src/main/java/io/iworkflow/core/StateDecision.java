@@ -80,7 +80,7 @@ public abstract class StateDecision {
     }
 
     /**
-     * Atomically force complete the workflow if signal channel is empty, otherwise trigger the state movements from the current thread
+     * Atomically force complete the workflow if internal channel is empty, otherwise trigger the state movements from the current thread
      * This is important for use case that needs to ensure all the messages in the channel are processed before completing the workflow, otherwise messages will be lost.
      * Without this atomic API, the channel may receive new messages during the execution of state APIs
      *
