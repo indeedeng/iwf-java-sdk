@@ -7,11 +7,13 @@ import io.iworkflow.core.ImmutableUnregisteredWorkflowOptions;
 import io.iworkflow.core.ImmutableWorkflowOptions;
 import io.iworkflow.core.UnregisteredWorkflowOptions;
 import io.iworkflow.core.WorkflowDefinitionException;
+import io.iworkflow.core.WorkflowInfo;
 import io.iworkflow.core.WorkflowOptions;
 import io.iworkflow.gen.models.Context;
 import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.gen.models.IDReusePolicy;
 import io.iworkflow.gen.models.WorkflowConfig;
+import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.integ.basic.BasicWorkflow;
 import io.iworkflow.integ.basic.EmptyInputWorkflow;
 import io.iworkflow.integ.basic.EmptyInputWorkflowState1;
@@ -124,5 +126,28 @@ public class BasicTest {
         // wait for workflow to finish
         final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(input + 2, output);
+    }
+
+    @Test
+    public void testGetWorkflowStatusWhenNoExistingWorkflow() {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "wf-get-workflow-status-test-id" + System.currentTimeMillis() / 1000;
+
+        try {
+            client.describeWorkflow(wfId, "");
+        } catch (final ClientSideException e) {
+            Assertions.assertEquals(ErrorSubStatus.WORKFLOW_NOT_EXISTS_SUB_STATUS, e.getErrorSubStatus());
+            Assertions.assertEquals(400, e.getStatusCode());
+        }
+    }
+
+    @Test
+    public void testGetWorkflowStatusWhenWorkflowIsRunning() {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "wf-get-workflow-status-running-test-id" + System.currentTimeMillis() / 1000;
+
+        client.startWorkflow(BasicWorkflow.class, wfId, 10, null, null);
+        final WorkflowInfo workflowInfo = client.describeWorkflow(wfId, "");
+        Assertions.assertEquals(WorkflowStatus.RUNNING, workflowInfo.getWorkflowStatus());
     }
 }

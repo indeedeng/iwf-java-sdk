@@ -7,6 +7,7 @@ import io.iworkflow.gen.models.SearchAttributeKeyAndType;
 import io.iworkflow.gen.models.SearchAttributeValueType;
 import io.iworkflow.gen.models.StateCompletionOutput;
 import io.iworkflow.gen.models.WorkflowGetDataObjectsResponse;
+import io.iworkflow.gen.models.WorkflowGetResponse;
 import io.iworkflow.gen.models.WorkflowGetSearchAttributesResponse;
 import io.iworkflow.gen.models.WorkflowSearchRequest;
 import io.iworkflow.gen.models.WorkflowSearchResponse;
@@ -567,6 +568,23 @@ public class Client {
             throw new IllegalArgumentException("attributeKeys must contain at least one entry, or use GetAllSearchAttributes API to get all");
         }
         return doGetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, attributeKeys);
+    }
+
+    /**
+     * Describe a workflow to get its info.
+     * If the workflow does not exist, throw the WORKFLOW_NOT_EXISTS_SUB_STATUS exception.
+     *
+     * @param workflowId    required
+     * @param workflowRunId optional
+     * @return the workflow's info
+     */
+    public WorkflowInfo describeWorkflow(
+            final String workflowId,
+            final String workflowRunId) {
+        final WorkflowGetResponse response = unregisteredClient.getWorkflow(workflowId, workflowRunId, false);
+        return WorkflowInfo.builder()
+                .workflowStatus(response.getWorkflowStatus())
+                .build();
     }
 
     public Map<String, Object> getAllSearchAttributes(

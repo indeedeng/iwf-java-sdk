@@ -403,6 +403,31 @@ public class UnregisteredClient {
         return getAnyWorkflowDataObjects(workflowId, workflowRunId, attributeKeys, false);
     }
 
+    /**
+     * Get a workflow's status and results(if completed &amp; requested).
+     * If the workflow does not exist, throw the WORKFLOW_NOT_EXISTS_SUB_STATUS exception.
+     *
+     * @param workflowId    required
+     * @param workflowRunId optional
+     * @param needsResults  result will be returned if this is true and workflow is completed
+     * @return the workflow's status and results
+     */
+    public WorkflowGetResponse getWorkflow(
+            final String workflowId,
+            final String workflowRunId,
+            final Boolean needsResults) {
+        try {
+            return defaultApi.apiV1WorkflowGetPost(
+                    new WorkflowGetRequest()
+                            .workflowId(workflowId)
+                            .workflowRunId(workflowRunId)
+                            .needsResults(needsResults)
+            );
+        } catch (final FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
+    }
+
     public WorkflowGetDataObjectsResponse getAnyWorkflowDataObjects(
             final String workflowId,
             final String workflowRunId,
