@@ -94,7 +94,7 @@ public class RpcTest {
         final String runId = client.startWorkflow(
                 RpcWorkflow.class, wfId, 10, 999);
 
-        final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "");
+        final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId);
         final Long rpcOutput = client.invokeRPC(rpcStub::testRpcFunc0);
 
         Assertions.assertEquals(RPC_OUTPUT, rpcOutput);

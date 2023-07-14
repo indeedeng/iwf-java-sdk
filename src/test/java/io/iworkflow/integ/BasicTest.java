@@ -147,7 +147,7 @@ public class BasicTest {
         final String wfId = "wf-get-workflow-status-running-test-id" + System.currentTimeMillis() / 1000;
 
         client.startWorkflow(BasicWorkflow.class, wfId, 10, null, null);
-        final WorkflowInfo workflowInfo = client.describeWorkflow(wfId, "");
+        final WorkflowInfo workflowInfo = client.describeWorkflow(wfId);
         Assertions.assertEquals(WorkflowStatus.RUNNING, workflowInfo.getWorkflowStatus());
     }
 }
