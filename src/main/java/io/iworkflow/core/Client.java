@@ -408,16 +408,15 @@ public class Client {
     }
 
     /**
-     * Stop a workflow, this is essentially terminate the workflow gracefully
-     * The workflow status will be CANCELED
+     * Stop a workflow with options
      *
      * @param workflowId    required
-     * @param workflowRunId optional, can be empty
+     * @param options       optional, can be null. If not set, the workflow status will be CANCELED
      */
     public void stopWorkflow(
             final String workflowId,
-            final String workflowRunId) {
-        stopWorkflow(workflowId, workflowRunId, null);
+            final StopWorkflowOptions options) {
+        stopWorkflow(workflowId, "", options);
     }
 
     /**

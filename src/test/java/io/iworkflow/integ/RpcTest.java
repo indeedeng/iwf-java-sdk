@@ -227,7 +227,7 @@ public class RpcTest {
             Assertions.assertEquals("java.lang.RuntimeException", errResp.getOriginalWorkerErrorType());
             Assertions.assertEquals("worker API error, status:501, errorType:java.lang.RuntimeException", errResp.getDetail());
         }
-        client.stopWorkflow(wfId, "");
+        client.stopWorkflow(wfId, null);
     }
 
 }

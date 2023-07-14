@@ -83,7 +83,7 @@ public class WorkflowUncompletedTest {
         final String runId = client.startWorkflow(
                 BasicSignalWorkflow.class, wfId, 10, input);
 
-        client.stopWorkflow(wfId, "");
+        client.stopWorkflow(wfId);
 
         try {
             client.getSimpleWorkflowResultWithWait(Integer.class, wfId);

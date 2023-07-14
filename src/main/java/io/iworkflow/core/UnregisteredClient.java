@@ -350,6 +350,18 @@ public class UnregisteredClient {
     }
 
     /**
+     * Stop a workflow, this is essentially cancel the workflow gracefully
+     *
+     * @param workflowId    required
+     * @param workflowRunId optional
+     */
+    public void stopWorkflow(
+            final String workflowId,
+            final String workflowRunId) {
+        stopWorkflow(workflowId, workflowRunId, null);
+    }
+
+    /**
      * Stop a workflow with options
      *
      * @param workflowId    required
