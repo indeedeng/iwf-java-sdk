@@ -7,6 +7,7 @@ import io.iworkflow.core.ImmutableUnregisteredWorkflowOptions;
 import io.iworkflow.core.ImmutableWorkflowOptions;
 import io.iworkflow.core.UnregisteredWorkflowOptions;
 import io.iworkflow.core.WorkflowDefinitionException;
+import io.iworkflow.core.WorkflowInfo;
 import io.iworkflow.core.WorkflowOptions;
 import io.iworkflow.gen.models.Context;
 import io.iworkflow.gen.models.ErrorSubStatus;
@@ -133,7 +134,7 @@ public class BasicTest {
         final String wfId = "wf-get-workflow-status-test-id" + System.currentTimeMillis() / 1000;
 
         try {
-            client.getWorkflowStatus(wfId, "");
+            client.describeWorkflow(wfId, "");
         } catch (final ClientSideException e) {
             Assertions.assertEquals(ErrorSubStatus.WORKFLOW_NOT_EXISTS_SUB_STATUS, e.getErrorSubStatus());
             Assertions.assertEquals(400, e.getStatusCode());
@@ -146,7 +147,7 @@ public class BasicTest {
         final String wfId = "wf-get-workflow-status-running-test-id" + System.currentTimeMillis() / 1000;
 
         client.startWorkflow(BasicWorkflow.class, wfId, 10, null, null);
-        final WorkflowStatus workflowStatus = client.getWorkflowStatus(wfId, "");
-        Assertions.assertEquals(WorkflowStatus.RUNNING, workflowStatus);
+        final WorkflowInfo workflowInfo = client.describeWorkflow(wfId, "");
+        Assertions.assertEquals(WorkflowStatus.RUNNING, workflowInfo.getWorkflowStatus());
     }
 }

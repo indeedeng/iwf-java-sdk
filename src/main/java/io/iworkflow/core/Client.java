@@ -12,7 +12,6 @@ import io.iworkflow.gen.models.WorkflowGetSearchAttributesResponse;
 import io.iworkflow.gen.models.WorkflowSearchRequest;
 import io.iworkflow.gen.models.WorkflowSearchResponse;
 import io.iworkflow.gen.models.WorkflowStateOptions;
-import io.iworkflow.gen.models.WorkflowStatus;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.matcher.ElementMatchers;
@@ -572,18 +571,20 @@ public class Client {
     }
 
     /**
-     * Get a workflow's status.
+     * Describe a workflow to get its info.
      * If the workflow does not exist, throw the WORKFLOW_NOT_EXISTS_SUB_STATUS exception.
      *
      * @param workflowId    required
      * @param workflowRunId optional
-     * @return the workflow's status
+     * @return the workflow's info
      */
-    public WorkflowStatus getWorkflowStatus(
+    public WorkflowInfo describeWorkflow(
             final String workflowId,
             final String workflowRunId) {
         final WorkflowGetResponse response = unregisteredClient.getWorkflow(workflowId, workflowRunId, false);
-        return response.getWorkflowStatus();
+        return WorkflowInfo.builder()
+                .workflowStatus(response.getWorkflowStatus())
+                .build();
     }
 
     public Map<String, Object> getAllSearchAttributes(
