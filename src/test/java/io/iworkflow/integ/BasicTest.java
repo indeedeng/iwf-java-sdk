@@ -37,7 +37,7 @@ public class BasicTest {
 
     @Test
     public void testBasicWorkflowWithClientBuilder() {
-        final Client client = Client.builder(ClientOptions.localDefault);
+        final Client client = Client.partialBuilder(ClientOptions.localDefault);
         WorkflowRegistry.registry.initializeClient(client);
         final String wfId = "basic-test-id-with-client-builder" + System.currentTimeMillis() / 1000;
         final WorkflowOptions startOptions = ImmutableWorkflowOptions.builder()
@@ -59,7 +59,7 @@ public class BasicTest {
 
     @Test
     public void testBasicWorkflowWithClientBuilderWhenNotFullyInitialized() {
-        final Client client = Client.builder(ClientOptions.localDefault);
+        final Client client = Client.partialBuilder(ClientOptions.localDefault);
         final String wfId = "basic-test-id-with-partial-client-builder" + System.currentTimeMillis() / 1000;
         final WorkflowOptions startOptions = ImmutableWorkflowOptions.builder()
                 .workflowIdReusePolicy(IDReusePolicy.DISALLOW_REUSE)

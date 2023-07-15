@@ -27,7 +27,7 @@ public class AspectTest {
             throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         final JoinPoint joinPoint = mock(JoinPoint.class);
 
-        final Client testClient = Client.builder(ClientOptions.dockerDefault);
+        final Client testClient = Client.partialBuilder(ClientOptions.dockerDefault);
         WorkflowRegistry.registry.initializeClient(testClient);
 
         when(joinPoint.getTarget()).thenReturn(testClient);
@@ -40,7 +40,7 @@ public class AspectTest {
             throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         final JoinPoint joinPoint = mock(JoinPoint.class);
 
-        final Client testClient = Client.builder(ClientOptions.dockerDefault);
+        final Client testClient = Client.partialBuilder(ClientOptions.dockerDefault);
 
         when(joinPoint.getTarget()).thenReturn(testClient);
 

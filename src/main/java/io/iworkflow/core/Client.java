@@ -47,13 +47,13 @@ public class Client {
      * @param clientOptions is for configuring the client
      * @return a partially-initialized client
      */
-    public static Client builder(final ClientOptions clientOptions) {
+    public static Client partialBuilder(final ClientOptions clientOptions) {
         return new Client(clientOptions);
     }
 
     /**
      * This is a private constructor.
-     * Use the {@link #builder(ClientOptions)} API to create a partially-initialized client.
+     * Use the {@link #partialBuilder(ClientOptions)} API to create a partially-initialized client.
      *
      * @param clientOptions is for configuring the client
      */
@@ -76,7 +76,7 @@ public class Client {
     /**
      * Note:
      * This constructor is going to be deprecated.
-     * It's now recommended to use the {@link #builder(ClientOptions) builder}} API to create a partially-initialized client
+     * It's now recommended to use the {@link #partialBuilder(ClientOptions) builder}} API to create a partially-initialized client
      * to avoid potential circular references issue (Client &gt; Registry &gt; ObjectWorkflow).
      *
      * Return a full-featured client. If you don't have the workflow Registry, you should use {@link UnregisteredClient} instead.
