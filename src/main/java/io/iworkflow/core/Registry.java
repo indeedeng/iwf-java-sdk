@@ -36,12 +36,22 @@ public class Registry {
     private static final String DELIMITER = "_";
 
     /**
+     * Note:
+     * This constructor is going to be deprecated.
+     * It's now recommended to use the {@link #Registry(Client client)} constructor to create a registry
+     * and initialize the client's {@link Client#registry} field.
+     */
+    @Deprecated
+    public Registry() {
+    }
+
+    /**
      * Initialize the {@link Client#registry} field of a client created by {@link Client#partialBuilder(ClientOptions)}.
      * Otherwise, public API calls of the client will throw the {@link ClientNotFullyInitializedException}.
      *
      * @param client required
      */
-    public void initializeClient(final Client client) {
+    public Registry(final Client client) {
         client.initializeRegistry(this);
     }
 

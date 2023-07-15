@@ -28,7 +28,7 @@ public class AspectTest {
         final JoinPoint joinPoint = mock(JoinPoint.class);
 
         final Client testClient = Client.partialBuilder(ClientOptions.dockerDefault);
-        WorkflowRegistry.registry.initializeClient(testClient);
+        testClient.initializeRegistry(WorkflowRegistry.registry);
 
         when(joinPoint.getTarget()).thenReturn(testClient);
 

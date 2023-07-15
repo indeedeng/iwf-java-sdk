@@ -38,7 +38,7 @@ public class Client {
      * <p>Return a partially-initialized client.</p>
      * REQUIRED following-up steps to fully initialize the client:
      * <pre>
-     *     Call {@link Registry#initializeClient(Client)} API to initialize the {@link #registry} field.
+     *     Use the {@link Registry#Registry(Client client)} constructor to create a registry served as the {@link #registry} field.
      * </pre>
      *
      * <p>If the client is not fully-initialized, its public API calls will throw the {@link ClientNotFullyInitializedException}.</p>
@@ -76,7 +76,7 @@ public class Client {
     /**
      * Note:
      * This constructor is going to be deprecated.
-     * It's now recommended to use the {@link #partialBuilder(ClientOptions) builder}} API to create a partially-initialized client
+     * It's now recommended to use the {@link #partialBuilder(ClientOptions)}} API to create a partially-initialized client
      * to avoid potential circular references issue (Client &gt; Registry &gt; ObjectWorkflow).
      *
      * Return a full-featured client. If you don't have the workflow Registry, you should use {@link UnregisteredClient} instead.
