@@ -36,6 +36,43 @@ public class BasicTest {
     }
 
     @Test
+    public void testBasicWorkflowWithClientBuilder() {
+        final Client client = Client.builder(ClientOptions.localDefault);
+        WorkflowRegistry.registry.initializeClient(client);
+        final String wfId = "basic-test-id-with-client-builder" + System.currentTimeMillis() / 1000;
+        final WorkflowOptions startOptions = ImmutableWorkflowOptions.builder()
+                .workflowIdReusePolicy(IDReusePolicy.DISALLOW_REUSE)
+                .build();
+        final Integer input = 0;
+        client.startWorkflow(BasicWorkflow.class, wfId, 10, input, startOptions);
+        // wait for workflow to finish
+        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        Assertions.assertEquals(input + 2, output);
+
+        // start the same workflow again should fail
+        final ClientSideException exception = Assertions.assertThrows(ClientSideException.class,
+                () -> client.startWorkflow(BasicWorkflow.class, wfId, 10, input, startOptions));
+
+        Assertions.assertEquals(ErrorSubStatus.WORKFLOW_ALREADY_STARTED_SUB_STATUS, exception.getErrorSubStatus());
+        Assertions.assertEquals(400, exception.getStatusCode());
+    }
+
+    @Test
+    public void testBasicWorkflowWithClientBuilderWhenNotFullyInitialized() {
+        final Client client = Client.builder(ClientOptions.localDefault);
+        final String wfId = "basic-test-id-with-partial-client-builder" + System.currentTimeMillis() / 1000;
+        final WorkflowOptions startOptions = ImmutableWorkflowOptions.builder()
+                .workflowIdReusePolicy(IDReusePolicy.DISALLOW_REUSE)
+                .build();
+        final Integer input = 0;
+
+        // TODO:
+        // Currently, the @Aspect does not work in the unit tests
+        Assertions.assertThrows(NullPointerException.class,
+                () -> client.startWorkflow(BasicWorkflow.class, wfId, 10, input, startOptions));
+    }
+
+    @Test
     public void testBasicWorkflow() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-test-id" + System.currentTimeMillis() / 1000;

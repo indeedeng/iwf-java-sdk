@@ -35,6 +35,16 @@ public class Registry {
 
     private static final String DELIMITER = "_";
 
+    /**
+     * Initialize the {@link Client#registry} field of a client created by {@link Client#builder(ClientOptions)}.
+     * Otherwise, public API calls of the client will throw the {@link ClientNotFullyInitializedException}.
+     *
+     * @param client required
+     */
+    public void initializeClient(final Client client) {
+        client.initializeRegistry(this);
+    }
+
     public void addWorkflows(final ObjectWorkflow... wfs) {
         Arrays.stream(wfs).forEach(this::addWorkflow);
     }

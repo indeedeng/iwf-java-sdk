@@ -28,18 +28,63 @@ import java.util.stream.Collectors;
 import static io.iworkflow.core.WorkflowState.shouldSkipWaitUntil;
 
 public class Client {
-    private final Registry registry;
+    private Registry registry;
 
     private final UnregisteredClient unregisteredClient;
 
     final ClientOptions clientOptions;
 
     /**
-     * return a full featured client. If you don't have the workflow Registry, you should use {@link UnregisteredClient} instead
+     * <p>Return a partially-initialized client.</p>
+     * REQUIRED following-up steps to fully initialize the client:
+     * <pre>
+     *     Call {@link Registry#initializeClient(Client)} API to initialize the {@link #registry} field.
+     * </pre>
+     *
+     * <p>If the client is not fully-initialized, its public API calls will throw the {@link ClientNotFullyInitializedException}.</p>
+     * <p>If you don't have the workflow Registry, you should use {@link UnregisteredClient} instead.</p>
+     *
+     * @param clientOptions is for configuring the client
+     * @return a partially-initialized client
+     */
+    public static Client builder(final ClientOptions clientOptions) {
+        return new Client(clientOptions);
+    }
+
+    /**
+     * This is a private constructor.
+     * Use the {@link #builder(ClientOptions)} API to create a partially-initialized client.
+     *
+     * @param clientOptions is for configuring the client
+     */
+    private Client(final ClientOptions clientOptions) {
+        this.registry = null;
+        this.clientOptions = clientOptions;
+        this.unregisteredClient = new UnregisteredClient(clientOptions);
+    }
+
+    /**
+     * Initialize the {@link #registry} field of the client.
+     * If the client is not fully-initialized, its public API calls will throw the {@link ClientNotFullyInitializedException}.
+     *
+     * @param registry  required
+     */
+    public void initializeRegistry(final Registry registry) {
+        this.registry = registry;
+    }
+
+    /**
+     * Note:
+     * This constructor is going to be deprecated.
+     * It's now recommended to use the {@link #builder(ClientOptions) builder}} API to create a partially-initialized client
+     * to avoid potential circular references issue (Client &gt; Registry &gt; ObjectWorkflow).
+     *
+     * Return a full-featured client. If you don't have the workflow Registry, you should use {@link UnregisteredClient} instead.
      *
      * @param registry      registry is required so that this client can perform some validation checks (workflow types, channel names)
      * @param clientOptions is for configuring the client
      */
+    @Deprecated
     public Client(final Registry registry, final ClientOptions clientOptions) {
         this.registry = registry;
         this.clientOptions = clientOptions;
