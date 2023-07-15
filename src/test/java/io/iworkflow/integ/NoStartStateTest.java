@@ -57,7 +57,7 @@ public class NoStartStateTest {
 
         Assertions.assertEquals(RPC_OUTPUT, rpcOutput);
 
-        client.stopWorkflow(wfId, "");
+        client.stopWorkflow(wfId, null);
     }
 
     @Test

@@ -38,6 +38,10 @@ public class SignalTest {
         client.signalWorkflow(
                 BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(2));
 
+        // test no runId
+        client.signalWorkflow(
+                BasicSignalWorkflow.class, wfId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(2));
+
         // test sending null signal
         client.signalWorkflow(
                 BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_3, null);

@@ -319,6 +319,15 @@ public class Client {
         return getComplexWorkflowResultWithWait(workflowId, "");
     }
 
+    /**
+     * Emit a signal message for the workflow object to receive from external sources
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @param workflowRunId     optional, can be empty
+     * @param signalChannelName required
+     * @param signalValue       optional, can be null
+     */
     public void signalWorkflow(
             final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
@@ -343,9 +352,25 @@ public class Client {
     }
 
     /**
-     * @param workflowId workflowId
-     * @param workflowRunId workflowRunId
-     * @param resetWorkflowTypeAndOptions the combination parameter for reset
+     * Emit a signal message for the workflow object to receive from external sources
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @param signalChannelName required
+     * @param signalValue       optional, can be null
+     */
+    public void signalWorkflow(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            final String signalChannelName,
+            final Object signalValue) {
+        signalWorkflow(workflowClass, workflowId, "", signalChannelName, signalValue);
+    }
+
+    /**
+     * @param workflowId                    required
+     * @param workflowRunId                 optional, can be empty
+     * @param resetWorkflowTypeAndOptions   required, the combination parameter for reset
      * @return the new runId after reset
      */
     public String resetWorkflow(
@@ -353,28 +378,27 @@ public class Client {
             final String workflowRunId,
             final ResetWorkflowTypeAndOptions resetWorkflowTypeAndOptions
     ) {
-
         return unregisteredClient.resetWorkflow(workflowId, workflowRunId, resetWorkflowTypeAndOptions);
     }
 
     /**
-     * Stop a workflow, this is essentially terminate the workflow gracefully
-     *
-     * @param workflowId    required
-     * @param workflowRunId optional, can be empty
+     * @param workflowId                    required
+     * @param resetWorkflowTypeAndOptions   required, the combination parameter for reset
+     * @return the new runId after reset
      */
-    public void stopWorkflow(
+    public String resetWorkflow(
             final String workflowId,
-            final String workflowRunId) {
-        unregisteredClient.stopWorkflow(workflowId, workflowRunId);
+            final ResetWorkflowTypeAndOptions resetWorkflowTypeAndOptions
+    ) {
+        return resetWorkflow(workflowId, "", resetWorkflowTypeAndOptions);
     }
 
     /**
      * Stop a workflow with options
      *
      * @param workflowId    required
-     * @param workflowRunId optional
-     * @param options       optional
+     * @param workflowRunId optional, can be empty
+     * @param options       optional, can be null. If not set, the workflow status will be CANCELED
      */
     public void stopWorkflow(
             final String workflowId,
@@ -383,6 +407,37 @@ public class Client {
         unregisteredClient.stopWorkflow(workflowId, workflowRunId, options);
     }
 
+    /**
+     * Stop a workflow with options
+     *
+     * @param workflowId    required
+     * @param options       optional, can be null. If not set, the workflow status will be CANCELED
+     */
+    public void stopWorkflow(
+            final String workflowId,
+            final StopWorkflowOptions options) {
+        stopWorkflow(workflowId, "", options);
+    }
+
+    /**
+     * Stop a workflow, this is essentially terminate the workflow gracefully
+     * The workflow status will be CANCELED
+     *
+     * @param workflowId    required
+     */
+    public void stopWorkflow(final String workflowId) {
+        stopWorkflow(workflowId, "", null);
+    }
+
+    /**
+     * Get specified data attributes (by keys) of a workflow
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @param workflowRunId     optional, can be empty
+     * @param keys              required, cannot be empty or null
+     * @return the data attributes
+     */
     public Map<String, Object> getWorkflowDataObjects(
             final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
@@ -395,11 +450,47 @@ public class Client {
         return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, keys);
     }
 
+    /**
+     * Get specified data attributes (by keys) of a workflow
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @param keys              required, cannot be empty or null
+     * @return the data attributes
+     */
+    public Map<String, Object> getWorkflowDataObjects(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            List<String> keys) {
+        return getWorkflowDataObjects(workflowClass, workflowId, "", keys);
+    }
+
+    /**
+     * Get all the data attributes of a workflow
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @param workflowRunId     optional, can be empty
+     * @return the data attributes
+     */
     public Map<String, Object> getAllDataObjects(
             final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId) {
         return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, null);
+    }
+
+    /**
+     * Get all the data attributes of a workflow
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @return the data attributes
+     */
+    public Map<String, Object> getAllDataObjects(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId) {
+        return getAllDataObjects(workflowClass, workflowId, "");
     }
 
     private Map<String, Object> doGetWorkflowDataObjects(
@@ -471,8 +562,8 @@ public class Client {
      * create a new stub for invoking RPC
      *
      * @param workflowClassForRpc the class of defining the RPCs to invoke
-     * @param workflowId          workflowId is required
-     * @param workflowRunId       optional
+     * @param workflowId          required
+     * @param workflowRunId       optional, can be empty
      * @param <T>                 the class of defining the RPCs to invoke
      * @return the result of the RPC
      */
@@ -513,6 +604,18 @@ public class Client {
         }
 
         return result;
+    }
+
+    /**
+     * create a new stub for invoking RPC
+     *
+     * @param workflowClassForRpc the class of defining the RPCs to invoke
+     * @param workflowId          required
+     * @param <T>                 the class of defining the RPCs to invoke
+     * @return the result of the RPC
+     */
+    public <T> T newRpcStub(Class<T> workflowClassForRpc, String workflowId) {
+        return newRpcStub(workflowClassForRpc, workflowId, "");
     }
 
     /**
@@ -559,6 +662,15 @@ public class Client {
         rpcStubMethod.execute(null, null, null);
     }
 
+    /**
+     * Get specified search attributes (by attributeKeys) of a workflow
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @param workflowRunId     optional, can be empty
+     * @param attributeKeys     required, cannot be empty or null
+     * @return the search attributes
+     */
     public Map<String, Object> getWorkflowSearchAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
@@ -571,11 +683,54 @@ public class Client {
     }
 
     /**
+     * Get specified search attributes (by attributeKeys) of a workflow
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @param attributeKeys     required, cannot be empty or null
+     * @return the search attributes
+     */
+    public Map<String, Object> getWorkflowSearchAttributes(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            List<String> attributeKeys) {
+        return getWorkflowSearchAttributes(workflowClass, workflowId, "", attributeKeys);
+    }
+
+    /**
+     * Get all the search attributes of a workflow
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @param workflowRunId     optional, can be empty
+     * @return the search attributes
+     */
+    public Map<String, Object> getAllSearchAttributes(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId) {
+        return doGetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, null);
+    }
+
+    /**
+     * Get all the search attributes of a workflow
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @return the search attributes
+     */
+    public Map<String, Object> getAllSearchAttributes(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId) {
+        return getAllSearchAttributes(workflowClass, workflowId, "");
+    }
+
+    /**
      * Describe a workflow to get its info.
      * If the workflow does not exist, throw the WORKFLOW_NOT_EXISTS_SUB_STATUS exception.
      *
      * @param workflowId    required
-     * @param workflowRunId optional
+     * @param workflowRunId optional, can be empty
      * @return the workflow's info
      */
     public WorkflowInfo describeWorkflow(
@@ -587,11 +742,16 @@ public class Client {
                 .build();
     }
 
-    public Map<String, Object> getAllSearchAttributes(
-            final Class<? extends ObjectWorkflow> workflowClass,
-            final String workflowId,
-            final String workflowRunId) {
-        return doGetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, null);
+    /**
+     * Describe a workflow to get its info.
+     * If the workflow does not exist, throw the WORKFLOW_NOT_EXISTS_SUB_STATUS exception.
+     *
+     * @param workflowId    required
+     * @return the workflow's info
+     */
+    public WorkflowInfo describeWorkflow(
+            final String workflowId) {
+        return describeWorkflow(workflowId, "");
     }
 
     private Map<String, Object> doGetWorkflowSearchAttributes(
