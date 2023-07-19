@@ -14,10 +14,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_DATE_TIME;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_INT;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_KEYWORD;
-import static io.iworkflow.integ.persistence.BasicPersistenceWorkflowState1.testDateTimeValue;
 
 public class PersistenceTest {
 
@@ -36,24 +34,33 @@ public class PersistenceTest {
         Assertions.assertEquals("test-value-2", output);
 
         Map<String, Object> map =
-                client.getWorkflowDataObjects(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+                client.getWorkflowDataAttributes(BasicPersistenceWorkflow.class, wfId, runId,
+                        Arrays.asList(
+                                BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY,
+                                BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "1",
+                                BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "2"));
         Assertions.assertEquals(
                 "query-start-query-decide", map.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+        Assertions.assertEquals(
+                11L, map.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "1"));
+        Assertions.assertNull(map.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "2"));
 
         // test no runId
         Map<String, Object> map2 =
-                client.getWorkflowDataObjects(BasicPersistenceWorkflow.class, wfId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+                client.getWorkflowDataAttributes(BasicPersistenceWorkflow.class, wfId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 "query-start-query-decide", map2.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
 
-        Map<String, Object> allDataObjects = client.getAllDataObjects(BasicPersistenceWorkflow.class, wfId, runId);
-        Assertions.assertEquals(3, allDataObjects.size());
+        Map<String, Object> allDataObjects = client.getAllDataAttributes(BasicPersistenceWorkflow.class, wfId, runId);
+        Assertions.assertEquals(4, allDataObjects.size());
         Assertions.assertEquals("query-start-query-decide", allDataObjects.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+        Assertions.assertEquals(11L, allDataObjects.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "1"));
 
         // test no runId
-        Map<String, Object> allDataObjects2 = client.getAllDataObjects(BasicPersistenceWorkflow.class, wfId);
-        Assertions.assertEquals(3, allDataObjects2.size());
+        Map<String, Object> allDataObjects2 = client.getAllDataAttributes(BasicPersistenceWorkflow.class, wfId);
+        Assertions.assertEquals(4, allDataObjects2.size());
         Assertions.assertEquals("query-start-query-decide", allDataObjects2.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+        Assertions.assertEquals(11L, allDataObjects.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "1"));
 
         final Map<String, Object> searchAttributes1 = client.getWorkflowSearchAttributes(BasicPersistenceWorkflow.class,
                 wfId, "", Arrays.asList(TEST_SEARCH_ATTRIBUTE_KEYWORD, TEST_SEARCH_ATTRIBUTE_INT));

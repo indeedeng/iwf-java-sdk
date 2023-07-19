@@ -1,6 +1,7 @@
 package io.iworkflow.core;
 
 import io.iworkflow.core.persistence.PersistenceOptions;
+import io.iworkflow.core.utils.DataAttributeUtils;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
@@ -438,16 +439,16 @@ public class Client {
      * @param keys              required, cannot be empty or null
      * @return the data attributes
      */
-    public Map<String, Object> getWorkflowDataObjects(
+    public Map<String, Object> getWorkflowDataAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
-            List<String> keys) {
+            final List<String> keys) {
 
         if (keys == null || keys.isEmpty()) {
-            throw new IllegalArgumentException("keys must contain at least one entry, or use getAllDataObjects API to get all");
+            throw new IllegalArgumentException("keys must contain at least one entry, or use getAllDataAttributes API to get all");
         }
-        return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, keys);
+        return doGetWorkflowDataAttributes(workflowClass, workflowId, workflowRunId, keys);
     }
 
     /**
@@ -458,11 +459,11 @@ public class Client {
      * @param keys              required, cannot be empty or null
      * @return the data attributes
      */
-    public Map<String, Object> getWorkflowDataObjects(
+    public Map<String, Object> getWorkflowDataAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
-            List<String> keys) {
-        return getWorkflowDataObjects(workflowClass, workflowId, "", keys);
+            final List<String> keys) {
+        return getWorkflowDataAttributes(workflowClass, workflowId, "", keys);
     }
 
     /**
@@ -473,11 +474,11 @@ public class Client {
      * @param workflowRunId     optional, can be empty
      * @return the data attributes
      */
-    public Map<String, Object> getAllDataObjects(
+    public Map<String, Object> getAllDataAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId) {
-        return doGetWorkflowDataObjects(workflowClass, workflowId, workflowRunId, null);
+        return doGetWorkflowDataAttributes(workflowClass, workflowId, workflowRunId, null);
     }
 
     /**
@@ -487,32 +488,33 @@ public class Client {
      * @param workflowId        required
      * @return the data attributes
      */
-    public Map<String, Object> getAllDataObjects(
+    public Map<String, Object> getAllDataAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId) {
-        return getAllDataObjects(workflowClass, workflowId, "");
+        return getAllDataAttributes(workflowClass, workflowId, "");
     }
 
-    private Map<String, Object> doGetWorkflowDataObjects(
+    private Map<String, Object> doGetWorkflowDataAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
             final String workflowId,
             final String workflowRunId,
-            List<String> keys) {
+            final List<String> keys) {
         final String wfType = workflowClass.getSimpleName();
         checkWorkflowTypeExists(wfType);
 
-        Map<String, Class<?>> queryDataObjectKeyToTypeMap = registry.getDataAttributeKeyToTypeMap(wfType);
+        final Map<String, Class<?>> dataAttributeKeyToTypeMap = registry.getDataAttributeKeyToTypeMap(wfType);
+        final Map<String, Class<?>> dataAttributePrefixToTypeMap = registry.getDataAttributePrefixToTypeMap(wfType);
 
         // if attribute keys is null or empty, iwf server will return all data attributes
         if (keys != null && !keys.isEmpty()) {
-            List<String> nonExistingDataObjectKeyList = keys.stream()
-                    .filter(s -> !queryDataObjectKeyToTypeMap.containsKey(s))
-                    .collect(Collectors.toList());
-            if (!nonExistingDataObjectKeyList.isEmpty()) {
+            final Optional<String> first = keys.stream()
+                    .filter(key -> !DataAttributeUtils.isValidDataAttributeKey(key, dataAttributeKeyToTypeMap, dataAttributePrefixToTypeMap))
+                    .findFirst();
+            if (first.isPresent()) {
                 throw new IllegalArgumentException(
                         String.format(
-                                "data attributes not registered: %s",
-                                String.join(", ", nonExistingDataObjectKeyList)
+                                "data attribute not registered: %s",
+                                first.get()
                         )
                 );
             }
@@ -525,12 +527,15 @@ public class Client {
         if (response.getObjects() == null) {
             throw new IllegalStateException("data attributes not returned");
         }
-        Map<String, Object> result = new HashMap<>();
-        for (KeyValue keyValue : response.getObjects()) {
+
+        final Map<String, Object> result = new HashMap<>();
+        for (final KeyValue keyValue : response.getObjects()) {
             if (keyValue.getValue() != null) {
                 result.put(
                         keyValue.getKey(),
-                        clientOptions.getObjectEncoder().decode(keyValue.getValue(), queryDataObjectKeyToTypeMap.get(keyValue.getKey()))
+                        clientOptions.getObjectEncoder().decode(
+                                keyValue.getValue(),
+                                DataAttributeUtils.getDataAttributeType(keyValue.getKey(), dataAttributeKeyToTypeMap, dataAttributePrefixToTypeMap))
                 );
             }
         }

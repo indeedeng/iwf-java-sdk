@@ -268,9 +268,13 @@ public class WorkerService {
         return results;
     }
 
-    private DataAttributesRWImpl createDataObjectsRW(String workflowType, List<KeyValue> keyValues) {
+    private DataAttributesRWImpl createDataObjectsRW(final String workflowType, final List<KeyValue> keyValues) {
         final Map<String, EncodedObject> map = toMap(keyValues);
-        return new DataAttributesRWImpl(registry.getDataAttributeKeyToTypeMap(workflowType), map, workerOptions.getObjectEncoder());
+        return new DataAttributesRWImpl(
+                registry.getDataAttributeKeyToTypeMap(workflowType),
+                registry.getDataAttributePrefixToTypeMap(workflowType),
+                map,
+                workerOptions.getObjectEncoder());
     }
 
     private Map<String, EncodedObject> toMap(final List<KeyValue> keyValues) {

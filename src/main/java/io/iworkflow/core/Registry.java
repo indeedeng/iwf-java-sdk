@@ -26,7 +26,8 @@ public class Registry {
     private final Map<String, Map<String, Class<?>>> signalTypeStore = new HashMap<>();
 
     private final Map<String, Map<String, Class<?>>> internalChannelTypeStore = new HashMap<>();
-    private final Map<String, Map<String, Class<?>>> dataAttributeTypeStore = new HashMap<>();
+    private final Map<String, Map<String, Class<?>>> dataAttributeKeyToTypeStore = new HashMap<>();
+    private final Map<String, Map<String, Class<?>>> dataAttributePrefixToTypeStore = new HashMap<>();
 
     private final Map<String, Map<String, SearchAttributeValueType>> searchAttributeTypeStore = new HashMap<>();
 
@@ -150,28 +151,42 @@ public class Registry {
     }
 
     private void registerWorkflowDataAttributes(final ObjectWorkflow wf) {
-        String workflowType = getWorkflowType(wf);
+        final String workflowType = getWorkflowType(wf);
         final List<DataAttributeDef> fields = getDataAttributeFields(wf);
+
+        dataAttributeKeyToTypeStore.put(workflowType, new HashMap<>());
+        dataAttributePrefixToTypeStore.put(workflowType, new HashMap<>());
+
         if (fields == null || fields.isEmpty()) {
-            dataAttributeTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        for (DataAttributeDef dataAttributeField : fields) {
-            Map<String, Class<?>> dataAttributeKeyToTypeMap =
-                    dataAttributeTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
-            if (dataAttributeKeyToTypeMap.containsKey(dataAttributeField.getKey())) {
-                throw new WorkflowDefinitionException(
-                        String.format(
-                                "data attribute key %s already exists",
-                                dataAttributeField.getDataAttributeType())
-                );
+        for (final DataAttributeDef dataAttributeField : fields) {
+            if (!dataAttributeField.isPrefix()) {
+                addDataAttributeToStore(dataAttributeField, workflowType, dataAttributeKeyToTypeStore);
+            } else {
+                addDataAttributeToStore(dataAttributeField, workflowType, dataAttributePrefixToTypeStore);
             }
-            dataAttributeKeyToTypeMap.put(
-                    dataAttributeField.getKey(),
-                    dataAttributeField.getDataAttributeType()
+        }
+    }
+
+    private void addDataAttributeToStore(
+            final DataAttributeDef dataAttributeField,
+            final String workflowType,
+            final Map<String, Map<String, Class<?>>> dataAttributeStore) {
+        final Map<String, Class<?>> dataAttributeMap =
+                dataAttributeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
+        if (dataAttributeMap.containsKey(dataAttributeField.getKey())) {
+            throw new WorkflowDefinitionException(
+                    String.format(
+                            "data attribute key/prefix %s already exists",
+                            dataAttributeField.getDataAttributeType())
             );
         }
+        dataAttributeMap.put(
+                dataAttributeField.getKey(),
+                dataAttributeField.getDataAttributeType()
+        );
     }
 
     private void registerPersistenceOptions(final ObjectWorkflow wf) {
@@ -180,19 +195,24 @@ public class Registry {
     }
 
     private List<DataAttributeDef> getDataAttributeFields(final ObjectWorkflow wf) {
-        final Set<String> keySet = wf.getPersistenceSchema().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
-        if (keySet.size() != wf.getPersistenceSchema().size()) {
-            throw new WorkflowDefinitionException("cannot have conflict key definition in persistence schema");
-        }
-        return wf.getPersistenceSchema().stream().filter((f) -> f instanceof DataAttributeDef).map(f -> (DataAttributeDef) f).collect(Collectors.toList());
+        return getAttributeFields(wf, DataAttributeDef.class);
     }
 
     private List<SearchAttributeDef> getSearchAttributeFields(final ObjectWorkflow wf) {
+        return getAttributeFields(wf, SearchAttributeDef.class);
+    }
+
+    private <T extends PersistenceFieldDef> List<T> getAttributeFields(final ObjectWorkflow wf, final Class<T> attributeDef) {
+        // All the search attributes, data attributes, and data attribute prefixes can not have the same `key`
         final Set<String> keySet = wf.getPersistenceSchema().stream().map(PersistenceFieldDef::getKey).collect(Collectors.toSet());
         if (keySet.size() != wf.getPersistenceSchema().size()) {
-            throw new WorkflowDefinitionException("cannot have conflict key definition in persistence schema");
+            throw new WorkflowDefinitionException("cannot have conflict key/prefix definition in persistence schema");
         }
-        return wf.getPersistenceSchema().stream().filter((f) -> f instanceof SearchAttributeDef).map(f -> (SearchAttributeDef) f).collect(Collectors.toList());
+
+        return wf.getPersistenceSchema().stream()
+                .filter(attributeDef::isInstance)
+                .map(attributeDef::cast)
+                .collect(Collectors.toList());
     }
 
     private List<InternalChannelDef> getInternalChannels(final ObjectWorkflow wf) {
@@ -259,7 +279,11 @@ public class Registry {
     }
 
     public Map<String, Class<?>> getDataAttributeKeyToTypeMap(final String workflowType) {
-        return dataAttributeTypeStore.get(workflowType);
+        return dataAttributeKeyToTypeStore.get(workflowType);
+    }
+
+    public Map<String, Class<?>> getDataAttributePrefixToTypeMap(final String workflowType) {
+        return dataAttributePrefixToTypeStore.get(workflowType);
     }
 
     public Map<String, SearchAttributeValueType> getSearchAttributeKeyToTypeMap(final String workflowType) {

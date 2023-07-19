@@ -1,6 +1,7 @@
 package io.iworkflow.core.persistence;
 
 import io.iworkflow.core.ObjectEncoder;
+import io.iworkflow.core.utils.DataAttributeUtils;
 import io.iworkflow.gen.models.EncodedObject;
 import io.iworkflow.gen.models.KeyValue;
 
@@ -11,15 +12,18 @@ import java.util.stream.Collectors;
 
 public class DataAttributesRWImpl implements DataAttributesRW {
     private final Map<String, Class<?>> keyToTypeMap;
+    private final Map<String, Class<?>> prefixToTypeMap;
     private final Map<String, EncodedObject> keyToEncodedObjectMap;
     private final Map<String, EncodedObject> toReturnToServer;
     private final ObjectEncoder objectEncoder;
 
     public DataAttributesRWImpl(
             final Map<String, Class<?>> keyToTypeMap,
+            final Map<String, Class<?>> prefixToTypeMap,
             final Map<String, EncodedObject> keyToValueMap,
             final ObjectEncoder objectEncoder) {
         this.keyToTypeMap = keyToTypeMap;
+        this.prefixToTypeMap = prefixToTypeMap;
         this.keyToEncodedObjectMap = keyToValueMap;
         this.toReturnToServer = new HashMap<>();
         this.objectEncoder = objectEncoder;
@@ -27,14 +31,14 @@ public class DataAttributesRWImpl implements DataAttributesRW {
 
     @Override
     public <T> T getDataAttribute(String key, Class<T> type) {
-        if (!keyToTypeMap.containsKey(key)) {
+        if (!DataAttributeUtils.isValidDataAttributeKey(key, keyToTypeMap, prefixToTypeMap)) {
             throw new IllegalArgumentException(String.format("data attribute %s is not registered", key));
         }
         if (!keyToEncodedObjectMap.containsKey(key)) {
             return null;
         }
 
-        Class<?> registeredType = keyToTypeMap.get(key);
+        final Class<?> registeredType = DataAttributeUtils.getDataAttributeType(key, keyToTypeMap, prefixToTypeMap);
         if (!type.isAssignableFrom(registeredType)) {
             throw new IllegalArgumentException(
                     String.format(
@@ -49,11 +53,11 @@ public class DataAttributesRWImpl implements DataAttributesRW {
 
     @Override
     public void setDataAttribute(String key, Object value) {
-        if (!keyToTypeMap.containsKey(key)) {
+        if (!DataAttributeUtils.isValidDataAttributeKey(key, keyToTypeMap, prefixToTypeMap)) {
             throw new IllegalArgumentException(String.format("data attribute %s is not registered", key));
         }
 
-        Class<?> registeredType = keyToTypeMap.get(key);
+        final Class<?> registeredType = DataAttributeUtils.getDataAttributeType(key, keyToTypeMap, prefixToTypeMap);
         if (value != null && !registeredType.isAssignableFrom(value.getClass())) {
             throw new IllegalArgumentException(String.format("Input is not an instance of class %s", registeredType.getName()));
         }

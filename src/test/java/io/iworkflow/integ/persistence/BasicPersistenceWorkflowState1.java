@@ -11,11 +11,13 @@ import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.integ.basic.FakContextImpl;
 
+import javax.validation.constraints.AssertTrue;
 import java.util.Arrays;
 
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_DATA_OBJECT_MODEL_1;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_DATA_OBJECT_MODEL_2;
+import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_DATE_TIME;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_INT;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_KEYWORD;
@@ -44,6 +46,9 @@ public class BasicPersistenceWorkflowState1 implements WorkflowState<String> {
         // but it's not allowed to set a parent to child
         //persistence.setDataObject(TEST_DATA_OBJECT_MODEL_2, new io.iworkflow.gen.models.Context());
         persistence.setDataAttribute(TEST_DATA_OBJECT_MODEL_2, new FakContextImpl());
+
+        // set dynamic data attribute with the registered prefix
+        persistence.setDataAttribute(TEST_DATA_OBJECT_PREFIX + "1", 11L);
 
         persistence.setStateExecutionLocal("test-key", "test-value-1");
         persistence.recordEvent("event-1", "event-1");
@@ -75,6 +80,14 @@ public class BasicPersistenceWorkflowState1 implements WorkflowState<String> {
         // but it's allowed to assign child to parent
         persistence.getDataAttribute(TEST_DATA_OBJECT_MODEL_2, io.iworkflow.gen.models.Context.class);
         persistence.getDataAttribute(TEST_DATA_OBJECT_MODEL_2, FakContextImpl.class);
+
+        // dynamically created data attribute with the registered prefix
+        final Long validDataAttributeWithPrefix = persistence.getDataAttribute(TEST_DATA_OBJECT_PREFIX + "1", Long.class);
+        assert validDataAttributeWithPrefix == 11L;
+
+        // return null for non-dynamically created data attribute with the registered prefix
+        final Long nonValidDataAttributeWithPrefix = persistence.getDataAttribute(TEST_DATA_OBJECT_PREFIX + "2", Long.class);
+        assert nonValidDataAttributeWithPrefix == null;
 
         String testVal2 = persistence.getStateExecutionLocal("test-key", String.class);
         if (testVal2.equals("test-value-1")) {
