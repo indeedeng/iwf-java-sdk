@@ -71,7 +71,7 @@ public class RpcTest {
 
         // data attrs
         Map<String, Object> dataAttrs =
-                client.getWorkflowDataObjects(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+                client.getWorkflowDataAttributes(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 ImmutableMap.builder()
                         .put(TEST_DATA_OBJECT_KEY, RPC_INPUT)
@@ -106,7 +106,7 @@ public class RpcTest {
 
         // data attrs
         Map<String, Object> dataAttrs =
-                client.getWorkflowDataObjects(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+                client.getWorkflowDataAttributes(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 ImmutableMap.builder()
                         .put(TEST_DATA_OBJECT_KEY, HARDCODED_STR)
@@ -140,7 +140,7 @@ public class RpcTest {
 
         // data attrs
         Map<String, Object> dataAttrs =
-                client.getWorkflowDataObjects(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+                client.getWorkflowDataAttributes(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 ImmutableMap.builder()
                         .put(TEST_DATA_OBJECT_KEY, RPC_INPUT)
@@ -173,7 +173,7 @@ public class RpcTest {
 
         // data attrs
         Map<String, Object> dataAttrs =
-                client.getWorkflowDataObjects(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+                client.getWorkflowDataAttributes(BasicPersistenceWorkflow.class, wfId, runId, Arrays.asList(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 ImmutableMap.builder()
                         .put(TEST_DATA_OBJECT_KEY, HARDCODED_STR)

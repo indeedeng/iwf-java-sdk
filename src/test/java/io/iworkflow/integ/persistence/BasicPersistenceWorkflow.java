@@ -19,6 +19,7 @@ public class BasicPersistenceWorkflow implements ObjectWorkflow {
     public static final String TEST_DATA_OBJECT_MODEL_1 = "data-obj-2";
 
     public static final String TEST_DATA_OBJECT_MODEL_2 = "data-obj-3";
+    public static final String TEST_DATA_OBJECT_PREFIX = "data-obj-prefix-";
 
     public static final String TEST_SEARCH_ATTRIBUTE_KEYWORD = "CustomKeywordField";
     public static final String TEST_SEARCH_ATTRIBUTE_INT = "CustomIntField";
@@ -36,6 +37,7 @@ public class BasicPersistenceWorkflow implements ObjectWorkflow {
                 DataAttributeDef.create(String.class, TEST_DATA_OBJECT_KEY),
                 DataAttributeDef.create(Context.class, TEST_DATA_OBJECT_MODEL_1),
                 DataAttributeDef.create(FakContextImpl.class, TEST_DATA_OBJECT_MODEL_2),
+                DataAttributeDef.createByPrefix(Long.class, TEST_DATA_OBJECT_PREFIX),
                 SearchAttributeDef.create(SearchAttributeValueType.INT, TEST_SEARCH_ATTRIBUTE_INT),
                 SearchAttributeDef.create(SearchAttributeValueType.KEYWORD, TEST_SEARCH_ATTRIBUTE_KEYWORD),
                 SearchAttributeDef.create(SearchAttributeValueType.DATETIME, TEST_SEARCH_ATTRIBUTE_DATE_TIME)
