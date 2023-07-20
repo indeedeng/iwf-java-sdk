@@ -162,10 +162,10 @@ public class Registry {
         }
 
         for (final DataAttributeDef dataAttributeField : fields) {
-            if (!dataAttributeField.isPrefix()) {
-                addDataAttributeToStore(dataAttributeField, workflowType, dataAttributeKeyToTypeStore);
-            } else {
+            if (dataAttributeField.isPrefix()) {
                 addDataAttributeToStore(dataAttributeField, workflowType, dataAttributePrefixToTypeStore);
+            } else {
+                addDataAttributeToStore(dataAttributeField, workflowType, dataAttributeKeyToTypeStore);
             }
         }
     }
