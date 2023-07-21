@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 
 import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_NAME_1;
 import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_NAME_3;
+import static io.iworkflow.integ.signal.BasicSignalWorkflow.SIGNAL_CHANNEL_PREFIX_1;
 import static io.iworkflow.integ.signal.BasicSignalWorkflowState2.TIMER_COMMAND_ID;
 
 public class SignalTest {
@@ -36,21 +37,25 @@ public class SignalTest {
                 BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(2));
 
         client.signalWorkflow(
-                BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(2));
+                BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(3));
 
         // test no runId
         client.signalWorkflow(
-                BasicSignalWorkflow.class, wfId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(2));
+                BasicSignalWorkflow.class, wfId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(5));
 
         // test sending null signal
         client.signalWorkflow(
                 BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_3, null);
 
+        // create by index
+        client.signalWorkflow(
+                BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_PREFIX_1 + "1", Integer.valueOf(4));
+
         Thread.sleep(1000);// wait for timer to be ready to skip
         client.skipTimer(wfId, "", BasicSignalWorkflowState2.class, 1, TIMER_COMMAND_ID);
 
         final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
-        Assertions.assertEquals(5, output);
+        Assertions.assertEquals(6, output);
 
         try {
             client.signalWorkflow(

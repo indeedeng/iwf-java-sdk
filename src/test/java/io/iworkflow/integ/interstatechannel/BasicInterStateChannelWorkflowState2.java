@@ -21,6 +21,7 @@ public class BasicInterStateChannelWorkflowState2 implements WorkflowState<Integ
             Integer input,
             Persistence persistence, final Communication communication) {
         communication.publishInternalChannel(BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_NAME_1, 2);
+        communication.publishInternalChannel(BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_PREFIX_1 + "1", 3);
         return CommandRequest.empty;
     }
 
