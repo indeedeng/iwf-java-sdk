@@ -1,11 +1,14 @@
 package io.iworkflow.core.utils;
 
+import io.iworkflow.core.communication.ChannelType;
+
 import java.util.Map;
 import java.util.Optional;
 
-public class InternalChannelUtils {
-    public static Class<?> getInternalChannelType(
+public class ChannelUtils {
+    public static Class<?> getChannelType(
             final String name,
+            final ChannelType channelType,
             final Map<String, Class<?>> nameToTypeMap,
             final Map<String, Class<?>> prefixToTypeMap) {
 
@@ -23,7 +26,8 @@ public class InternalChannelUtils {
 
         throw new IllegalArgumentException(
                 String.format(
-                        "InternalChannel not registered: %s",
+                        "%s channel not registered: %s",
+                        channelType.toString(),
                         name
                 )
         );

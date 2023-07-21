@@ -3,7 +3,8 @@ package io.iworkflow.core.mapper;
 import io.iworkflow.core.ObjectEncoder;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.command.ImmutableCommandResults;
-import io.iworkflow.core.utils.InternalChannelUtils;
+import io.iworkflow.core.communication.ChannelType;
+import io.iworkflow.core.utils.ChannelUtils;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ public class CommandResultsMapper {
     public static CommandResults fromGenerated(
             io.iworkflow.gen.models.CommandResults commandResults,
             Map<String, Class<?>> signalNameToTypeMap,
+            Map<String, Class<?>> signalPrefixToTypeMap,
             Map<String, Class<?>> interstateChannelNameToTypeMap,
             Map<String, Class<?>> interstateChannelPrefixToTypeMap,
             ObjectEncoder objectEncoder) {
@@ -24,7 +26,12 @@ public class CommandResultsMapper {
             builder.allSignalCommandResults(commandResults.getSignalResults().stream()
                     .map(signalResult -> SignalResultMapper.fromGenerated(
                             signalResult,
-                            signalNameToTypeMap.get(signalResult.getSignalChannelName()),
+                            ChannelUtils.getChannelType(
+                                    signalResult.getSignalChannelName(),
+                                    ChannelType.SIGNAL,
+                                    signalNameToTypeMap,
+                                    signalPrefixToTypeMap
+                            ),
                             objectEncoder))
                     .collect(Collectors.toList()));
         }
@@ -37,8 +44,9 @@ public class CommandResultsMapper {
             builder.allInternalChannelCommandResult(commandResults.getInterStateChannelResults().stream()
                     .map(result -> InternalChannelResultMapper.fromGenerated(
                             result,
-                            InternalChannelUtils.getInternalChannelType(
+                            ChannelUtils.getChannelType(
                                     result.getChannelName(),
+                                    ChannelType.INTERNAL,
                                     interstateChannelNameToTypeMap,
                                     interstateChannelPrefixToTypeMap
                             ),

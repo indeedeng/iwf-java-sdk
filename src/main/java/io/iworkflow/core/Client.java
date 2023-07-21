@@ -1,6 +1,8 @@
 package io.iworkflow.core;
 
+import io.iworkflow.core.communication.ChannelType;
 import io.iworkflow.core.persistence.PersistenceOptions;
+import io.iworkflow.core.utils.ChannelUtils;
 import io.iworkflow.core.utils.DataAttributeUtils;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
@@ -339,12 +341,13 @@ public class Client {
 
         checkWorkflowTypeExists(wfType);
 
-        Map<String, Class<?>> nameToTypeMap = registry.getSignalChannelNameToSignalTypeMap(wfType);
+        final Class<?> signalType = ChannelUtils.getChannelType(
+                signalChannelName,
+                ChannelType.SIGNAL,
+                registry.getSignalChannelNameToTypeMap(wfType),
+                registry.getSignalChannelPrefixToTypeMap(wfType)
+        );
 
-        if (!nameToTypeMap.containsKey(signalChannelName)) {
-            throw new IllegalArgumentException(String.format("Workflow %s doesn't have signal %s", wfType, signalChannelName));
-        }
-        Class<?> signalType = nameToTypeMap.get(signalChannelName);
         if (signalValue != null && !signalType.isInstance(signalValue)) {
             throw new IllegalArgumentException(String.format("Signal value is not of type %s", signalType.getName()));
         }

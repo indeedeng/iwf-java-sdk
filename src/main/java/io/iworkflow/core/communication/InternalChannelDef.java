@@ -5,12 +5,6 @@ import org.immutables.value.Value;
 @Value.Immutable
 public abstract class InternalChannelDef implements CommunicationMethodDef {
 
-    public abstract Class getValueType();
-
-    public abstract String getChannelName();
-
-    public abstract Boolean isPrefix();
-
     /**
      * iWF will verify if the name has been registered for the internal channel created using this method,
      * allowing users to create only one internal channel with the same name and type.
@@ -21,8 +15,8 @@ public abstract class InternalChannelDef implements CommunicationMethodDef {
      */
     public static InternalChannelDef create(final Class type, final String name) {
         return ImmutableInternalChannelDef.builder()
-                .channelName(name)
-                .valueType(type)
+                .name(name)
+                .type(type)
                 .isPrefix(false)
                 .build();
     }
@@ -39,8 +33,8 @@ public abstract class InternalChannelDef implements CommunicationMethodDef {
      */
     public static InternalChannelDef createByPrefix(final Class type, final String namePrefix) {
         return ImmutableInternalChannelDef.builder()
-                .channelName(namePrefix)
-                .valueType(type)
+                .name(namePrefix)
+                .type(type)
                 .isPrefix(true)
                 .build();
     }

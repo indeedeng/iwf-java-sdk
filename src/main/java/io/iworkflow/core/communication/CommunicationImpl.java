@@ -3,7 +3,7 @@ package io.iworkflow.core.communication;
 import io.iworkflow.core.ObjectEncoder;
 import io.iworkflow.core.StateMovement;
 import io.iworkflow.core.WorkflowDefinitionException;
-import io.iworkflow.core.utils.InternalChannelUtils;
+import io.iworkflow.core.utils.ChannelUtils;
 import io.iworkflow.gen.models.EncodedObject;
 
 import java.util.ArrayList;
@@ -36,8 +36,9 @@ public class CommunicationImpl implements Communication {
 
     @Override
     public void publishInternalChannel(final String channelName, final Object value) {
-        final Class<?> type = InternalChannelUtils.getInternalChannelType(
+        final Class<?> type = ChannelUtils.getChannelType(
                 channelName,
+                ChannelType.INTERNAL,
                 nameToTypeMap,
                 prefixToTypeMap
         );

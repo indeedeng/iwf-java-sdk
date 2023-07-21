@@ -1,5 +1,7 @@
 package io.iworkflow.core;
 
+import io.iworkflow.core.communication.ChannelType;
+import io.iworkflow.core.communication.CommunicationMethodDef;
 import io.iworkflow.core.communication.InternalChannelDef;
 import io.iworkflow.core.communication.SignalChannelDef;
 import io.iworkflow.core.persistence.DataAttributeDef;
@@ -23,7 +25,9 @@ public class Registry {
     private final Map<String, StateDef> workflowStateStore = new HashMap<>(); // TODO refactor to use Map<String, Map<String, StateDef>> to be more clear
 
     private final Map<String, StateDef> workflowStartStateStore = new HashMap<>();
-    private final Map<String, Map<String, Class<?>>> signalTypeStore = new HashMap<>();
+
+    private final Map<String, Map<String, Class<?>>> signalNameToTypeStore = new HashMap<>();
+    private final Map<String, Map<String, Class<?>>> signalPrefixToTypeStore = new HashMap<>();
 
     private final Map<String, Map<String, Class<?>>> internalChannelNameToTypeStore = new HashMap<>();
     private final Map<String, Map<String, Class<?>>> internalChannelPrefixToTypeStore = new HashMap<>();
@@ -115,21 +119,22 @@ public class Registry {
     }
 
     private void registerWorkflowSignal(final ObjectWorkflow wf) {
-        String workflowType = getWorkflowType(wf);
+        final String workflowType = getWorkflowType(wf);
         final List<SignalChannelDef> channels = getSignalChannels(wf);
+
+        signalNameToTypeStore.put(workflowType, new HashMap<>());
+        signalPrefixToTypeStore.put(workflowType, new HashMap<>());
+
         if (channels == null || channels.isEmpty()) {
-            signalTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        for (SignalChannelDef signalChannelDef : channels) {
-            Map<String, Class<?>> signalNameToTypeMap =
-                    signalTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
-            if (signalNameToTypeMap.containsKey(signalChannelDef.getSignalChannelName())) {
-                throw new WorkflowDefinitionException(
-                        String.format("Signal channel name  %s already exists", signalChannelDef.getSignalChannelName()));
+        for (final SignalChannelDef signalChannelDef : channels) {
+            if (signalChannelDef.isPrefix()) {
+                addChannelToStore(workflowType, ChannelType.SIGNAL, signalChannelDef, signalPrefixToTypeStore);
+            } else {
+                addChannelToStore(workflowType, ChannelType.SIGNAL, signalChannelDef, signalNameToTypeStore);
             }
-            signalNameToTypeMap.put(signalChannelDef.getSignalChannelName(), signalChannelDef.getSignalValueType());
         }
     }
 
@@ -146,28 +151,30 @@ public class Registry {
 
         for (final InternalChannelDef internalChannelDef : channels) {
             if (internalChannelDef.isPrefix()) {
-                addInternalChannelToStore(internalChannelDef, workflowType, internalChannelPrefixToTypeStore);
+                addChannelToStore(workflowType, ChannelType.INTERNAL, internalChannelDef, internalChannelPrefixToTypeStore);
             } else {
-                addInternalChannelToStore(internalChannelDef, workflowType, internalChannelNameToTypeStore);
+                addChannelToStore(workflowType, ChannelType.INTERNAL, internalChannelDef, internalChannelNameToTypeStore);
             }
         }
     }
 
-    private void addInternalChannelToStore(
-            final InternalChannelDef internalChannelDef,
+    private void addChannelToStore(
             final String workflowType,
-            final Map<String, Map<String, Class<?>>> internalChannelStore
+            final ChannelType channelType,
+            final CommunicationMethodDef channelDef,
+            final Map<String, Map<String, Class<?>>> channelStore
     ) {
-        final Map<String, Class<?>> internalChannelMap =
-                internalChannelStore.computeIfAbsent(workflowType, s -> new HashMap<>());
-        if (internalChannelMap.containsKey(internalChannelDef.getChannelName())) {
+        final Map<String, Class<?>> channelMap =
+                channelStore.computeIfAbsent(workflowType, s -> new HashMap<>());
+        if (channelMap.containsKey(channelDef.getName())) {
             throw new WorkflowDefinitionException(
                     String.format(
-                            "InternalChannel name/prefix %s already exists",
-                            internalChannelDef.getChannelName())
+                            "%s channel name/prefix %s already exists",
+                            channelType.toString(),
+                            channelDef.getName())
             );
         }
-        internalChannelMap.put(internalChannelDef.getChannelName(), internalChannelDef.getValueType());
+        channelMap.put(channelDef.getName(), channelDef.getType());
     }
 
     private void registerWorkflowDataAttributes(final ObjectWorkflow wf) {
@@ -290,8 +297,12 @@ public class Registry {
         return Optional.ofNullable(state);
     }
 
-    public Map<String, Class<?>> getSignalChannelNameToSignalTypeMap(final String workflowType) {
-        return signalTypeStore.get(workflowType);
+    public Map<String, Class<?>> getSignalChannelNameToTypeMap(final String workflowType) {
+        return signalNameToTypeStore.get(workflowType);
+    }
+
+    public Map<String, Class<?>> getSignalChannelPrefixToTypeMap(final String workflowType) {
+        return signalNameToTypeStore.get(workflowType);
     }
 
     public Map<String, Class<?>> getInternalChannelNameToTypeMap(final String workflowType) {

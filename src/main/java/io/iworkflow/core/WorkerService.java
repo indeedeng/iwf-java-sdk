@@ -229,7 +229,8 @@ public class WorkerService {
                 input,
                 CommandResultsMapper.fromGenerated(
                         req.getCommandResults(),
-                        registry.getSignalChannelNameToSignalTypeMap(req.getWorkflowType()),
+                        registry.getSignalChannelNameToTypeMap(req.getWorkflowType()),
+                        registry.getSignalChannelPrefixToTypeMap(req.getWorkflowType()),
                         registry.getInternalChannelNameToTypeMap(req.getWorkflowType()),
                         registry.getInternalChannelPrefixToTypeMap(req.getWorkflowType()),
                         workerOptions.getObjectEncoder()),
