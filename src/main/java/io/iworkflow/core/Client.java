@@ -344,8 +344,7 @@ public class Client {
         final Class<?> signalType = ChannelUtils.getChannelType(
                 signalChannelName,
                 ChannelType.SIGNAL,
-                registry.getSignalChannelNameToTypeMap(wfType),
-                registry.getSignalChannelPrefixToTypeMap(wfType)
+                registry.getSignalChannelTypeMapsStore(wfType)
         );
 
         if (signalValue != null && !signalType.isInstance(signalValue)) {
@@ -505,13 +504,12 @@ public class Client {
         final String wfType = workflowClass.getSimpleName();
         checkWorkflowTypeExists(wfType);
 
-        final Map<String, Class<?>> dataAttributeKeyToTypeMap = registry.getDataAttributeKeyToTypeMap(wfType);
-        final Map<String, Class<?>> dataAttributePrefixToTypeMap = registry.getDataAttributePrefixToTypeMap(wfType);
+        final TypeMapsStore dataAttributeTypeMapsStore = registry.getDataAttributeTypeMapsStore(wfType);
 
         // if attribute keys is null or empty, iwf server will return all data attributes
         if (keys != null && !keys.isEmpty()) {
             final Optional<String> first = keys.stream()
-                    .filter(key -> !DataAttributeUtils.isValidDataAttributeKey(key, dataAttributeKeyToTypeMap, dataAttributePrefixToTypeMap))
+                    .filter(key -> !DataAttributeUtils.isValidDataAttributeKey(key, dataAttributeTypeMapsStore))
                     .findFirst();
             if (first.isPresent()) {
                 throw new IllegalArgumentException(
@@ -538,7 +536,7 @@ public class Client {
                         keyValue.getKey(),
                         clientOptions.getObjectEncoder().decode(
                                 keyValue.getValue(),
-                                DataAttributeUtils.getDataAttributeType(keyValue.getKey(), dataAttributeKeyToTypeMap, dataAttributePrefixToTypeMap))
+                                DataAttributeUtils.getDataAttributeType(keyValue.getKey(), dataAttributeTypeMapsStore))
                 );
             }
         }

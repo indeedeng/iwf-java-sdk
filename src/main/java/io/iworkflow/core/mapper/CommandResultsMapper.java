@@ -1,22 +1,20 @@
 package io.iworkflow.core.mapper;
 
 import io.iworkflow.core.ObjectEncoder;
+import io.iworkflow.core.TypeMapsStore;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.command.ImmutableCommandResults;
 import io.iworkflow.core.communication.ChannelType;
 import io.iworkflow.core.utils.ChannelUtils;
 
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CommandResultsMapper {
     public static CommandResults fromGenerated(
-            io.iworkflow.gen.models.CommandResults commandResults,
-            Map<String, Class<?>> signalNameToTypeMap,
-            Map<String, Class<?>> signalPrefixToTypeMap,
-            Map<String, Class<?>> interstateChannelNameToTypeMap,
-            Map<String, Class<?>> interstateChannelPrefixToTypeMap,
-            ObjectEncoder objectEncoder) {
+            final io.iworkflow.gen.models.CommandResults commandResults,
+            final TypeMapsStore signalChannelTypeMapsStore,
+            final TypeMapsStore internalChannelTypeMapsStore,
+            final ObjectEncoder objectEncoder) {
 
         ImmutableCommandResults.Builder builder = ImmutableCommandResults.builder();
         if (commandResults == null) {
@@ -29,8 +27,7 @@ public class CommandResultsMapper {
                             ChannelUtils.getChannelType(
                                     signalResult.getSignalChannelName(),
                                     ChannelType.SIGNAL,
-                                    signalNameToTypeMap,
-                                    signalPrefixToTypeMap
+                                    signalChannelTypeMapsStore
                             ),
                             objectEncoder))
                     .collect(Collectors.toList()));
@@ -47,8 +44,7 @@ public class CommandResultsMapper {
                             ChannelUtils.getChannelType(
                                     result.getChannelName(),
                                     ChannelType.INTERNAL,
-                                    interstateChannelNameToTypeMap,
-                                    interstateChannelPrefixToTypeMap
+                                    internalChannelTypeMapsStore
                             ),
                             objectEncoder))
                     .collect(Collectors.toList()));

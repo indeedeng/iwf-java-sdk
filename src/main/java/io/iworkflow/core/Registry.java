@@ -297,28 +297,25 @@ public class Registry {
         return Optional.ofNullable(state);
     }
 
-    public Map<String, Class<?>> getSignalChannelNameToTypeMap(final String workflowType) {
-        return signalNameToTypeStore.get(workflowType);
+    public TypeMapsStore getSignalChannelTypeMapsStore(final String workflowType) {
+        return ImmutableTypeMapsStore.builder()
+                .nameToTypeStore(signalNameToTypeStore.get(workflowType))
+                .prefixToTypeStore(signalPrefixToTypeStore.get(workflowType))
+                .build();
     }
 
-    public Map<String, Class<?>> getSignalChannelPrefixToTypeMap(final String workflowType) {
-        return signalNameToTypeStore.get(workflowType);
+    public TypeMapsStore getInternalChannelTypeMapsStore(final String workflowType) {
+        return ImmutableTypeMapsStore.builder()
+                .nameToTypeStore(internalChannelNameToTypeStore.get(workflowType))
+                .prefixToTypeStore(internalChannelPrefixToTypeStore.get(workflowType))
+                .build();
     }
 
-    public Map<String, Class<?>> getInternalChannelNameToTypeMap(final String workflowType) {
-        return internalChannelNameToTypeStore.get(workflowType);
-    }
-
-    public Map<String, Class<?>> getInternalChannelPrefixToTypeMap(final String workflowType) {
-        return internalChannelPrefixToTypeStore.get(workflowType);
-    }
-
-    public Map<String, Class<?>> getDataAttributeKeyToTypeMap(final String workflowType) {
-        return dataAttributeKeyToTypeStore.get(workflowType);
-    }
-
-    public Map<String, Class<?>> getDataAttributePrefixToTypeMap(final String workflowType) {
-        return dataAttributePrefixToTypeStore.get(workflowType);
+    public TypeMapsStore getDataAttributeTypeMapsStore(final String workflowType) {
+        return ImmutableTypeMapsStore.builder()
+                .nameToTypeStore(dataAttributeKeyToTypeStore.get(workflowType))
+                .prefixToTypeStore(dataAttributePrefixToTypeStore.get(workflowType))
+                .build();
     }
 
     public Map<String, SearchAttributeValueType> getSearchAttributeKeyToTypeMap(final String workflowType) {

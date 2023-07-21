@@ -2,6 +2,7 @@ package io.iworkflow.core.communication;
 
 import io.iworkflow.core.ObjectEncoder;
 import io.iworkflow.core.StateMovement;
+import io.iworkflow.core.TypeMapsStore;
 import io.iworkflow.core.WorkflowDefinitionException;
 import io.iworkflow.core.utils.ChannelUtils;
 import io.iworkflow.gen.models.EncodedObject;
@@ -14,8 +15,7 @@ import java.util.Map;
 
 public class CommunicationImpl implements Communication {
 
-    final Map<String, Class<?>> nameToTypeMap;
-    final Map<String, Class<?>> prefixToTypeMap;
+    final TypeMapsStore typeMapsStore;
     final Map<String, List<EncodedObject>> toPublish = new HashMap<>();
 
     final List<StateMovement> stateMovements = new ArrayList<>();
@@ -24,12 +24,10 @@ public class CommunicationImpl implements Communication {
     final ObjectEncoder objectEncoder;
 
     public CommunicationImpl(
-            final Map<String, Class<?>> nameToTypeMap,
-            final Map<String, Class<?>> prefixToTypeMap,
+            final TypeMapsStore typeMapsStore,
             final ObjectEncoder objectEncoder,
             final boolean allowTriggerStateMovements) {
-        this.nameToTypeMap = nameToTypeMap;
-        this.prefixToTypeMap = prefixToTypeMap;
+        this.typeMapsStore = typeMapsStore;
         this.objectEncoder = objectEncoder;
         this.allowTriggerStateMovements = allowTriggerStateMovements;
     }
@@ -39,8 +37,7 @@ public class CommunicationImpl implements Communication {
         final Class<?> type = ChannelUtils.getChannelType(
                 channelName,
                 ChannelType.INTERNAL,
-                nameToTypeMap,
-                prefixToTypeMap
+                typeMapsStore
         );
         if (value != null && !type.isInstance(value)) {
             throw new WorkflowDefinitionException(String.format("InternalChannel value is not of type %s", type.getName()));

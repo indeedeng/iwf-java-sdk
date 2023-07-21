@@ -68,8 +68,7 @@ public class WorkerService {
         final Map<String, SearchAttributeValueType> searchAttrsTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(searchAttrsTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
-                registry.getInternalChannelNameToTypeMap(req.getWorkflowType()),
-                registry.getInternalChannelPrefixToTypeMap(req.getWorkflowType()),
+                registry.getInternalChannelTypeMapsStore(req.getWorkflowType()),
                 workerOptions.getObjectEncoder(),
                 true
         );
@@ -150,8 +149,7 @@ public class WorkerService {
         final Map<String, SearchAttributeValueType> searchAttrsTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(searchAttrsTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
-                registry.getInternalChannelNameToTypeMap(req.getWorkflowType()),
-                registry.getInternalChannelPrefixToTypeMap(req.getWorkflowType()),
+                registry.getInternalChannelTypeMapsStore(req.getWorkflowType()),
                 workerOptions.getObjectEncoder(),
                 false
         );
@@ -216,8 +214,7 @@ public class WorkerService {
         final Map<String, SearchAttributeValueType> saTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(saTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
-                registry.getInternalChannelNameToTypeMap(req.getWorkflowType()),
-                registry.getInternalChannelPrefixToTypeMap(req.getWorkflowType()),
+                registry.getInternalChannelTypeMapsStore(req.getWorkflowType()),
                 workerOptions.getObjectEncoder(),
                 false
         );
@@ -229,10 +226,8 @@ public class WorkerService {
                 input,
                 CommandResultsMapper.fromGenerated(
                         req.getCommandResults(),
-                        registry.getSignalChannelNameToTypeMap(req.getWorkflowType()),
-                        registry.getSignalChannelPrefixToTypeMap(req.getWorkflowType()),
-                        registry.getInternalChannelNameToTypeMap(req.getWorkflowType()),
-                        registry.getInternalChannelPrefixToTypeMap(req.getWorkflowType()),
+                        registry.getSignalChannelTypeMapsStore(req.getWorkflowType()),
+                        registry.getInternalChannelTypeMapsStore(req.getWorkflowType()),
                         workerOptions.getObjectEncoder()),
                 persistence,
                 communication);
@@ -285,8 +280,7 @@ public class WorkerService {
     private DataAttributesRWImpl createDataObjectsRW(final String workflowType, final List<KeyValue> keyValues) {
         final Map<String, EncodedObject> map = toMap(keyValues);
         return new DataAttributesRWImpl(
-                registry.getDataAttributeKeyToTypeMap(workflowType),
-                registry.getDataAttributePrefixToTypeMap(workflowType),
+                registry.getDataAttributeTypeMapsStore(workflowType),
                 map,
                 workerOptions.getObjectEncoder());
     }

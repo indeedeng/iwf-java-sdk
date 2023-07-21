@@ -1,19 +1,23 @@
 package io.iworkflow.core.utils;
 
+import io.iworkflow.core.TypeMapsStore;
+
 import java.util.Map;
 import java.util.Optional;
 
 public class DataAttributeUtils {
     public static Boolean isValidDataAttributeKey(
             final String key,
-            final Map<String, Class<?>> dataAttributeKeyToTypeMap,
-            final Map<String, Class<?>> dataAttributePrefixToTypeMap) {
+            final TypeMapsStore typeMapsStore) {
 
-        if (dataAttributeKeyToTypeMap.containsKey(key)) {
+        final Map<String, Class<?>> keyToTypeMap = typeMapsStore.getNameToTypeStore();
+        final Map<String, Class<?>> prefixToTypeMap = typeMapsStore.getPrefixToTypeStore();
+
+        if (keyToTypeMap.containsKey(key)) {
             return true;
         }
 
-        final Optional<String> first = dataAttributePrefixToTypeMap.keySet().stream()
+        final Optional<String> first = prefixToTypeMap.keySet().stream()
                 .filter(key::startsWith)
                 .findFirst();
 
@@ -22,19 +26,21 @@ public class DataAttributeUtils {
 
     public static Class<?> getDataAttributeType(
             final String key,
-            final Map<String, Class<?>> dataAttributeKeyToTypeMap,
-            final Map<String, Class<?>> dataAttributePrefixToTypeMap) {
+            final TypeMapsStore typeMapsStore) {
 
-        if (dataAttributeKeyToTypeMap.containsKey(key)) {
-            return dataAttributeKeyToTypeMap.get(key);
+        final Map<String, Class<?>> keyToTypeMap = typeMapsStore.getNameToTypeStore();
+        final Map<String, Class<?>> prefixToTypeMap = typeMapsStore.getPrefixToTypeStore();
+
+        if (keyToTypeMap.containsKey(key)) {
+            return keyToTypeMap.get(key);
         }
 
-        final Optional<String> first = dataAttributePrefixToTypeMap.keySet().stream()
+        final Optional<String> first = prefixToTypeMap.keySet().stream()
                 .filter(key::startsWith)
                 .findFirst();
 
         if (first.isPresent()) {
-            return dataAttributePrefixToTypeMap.get(first.get());
+            return prefixToTypeMap.get(first.get());
         }
 
         throw new IllegalArgumentException(

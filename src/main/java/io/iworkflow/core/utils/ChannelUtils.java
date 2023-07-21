@@ -1,5 +1,6 @@
 package io.iworkflow.core.utils;
 
+import io.iworkflow.core.TypeMapsStore;
 import io.iworkflow.core.communication.ChannelType;
 
 import java.util.Map;
@@ -9,8 +10,10 @@ public class ChannelUtils {
     public static Class<?> getChannelType(
             final String name,
             final ChannelType channelType,
-            final Map<String, Class<?>> nameToTypeMap,
-            final Map<String, Class<?>> prefixToTypeMap) {
+            final TypeMapsStore typeMapsStore
+    ) {
+        final Map<String, Class<?>> nameToTypeMap = typeMapsStore.getNameToTypeStore();
+        final Map<String, Class<?>> prefixToTypeMap = typeMapsStore.getPrefixToTypeStore();
 
         if (nameToTypeMap.containsKey(name)) {
             return nameToTypeMap.get(name);
