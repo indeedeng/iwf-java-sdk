@@ -25,7 +25,9 @@ public class Registry {
     private final Map<String, StateDef> workflowStartStateStore = new HashMap<>();
     private final Map<String, Map<String, Class<?>>> signalTypeStore = new HashMap<>();
 
-    private final Map<String, Map<String, Class<?>>> internalChannelTypeStore = new HashMap<>();
+    private final Map<String, Map<String, Class<?>>> internalChannelNameToTypeStore = new HashMap<>();
+    private final Map<String, Map<String, Class<?>>> internalChannelPrefixToTypeStore = new HashMap<>();
+
     private final Map<String, Map<String, Class<?>>> dataAttributeKeyToTypeStore = new HashMap<>();
     private final Map<String, Map<String, Class<?>>> dataAttributePrefixToTypeStore = new HashMap<>();
 
@@ -132,22 +134,40 @@ public class Registry {
     }
 
     private void registerWorkflowInternalChannel(final ObjectWorkflow wf) {
-        String workflowType = getWorkflowType(wf);
+        final String workflowType = getWorkflowType(wf);
         final List<InternalChannelDef> channels = getInternalChannels(wf);
+
+        internalChannelNameToTypeStore.put(workflowType, new HashMap<>());
+        internalChannelPrefixToTypeStore.put(workflowType, new HashMap<>());
+
         if (channels == null || channels.isEmpty()) {
-            internalChannelTypeStore.put(workflowType, new HashMap<>());
             return;
         }
 
-        for (InternalChannelDef internalChannelDef : channels) {
-            Map<String, Class<?>> nameToTypeMap =
-                    internalChannelTypeStore.computeIfAbsent(workflowType, s -> new HashMap<>());
-            if (nameToTypeMap.containsKey(internalChannelDef.getChannelName())) {
-                throw new WorkflowDefinitionException(
-                        String.format("InternalChannel name  %s already exists", internalChannelDef.getChannelName()));
+        for (final InternalChannelDef internalChannelDef : channels) {
+            if (internalChannelDef.isPrefix()) {
+                addInternalChannelToStore(internalChannelDef, workflowType, internalChannelPrefixToTypeStore);
+            } else {
+                addInternalChannelToStore(internalChannelDef, workflowType, internalChannelNameToTypeStore);
             }
-            nameToTypeMap.put(internalChannelDef.getChannelName(), internalChannelDef.getValueType());
         }
+    }
+
+    private void addInternalChannelToStore(
+            final InternalChannelDef internalChannelDef,
+            final String workflowType,
+            final Map<String, Map<String, Class<?>>> internalChannelStore
+    ) {
+        final Map<String, Class<?>> internalChannelMap =
+                internalChannelStore.computeIfAbsent(workflowType, s -> new HashMap<>());
+        if (internalChannelMap.containsKey(internalChannelDef.getChannelName())) {
+            throw new WorkflowDefinitionException(
+                    String.format(
+                            "InternalChannel name/prefix %s already exists",
+                            internalChannelDef.getChannelName())
+            );
+        }
+        internalChannelMap.put(internalChannelDef.getChannelName(), internalChannelDef.getValueType());
     }
 
     private void registerWorkflowDataAttributes(final ObjectWorkflow wf) {
@@ -275,7 +295,11 @@ public class Registry {
     }
 
     public Map<String, Class<?>> getInternalChannelNameToTypeMap(final String workflowType) {
-        return internalChannelTypeStore.get(workflowType);
+        return internalChannelNameToTypeStore.get(workflowType);
+    }
+
+    public Map<String, Class<?>> getInternalChannelPrefixToTypeMap(final String workflowType) {
+        return internalChannelPrefixToTypeStore.get(workflowType);
     }
 
     public Map<String, Class<?>> getDataAttributeKeyToTypeMap(final String workflowType) {

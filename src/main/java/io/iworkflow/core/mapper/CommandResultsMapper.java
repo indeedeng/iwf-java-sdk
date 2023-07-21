@@ -3,6 +3,7 @@ package io.iworkflow.core.mapper;
 import io.iworkflow.core.ObjectEncoder;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.command.ImmutableCommandResults;
+import io.iworkflow.core.utils.InternalChannelUtils;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ public class CommandResultsMapper {
             io.iworkflow.gen.models.CommandResults commandResults,
             Map<String, Class<?>> signalNameToTypeMap,
             Map<String, Class<?>> interstateChannelNameToTypeMap,
+            Map<String, Class<?>> interstateChannelPrefixToTypeMap,
             ObjectEncoder objectEncoder) {
 
         ImmutableCommandResults.Builder builder = ImmutableCommandResults.builder();
@@ -35,7 +37,11 @@ public class CommandResultsMapper {
             builder.allInternalChannelCommandResult(commandResults.getInterStateChannelResults().stream()
                     .map(result -> InternalChannelResultMapper.fromGenerated(
                             result,
-                            interstateChannelNameToTypeMap.get(result.getChannelName()),
+                            InternalChannelUtils.getInternalChannelType(
+                                    result.getChannelName(),
+                                    interstateChannelNameToTypeMap,
+                                    interstateChannelPrefixToTypeMap
+                            ),
                             objectEncoder))
                     .collect(Collectors.toList()));
         }
