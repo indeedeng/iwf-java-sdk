@@ -22,13 +22,13 @@ public abstract class SignalChannelDef implements CommunicationMethodDef {
     }
 
     /**
-     * iWF now supports dynamically created signal channels with a shared prefix and the same type.
+     * iWF now supports dynamically created signal channels with a shared name prefix and the same type.
      * (E.g., dynamically created signal channels of type String can be named with a common prefix like: signal_channel_prefix_1: "one", signal_channel_prefix_2: "two")
      * iWF will verify if the prefix has been registered for signal channels created using this method,
-     * allowing users to create multiple signal channels with the same prefix and type.
+     * allowing users to create multiple signal channels with the same name prefix and type.
      *
      * @param type          required.
-     * @param namePrefix    required. The common prefix of a set of signal channels to be created later.
+     * @param namePrefix    required. The common name prefix of a set of signal channels to be created later.
      * @return a signal channel definition
      */
     public static SignalChannelDef createByPrefix(final Class type, final String namePrefix) {

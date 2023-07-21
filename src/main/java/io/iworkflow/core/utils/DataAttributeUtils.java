@@ -10,10 +10,10 @@ public class DataAttributeUtils {
             final String key,
             final TypeMapsStore typeMapsStore) {
 
-        final Map<String, Class<?>> keyToTypeMap = typeMapsStore.getNameToTypeStore();
+        final Map<String, Class<?>> nameToTypeMap = typeMapsStore.getNameToTypeStore();
         final Map<String, Class<?>> prefixToTypeMap = typeMapsStore.getPrefixToTypeStore();
 
-        if (keyToTypeMap.containsKey(key)) {
+        if (nameToTypeMap.containsKey(key)) {
             return true;
         }
 
@@ -28,11 +28,11 @@ public class DataAttributeUtils {
             final String key,
             final TypeMapsStore typeMapsStore) {
 
-        final Map<String, Class<?>> keyToTypeMap = typeMapsStore.getNameToTypeStore();
+        final Map<String, Class<?>> nameToTypeMap = typeMapsStore.getNameToTypeStore();
         final Map<String, Class<?>> prefixToTypeMap = typeMapsStore.getPrefixToTypeStore();
 
-        if (keyToTypeMap.containsKey(key)) {
-            return keyToTypeMap.get(key);
+        if (nameToTypeMap.containsKey(key)) {
+            return nameToTypeMap.get(key);
         }
 
         final Optional<String> first = prefixToTypeMap.keySet().stream()
