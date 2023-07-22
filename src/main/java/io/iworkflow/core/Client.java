@@ -1,9 +1,6 @@
 package io.iworkflow.core;
 
-import io.iworkflow.core.communication.ChannelType;
 import io.iworkflow.core.persistence.PersistenceOptions;
-import io.iworkflow.core.utils.ChannelUtils;
-import io.iworkflow.core.utils.DataAttributeUtils;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
@@ -341,11 +338,7 @@ public class Client {
 
         checkWorkflowTypeExists(wfType);
 
-        final Class<?> signalType = ChannelUtils.getChannelType(
-                signalChannelName,
-                ChannelType.SIGNAL,
-                registry.getSignalChannelTypeMapsStore(wfType)
-        );
+        final Class<?> signalType = registry.getSignalChannelTypeStore(wfType).getType(signalChannelName);
 
         if (signalValue != null && !signalType.isInstance(signalValue)) {
             throw new IllegalArgumentException(String.format("Signal value is not of type %s", signalType.getName()));
@@ -504,12 +497,12 @@ public class Client {
         final String wfType = workflowClass.getSimpleName();
         checkWorkflowTypeExists(wfType);
 
-        final TypeMapsStore dataAttributeTypeMapsStore = registry.getDataAttributeTypeMapsStore(wfType);
+        final TypeStore dataAttributeTypeStore = registry.getDataAttributeTypeStore(wfType);
 
         // if attribute keys is null or empty, iwf server will return all data attributes
         if (keys != null && !keys.isEmpty()) {
             final Optional<String> first = keys.stream()
-                    .filter(key -> !DataAttributeUtils.isValidDataAttributeKey(key, dataAttributeTypeMapsStore))
+                    .filter(key -> !dataAttributeTypeStore.isValidNameOrPrefix(key))
                     .findFirst();
             if (first.isPresent()) {
                 throw new IllegalArgumentException(
@@ -536,7 +529,8 @@ public class Client {
                         keyValue.getKey(),
                         clientOptions.getObjectEncoder().decode(
                                 keyValue.getValue(),
-                                DataAttributeUtils.getDataAttributeType(keyValue.getKey(), dataAttributeTypeMapsStore))
+                                dataAttributeTypeStore.getType(keyValue.getKey())
+                        )
                 );
             }
         }

@@ -1,19 +1,17 @@
 package io.iworkflow.core.mapper;
 
 import io.iworkflow.core.ObjectEncoder;
-import io.iworkflow.core.TypeMapsStore;
+import io.iworkflow.core.TypeStore;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.command.ImmutableCommandResults;
-import io.iworkflow.core.communication.ChannelType;
-import io.iworkflow.core.utils.ChannelUtils;
 
 import java.util.stream.Collectors;
 
 public class CommandResultsMapper {
     public static CommandResults fromGenerated(
             final io.iworkflow.gen.models.CommandResults commandResults,
-            final TypeMapsStore signalChannelTypeMapsStore,
-            final TypeMapsStore internalChannelTypeMapsStore,
+            final TypeStore signalChannelTypeStore,
+            final TypeStore internalChannelTypeStore,
             final ObjectEncoder objectEncoder) {
 
         ImmutableCommandResults.Builder builder = ImmutableCommandResults.builder();
@@ -24,11 +22,7 @@ public class CommandResultsMapper {
             builder.allSignalCommandResults(commandResults.getSignalResults().stream()
                     .map(signalResult -> SignalResultMapper.fromGenerated(
                             signalResult,
-                            ChannelUtils.getChannelType(
-                                    signalResult.getSignalChannelName(),
-                                    ChannelType.SIGNAL,
-                                    signalChannelTypeMapsStore
-                            ),
+                            signalChannelTypeStore.getType(signalResult.getSignalChannelName()),
                             objectEncoder))
                     .collect(Collectors.toList()));
         }
@@ -41,11 +35,7 @@ public class CommandResultsMapper {
             builder.allInternalChannelCommandResult(commandResults.getInterStateChannelResults().stream()
                     .map(result -> InternalChannelResultMapper.fromGenerated(
                             result,
-                            ChannelUtils.getChannelType(
-                                    result.getChannelName(),
-                                    ChannelType.INTERNAL,
-                                    internalChannelTypeMapsStore
-                            ),
+                            internalChannelTypeStore.getType(result.getChannelName()),
                             objectEncoder))
                     .collect(Collectors.toList()));
         }
