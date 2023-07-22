@@ -17,7 +17,6 @@ public class TypeStore {
         DATA_ATTRIBUTE,
         SIGNAL_CHANNEL,
         INTERNAL_CHANNEL,
-
     }
 
     public final Type classType;
@@ -63,15 +62,7 @@ public class TypeStore {
             store = nameToTypeStore;
         }
 
-        if (store.containsKey(def.getKey())) {
-            throw new WorkflowDefinitionException(
-                    String.format(
-                            "%s key/prefix %s already exists",
-                            classType,
-                            def.getKey())
-            );
-        }
-        store.put(def.getKey(), def.getDataAttributeType());
+        doAddToStore(store, def.getKey(), def.getDataAttributeType());
     }
 
     public void addChannelToStore(final CommunicationMethodDef def) {
@@ -82,15 +73,7 @@ public class TypeStore {
             store = nameToTypeStore;
         }
 
-        if (store.containsKey(def.getName())) {
-            throw new WorkflowDefinitionException(
-                    String.format(
-                            "%s name/prefix %s already exists",
-                            classType,
-                            def.getName())
-            );
-        }
-        store.put(def.getName(), def.getType());
+        doAddToStore(store, def.getName(), def.getType());
     }
 
     private Class<?> doGetType(final String name) {
@@ -103,5 +86,17 @@ public class TypeStore {
                 .findFirst();
 
         return first.map(prefixToTypeStore::get).orElse(null);
+    }
+
+    private void doAddToStore(final Map<String, Class<?>> store, final String name, final Class<?> type) {
+        if (store.containsKey(name)) {
+            throw new WorkflowDefinitionException(
+                    String.format(
+                            "%s name/prefix %s already exists",
+                            classType,
+                            name)
+            );
+        }
+        store.put(name, type);
     }
 }
