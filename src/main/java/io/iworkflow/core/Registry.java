@@ -123,7 +123,7 @@ public class Registry {
         }
 
         for (final SignalChannelDef signalChannelDef : channels) {
-            typeStore.addChannelToStore(signalChannelDef);
+            typeStore.addToStore(signalChannelDef);
         }
     }
 
@@ -139,7 +139,7 @@ public class Registry {
         }
 
         for (final InternalChannelDef internalChannelDef : channels) {
-            typeStore.addChannelToStore(internalChannelDef);
+            typeStore.addToStore(internalChannelDef);
         }
     }
 
@@ -155,7 +155,7 @@ public class Registry {
         }
 
         for (final DataAttributeDef dataAttributeField : fields) {
-            typeStore.addDataAttributeToStore(dataAttributeField);
+            typeStore.addToStore(dataAttributeField);
         }
     }
 

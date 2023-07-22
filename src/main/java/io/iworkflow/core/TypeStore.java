@@ -54,26 +54,23 @@ public class TypeStore {
         return type;
     }
 
-    public void addDataAttributeToStore(final DataAttributeDef def) {
-        final Map<String, Class<?>> store;
-        if (def.isPrefix()) {
-            store = prefixToTypeStore;
+    public void addToStore(final Object def) {
+        final boolean isPrefix;
+        final String name;
+        final Class<?> type;
+        if (classType.equals(Type.DATA_ATTRIBUTE)) {
+            final DataAttributeDef attributeDef = (DataAttributeDef) def;
+            isPrefix = attributeDef.isPrefix();
+            name = attributeDef.getKey();
+            type = attributeDef.getDataAttributeType();
         } else {
-            store = nameToTypeStore;
+            final CommunicationMethodDef channelDef = (CommunicationMethodDef) def;
+            isPrefix = channelDef.isPrefix();
+            name = channelDef.getName();
+            type = channelDef.getType();
         }
 
-        doAddToStore(store, def.getKey(), def.getDataAttributeType());
-    }
-
-    public void addChannelToStore(final CommunicationMethodDef def) {
-        final Map<String, Class<?>> store;
-        if (def.isPrefix()) {
-            store = prefixToTypeStore;
-        } else {
-            store = nameToTypeStore;
-        }
-
-        doAddToStore(store, def.getName(), def.getType());
+        doAddToStore(isPrefix, name, type);
     }
 
     private Class<?> doGetType(final String name) {
@@ -88,13 +85,21 @@ public class TypeStore {
         return first.map(prefixToTypeStore::get).orElse(null);
     }
 
-    private void doAddToStore(final Map<String, Class<?>> store, final String name, final Class<?> type) {
+    private void doAddToStore(final boolean isPrefix, final String name, final Class<?> type) {
+        final Map<String, Class<?>> store;
+        if (isPrefix) {
+            store = prefixToTypeStore;
+        } else {
+            store = nameToTypeStore;
+        }
+
         if (store.containsKey(name)) {
             throw new WorkflowDefinitionException(
                     String.format(
                             "%s name/prefix %s already exists",
                             classType,
-                            name)
+                            name
+                    )
             );
         }
         store.put(name, type);
