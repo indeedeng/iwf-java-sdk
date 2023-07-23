@@ -67,7 +67,7 @@ public class TypeStore {
             final CommunicationMethodDef channelDef = (CommunicationMethodDef) def;
             isPrefix = channelDef.isPrefix();
             name = channelDef.getName();
-            type = channelDef.getType();
+            type = channelDef.getValueType();
         }
 
         doAddToStore(isPrefix, name, type);

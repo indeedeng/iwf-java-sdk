@@ -16,7 +16,7 @@ public abstract class InternalChannelDef implements CommunicationMethodDef {
     public static InternalChannelDef create(final Class type, final String name) {
         return ImmutableInternalChannelDef.builder()
                 .name(name)
-                .type(type)
+                .valueType(type)
                 .isPrefix(false)
                 .build();
     }
@@ -34,7 +34,7 @@ public abstract class InternalChannelDef implements CommunicationMethodDef {
     public static InternalChannelDef createByPrefix(final Class type, final String namePrefix) {
         return ImmutableInternalChannelDef.builder()
                 .name(namePrefix)
-                .type(type)
+                .valueType(type)
                 .isPrefix(true)
                 .build();
     }

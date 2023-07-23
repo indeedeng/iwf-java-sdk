@@ -16,7 +16,7 @@ public abstract class SignalChannelDef implements CommunicationMethodDef {
     public static SignalChannelDef create(final Class type, final String name) {
         return ImmutableSignalChannelDef.builder()
                 .name(name)
-                .type(type)
+                .valueType(type)
                 .isPrefix(false)
                 .build();
     }
@@ -34,7 +34,7 @@ public abstract class SignalChannelDef implements CommunicationMethodDef {
     public static SignalChannelDef createByPrefix(final Class type, final String namePrefix) {
         return ImmutableSignalChannelDef.builder()
                 .name(namePrefix)
-                .type(type)
+                .valueType(type)
                 .isPrefix(true)
                 .build();
     }
