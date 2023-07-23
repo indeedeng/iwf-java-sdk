@@ -68,7 +68,10 @@ public class WorkerService {
         final Map<String, SearchAttributeValueType> searchAttrsTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(searchAttrsTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
-                registry.getInternalChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder(), true);
+                registry.getInternalChannelTypeStore(req.getWorkflowType()),
+                workerOptions.getObjectEncoder(),
+                true
+        );
 
         final StateExecutionLocalsImpl stateExeLocals = new StateExecutionLocalsImpl(toMap(null), workerOptions.getObjectEncoder());
         Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateExeLocals);
@@ -146,7 +149,10 @@ public class WorkerService {
         final Map<String, SearchAttributeValueType> searchAttrsTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(searchAttrsTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
-                registry.getInternalChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder(), false);
+                registry.getInternalChannelTypeStore(req.getWorkflowType()),
+                workerOptions.getObjectEncoder(),
+                false
+        );
 
         final StateExecutionLocalsImpl stateExeLocals = new StateExecutionLocalsImpl(toMap(null), workerOptions.getObjectEncoder());
         Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateExeLocals);
@@ -208,7 +214,10 @@ public class WorkerService {
         final Map<String, SearchAttributeValueType> saTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(saTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
-                registry.getInternalChannelNameToTypeMap(req.getWorkflowType()), workerOptions.getObjectEncoder(), false);
+                registry.getInternalChannelTypeStore(req.getWorkflowType()),
+                workerOptions.getObjectEncoder(),
+                false
+        );
 
         Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateExeLocals);
 
@@ -217,8 +226,8 @@ public class WorkerService {
                 input,
                 CommandResultsMapper.fromGenerated(
                         req.getCommandResults(),
-                        registry.getSignalChannelNameToSignalTypeMap(req.getWorkflowType()),
-                        registry.getInternalChannelNameToTypeMap(req.getWorkflowType()),
+                        registry.getSignalChannelTypeStore(req.getWorkflowType()),
+                        registry.getInternalChannelTypeStore(req.getWorkflowType()),
                         workerOptions.getObjectEncoder()),
                 persistence,
                 communication);
@@ -271,8 +280,7 @@ public class WorkerService {
     private DataAttributesRWImpl createDataObjectsRW(final String workflowType, final List<KeyValue> keyValues) {
         final Map<String, EncodedObject> map = toMap(keyValues);
         return new DataAttributesRWImpl(
-                registry.getDataAttributeKeyToTypeMap(workflowType),
-                registry.getDataAttributePrefixToTypeMap(workflowType),
+                registry.getDataAttributeTypeStore(workflowType),
                 map,
                 workerOptions.getObjectEncoder());
     }

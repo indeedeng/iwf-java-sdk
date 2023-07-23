@@ -17,13 +17,15 @@ public class BasicSignalWorkflow implements ObjectWorkflow {
     public static final String SIGNAL_CHANNEL_NAME_2 = "test-signal-2";
 
     public static final String SIGNAL_CHANNEL_NAME_3 = "test-signal-3";
+    public static final String SIGNAL_CHANNEL_PREFIX_1 = "test-signal-prefix-1";
 
     @Override
     public List<CommunicationMethodDef> getCommunicationSchema() {
         return Arrays.asList(
                 SignalChannelDef.create(Integer.class, SIGNAL_CHANNEL_NAME_1),
                 SignalChannelDef.create(Integer.class, SIGNAL_CHANNEL_NAME_2),
-                SignalChannelDef.create(Void.class, SIGNAL_CHANNEL_NAME_3)
+                SignalChannelDef.create(Void.class, SIGNAL_CHANNEL_NAME_3),
+                SignalChannelDef.createByPrefix(Integer.class, SIGNAL_CHANNEL_PREFIX_1)
         );
     }
 

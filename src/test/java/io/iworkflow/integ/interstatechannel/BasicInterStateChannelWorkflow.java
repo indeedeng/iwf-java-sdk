@@ -14,12 +14,14 @@ public class BasicInterStateChannelWorkflow implements ObjectWorkflow {
     public static final String INTER_STATE_CHANNEL_NAME_1 = "test-inter-state-channel-1";
 
     public static final String INTER_STATE_CHANNEL_NAME_2 = "test-inter-state-channel-2";
+    public static final String INTER_STATE_CHANNEL_PREFIX_1 = "test-inter-state-channel-prefix-1-";
 
     @Override
     public List<CommunicationMethodDef> getCommunicationSchema() {
         return Arrays.asList(
                 InternalChannelDef.create(Integer.class, INTER_STATE_CHANNEL_NAME_1),
-                InternalChannelDef.create(Integer.class, INTER_STATE_CHANNEL_NAME_2)
+                InternalChannelDef.create(Integer.class, INTER_STATE_CHANNEL_NAME_2),
+                InternalChannelDef.createByPrefix(Integer.class, INTER_STATE_CHANNEL_PREFIX_1)
         );
     }
 

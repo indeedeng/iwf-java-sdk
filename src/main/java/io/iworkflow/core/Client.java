@@ -1,7 +1,6 @@
 package io.iworkflow.core;
 
 import io.iworkflow.core.persistence.PersistenceOptions;
-import io.iworkflow.core.utils.DataAttributeUtils;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
@@ -339,12 +338,8 @@ public class Client {
 
         checkWorkflowTypeExists(wfType);
 
-        Map<String, Class<?>> nameToTypeMap = registry.getSignalChannelNameToSignalTypeMap(wfType);
+        final Class<?> signalType = registry.getSignalChannelTypeStore(wfType).getType(signalChannelName);
 
-        if (!nameToTypeMap.containsKey(signalChannelName)) {
-            throw new IllegalArgumentException(String.format("Workflow %s doesn't have signal %s", wfType, signalChannelName));
-        }
-        Class<?> signalType = nameToTypeMap.get(signalChannelName);
         if (signalValue != null && !signalType.isInstance(signalValue)) {
             throw new IllegalArgumentException(String.format("Signal value is not of type %s", signalType.getName()));
         }
@@ -502,13 +497,12 @@ public class Client {
         final String wfType = workflowClass.getSimpleName();
         checkWorkflowTypeExists(wfType);
 
-        final Map<String, Class<?>> dataAttributeKeyToTypeMap = registry.getDataAttributeKeyToTypeMap(wfType);
-        final Map<String, Class<?>> dataAttributePrefixToTypeMap = registry.getDataAttributePrefixToTypeMap(wfType);
+        final TypeStore dataAttributeTypeStore = registry.getDataAttributeTypeStore(wfType);
 
         // if attribute keys is null or empty, iwf server will return all data attributes
         if (keys != null && !keys.isEmpty()) {
             final Optional<String> first = keys.stream()
-                    .filter(key -> !DataAttributeUtils.isValidDataAttributeKey(key, dataAttributeKeyToTypeMap, dataAttributePrefixToTypeMap))
+                    .filter(key -> !dataAttributeTypeStore.isValidNameOrPrefix(key))
                     .findFirst();
             if (first.isPresent()) {
                 throw new IllegalArgumentException(
@@ -535,7 +529,8 @@ public class Client {
                         keyValue.getKey(),
                         clientOptions.getObjectEncoder().decode(
                                 keyValue.getValue(),
-                                DataAttributeUtils.getDataAttributeType(keyValue.getKey(), dataAttributeKeyToTypeMap, dataAttributePrefixToTypeMap))
+                                dataAttributeTypeStore.getType(keyValue.getKey())
+                        )
                 );
             }
         }
