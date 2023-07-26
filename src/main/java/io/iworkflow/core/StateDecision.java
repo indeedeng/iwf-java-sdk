@@ -235,7 +235,7 @@ public abstract class StateDecision {
     public static StateDecision multiNextStates(final String... stateIds) {
         final ArrayList<StateMovement> stateMovements = new ArrayList<StateMovement>();
         Arrays.stream(stateIds).forEach(id -> {
-            stateMovements.add(StateMovement.create(id, null, null));
+            stateMovements.add(StateMovement.create(id));
         });
         return multiNextStates(stateMovements);
     }
