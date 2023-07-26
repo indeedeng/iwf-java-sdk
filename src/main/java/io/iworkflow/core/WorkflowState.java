@@ -29,11 +29,11 @@ public interface WorkflowState<I> {
      * @param input         the state input which is deserialized by {@link ObjectEncoder} with {@link #getInputType}
      * @param persistence   persistence API for 1) data attributes, 2) search attributes and 3) stateExecutionLocals 4) recordEvent
      *                      DataAttributes and SearchAttributes are defined by {@link ObjectWorkflow} interface.
-     *                      StateExecutionLocals are for passing data within the state execution from this start API to {@link #execute} API
+     *                      StateExecutionLocals are for passing data within the state execution from this waitUntil API to {@link #execute} API
      *                      RecordEvent is for storing some tracking info(e.g. RPC call input/output) when executing the API.
-     *                      Note that any write API will be recorded to server after the whole start API response is accepted.
+     *                      Note that any write API will be recorded to server after the whole waitUntil API response is accepted by server.
      * @param communication communication API, right now only for publishing value to InternalChannel
-     *                      Note that any write API will be recorded to server after the whole start API response is accepted.
+     *                      Note that any write API will be recorded to server after the whole waitUntil API response is accepted by server.
      * @return the requested commands for this step
      */
     default CommandRequest waitUntil(
@@ -49,18 +49,18 @@ public interface WorkflowState<I> {
 
     /**
      * Implement this method to execute the state business, when requested commands are ready if {@link #waitUntil} is implemented
-     * If {@link #waitUntil} is not implemented, the state will invoke this API directly
+     * If {@link #waitUntil} is not implemented, the state will invoke this execute API directly
      *
      * @param context        the context info of this API invocation, like workflow start time, workflowId, etc
      * @param input          the state input which is deserialized by {@link ObjectEncoder} with {@link #getInputType}
      * @param commandResults the results of the command that executed by {@link #waitUntil}
      * @param persistence    persistence API for 1) data attributes, 2) search attributes and 3) stateExecutionLocals 4) recordEvent
      *                       DataAttributes and SearchAttributes are defined by {@link ObjectWorkflow} interface.
-     *                       StateExecutionLocals are for passing data within the state execution from this start API to {@link #execute} API
+     *                       StateExecutionLocals are for passing data within the state execution from this API to {@link #execute} API
      *                       RecordEvent is for storing some tracking info(e.g. RPC call input/output) when executing the API.
-     *                       Note that the write API will be recorded to server after the whole start API response is accepted.
+     *                       Note that the write API will be recorded to server after the whole execute API response is accepted by server.
      * @param communication  communication API, right now only for publishing value to InternalChannel
-     *                       Note that the write API will be recorded to server after the whole decide API response is accepted.
+     *                       Note that the write API will be recorded to server after the whole execute API response is accepted by server.
      * @return the decision of what to do next(e.g. transition to next states)
      */
     StateDecision execute(
@@ -82,9 +82,10 @@ public interface WorkflowState<I> {
     }
 
     /**
-     * Optional configuration to adjust the state behaviors. Default values:
+     * Optional configuration to adjust the state behaviors. Default values if not set:
+     * - waitUntilApiFailurePolicy: FAIL_WORKFLOW_ON_FAILURE
      * - PersistenceLoadingPolicy for dataAttributes/searchAttributes: LOAD_ALL_WITHOUT_LOCKING ,
-     * - start/decide API:
+     * - waitUntil/execute API:
      * -    timeout: 30s
      * -    retryPolicy:
      * -        InitialIntervalSeconds: 1
