@@ -11,7 +11,7 @@ public abstract class StateMovement {
     public abstract String getStateId();
 
     public abstract Optional<Object> getStateInput();
-    public abstract Optional<WorkflowStateOptions> getStateOptions();
+    public abstract Optional<WorkflowStateOptions> getStateOptionsOverride();
 
     public final static String RESERVED_STATE_ID_PREFIX = "_SYS_";
     private final static String GRACEFUL_COMPLETING_WORKFLOW_STATE_ID = "_SYS_GRACEFUL_COMPLETING_WORKFLOW";
@@ -54,13 +54,13 @@ public abstract class StateMovement {
 
     /**
      *
-     * @param stateClass    required
-     * @param stateInput    required
-     * @param stateOptions  required, to override the defined ones in the State class
+     * @param stateClass            required
+     * @param stateInput            required
+     * @param stateOptionsOverride  required, to override the defined ones in the State class
      * @return state movement
      */
-    public static StateMovement create(final Class<? extends WorkflowState> stateClass, final Object stateInput, final WorkflowStateOptions stateOptions) {
-        return create(stateClass.getSimpleName(), stateInput, stateOptions);
+    public static StateMovement create(final Class<? extends WorkflowState> stateClass, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
+        return create(stateClass.getSimpleName(), stateInput, stateOptionsOverride);
     }
 
     /**
@@ -75,12 +75,12 @@ public abstract class StateMovement {
 
     /**
      *
-     * @param stateClass    required
-     * @param stateOptions  required, to override the defined ones in the State class
+     * @param stateClass            required
+     * @param stateOptionsOverride  required, to override the defined ones in the State class
      * @return state movement
      */
-    public static StateMovement create(final Class<? extends WorkflowState> stateClass, final WorkflowStateOptions stateOptions) {
-        return create(stateClass, null, stateOptions);
+    public static StateMovement create(final Class<? extends WorkflowState> stateClass, final WorkflowStateOptions stateOptionsOverride) {
+        return create(stateClass, null, stateOptionsOverride);
     }
 
     /**
@@ -94,12 +94,12 @@ public abstract class StateMovement {
 
     /**
      * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
-     * @param stateId       stateId
-     * @param stateInput    input
-     * @param stateOptions  required, to override the defined ones in the State class
+     * @param stateId               stateId
+     * @param stateInput            input
+     * @param stateOptionsOverride  required, to override the defined ones in the State class
      * @return state movement
      */
-    public static StateMovement create(final String stateId, final Object stateInput, final WorkflowStateOptions stateOptions) {
+    public static StateMovement create(final String stateId, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
         if (stateId.startsWith(RESERVED_STATE_ID_PREFIX)) {
             throw new WorkflowDefinitionException("Cannot use reserved stateId prefix for your stateId");
         }
@@ -111,10 +111,19 @@ public abstract class StateMovement {
             builder.stateInput(stateInput);
         }
 
-        if (stateOptions != null) {
-            builder.stateOptions(stateOptions);
+        if (stateOptionsOverride != null) {
+            builder.stateOptionsOverride(stateOptionsOverride);
         }
 
         return builder.build();
+    }
+
+    /**
+     * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
+     * @param stateId               stateId
+     * @return state movement
+     */
+    public static StateMovement create(final String stateId) {
+        return create(stateId, null, null);
     }
 }

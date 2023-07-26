@@ -148,13 +148,13 @@ public abstract class StateDecision {
 
     /**
      *
-     * @param stateClass    required
-     * @param stateInput    required
-     * @param stateOptions  required, to override the defined ones in the State class
+     * @param stateClass            required
+     * @param stateInput            required
+     * @param stateOptionsOverride  required, to override the defined ones in the State class
      * @return state decision
      */
-    public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass, final Object stateInput, final WorkflowStateOptions stateOptions) {
-        return singleNextState(stateClass.getSimpleName(), stateInput, stateOptions);
+    public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
+        return singleNextState(stateClass.getSimpleName(), stateInput, stateOptionsOverride);
     }
 
     /**
@@ -169,12 +169,12 @@ public abstract class StateDecision {
 
     /**
      *
-     * @param stateClass    required
-     * @param stateOptions  required, to override the defined ones in the State class
+     * @param stateClass            required
+     * @param stateOptionsOverride  required, to override the defined ones in the State class
      * @return state decision
      */
-    public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass, final WorkflowStateOptions stateOptions) {
-        return singleNextState(stateClass, null, stateOptions);
+    public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass, final WorkflowStateOptions stateOptionsOverride) {
+        return singleNextState(stateClass, null, stateOptionsOverride);
     }
 
     /**
@@ -188,15 +188,24 @@ public abstract class StateDecision {
 
     /**
      * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
-     * @param stateId       stateId of next state
-     * @param stateInput    input for next state
-     * @param stateOptions  required, to override the defined ones in the State class
+     * @param stateId               stateId of next state
+     * @param stateInput            input for next state
+     * @param stateOptionsOverride  required, to override the defined ones in the State class
      * @return state decision
      */
-    public static StateDecision singleNextState(final String stateId, final Object stateInput, final WorkflowStateOptions stateOptions) {
+    public static StateDecision singleNextState(final String stateId, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
-                StateMovement.create(stateId, stateInput, stateOptions)
+                StateMovement.create(stateId, stateInput, stateOptionsOverride)
         )).build();
+    }
+
+    /**
+     * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
+     * @param stateId               stateId of next state
+     * @return state decision
+     */
+    public static StateDecision singleNextState(final String stateId) {
+        return singleNextState(stateId);
     }
 
     /**

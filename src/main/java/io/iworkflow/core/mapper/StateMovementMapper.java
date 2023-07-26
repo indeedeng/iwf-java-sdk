@@ -23,7 +23,7 @@ public class StateMovementMapper {
             }
 
             // Try to get the overrode stateOptions, if it's null, get the stateOptions from stateDef
-            WorkflowStateOptions stateOptions = stateMovement.getStateOptions().orElse(null);
+            WorkflowStateOptions stateOptions = stateMovement.getStateOptionsOverride().orElse(null);
             if (stateOptions == null) {
                 stateOptions = stateDef.getWorkflowState().getStateOptions();
             }
