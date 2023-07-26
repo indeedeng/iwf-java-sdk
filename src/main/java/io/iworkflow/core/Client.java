@@ -102,7 +102,17 @@ public class Client {
         return startWorkflow(wfType, workflowId, workflowTimeoutSeconds, input, option);
     }
 
-    private String startWorkflow(
+    /**
+     * startWorkflow starts a workflow execution
+     *
+     * @param wfType                 is required. It should be the same as the {@link ObjectWorkflow#getWorkflowType()}
+     * @param workflowId             is required
+     * @param workflowTimeoutSeconds is required
+     * @param input                  is optional, can be null
+     * @param options                is optional, can be null
+     * @return runId
+     */
+    public String startWorkflow(
             final String wfType,
             final String workflowId,
             final int workflowTimeoutSeconds,
