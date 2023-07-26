@@ -53,58 +53,6 @@ public class Client {
     /**
      * startWorkflow starts a workflow execution
      *
-     * @param workflow               is required
-     * @param workflowId             is required
-     * @param workflowTimeoutSeconds is required
-     * @return runId
-     */
-    public String startWorkflow(
-            final ObjectWorkflow workflow,
-            final String workflowId,
-            final int workflowTimeoutSeconds) {
-        return startWorkflow(workflow, workflowId, workflowTimeoutSeconds, null, null);
-    }
-
-    /**
-     * startWorkflow starts a workflow execution
-     *
-     * @param workflow               is required
-     * @param workflowId             is required
-     * @param workflowTimeoutSeconds is required
-     * @param input                  is optional, can be null
-     * @return runId
-     */
-    public String startWorkflow(
-            final ObjectWorkflow workflow,
-            final String workflowId,
-            final int workflowTimeoutSeconds,
-            final Object input) {
-        return startWorkflow(workflow, workflowId, workflowTimeoutSeconds, input, null);
-    }
-
-    /**
-     * startWorkflow starts a workflow execution
-     *
-     * @param workflow               is required
-     * @param workflowId             is required
-     * @param workflowTimeoutSeconds is required
-     * @param input                  is optional, can be null
-     * @param options                is optional, can be null
-     * @return runId
-     */
-    public String startWorkflow(
-            final ObjectWorkflow workflow,
-            final String workflowId,
-            final int workflowTimeoutSeconds,
-            final Object input,
-            final WorkflowOptions options) {
-        final String wfType = Registry.getWorkflowType(workflow);
-        return doStartWorkflow(wfType, workflowId, workflowTimeoutSeconds, input, options);
-    }
-
-    /**
-     * startWorkflow starts a workflow execution
-     *
      * @param workflowClass          is required
      * @param workflowId             is required
      * @param workflowTimeoutSeconds is required
@@ -151,10 +99,10 @@ public class Client {
             final Object input,
             final WorkflowOptions option) {
         final String wfType = workflowClass.getSimpleName();
-        return doStartWorkflow(wfType, workflowId, workflowTimeoutSeconds, input, option);
+        return startWorkflow(wfType, workflowId, workflowTimeoutSeconds, input, option);
     }
 
-    private String doStartWorkflow(
+    private String startWorkflow(
             final String wfType,
             final String workflowId,
             final int workflowTimeoutSeconds,
