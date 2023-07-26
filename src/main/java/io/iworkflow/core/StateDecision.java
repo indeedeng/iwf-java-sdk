@@ -205,7 +205,7 @@ public abstract class StateDecision {
      * @return state decision
      */
     public static StateDecision singleNextState(final String stateId) {
-        return singleNextState(stateId);
+        return singleNextState(stateId, null, null);
     }
 
     /**
