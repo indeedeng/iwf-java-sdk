@@ -73,7 +73,9 @@ public interface ObjectWorkflow {
      * Define the workflowType of this workflow definition. By default(when return empty string), it's the simple name of the workflow instance,
      * which should be the case for most scenarios.
      * <p>
-     * In case of dynamic workflow implementation, return customized values based on constructor input.
+     * Implement this to provide a different workflowType than default to avoid breaking changes when changing workflow class name.
+     * However, {@link Client} must then use String to provide workflow type to start workflows.
+     *
      * @return the workflow type
      */
     default String getWorkflowType() {
