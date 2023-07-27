@@ -1,6 +1,7 @@
 package io.iworkflow.core;
 
 import io.iworkflow.gen.models.WorkflowConditionalCloseType;
+import io.iworkflow.gen.models.WorkflowStateOptions;
 import org.immutables.value.Value;
 
 import java.util.ArrayList;
@@ -145,54 +146,79 @@ public abstract class StateDecision {
                 .build();
     }
 
-    public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass) {
-        return singleNextState(stateClass.getSimpleName());
+    /**
+     *
+     * @param stateClass            required
+     * @param stateInput            optional, can be null
+     * @param stateOptionsOverride  optional, can be null. It is used to override the defined one in the State class
+     * @return state decision
+     */
+    public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
+        return singleNextState(stateClass.getSimpleName(), stateInput, stateOptionsOverride);
     }
 
     /**
-     * use the other one with WorkflowState class param if the StateId is provided by default, to make your code cleaner
      *
-     * @param stateId stateId
+     * @param stateClass    required
+     * @param stateInput    optional, can be null
+     * @return state decision
+     */
+    public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass, final Object stateInput) {
+        return singleNextState(stateClass, stateInput, null);
+    }
+
+    /**
+     *
+     * @param stateClass    required
+     * @return state decision
+     */
+    public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass) {
+        return singleNextState(stateClass, null, null);
+    }
+
+    /**
+     * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
+     * @param stateId               required. StateId of next state
+     * @param stateInput            optional, can be null. Input for next state
+     * @param stateOptionsOverride  optional, can be null. It is used to override the defined one in the State class
+     * @return state decision
+     */
+    public static StateDecision singleNextState(final String stateId, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
+                StateMovement.create(stateId, stateInput, stateOptionsOverride)
+        )).build();
+    }
+
+    /**
+     * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
+     * @param stateId               stateId of next state
      * @return state decision
      */
     public static StateDecision singleNextState(final String stateId) {
-        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
-                StateMovement.create(stateId)
-        )).build();
-    }
-
-    public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass, final Object stateInput) {
-        return singleNextState(stateClass.getSimpleName(), stateInput);
+        return singleNextState(stateId, null, null);
     }
 
     /**
-     * use the other one with WorkflowState class param if the StateId is provided by default, to make your code cleaner
-     * @param stateId stateId of next state
-     * @param stateInput input for next state
+     *
+     * @param stateMovements required
      * @return state decision
      */
-    public static StateDecision singleNextState(final String stateId, final Object stateInput) {
-        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
-                StateMovement.create(stateId, stateInput)
-        )).build();
-    }
-
-    public static StateDecision multiNextStates(final StateMovement... stateMovements) {
-        return ImmutableStateDecision.builder().nextStates(Arrays.asList(stateMovements)).build();
-    }
-
     public static StateDecision multiNextStates(final List<StateMovement> stateMovements) {
         return ImmutableStateDecision.builder().nextStates(stateMovements).build();
     }
 
-    public static StateDecision multiNextStates(final Class<? extends WorkflowState>... states) {
-        List<String> stateIds = new ArrayList<>();
-        Arrays.stream(states).forEach(s -> stateIds.add(s.getSimpleName()));
-        return multiNextStates(stateIds.toArray(new String[0]));
+    /**
+     *
+     * @param stateMovements required
+     * @return state decision
+     */
+    public static StateDecision multiNextStates(final StateMovement... stateMovements) {
+        return multiNextStates(Arrays.asList(stateMovements));
     }
 
     /**
-     * use the other one with WorkflowState class param if the StateId is provided by default, to make your code cleaner
+     * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
+     * or use other ones with a list of StateMovement to enable the WorkflowStateOptions overriding
      * @param stateIds stateIds of next states
      * @return state decision
      */
@@ -201,6 +227,17 @@ public abstract class StateDecision {
         Arrays.stream(stateIds).forEach(id -> {
             stateMovements.add(StateMovement.create(id));
         });
-        return ImmutableStateDecision.builder().nextStates(stateMovements).build();
+        return multiNextStates(stateMovements);
+    }
+
+    /**
+     * use other ones with a list of StateMovement to enable the WorkflowStateOptions overriding
+     * @param states required
+     * @return state decision
+     */
+    public static StateDecision multiNextStates(final Class<? extends WorkflowState>... states) {
+        List<String> stateIds = new ArrayList<>();
+        Arrays.stream(states).forEach(s -> stateIds.add(s.getSimpleName()));
+        return multiNextStates(stateIds.toArray(new String[0]));
     }
 }
