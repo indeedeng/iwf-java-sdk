@@ -55,8 +55,8 @@ public abstract class StateMovement {
     /**
      *
      * @param stateClass            required
-     * @param stateInput            required
-     * @param stateOptionsOverride  required, to override the defined ones in the State class
+     * @param stateInput            optional, can be null
+     * @param stateOptionsOverride  optional, can be null. It is used to override the defined one in the State class
      * @return state movement
      */
     public static StateMovement create(final Class<? extends WorkflowState> stateClass, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
@@ -66,21 +66,11 @@ public abstract class StateMovement {
     /**
      *
      * @param stateClass    required
-     * @param stateInput    required
+     * @param stateInput    optional, can be null
      * @return state movement
      */
     public static StateMovement create(final Class<? extends WorkflowState> stateClass, final Object stateInput) {
         return create(stateClass, stateInput, null);
-    }
-
-    /**
-     *
-     * @param stateClass            required
-     * @param stateOptionsOverride  required, to override the defined ones in the State class
-     * @return state movement
-     */
-    public static StateMovement create(final Class<? extends WorkflowState> stateClass, final WorkflowStateOptions stateOptionsOverride) {
-        return create(stateClass, null, stateOptionsOverride);
     }
 
     /**
@@ -94,9 +84,9 @@ public abstract class StateMovement {
 
     /**
      * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
-     * @param stateId               stateId
-     * @param stateInput            input
-     * @param stateOptionsOverride  required, to override the defined ones in the State class
+     * @param stateId               required
+     * @param stateInput            optional, can be null
+     * @param stateOptionsOverride  optional, can be null. It is used to override the defined one in the State class
      * @return state movement
      */
     public static StateMovement create(final String stateId, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {

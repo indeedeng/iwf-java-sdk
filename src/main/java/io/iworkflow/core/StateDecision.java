@@ -149,8 +149,8 @@ public abstract class StateDecision {
     /**
      *
      * @param stateClass            required
-     * @param stateInput            required
-     * @param stateOptionsOverride  required, to override the defined ones in the State class
+     * @param stateInput            optional, can be null
+     * @param stateOptionsOverride  optional, can be null. It is used to override the defined one in the State class
      * @return state decision
      */
     public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
@@ -160,21 +160,11 @@ public abstract class StateDecision {
     /**
      *
      * @param stateClass    required
-     * @param stateInput    required
+     * @param stateInput    optional, can be null
      * @return state decision
      */
     public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass, final Object stateInput) {
         return singleNextState(stateClass, stateInput, null);
-    }
-
-    /**
-     *
-     * @param stateClass            required
-     * @param stateOptionsOverride  required, to override the defined ones in the State class
-     * @return state decision
-     */
-    public static StateDecision singleNextState(final Class<? extends WorkflowState> stateClass, final WorkflowStateOptions stateOptionsOverride) {
-        return singleNextState(stateClass, null, stateOptionsOverride);
     }
 
     /**
@@ -188,9 +178,9 @@ public abstract class StateDecision {
 
     /**
      * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
-     * @param stateId               stateId of next state
-     * @param stateInput            input for next state
-     * @param stateOptionsOverride  required, to override the defined ones in the State class
+     * @param stateId               required. StateId of next state
+     * @param stateInput            optional, can be null. Input for next state
+     * @param stateOptionsOverride  optional, can be null. It is used to override the defined one in the State class
      * @return state decision
      */
     public static StateDecision singleNextState(final String stateId, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
