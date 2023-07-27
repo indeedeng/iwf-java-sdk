@@ -85,6 +85,29 @@ public class BasicTest {
     }
 
     @Test
+    public void testTypeSpecifiedWorkflow() {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "type-specified-test-id" + System.currentTimeMillis() / 1000;
+        final UnregisteredWorkflowOptions startOptions = ImmutableUnregisteredWorkflowOptions.builder()
+                .workflowIdReusePolicy(IDReusePolicy.ALLOW_IF_NO_RUNNING)
+                .build();
+
+        final EmptyInputWorkflow workflow = new EmptyInputWorkflow();
+
+        client.startWorkflow(workflow.getWorkflowType(), wfId, 0, null, null);
+        Integer out = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        Assertions.assertNull(out);
+
+        // fail when not passing the customized workflowType when starting a workflow with customized workflowType
+        try {
+            client.startWorkflow(EmptyInputWorkflow.class, wfId, 0);
+        } catch (final IllegalArgumentException e) {
+            return;
+        }
+        Assertions.fail("not passing the customized workflowType when starting a workflow with customized workflowType should fail");
+    }
+
+    @Test
     public void testModelInputWorkflow() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "model-input-test-id" + System.currentTimeMillis() / 1000;
