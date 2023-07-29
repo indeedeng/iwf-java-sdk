@@ -15,7 +15,7 @@ public abstract class SignalCommand implements BaseCommand {
      *
      * @param commandId     required. All the signal commands created here will share the same commandId.
      * @param signalName    required.
-     * @param count         required. It represents the number of commands to create.
+     * @param count         required. It represents the number of signal commands to create.
      * @return super command
      */
     public static SuperCommand create(final String commandId, final String signalName, final int count) {
@@ -45,7 +45,7 @@ public abstract class SignalCommand implements BaseCommand {
      * Create a super command that represents one or many signal commands.
      *
      * @param signalName    required.
-     * @param count         required. It represents the number of commands to create.
+     * @param count         required. It represents the number of signal commands to create.
      * @return super command
      */
     public static SuperCommand create(final String signalName, final int count) {

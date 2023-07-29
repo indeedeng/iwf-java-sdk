@@ -45,7 +45,7 @@ public abstract class InternalChannelCommand implements BaseCommand {
      * Create a super command that represents one or many internal channel commands.
      *
      * @param channelName   required.
-     * @param count         required. It represents the number of commands to create.
+     * @param count         required. It represents the number of internal channel commands to create.
      * @return super command
      */
     public static SuperCommand create(final String channelName, final int count) {
