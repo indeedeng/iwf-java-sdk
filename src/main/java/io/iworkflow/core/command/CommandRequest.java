@@ -27,7 +27,8 @@ public abstract class CommandRequest {
      * @return the command request
      */
     public static CommandRequest forAllCommandCompleted(final BaseCommand... commands) {
-        return ImmutableCommandRequest.builder().addAllCommands(Arrays.asList(commands)).commandWaitingType(CommandWaitingType.ALL_COMPLETED).build();
+        final List<BaseCommand> allSingleCommands = getAllSingleCommands(commands);
+        return ImmutableCommandRequest.builder().addAllCommands(allSingleCommands).commandWaitingType(CommandWaitingType.ALL_COMPLETED).build();
     }
 
     /**
@@ -50,12 +51,32 @@ public abstract class CommandRequest {
      * @return the command request
      */
     public static CommandRequest forAnyCommandCombinationCompleted(final List<List<String>> commandCombinationLists, final BaseCommand... commands) {
+        final List<BaseCommand> allSingleCommands = getAllSingleCommands(commands);
+
         final List<CommandCombination> combinations = new ArrayList<>();
         commandCombinationLists.forEach(commandIds -> combinations.add(new CommandCombination().commandIds(commandIds)));
         return ImmutableCommandRequest.builder()
                 .commandCombinations(combinations)
-                .addAllCommands(Arrays.asList(commands))
+                .addAllCommands(allSingleCommands)
                 .commandWaitingType(CommandWaitingType.ANY_COMBINATION_COMPLETED)
                 .build();
+    }
+
+    private static List<BaseCommand> getAllSingleCommands(final BaseCommand... commands) {
+        final ArrayList<BaseCommand> allSingleCommands = new ArrayList<>();
+        Arrays.stream(commands).forEach(
+                command -> {
+                    if (command instanceof SuperCommand) {
+                        allSingleCommands.addAll(
+                                SuperCommand.toList((SuperCommand) command)
+                        );
+                        return;
+                    }
+
+                    allSingleCommands.add(command);
+                }
+        );
+
+        return allSingleCommands;
     }
 }

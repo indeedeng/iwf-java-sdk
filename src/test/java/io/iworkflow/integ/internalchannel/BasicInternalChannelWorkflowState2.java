@@ -1,4 +1,4 @@
-package io.iworkflow.integ.interstatechannel;
+package io.iworkflow.integ.internalchannel;
 
 import io.iworkflow.core.Context;
 import io.iworkflow.core.StateDecision;
@@ -8,7 +8,7 @@ import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
 
-public class BasicInterStateChannelWorkflowState2 implements WorkflowState<Integer> {
+public class BasicInternalChannelWorkflowState2 implements WorkflowState<Integer> {
 
     @Override
     public Class<Integer> getInputType() {
@@ -20,8 +20,8 @@ public class BasicInterStateChannelWorkflowState2 implements WorkflowState<Integ
             Context context,
             Integer input,
             Persistence persistence, final Communication communication) {
-        communication.publishInternalChannel(BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_NAME_1, 2);
-        communication.publishInternalChannel(BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_PREFIX_1 + "1", 3);
+        communication.publishInternalChannel(BasicInternalChannelWorkflow.INTER_STATE_CHANNEL_NAME_1, 2);
+        communication.publishInternalChannel(BasicInternalChannelWorkflow.INTER_STATE_CHANNEL_PREFIX_1 + "1", 3);
         return CommandRequest.empty;
     }
 

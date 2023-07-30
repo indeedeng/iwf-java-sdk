@@ -1,4 +1,4 @@
-package io.iworkflow.integ.interstatechannel;
+package io.iworkflow.integ.internalchannel;
 
 import io.iworkflow.core.Context;
 import io.iworkflow.core.StateDecision;
@@ -13,7 +13,7 @@ import io.iworkflow.gen.models.ChannelRequestStatus;
 
 import java.util.Arrays;
 
-public class BasicInterStateChannelWorkflowState1 implements WorkflowState<Integer> {
+public class BasicInternalChannelWorkflowState1 implements WorkflowState<Integer> {
     public static final String COMMAND_ID = "test-cmd-id";
     public static final String COMMAND_ID_2 = "test-cmd-id-2";
 
@@ -32,9 +32,9 @@ public class BasicInterStateChannelWorkflowState1 implements WorkflowState<Integ
                 Arrays.asList(
                         Arrays.asList(COMMAND_ID, COMMAND_ID_2)
                 ),
-                InternalChannelCommand.create(COMMAND_ID, BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_NAME_1),
-                InternalChannelCommand.create(COMMAND_ID, BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_NAME_2),
-                InternalChannelCommand.create(COMMAND_ID_2, BasicInterStateChannelWorkflow.INTER_STATE_CHANNEL_PREFIX_1 + "1")
+                InternalChannelCommand.create(COMMAND_ID, BasicInternalChannelWorkflow.INTER_STATE_CHANNEL_NAME_1),
+                InternalChannelCommand.create(COMMAND_ID, BasicInternalChannelWorkflow.INTER_STATE_CHANNEL_NAME_2),
+                InternalChannelCommand.create(COMMAND_ID_2, BasicInternalChannelWorkflow.INTER_STATE_CHANNEL_PREFIX_1 + "1")
         );
     }
 
