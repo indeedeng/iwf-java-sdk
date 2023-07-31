@@ -1,5 +1,6 @@
 package io.iworkflow.integ;
 
+import feign.FeignException;
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
 import io.iworkflow.core.ClientSideException;
@@ -90,9 +91,13 @@ public class SignalTest {
     }
 
     private void checkWorkflowResultBeforeComplete(final Client client, final String wfId, final String runId) {
+        Assertions.assertThrows(FeignException.FeignClientException.class, () -> client.getSimpleWorkflowResultWithWait(Integer.class, wfId));
+        Assertions.assertThrows(FeignException.FeignClientException.class, () -> client.getSimpleWorkflowResultWithWait(Integer.class, wfId, runId));
+        Assertions.assertThrows(FeignException.FeignClientException.class, () -> client.getComplexWorkflowResultWithWait(wfId));
+        Assertions.assertThrows(FeignException.FeignClientException.class, () -> client.getComplexWorkflowResultWithWait(wfId, runId));
+
         Assertions.assertThrows(WorkflowUncompletedException.class, () -> client.tryGettingSimpleWorkflowResult(Integer.class, wfId));
         Assertions.assertThrows(WorkflowUncompletedException.class, () -> client.tryGettingSimpleWorkflowResult(Integer.class, wfId, runId));
-
         Assertions.assertThrows(WorkflowUncompletedException.class, () -> client.tryGettingComplexWorkflowResult(wfId));
         Assertions.assertThrows(WorkflowUncompletedException.class, () -> client.tryGettingComplexWorkflowResult(wfId, runId));
     }

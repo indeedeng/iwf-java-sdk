@@ -1,5 +1,6 @@
 package io.iworkflow.core;
 
+import feign.FeignException;
 import io.iworkflow.core.persistence.PersistenceOptions;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
@@ -241,7 +242,7 @@ public class Client {
     /**
      * For most cases, a workflow only has one result(one completion state).
      * Use this API to retrieve the output of the state with waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     * If the workflow is not COMPLETED, throw the {@link feign.FeignException.FeignClientException}.
      *
      * @param valueClass    required, the type class of the output
      * @param workflowId    required, the workflowId
@@ -259,7 +260,7 @@ public class Client {
     /**
      * For most cases, a workflow only has one result(one completion state).
      * Use this API to retrieve the output of the state with waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     * If the workflow is not COMPLETED, throw the {@link feign.FeignException.FeignClientException}.
      *
      * @param valueClass    required, the type class of the output
      * @param workflowId    required, the workflowId
@@ -311,7 +312,7 @@ public class Client {
     /**
      * In some cases, a workflow may have more than one completion states.
      * Use this API to retrieve the output of the states with waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     * If the workflow is not COMPLETED, throw the {@link feign.FeignException.FeignClientException}.
      *
      * @param workflowId    required, the workflowId
      * @param workflowRunId optional, can be empty
@@ -325,7 +326,7 @@ public class Client {
     /**
      * In some cases, a workflow may have more than one completion states.
      * Use this API to retrieve the output of the states with waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     * If the workflow is not COMPLETED, throw the {@link feign.FeignException.FeignClientException}.
      *
      * @param workflowId    required, the workflowId
      * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
