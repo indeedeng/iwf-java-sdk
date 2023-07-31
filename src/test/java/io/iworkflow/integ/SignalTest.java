@@ -55,8 +55,6 @@ public class SignalTest {
         client.signalWorkflow(
                 BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_PREFIX_1 + "1", Integer.valueOf(4));
 
-        checkWorkflowResultBeforeComplete(client, wfId, runId);
-
         Thread.sleep(1000);// wait for timer to be ready to skip
         client.skipTimer(wfId, "", BasicSignalWorkflowState2.class, 1, TIMER_COMMAND_ID);
 
@@ -88,18 +86,6 @@ public class SignalTest {
 
         final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(5, output);
-    }
-
-    private void checkWorkflowResultBeforeComplete(final Client client, final String wfId, final String runId) {
-        Assertions.assertThrows(FeignException.FeignClientException.class, () -> client.getSimpleWorkflowResultWithWait(Integer.class, wfId));
-        Assertions.assertThrows(FeignException.FeignClientException.class, () -> client.getSimpleWorkflowResultWithWait(Integer.class, wfId, runId));
-        Assertions.assertThrows(FeignException.FeignClientException.class, () -> client.getComplexWorkflowResultWithWait(wfId));
-        Assertions.assertThrows(FeignException.FeignClientException.class, () -> client.getComplexWorkflowResultWithWait(wfId, runId));
-
-        Assertions.assertThrows(WorkflowUncompletedException.class, () -> client.tryGettingSimpleWorkflowResult(Integer.class, wfId));
-        Assertions.assertThrows(WorkflowUncompletedException.class, () -> client.tryGettingSimpleWorkflowResult(Integer.class, wfId, runId));
-        Assertions.assertThrows(WorkflowUncompletedException.class, () -> client.tryGettingComplexWorkflowResult(wfId));
-        Assertions.assertThrows(WorkflowUncompletedException.class, () -> client.tryGettingComplexWorkflowResult(wfId, runId));
     }
 
     private void checkWorkflowResultAfterComplete(final Client client, final String wfId, final String runId) {

@@ -32,9 +32,12 @@ public class WorkflowUncompletedTest {
         final String wfId = "testWorkflowTimeout" + System.currentTimeMillis() / 1000;
         final Integer input = 1;
 
+        final String runId = client.startWorkflow(BasicSignalWorkflow.class, wfId, 100, input);
 
-        client.startWorkflow(BasicSignalWorkflow.class, wfId, 100, input);
-
+        Assertions.assertThrows(WorkflowUncompletedException.class, () -> client.tryGettingSimpleWorkflowResult(Integer.class, wfId));
+        Assertions.assertThrows(WorkflowUncompletedException.class, () -> client.tryGettingSimpleWorkflowResult(Integer.class, wfId, runId));
+        Assertions.assertThrows(WorkflowUncompletedException.class, () -> client.tryGettingComplexWorkflowResult(wfId));
+        Assertions.assertThrows(WorkflowUncompletedException.class, () -> client.tryGettingComplexWorkflowResult(wfId, runId));
 
         long startMs = System.currentTimeMillis();
         long elapsedMs;
