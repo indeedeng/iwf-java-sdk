@@ -239,33 +239,82 @@ public class Client {
     }
 
     /**
-     * For most cases, a workflow only has one result(one completion state)
-     * Use this API to retrieve the output of the state
+     * For most cases, a workflow only has one result(one completion state).
+     * Use this API to retrieve the output of the state with waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
      *
-     * @param valueClass    the type class of the output
-     * @param workflowId    the workflowId
-     * @param workflowRunId optional runId, can be empty
+     * @param valueClass    required, the type class of the output
+     * @param workflowId    required, the workflowId
+     * @param workflowRunId optional, can be empty
      * @param <T>           type of the output
      * @return the output result
      */
     public <T> T getSimpleWorkflowResultWithWait(
-            Class<T> valueClass,
+            final Class<T> valueClass,
             final String workflowId,
             final String workflowRunId) {
         return unregisteredClient.getSimpleWorkflowResultWithWait(valueClass, workflowId, workflowRunId);
     }
 
+    /**
+     * For most cases, a workflow only has one result(one completion state).
+     * Use this API to retrieve the output of the state with waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     *
+     * @param valueClass    required, the type class of the output
+     * @param workflowId    required, the workflowId
+     * @param <T>           type of the output
+     * @return the output result
+     */
     public <T> T getSimpleWorkflowResultWithWait(
-            Class<T> valueClass,
+            final Class<T> valueClass,
             final String workflowId) {
         return getSimpleWorkflowResultWithWait(valueClass, workflowId, "");
     }
 
     /**
-     * In some cases, a workflow may have more than one completion states
+     * For most cases, a workflow only has one result(one completion state).
+     * Use this API to retrieve the output of the state without waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     * Else, return the same result as {@link #getSimpleWorkflowResultWithWait(Class, String, String)}.
      *
-     * @param workflowId    workflowId
-     * @param workflowRunId workflowRunId
+     * @param valueClass    required, the type class of the output
+     * @param workflowId    required, the workflowId
+     * @param workflowRunId optional, can be empty
+     * @param <T>           type of the output
+     * @return the output result
+     */
+    public <T> T tryGettingSimpleWorkflowResult(
+            final Class<T> valueClass,
+            final String workflowId,
+            final String workflowRunId) {
+        return unregisteredClient.tryGettingSimpleWorkflowResult(valueClass, workflowId, workflowRunId);
+    }
+
+    /**
+     * For most cases, a workflow only has one result(one completion state).
+     * Use this API to retrieve the output of the state without waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     * Else, return the same result as {@link #getSimpleWorkflowResultWithWait(Class, String)}.
+     *
+     * @param valueClass    required, the type class of the output
+     * @param workflowId    required, the workflowId
+     * @param <T>           type of the output
+     * @return the output result
+     */
+    public <T> T tryGettingSimpleWorkflowResult(
+            final Class<T> valueClass,
+            final String workflowId) {
+        return tryGettingSimpleWorkflowResult(valueClass, workflowId, "");
+    }
+
+    /**
+     * In some cases, a workflow may have more than one completion states.
+     * Use this API to retrieve the output of the states with waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     *
+     * @param workflowId    required, the workflowId
+     * @param workflowRunId optional, can be empty
      * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
      */
     public List<StateCompletionOutput> getComplexWorkflowResultWithWait(
@@ -273,8 +322,44 @@ public class Client {
         return unregisteredClient.getComplexWorkflowResultWithWait(workflowId, workflowRunId);
     }
 
+    /**
+     * In some cases, a workflow may have more than one completion states.
+     * Use this API to retrieve the output of the states with waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     *
+     * @param workflowId    required, the workflowId
+     * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
+     */
     public List<StateCompletionOutput> getComplexWorkflowResultWithWait(final String workflowId) {
         return getComplexWorkflowResultWithWait(workflowId, "");
+    }
+
+    /**
+     * In some cases, a workflow may have more than one completion states.
+     * Use this API to retrieve the output of the states without waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     * Else, return the same result as {@link #getComplexWorkflowResultWithWait(String, String)}.
+     *
+     * @param workflowId    required, the workflowId
+     * @param workflowRunId optional, can be empty
+     * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
+     */
+    public List<StateCompletionOutput> tryGettingComplexWorkflowResult(
+            final String workflowId, final String workflowRunId) {
+        return unregisteredClient.tryGettingComplexWorkflowResult(workflowId, workflowRunId);
+    }
+
+    /**
+     * In some cases, a workflow may have more than one completion states.
+     * Use this API to retrieve the output of the states without waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     * Else, return the same result as {@link #getComplexWorkflowResultWithWait(String)}.
+     *
+     * @param workflowId    required, the workflowId
+     * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
+     */
+    public List<StateCompletionOutput> tryGettingComplexWorkflowResult(final String workflowId) {
+        return tryGettingComplexWorkflowResult(workflowId, "");
     }
 
     /**

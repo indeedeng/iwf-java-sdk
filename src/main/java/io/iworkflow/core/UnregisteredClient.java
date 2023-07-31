@@ -1,6 +1,7 @@
 package io.iworkflow.core;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import feign.Feign;
 import feign.FeignException;
 import feign.Retryer;
@@ -162,29 +163,170 @@ public class UnregisteredClient {
     }
 
     /**
-     * For most cases, a workflow only has one result(one completion state)
-     * Use this API to retrieve the output of the state
+     * For most cases, a workflow only has one result(one completion state).
+     * Use this API to retrieve the output of the state with waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
      *
-     * @param valueClass    the type class of the output
-     * @param workflowId    the workflowId
-     * @param workflowRunId optional runId, can be empty string
+     * @param valueClass    required, the type class of the output
+     * @param workflowId    required, the workflowId
+     * @param workflowRunId optional, can be empty
      * @param <T>           type of the output
-     * @return the result
+     * @return the output result
      */
     public <T> T getSimpleWorkflowResultWithWait(
-            Class<T> valueClass,
+            final Class<T> valueClass,
             final String workflowId,
             final String workflowRunId) {
+        return getWorkflowResultsAndDecode(valueClass, workflowId, workflowRunId, true);
+    }
 
-        WorkflowGetResponse workflowGetResponse;
+    /**
+     * For most cases, a workflow only has one result(one completion state).
+     * Use this API to retrieve the output of the state with waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     *
+     * @param valueClass    required, the type class of the output
+     * @param workflowId    required, the workflowId
+     * @param <T>           type of the output
+     * @return the output result
+     */
+    public <T> T getSimpleWorkflowResultWithWait(
+            final Class<T> valueClass,
+            final String workflowId) {
+        return getSimpleWorkflowResultWithWait(valueClass, workflowId, "");
+    }
+
+    /**
+     * For most cases, a workflow only has one result(one completion state).
+     * Use this API to retrieve the output of the state without waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     * Else, return the same result as {@link #getSimpleWorkflowResultWithWait(Class, String, String)}.
+     *
+     * @param valueClass    required, the type class of the output
+     * @param workflowId    required, the workflowId
+     * @param workflowRunId optional, can be empty
+     * @param <T>           type of the output
+     * @return the output result
+     */
+    public <T> T tryGettingSimpleWorkflowResult(
+            final Class<T> valueClass,
+            final String workflowId,
+            final String workflowRunId) {
+        return getWorkflowResultsAndDecode(valueClass, workflowId, workflowRunId, false);
+    }
+
+    /**
+     * For most cases, a workflow only has one result(one completion state).
+     * Use this API to retrieve the output of the state without waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     * Else, return the same result as {@link #getSimpleWorkflowResultWithWait(Class, String)}.
+     *
+     * @param valueClass    required, the type class of the output
+     * @param workflowId    required, the workflowId
+     * @param <T>           type of the output
+     * @return the output result
+     */
+    public <T> T tryGettingSimpleWorkflowResult(
+            final Class<T> valueClass,
+            final String workflowId) {
+        return tryGettingSimpleWorkflowResult(valueClass, workflowId, "");
+    }
+
+    /**
+     * In some cases, a workflow may have more than one completion states.
+     * Use this API to retrieve the output of the states with waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     *
+     * @param workflowId    required, the workflowId
+     * @param workflowRunId optional, can be empty
+     * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
+     */
+    public List<StateCompletionOutput> getComplexWorkflowResultWithWait(
+            final String workflowId, final String workflowRunId) {
+        return getWorkflowResults(workflowId, workflowRunId, true);
+    }
+
+    /**
+     * In some cases, a workflow may have more than one completion states.
+     * Use this API to retrieve the output of the states with waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     *
+     * @param workflowId    required, the workflowId
+     * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
+     */
+    public List<StateCompletionOutput> getComplexWorkflowResultWithWait(final String workflowId) {
+        return getComplexWorkflowResultWithWait(workflowId, "");
+    }
+
+    /**
+     * In some cases, a workflow may have more than one completion states.
+     * Use this API to retrieve the output of the states without waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     * Else, return the same result as {@link #getComplexWorkflowResultWithWait(String, String)}.
+     *
+     * @param workflowId    required, the workflowId
+     * @param workflowRunId optional, can be empty
+     * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
+     */
+    public List<StateCompletionOutput> tryGettingComplexWorkflowResult(
+            final String workflowId, final String workflowRunId) {
+        return getWorkflowResults(workflowId, workflowRunId, false);
+    }
+
+    /**
+     * In some cases, a workflow may have more than one completion states.
+     * Use this API to retrieve the output of the states without waiting for the workflow to complete.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     * Else, return the same result as {@link #getComplexWorkflowResultWithWait(String)}.
+     *
+     * @param workflowId    required, the workflowId
+     * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
+     */
+    public List<StateCompletionOutput> tryGettingComplexWorkflowResult(final String workflowId) {
+        return tryGettingComplexWorkflowResult(workflowId, "");
+    }
+
+    private <T> T getWorkflowResultsAndDecode(
+            final Class<T> valueClass,
+            final String workflowId,
+            final String workflowRunId,
+            final boolean withWait) {
+        final List<StateCompletionOutput> workflowResults = getWorkflowResults(workflowId, workflowRunId, withWait);
+
+        if (workflowResults.size() == 0) {
+            return null;
+        }
+
+        final String checkErrorMessage = "this workflow should have one or zero state output for using this API";
+        final List<StateCompletionOutput> filteredResults = workflowResults.stream().filter((res) -> res.getCompletedStateOutput() != null).collect(Collectors.toList());
+        Preconditions.checkArgument(workflowResults.size() == 1 || filteredResults.size() == 1, checkErrorMessage + ", found " + workflowResults.size() + ", after filtered NULL: " + filteredResults.size());
+
+        final StateCompletionOutput output;
+        if (filteredResults.size() == 1) {
+            output = filteredResults.get(0);
+        } else {
+            output = workflowResults.get(0);
+        }
+        return clientOptions.getObjectEncoder().decode(output.getCompletedStateOutput(), valueClass);
+    }
+
+    private List<StateCompletionOutput> getWorkflowResults(
+            final String workflowId,
+            final String workflowRunId,
+            final boolean withWait) {
+        final WorkflowGetRequest request = new WorkflowGetRequest()
+                .needsResults(true)
+                .workflowId(workflowId)
+                .workflowRunId(workflowRunId);
+
+        final WorkflowGetResponse workflowGetResponse;
         try {
-            workflowGetResponse = defaultApi.apiV1WorkflowGetWithWaitPost(
-                    new WorkflowGetRequest()
-                            .needsResults(true)
-                            .workflowId(workflowId)
-                            .workflowRunId(workflowRunId)
-            );
-        } catch (FeignException.FeignClientException exp) {
+            if (withWait) {
+                workflowGetResponse = defaultApi.apiV1WorkflowGetWithWaitPost(request);
+            } else {
+                workflowGetResponse = defaultApi.apiV1WorkflowGetPost(request);
+            }
+        } catch (final FeignException.FeignClientException exp) {
             throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
         }
 
@@ -192,21 +334,11 @@ public class UnregisteredClient {
             throwUncompletedException(workflowGetResponse);
         }
 
-        if (workflowGetResponse.getResults() == null || workflowGetResponse.getResults().size() == 0) {
-            return null;
+        final List<StateCompletionOutput> results = workflowGetResponse.getResults();
+        if (results == null) {
+            return ImmutableList.of();
         }
-
-        String checkErrorMessage = "this workflow should have one or zero state output for using this API";
-        final List<StateCompletionOutput> filteredResults = workflowGetResponse.getResults().stream().filter((res) -> res.getCompletedStateOutput() != null).collect(Collectors.toList());
-        Preconditions.checkArgument(workflowGetResponse.getResults().size() == 1 || filteredResults.size() == 1, checkErrorMessage + ", found " + workflowGetResponse.getResults().size() + ", after filtered NULL: " + filteredResults.size());
-
-        final StateCompletionOutput output;
-        if (filteredResults.size() == 1) {
-            output = filteredResults.get(0);
-        } else {
-            output = workflowGetResponse.getResults().get(0);
-        }
-        return clientOptions.getObjectEncoder().decode(output.getCompletedStateOutput(), valueClass);
+        return results;
     }
 
     private void throwUncompletedException(final WorkflowGetResponse workflowGetResponse) {
@@ -217,40 +349,6 @@ public class UnregisteredClient {
                 workflowGetResponse.getErrorMessage(),
                 workflowGetResponse.getResults(),
                 this.clientOptions.getObjectEncoder());
-    }
-
-    public <T> T getSimpleWorkflowResultWithWait(
-            Class<T> valueClass,
-            final String workflowId) {
-        return getSimpleWorkflowResultWithWait(valueClass, workflowId, "");
-    }
-
-    /**
-     * In some cases, a workflow may have more than one completion states
-     *
-     * @param workflowId    workflowId
-     * @param workflowRunId optional runId, can be empty string
-     * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
-     */
-    public List<StateCompletionOutput> getComplexWorkflowResultWithWait(
-            final String workflowId, final String workflowRunId) {
-
-        try {
-            WorkflowGetResponse workflowGetResponse = defaultApi.apiV1WorkflowGetWithWaitPost(
-                    new WorkflowGetRequest()
-                            .needsResults(true)
-                            .workflowId(workflowId)
-                            .workflowRunId(workflowRunId)
-            );
-
-            if (workflowGetResponse.getWorkflowStatus() != WorkflowStatus.COMPLETED) {
-                throwUncompletedException(workflowGetResponse);
-            }
-            
-            return workflowGetResponse.getResults();
-        } catch (FeignException.FeignClientException exp) {
-            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
-        }
     }
 
     public void signalWorkflow(
