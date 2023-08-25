@@ -125,3 +125,14 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 ### 2.2
 
 - [x] Support atomic conditional complete workflow by checking signal/internal channel emptiness
+
+### 2.3
+
+- [x] Support dynamic data/search attributes and internal/signal channel definition
+- [x] Support state options overridden dynamically
+- [x] Support describe workflow API
+
+### 2.4
+
+- [x] Support execute API failure policy
+- [x] Support RPC persistence locking policy 
