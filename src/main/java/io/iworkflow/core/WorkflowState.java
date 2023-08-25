@@ -92,7 +92,7 @@ public interface WorkflowState<I> {
      * -        MaxInternalSeconds:100
      * -        MaximumAttempts: 0
      * -        BackoffCoefficient: 2
-     *
+     * See {@link WorkflowStateOptionsExtension} for some helpers to build the options.
      * @return the optional options
      */
     default WorkflowStateOptions getStateOptions() {

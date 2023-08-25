@@ -70,7 +70,7 @@ public interface ObjectWorkflow {
     }
 
     /**
-     * Define the workflowType of this workflow definition. By default(when return empty string), it's the simple name of the workflow instance,
+     * Define the workflowType of this workflow definition. By default, it's the simple name of the workflow instance,
      * which should be the case for most scenarios.
      * <p>
      * Implement this to provide a different workflowType than default to avoid breaking changes when changing workflow class name.
@@ -79,7 +79,7 @@ public interface ObjectWorkflow {
      * @return the workflow type
      */
     default String getWorkflowType() {
-        return "";
+        return this.getClass().getSimpleName();
     }
 }
 

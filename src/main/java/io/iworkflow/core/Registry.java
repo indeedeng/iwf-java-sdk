@@ -54,9 +54,6 @@ public class Registry {
         registerWorkflowRPCs(wf);
     }
     public static String getWorkflowType(final ObjectWorkflow wf) {
-        if (wf.getWorkflowType().isEmpty()) {
-            return wf.getClass().getSimpleName();
-        }
         return wf.getWorkflowType();
     }
 
