@@ -25,10 +25,14 @@ public @interface RPC {
     // used when dataAttributesLoadingType is PARTIAL_WITHOUT_LOCKING
     String[] dataAttributesPartialLoadingKeys() default {};
 
+    String[] dataAttributesLockingKeys() default {};
+
     PersistenceLoadingType searchAttributesLoadingType() default PersistenceLoadingType.ALL_WITHOUT_LOCKING;
 
     // used when searchAttributesPartialLoadingKeys is PARTIAL_WITHOUT_LOCKING
     String[] searchAttributesPartialLoadingKeys() default {};
+
+    String[] searchAttributesLockingKeys() default {};
 
     /**
      * Only used when workflow has enabled {@link PersistenceOptions} CachingPersistenceByMemo
