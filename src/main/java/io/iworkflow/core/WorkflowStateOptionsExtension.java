@@ -7,15 +7,15 @@ import io.iworkflow.gen.models.WorkflowStateOptions;
 // to make it easier to build
 public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
 
-    public WorkflowStateOptions setProceedOnExecuteFailure(WorkflowState proceedingState) {
+    public WorkflowStateOptionsExtension setProceedOnExecuteFailure(final Class<? extends WorkflowState> proceedingState) {
         this.executeApiFailurePolicy(ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE);
-        this.executeApiFailureProceedStateId(proceedingState.getStateId());
+        this.executeApiFailureProceedStateId(proceedingState.getSimpleName());
         return this;
     }
 
-    public WorkflowStateOptions setProceedOnExecuteFailure(WorkflowState proceedingState, WorkflowStateOptions stateOptions) {
+    public WorkflowStateOptionsExtension setProceedOnExecuteFailure(final Class<? extends WorkflowState> proceedingState, WorkflowStateOptions stateOptions) {
         this.executeApiFailurePolicy(ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE);
-        this.executeApiFailureProceedStateId(proceedingState.getStateId());
+        this.executeApiFailureProceedStateId(proceedingState.getSimpleName());
         this.executeApiFailureProceedStateOptions(stateOptions);
         return this;
     }
