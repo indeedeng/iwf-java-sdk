@@ -5,7 +5,9 @@ import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
 import io.iworkflow.core.ClientSideException;
 import io.iworkflow.core.ImmutableStopWorkflowOptions;
+import io.iworkflow.core.ImmutableWorkflowOptions;
 import io.iworkflow.gen.models.ErrorResponse;
+import io.iworkflow.gen.models.WorkflowConfig;
 import io.iworkflow.gen.models.WorkflowStopType;
 import io.iworkflow.integ.persistence.BasicPersistenceWorkflow;
 import io.iworkflow.integ.rpc.NoStateWorkflow;
@@ -17,9 +19,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_INT;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_KEYWORD;
@@ -35,6 +41,63 @@ public class RpcTest {
     @BeforeEach
     public void setup() throws ExecutionException, InterruptedException {
         TestSingletonWorkerService.startWorkerIfNotUp();
+    }
+
+    @Test
+    public void testRPCLocking() throws InterruptedException, ExecutionException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "testRPCLocking" + System.currentTimeMillis() / 1000;
+        client.startWorkflow(
+                NoStateWorkflow.class, wfId, 1000, 999,
+                ImmutableWorkflowOptions.builder()
+                        .workflowConfigOverride(
+                                new WorkflowConfig()
+                                        .continueAsNewThreshold(1)
+                        )
+                        .build());
+
+        final NoStateWorkflow rpcStub = client.newRpcStub(NoStateWorkflow.class, wfId, "");
+
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        final ArrayList<Future<String>> futures = new ArrayList<>();
+        int total = 1000;
+        for (int i = 0; i < total; i++) {
+
+            final Future<String> future = executor.submit(() -> {
+                        try {
+                            return client.invokeRPC(rpcStub::increaseCounter);
+                        } catch (ClientSideException e) {
+                            if (e.getStatusCode() != 450) {
+                                throw e;
+                            }
+                        }
+                        return "fail";
+                    }
+            );
+            futures.add(future);
+        }
+
+        int succ = 0;
+        for (int i = 0; i < total; i++) {
+            ;
+            try {
+                final String done = futures.get(i).get();
+                if (done.equals("done")) {
+                    succ++;
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
+        Assertions.assertTrue(succ > 0);
+        Assertions.assertEquals(succ, client.invokeRPC(rpcStub::getCounter));
+
+        executor.shutdown();
+
+        // TODO make sure continue as new is happening when no state is executed
+        // https://github.com/indeedeng/iwf/issues/339
+
+        client.stopWorkflow(wfId, null);
     }
 
     @Test

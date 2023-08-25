@@ -56,9 +56,11 @@ public class RpcInvocationHandler {
         final Object output = unregisteredClient.invokeRpc(outputType, input, workflowId, workflowRunId, method.getName(), rpcAnno.timeoutSeconds(),
                 new PersistenceLoadingPolicy()
                         .persistenceLoadingType(rpcAnno.dataAttributesLoadingType())
-                        .partialLoadingKeys(Arrays.asList(rpcAnno.dataAttributesPartialLoadingKeys())),
+                        .partialLoadingKeys(Arrays.asList(rpcAnno.dataAttributesPartialLoadingKeys()))
+                        .lockingKeys(Arrays.asList(rpcAnno.dataAttributesLockingKeys())),
                 new PersistenceLoadingPolicy()
                         .persistenceLoadingType(rpcAnno.searchAttributesLoadingType())
+                        .lockingKeys(Arrays.asList(rpcAnno.searchAttributesLockingKeys()))
                         .partialLoadingKeys(Arrays.asList(rpcAnno.searchAttributesPartialLoadingKeys())),
                 useMemo,
                 searchAttributeKeyAndTypes
