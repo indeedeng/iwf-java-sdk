@@ -2,6 +2,7 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
+import io.iworkflow.core.ImmutableWorkflowOptions;
 import io.iworkflow.integ.timer.BasicTimerWorkflow;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
@@ -26,7 +27,8 @@ public class TimerTest {
         final Integer input = 5;
 
         client.startWorkflow(
-                BasicTimerWorkflow.class, wfId, 10, input);
+                BasicTimerWorkflow.class, wfId, 10, input,
+                ImmutableWorkflowOptions.builder().addWaitForCompletionStateExecutionIds("BasicTimerWorkflowState1-1").build());
 
         client.waitForStateExecutionCompletion(Void.class, wfId, "BasicTimerWorkflowState1-1");
         client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
