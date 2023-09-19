@@ -12,13 +12,7 @@ import io.iworkflow.core.persistence.Persistence;
 import java.time.Duration;
 
 public class BasicTimerWorkflowState1 implements WorkflowState<Integer> {
-    public static final String STATE_ID = "timer-s1";
     public static final String COMMAND_ID = "test-timer-id";
-
-    @Override
-    public String getStateId() {
-        return STATE_ID;
-    }
 
     @Override
     public Class<Integer> getInputType() {
