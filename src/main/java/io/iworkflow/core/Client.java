@@ -911,7 +911,7 @@ public class Client {
         unregisteredClient.skipTimer(workflowId, workflowRunId, workflowStateId, stateExecutionNumber, timerCommandIndex);
     }
 
-    private <T> T waitForStateExecutionCompletion(
+    public <T> T waitForStateExecutionCompletion(
             final Class<T> valueClass,
             final String workflowId,
             final String stateExecutionId) {
