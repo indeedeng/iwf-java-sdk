@@ -25,4 +25,6 @@ public abstract class UnregisteredWorkflowOptions {
     public abstract Optional<WorkflowConfig> getWorkflowConfigOverride();
 
     public abstract Optional<Boolean> getUsingMemoForDataAttributes();
+
+    public abstract Optional<List<String>> getWaitForCompletionStateExecutionIds();
 }

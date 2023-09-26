@@ -151,6 +151,10 @@ public class UnregisteredClient {
                 startOptions.useMemoForDataAttributes(options.getUsingMemoForDataAttributes().get());
             }
 
+            if (options.getWaitForCompletionStateExecutionIds().isPresent()) {
+                request.waitForCompletionStateExecutionIds(options.getWaitForCompletionStateExecutionIds().get());
+            }
+
             request.workflowStartOptions(startOptions);
         }
 

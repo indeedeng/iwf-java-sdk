@@ -128,6 +128,7 @@ public class Client {
             unregisterWorkflowOptions.cronSchedule(options.getCronSchedule());
             unregisterWorkflowOptions.workflowRetryPolicy(options.getWorkflowRetryPolicy());
             unregisterWorkflowOptions.workflowConfigOverride(options.getWorkflowConfigOverride());
+            unregisterWorkflowOptions.waitForCompletionStateExecutionIds(options.getWaitForCompletionStateExecutionIds());
 
             final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(wfType);
             final List<SearchAttribute> convertedSAs = convertToSearchAttributeList(saTypes, options.getInitialSearchAttribute());
