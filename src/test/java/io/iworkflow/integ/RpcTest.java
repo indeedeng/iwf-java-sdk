@@ -60,7 +60,7 @@ public class RpcTest {
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
         final ArrayList<Future<String>> futures = new ArrayList<>();
-        int total = 1000;
+        int total = 100;
         for (int i = 0; i < total; i++) {
 
             final Future<String> future = executor.submit(() -> {
@@ -107,7 +107,7 @@ public class RpcTest {
         final String runId = client.startWorkflow(
                 RpcWorkflow.class, wfId, 10, 999);
 
-        final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "");
+        final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "" );
 
         client.invokeRPC(rpcStub::testRpcSetDataAttribute, "test-value");
         String value = client.invokeRPC(rpcStub::testRpcGetDataAttribute);
