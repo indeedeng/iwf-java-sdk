@@ -1,6 +1,5 @@
 package io.iworkflow.core;
 
-import feign.FeignException;
 import io.iworkflow.core.persistence.PersistenceOptions;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
@@ -128,6 +127,7 @@ public class Client {
             unregisterWorkflowOptions.cronSchedule(options.getCronSchedule());
             unregisterWorkflowOptions.workflowRetryPolicy(options.getWorkflowRetryPolicy());
             unregisterWorkflowOptions.workflowConfigOverride(options.getWorkflowConfigOverride());
+            unregisterWorkflowOptions.waitForCompletionStateExecutionIds(options.getWaitForCompletionStateExecutionIds());
 
             final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(wfType);
             final List<SearchAttribute> convertedSAs = convertToSearchAttributeList(saTypes, options.getInitialSearchAttribute());
@@ -909,5 +909,12 @@ public class Client {
             final int stateExecutionNumber,
             final int timerCommandIndex) {
         unregisteredClient.skipTimer(workflowId, workflowRunId, workflowStateId, stateExecutionNumber, timerCommandIndex);
+    }
+
+    public <T> T waitForStateExecutionCompletion(
+            final Class<T> valueClass,
+            final String workflowId,
+            final String stateExecutionId) {
+        return unregisteredClient.waitForStateExecutionCompletion(valueClass, workflowId, stateExecutionId);
     }
 }

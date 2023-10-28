@@ -5,6 +5,7 @@ import io.iworkflow.gen.models.WorkflowConfig;
 import io.iworkflow.gen.models.WorkflowRetryPolicy;
 import org.immutables.value.Value;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,4 +20,6 @@ public abstract class WorkflowOptions {
     public abstract Map<String, Object> getInitialSearchAttribute();
 
     public abstract Optional<WorkflowConfig> getWorkflowConfigOverride();
+
+    public abstract List<String> getWaitForCompletionStateExecutionIds();
 }

@@ -31,6 +31,8 @@ import io.iworkflow.gen.models.WorkflowStartRequest;
 import io.iworkflow.gen.models.WorkflowStartResponse;
 import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.gen.models.WorkflowStopRequest;
+import io.iworkflow.gen.models.WorkflowWaitForStateCompletionRequest;
+import io.iworkflow.gen.models.WorkflowWaitForStateCompletionResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -152,6 +154,8 @@ public class UnregisteredClient {
             }
 
             request.workflowStartOptions(startOptions);
+
+            request.waitForCompletionStateExecutionIds(options.getWaitForCompletionStateExecutionIds());
         }
 
         try {
@@ -339,6 +343,26 @@ public class UnregisteredClient {
             return ImmutableList.of();
         }
         return results;
+    }
+
+    public <T> T waitForStateExecutionCompletion(
+            final Class<T> valueClass,
+            final String workflowId,
+            final String stateExecutionId) {
+        final WorkflowWaitForStateCompletionRequest request = new WorkflowWaitForStateCompletionRequest()
+                .stateExecutionId(stateExecutionId)
+                .workflowId(workflowId);
+        final WorkflowWaitForStateCompletionResponse response;
+        try {
+            response = defaultApi.apiV1WorkflowWaitForStateCompletionPost(request);
+        } catch (final FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
+
+        if (response.getStateCompletionOutput() == null) {
+            return null;
+        }
+        return clientOptions.getObjectEncoder().decode(response.getStateCompletionOutput().getCompletedStateOutput(), valueClass);
     }
 
     private void throwUncompletedException(final WorkflowGetResponse workflowGetResponse) {
