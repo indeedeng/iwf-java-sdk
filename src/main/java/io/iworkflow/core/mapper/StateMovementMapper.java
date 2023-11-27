@@ -58,7 +58,8 @@ public class StateMovementMapper {
             String stateId = stateOptions.getExecuteApiFailureProceedStateId();
             final StateDef proceedStatDef = registry.getWorkflowState(workflowType, stateId);
             WorkflowStateOptions proceedStateOptions = proceedStatDef.getWorkflowState().getStateOptions();
-            if (proceedStateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE) {
+            if (proceedStateOptions != null &&
+                    proceedStateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE) {
                 throw new WorkflowDefinitionException("nested failure handling is not supported. You cannot set a failure proceeding state on top of another failure proceeding state.");
             }
 
