@@ -13,7 +13,7 @@ public class WorkflowStateFailProceedToRecoverNoWaitUntil implements ObjectWorkf
     public List<StateDef> getWorkflowStates() {
         return Arrays.asList(
                 StateDef.startingState(new StateFailProceedToRecoverNoWaitUntil()),
-                StateDef.nonStartingState(new StateRecoverBasic())
+                StateDef.nonStartingState(new StateRecoverNoWaitUntil())
         );
     }
 }
