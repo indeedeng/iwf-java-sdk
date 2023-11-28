@@ -8,11 +8,12 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class StateApiFailWorkflow implements ObjectWorkflow {
+public class WorkflowStateFailProceedToRecoverNoWaitUntil implements ObjectWorkflow {
     @Override
     public List<StateDef> getWorkflowStates() {
         return Arrays.asList(
-                StateDef.startingState(new StateApiFailWorkflowState1())
+                StateDef.startingState(new StateFailProceedToRecoverNoWaitUntil()),
+                StateDef.nonStartingState(new StateRecoverBasic())
         );
     }
 }
