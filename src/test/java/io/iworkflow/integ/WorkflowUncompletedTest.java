@@ -7,7 +7,7 @@ import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.gen.models.WorkflowStopType;
 import io.iworkflow.integ.forcefail.ForceFailWorkflow;
 import io.iworkflow.integ.signal.BasicSignalWorkflow;
-import io.iworkflow.integ.stateapifail.StateApiFailWorkflow;
+import io.iworkflow.integ.stateapifail.WorkflowBasicStateFail;
 import io.iworkflow.integ.stateapitimeout.StateApiTimeoutFailWorkflow;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
@@ -203,7 +203,7 @@ public class WorkflowUncompletedTest {
         final Integer input = 5;
 
         final String runId = client.startWorkflow(
-                StateApiFailWorkflow.class, wfId, 10, input);
+                WorkflowBasicStateFail.class, wfId, 10, input);
 
         try {
             client.getSimpleWorkflowResultWithWait(Integer.class, wfId);

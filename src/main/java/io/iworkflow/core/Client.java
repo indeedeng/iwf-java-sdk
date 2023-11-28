@@ -1,6 +1,8 @@
 package io.iworkflow.core;
 
+import io.iworkflow.core.mapper.StateMovementMapper;
 import io.iworkflow.core.persistence.PersistenceOptions;
+import io.iworkflow.gen.models.ExecuteApiFailurePolicy;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
@@ -153,6 +155,9 @@ public class Client {
                     stateOptions.skipWaitUntil(true);
                 }
             }
+
+            StateMovementMapper.autoFillFailureProceedingStateOptions(stateOptions, wfType, registry);
+
             if (stateOptions != null) {
                 unregisterWorkflowOptions.startStateOptions(stateOptions);
             }

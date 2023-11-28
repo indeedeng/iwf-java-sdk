@@ -10,7 +10,7 @@ import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.gen.models.RetryPolicy;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 
-public class StateApiFailWorkflowState1 implements WorkflowState<Integer> {
+public class StateFailBasic implements WorkflowState<Integer> {
 
     @Override
     public Class<Integer> getInputType() {

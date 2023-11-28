@@ -8,12 +8,11 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class ExecuteApiFailProceedWorkflow implements ObjectWorkflow {
+public class WorkflowBasicStateFail implements ObjectWorkflow {
     @Override
     public List<StateDef> getWorkflowStates() {
         return Arrays.asList(
-                StateDef.startingState(new StateApiFailProceedState()),
-                StateDef.nonStartingState(new StateApiRecoverState())
+                StateDef.startingState(new StateFailBasic())
         );
     }
 }
