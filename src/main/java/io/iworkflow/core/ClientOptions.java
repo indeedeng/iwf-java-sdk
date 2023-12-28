@@ -2,6 +2,9 @@ package io.iworkflow.core;
 
 import org.immutables.value.Value;
 
+import java.util.Map;
+import java.util.Optional;
+
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Value.Immutable
@@ -11,6 +14,10 @@ public abstract class ClientOptions {
     public abstract String getWorkerUrl();
 
     public abstract ObjectEncoder getObjectEncoder();
+
+    public abstract Optional<Integer> getLongPollApiMaxWaitTimeSeconds();
+
+    public abstract Map<String,String> getRequestHeaders();
 
     @Value.Default
     public ServiceApiRetryConfig getServiceApiRetryConfig() {
