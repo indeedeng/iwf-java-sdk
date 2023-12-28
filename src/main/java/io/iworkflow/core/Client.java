@@ -48,6 +48,12 @@ public class Client {
         this.unregisteredClient = new UnregisteredClient(clientOptions);
     }
 
+    public Client(final Registry registry, final ClientOptions clientOptions, final UnregisteredClient unregisteredClient) {
+        this.registry = registry;
+        this.clientOptions = clientOptions;
+        this.unregisteredClient = unregisteredClient;
+    }
+
     public UnregisteredClient getUnregisteredClient() {
         return unregisteredClient;
     }
