@@ -66,6 +66,11 @@ public class UnregisteredClient {
 
         this.defaultApi = apiClient.buildClient(DefaultApi.class);
     }
+    
+    public UnregisteredClient(final ClientOptions clientOptions, final DefaultApi openApiClient) {
+        this.clientOptions = clientOptions;
+        this.defaultApi = openApiClient;
+    }
 
     /**
      * @param workflowType           required
