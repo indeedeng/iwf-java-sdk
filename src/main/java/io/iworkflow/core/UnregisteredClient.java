@@ -60,8 +60,16 @@ public class UnregisteredClient {
         );
         feignBuilder.errorDecoder(new ServerErrorRetryDecoder());
         apiClient.setFeignBuilder(feignBuilder);
+        feignBuilder.requestInterceptor(
+                (requestTemplate) -> clientOptions.getRequestHeaders().forEach(requestTemplate::header)
+        );
 
         this.defaultApi = apiClient.buildClient(DefaultApi.class);
+    }
+    
+    public UnregisteredClient(final ClientOptions clientOptions, final DefaultApi openApiClient) {
+        this.clientOptions = clientOptions;
+        this.defaultApi = openApiClient;
     }
 
     /**
@@ -323,6 +331,10 @@ public class UnregisteredClient {
                 .workflowId(workflowId)
                 .workflowRunId(workflowRunId);
 
+        if(withWait && clientOptions.getLongPollApiMaxWaitTimeSeconds().isPresent()) {
+            request.waitTimeSeconds(clientOptions.getLongPollApiMaxWaitTimeSeconds().get());
+        }
+
         final WorkflowGetResponse workflowGetResponse;
         try {
             if (withWait) {
@@ -352,6 +364,11 @@ public class UnregisteredClient {
         final WorkflowWaitForStateCompletionRequest request = new WorkflowWaitForStateCompletionRequest()
                 .stateExecutionId(stateExecutionId)
                 .workflowId(workflowId);
+
+        if(clientOptions.getLongPollApiMaxWaitTimeSeconds().isPresent()) {
+            request.waitTimeSeconds(clientOptions.getLongPollApiMaxWaitTimeSeconds().get());
+        }
+
         final WorkflowWaitForStateCompletionResponse response;
         try {
             response = defaultApi.apiV1WorkflowWaitForStateCompletionPost(request);
