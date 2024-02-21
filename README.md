@@ -135,4 +135,8 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 ### 2.4
 
 - [x] Support execute API failure policy
-- [x] Support RPC persistence locking policy 
+- [x] Support RPC persistence locking policy
+
+### 2.5
+
+- [x] Add waitForStateExecutionCompletion API
