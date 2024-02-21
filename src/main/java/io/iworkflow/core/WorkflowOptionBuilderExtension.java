@@ -25,7 +25,7 @@ public class WorkflowOptionBuilderExtension {
     /**
      * Add a state to wait for completion. This can wait for any times completion of the state
      * @param state The state to wait for completion.
-     * @param number The number of the state completion to wait for.
+     * @param number The number of the state completion to wait for. E.g. when it's 2, it's waiting for the second completion of the state.
      * @return The builder.
      */
     public WorkflowOptionBuilderExtension WaitForCompletionStateWithNumber(Class<? extends WorkflowState> state, int number) {
