@@ -252,16 +252,38 @@ public class Client {
     }
 
     /**
+     * A long poll API to wait for the workflow completion
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     *
+     * @param workflowId    required, the workflowId
+     */
+    public void waitForWorkflowCompletion(
+            final String workflowId) {
+        this.getSimpleWorkflowResultWithWait(Void.class, workflowId);
+    }
+
+    /**
+     * A long poll API to wait for the workflow completion
      * For most cases, a workflow only has one result(one completion state).
      * Use this API to retrieve the output of the state with waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link feign.FeignException.FeignClientException}.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
      *
      * @param valueClass    required, the type class of the output
      * @param workflowId    required, the workflowId
-     * @param workflowRunId optional, can be empty
      * @param <T>           type of the output
      * @return the output result
      */
+    public <T> T waitForWorkflowCompletion(
+            final Class<T> valueClass,
+            final String workflowId) {
+        return this.getSimpleWorkflowResultWithWait(valueClass, workflowId);
+    }
+
+    /**
+     * Use {@link #waitForWorkflowCompletion(Class, String)} instead
+     * It's just a renaming.
+     */
+    @Deprecated
     public <T> T getSimpleWorkflowResultWithWait(
             final Class<T> valueClass,
             final String workflowId,
@@ -270,15 +292,10 @@ public class Client {
     }
 
     /**
-     * For most cases, a workflow only has one result(one completion state).
-     * Use this API to retrieve the output of the state with waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link feign.FeignException.FeignClientException}.
-     *
-     * @param valueClass    required, the type class of the output
-     * @param workflowId    required, the workflowId
-     * @param <T>           type of the output
-     * @return the output result
+     * Use {@link #waitForWorkflowCompletion(Class, String)} instead
+     * It's just a renaming.
      */
+    @Deprecated
     public <T> T getSimpleWorkflowResultWithWait(
             final Class<T> valueClass,
             final String workflowId) {
@@ -936,7 +953,7 @@ public class Client {
             final Class<? extends WorkflowState> stateClass) {
         this.waitForStateExecutionCompletion(Void.class, workflowId, stateClass, 1);
     }
-    
+
     /**
      * A long poll API to wait for the completion of the state. This only waits for the first completion.
      * Note 1 The stateCompletion to wait for is needed to registered on starting workflow due to limitation in https://github.com/indeedeng/iwf/issues/349

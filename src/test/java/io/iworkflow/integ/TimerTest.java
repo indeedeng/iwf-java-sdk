@@ -36,7 +36,7 @@ public class TimerTest {
                         .getBuilder().build());
 
         client.waitForStateExecutionCompletion(wfId, BasicTimerWorkflowState1.class);
-        client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        client.waitForWorkflowCompletion(wfId);
         final long elapsed = System.currentTimeMillis() - startTs;
         Assertions.assertTrue(elapsed >= 4000 && elapsed <= 7000, String.format("actual duration: %d", elapsed));
     }
