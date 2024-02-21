@@ -3,7 +3,9 @@ package io.iworkflow.integ;
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
 import io.iworkflow.core.ImmutableWorkflowOptions;
+import io.iworkflow.core.WorkflowOptionBuilderExtension;
 import io.iworkflow.integ.timer.BasicTimerWorkflow;
+import io.iworkflow.integ.timer.BasicTimerWorkflowState1;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
 import org.junit.jupiter.api.Assertions;
@@ -28,7 +30,9 @@ public class TimerTest {
 
         client.startWorkflow(
                 BasicTimerWorkflow.class, wfId, 10, input,
-                ImmutableWorkflowOptions.builder().addWaitForCompletionStateExecutionIds("BasicTimerWorkflowState1-1").build());
+                ImmutableWorkflowOptions.extendedBuilder()
+                        .WaitForCompletionStates(BasicTimerWorkflowState1.class)
+                        .getBuilder().build());
 
         client.waitForStateExecutionCompletion(Void.class, wfId, "BasicTimerWorkflowState1-1");
         client.getSimpleWorkflowResultWithWait(Integer.class, wfId);

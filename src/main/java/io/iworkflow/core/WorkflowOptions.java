@@ -22,4 +22,12 @@ public abstract class WorkflowOptions {
     public abstract Optional<WorkflowConfig> getWorkflowConfigOverride();
 
     public abstract List<String> getWaitForCompletionStateExecutionIds();
+
+    public static WorkflowOptionBuilderExtension extendedBuilder() {
+        return new WorkflowOptionBuilderExtension();
+    }
+
+    public static ImmutableWorkflowOptions.Builder  basicBuilder() {
+        return ImmutableWorkflowOptions.builder();
+    }
 }

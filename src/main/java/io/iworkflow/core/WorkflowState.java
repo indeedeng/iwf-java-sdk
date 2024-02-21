@@ -112,6 +112,10 @@ public interface WorkflowState<I> {
         }
         return false;
     }
+
+    static String getStateExecutionId(Class<? extends WorkflowState> state, int number) {
+        return String.format("%s-%d", state.getSimpleName(), number);
+    }
 }
 
 
