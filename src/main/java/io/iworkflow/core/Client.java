@@ -2,6 +2,7 @@ package io.iworkflow.core;
 
 import io.iworkflow.core.mapper.StateMovementMapper;
 import io.iworkflow.core.persistence.PersistenceOptions;
+import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.gen.models.ExecuteApiFailurePolicy;
 import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.SearchAttribute;
@@ -251,16 +252,38 @@ public class Client {
     }
 
     /**
+     * A long poll API to wait for the workflow completion
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
+     *
+     * @param workflowId    required, the workflowId
+     */
+    public void waitForWorkflowCompletion(
+            final String workflowId) {
+        this.getSimpleWorkflowResultWithWait(Void.class, workflowId);
+    }
+
+    /**
+     * A long poll API to wait for the workflow completion
      * For most cases, a workflow only has one result(one completion state).
      * Use this API to retrieve the output of the state with waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link feign.FeignException.FeignClientException}.
+     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
      *
      * @param valueClass    required, the type class of the output
      * @param workflowId    required, the workflowId
-     * @param workflowRunId optional, can be empty
      * @param <T>           type of the output
      * @return the output result
      */
+    public <T> T waitForWorkflowCompletion(
+            final Class<T> valueClass,
+            final String workflowId) {
+        return this.getSimpleWorkflowResultWithWait(valueClass, workflowId);
+    }
+
+    /**
+     * Use {@link #waitForWorkflowCompletion(Class, String)} instead
+     * It's just a renaming.
+     */
+    @Deprecated
     public <T> T getSimpleWorkflowResultWithWait(
             final Class<T> valueClass,
             final String workflowId,
@@ -269,15 +292,10 @@ public class Client {
     }
 
     /**
-     * For most cases, a workflow only has one result(one completion state).
-     * Use this API to retrieve the output of the state with waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link feign.FeignException.FeignClientException}.
-     *
-     * @param valueClass    required, the type class of the output
-     * @param workflowId    required, the workflowId
-     * @param <T>           type of the output
-     * @return the output result
+     * Use {@link #waitForWorkflowCompletion(Class, String)} instead
+     * It's just a renaming.
      */
+    @Deprecated
     public <T> T getSimpleWorkflowResultWithWait(
             final Class<T> valueClass,
             final String workflowId) {
@@ -922,6 +940,64 @@ public class Client {
         unregisteredClient.skipTimer(workflowId, workflowRunId, workflowStateId, stateExecutionNumber, timerCommandIndex);
     }
 
+    /**
+     * A long poll API to wait for the completion of the state. This only waits for the first completion.
+     * Note 1 The stateCompletion to wait for is needed to registered on starting workflow due to limitation in https://github.com/indeedeng/iwf/issues/349
+     * Note 2 The max polling time is configured as clientOptions as the Feign client timeout(default to 10s)
+     * If the state is not COMPLETED, throw the {@link ClientSideException} with the sub status of {@link ErrorSubStatus#LONG_POLL_TIME_OUT_SUB_STATUS}
+     * @param workflowId the workflowId
+     * @param stateClass the state class.
+     */
+    public void waitForStateExecutionCompletion(
+            final String workflowId,
+            final Class<? extends WorkflowState> stateClass) {
+        this.waitForStateExecutionCompletion(Void.class, workflowId, stateClass, 1);
+    }
+
+    /**
+     * A long poll API to wait for the completion of the state. This only waits for the first completion.
+     * Note 1 The stateCompletion to wait for is needed to registered on starting workflow due to limitation in https://github.com/indeedeng/iwf/issues/349
+     * Note 2 The max polling time is configured as clientOptions as the Feign client timeout(default to 10s)
+     * If the state is not COMPLETED, throw the {@link ClientSideException} with the sub status of {@link ErrorSubStatus#LONG_POLL_TIME_OUT_SUB_STATUS}
+     * @param valueClass the result of the state completion. Could be Void if not interested
+     * @param workflowId the workflowId
+     * @param stateClass the state class.
+     * @return the result of the state completion
+     * @param <T> the result type of the state completion
+     */
+    public <T> T waitForStateExecutionCompletion(
+            final Class<T> valueClass,
+            final String workflowId,
+            final Class<? extends WorkflowState> stateClass) {
+        return this.waitForStateExecutionCompletion(valueClass, workflowId, stateClass, 1);
+    }
+
+    /**
+     * A long poll API to wait for the completion of the state. This only waits for the first completion.
+     * Note 1 The stateCompletion and stateExecutionNumber to wait for must be registered on starting workflow due to limitation in https://github.com/indeedeng/iwf/issues/349
+     * Note 2 The max polling time is configured as clientOptions as the Feign client timeout(default to 10s)
+     * If the state is not COMPLETED, throw the {@link ClientSideException} with the sub status of {@link ErrorSubStatus#LONG_POLL_TIME_OUT_SUB_STATUS}
+     * @param valueClass the result of the state completion. Could be Void if not interested
+     * @param workflowId the workflowId
+     * @param stateClass the state class
+     * @param stateExecutionNumber the state execution number. E.g. if it's 2, it means the 2nd execution of the state
+     * @return the result of the state completion
+     * @param <T> the result type of the state completion
+     */
+    public <T> T waitForStateExecutionCompletion(
+            final Class<T> valueClass,
+            final String workflowId,
+            final Class<? extends WorkflowState> stateClass,
+            final int stateExecutionNumber) {
+        final String stateExecutionId= WorkflowState.getStateExecutionId(stateClass, stateExecutionNumber);
+        return unregisteredClient.waitForStateExecutionCompletion(valueClass, workflowId, stateExecutionId);
+    }
+
+
+    /**
+     * This method is deprecated, use the method with stateClass instead for strongly typing experience
+     */
+    @Deprecated
     public <T> T waitForStateExecutionCompletion(
             final Class<T> valueClass,
             final String workflowId,
