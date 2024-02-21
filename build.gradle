@@ -161,7 +161,7 @@ signing {
 }
 
 group = "io.iworkflow"
-version = "2.5.1"
+version = "2.5.4"
 
 nexusPublishing {
     repositories {

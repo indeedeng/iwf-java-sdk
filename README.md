@@ -23,7 +23,7 @@ For the latest version, [MVN Repository](https://mvnrepository.com/artifact/io.i
 
 ```gradle
 // https://mvnrepository.com/artifact/io.iworkflow/iwf-java-sdk
-implementation 'io.iworkflow:iwf-java-sdk:2.2.+'
+implementation 'io.iworkflow:iwf-java-sdk:2.5.+'
 ```
 
 ### Maven
@@ -33,7 +33,7 @@ implementation 'io.iworkflow:iwf-java-sdk:2.2.+'
 <dependency>
     <groupId>io.iworkflow</groupId>
     <artifactId>iwf-java-sdk</artifactId>
-    <version>2.2.+</version>
+    <version>2.5.+</version>
     <type>pom</type>
 </dependency>
 
@@ -135,4 +135,8 @@ Run the command `git submodule update --remote --merge` to update IDL to the lat
 ### 2.4
 
 - [x] Support execute API failure policy
-- [x] Support RPC persistence locking policy 
+- [x] Support RPC persistence locking policy
+
+### 2.5
+
+- [x] Add waitForStateExecutionCompletion API

@@ -2,8 +2,6 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
-import io.iworkflow.core.ImmutableWorkflowOptions;
-import io.iworkflow.core.WorkflowOptionBuilderExtension;
 import io.iworkflow.core.WorkflowOptions;
 import io.iworkflow.integ.timer.BasicTimerWorkflow;
 import io.iworkflow.integ.timer.BasicTimerWorkflowState1;
@@ -32,7 +30,7 @@ public class TimerTest {
         client.startWorkflow(
                 BasicTimerWorkflow.class, wfId, 10, input,
                 WorkflowOptions.extendedBuilder()
-                        .WaitForCompletionStates(BasicTimerWorkflowState1.class)
+                        .waitForCompletionStates(BasicTimerWorkflowState1.class)
                         .getBuilder().build());
 
         client.waitForStateExecutionCompletion(wfId, BasicTimerWorkflowState1.class);

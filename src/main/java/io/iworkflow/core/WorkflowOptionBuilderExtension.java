@@ -14,7 +14,7 @@ public class WorkflowOptionBuilderExtension {
      * @param states The states to wait for completion. O
      * @return The builder.
      */
-    public WorkflowOptionBuilderExtension WaitForCompletionStates(Class<? extends WorkflowState> ...states) {
+    public WorkflowOptionBuilderExtension waitForCompletionStates(Class<? extends WorkflowState> ...states) {
         Arrays.stream(states).forEach(
                 state -> builder.addWaitForCompletionStateExecutionIds(
                         WorkflowState.getStateExecutionId(state,1)
@@ -28,7 +28,7 @@ public class WorkflowOptionBuilderExtension {
      * @param number The number of the state completion to wait for. E.g. when it's 2, it's waiting for the second completion of the state.
      * @return The builder.
      */
-    public WorkflowOptionBuilderExtension WaitForCompletionStateWithNumber(Class<? extends WorkflowState> state, int number) {
+    public WorkflowOptionBuilderExtension waitForCompletionStateWithNumber(Class<? extends WorkflowState> state, int number) {
         builder.addWaitForCompletionStateExecutionIds(
                 WorkflowState.getStateExecutionId(state, number)
         );
