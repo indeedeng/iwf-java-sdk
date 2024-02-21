@@ -928,6 +928,20 @@ public class Client {
      * Note 1 The stateCompletion to wait for is needed to registered on starting workflow due to limitation in https://github.com/indeedeng/iwf/issues/349
      * Note 2 The max polling time is configured as clientOptions as the Feign client timeout(default to 10s)
      * If the state is not COMPLETED, throw the {@link ClientSideException} with the sub status of {@link ErrorSubStatus#LONG_POLL_TIME_OUT_SUB_STATUS}
+     * @param workflowId the workflowId
+     * @param stateClass the state class.
+     */
+    public void waitForStateExecutionCompletion(
+            final String workflowId,
+            final Class<? extends WorkflowState> stateClass) {
+        this.waitForStateExecutionCompletion(Void.class, workflowId, stateClass, 1);
+    }
+    
+    /**
+     * A long poll API to wait for the completion of the state. This only waits for the first completion.
+     * Note 1 The stateCompletion to wait for is needed to registered on starting workflow due to limitation in https://github.com/indeedeng/iwf/issues/349
+     * Note 2 The max polling time is configured as clientOptions as the Feign client timeout(default to 10s)
+     * If the state is not COMPLETED, throw the {@link ClientSideException} with the sub status of {@link ErrorSubStatus#LONG_POLL_TIME_OUT_SUB_STATUS}
      * @param valueClass the result of the state completion. Could be Void if not interested
      * @param workflowId the workflowId
      * @param stateClass the state class.
@@ -939,20 +953,6 @@ public class Client {
             final String workflowId,
             final Class<? extends WorkflowState> stateClass) {
         return this.waitForStateExecutionCompletion(valueClass, workflowId, stateClass, 1);
-    }
-
-    /**
-     * A long poll API to wait for the completion of the state. This only waits for the first completion.
-     * Note 1 The stateCompletion to wait for is needed to registered on starting workflow due to limitation in https://github.com/indeedeng/iwf/issues/349
-     * Note 2 The max polling time is configured as clientOptions as the Feign client timeout(default to 10s)
-     * If the state is not COMPLETED, throw the {@link ClientSideException} with the sub status of {@link ErrorSubStatus#LONG_POLL_TIME_OUT_SUB_STATUS}
-     * @param workflowId the workflowId
-     * @param stateClass the state class.
-     */
-    public void waitForStateExecutionCompletion(
-            final String workflowId,
-            final Class<? extends WorkflowState> stateClass) {
-        this.waitForStateExecutionCompletion(Void.class, workflowId, stateClass, 1);
     }
 
     /**
