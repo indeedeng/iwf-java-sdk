@@ -171,23 +171,4 @@ public final class RpcDefinitions {
 
         return true;
     }
-
-    public static void validateRpcMethodTest(final Method method) {
-        final Class<?>[] paramTypes = method.getParameterTypes();
-        final Class<?> persistenceType, communicationType, contextType;
-        if (paramTypes.length == PARAMETERS_NO_INPUT) {
-            contextType = paramTypes[0];
-            persistenceType = paramTypes[1];
-            communicationType = paramTypes[2];
-        } else if (paramTypes.length == PARAMETERS_WITH_INPUT) {
-            contextType = paramTypes[0];
-            persistenceType = paramTypes[2];
-            communicationType = paramTypes[3];
-        } else {
-            throw new WorkflowDefinitionException(ERROR_MESSAGE);
-        }
-        if (!persistenceType.equals(Persistence.class) || !communicationType.equals(Communication.class)) {
-            throw new WorkflowDefinitionException(ERROR_MESSAGE);
-        }
-    }
 }
