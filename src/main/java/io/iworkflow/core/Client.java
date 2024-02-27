@@ -37,7 +37,7 @@ public class Client {
     final ClientOptions clientOptions;
 
     /**
-     * return a full featured client. If you don't have the workflow Registry, you should use {@link UnregisteredClient} instead
+     * return a full-featured client. If you don't have the workflow Registry, you should use {@link UnregisteredClient} instead
      *
      * @param registry      registry is required so that this client can perform some validation checks (workflow types, channel names)
      * @param clientOptions is for configuring the client
@@ -690,11 +690,35 @@ public class Client {
      * invoking the RPC through RPC stub
      *
      * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
+     * @param input         the input of the RPC method
+     * @param <I>           the input type
+     * @param <O>           the output type
+     * @return              output
+     */
+    public <I, O> O invokeRPC(RpcDefinitions.RpcFunc1NoPersistence<I, O> rpcStubMethod, I input) {
+        return rpcStubMethod.execute(null, input, null);
+    }
+
+    /**
+     * invoking the RPC through RPC stub
+     *
+     * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
      * @param <O>           the output type
      * @return output
      */
     public <O> O invokeRPC(RpcDefinitions.RpcFunc0<O> rpcStubMethod) {
         return rpcStubMethod.execute(null, null, null);
+    }
+
+    /**
+     * invoking the RPC through RPC stub
+     *
+     * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
+     * @param <O>           the output type
+     * @return output
+     */
+    public <O> O invokeRPC(RpcDefinitions.RpcFunc0NoPersistence<O> rpcStubMethod) {
+        return rpcStubMethod.execute(null, null);
     }
 
     /**
@@ -712,9 +736,29 @@ public class Client {
      * invoking the RPC through RPC stub
      *
      * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
+     * @param input         the input of the RPC method
+     * @param <I>           the input type
+     */
+    public <I> void invokeRPC(RpcDefinitions.RpcProc1NoPersistence<I> rpcStubMethod, I input) {
+        rpcStubMethod.execute(null, input, null);
+    }
+
+    /**
+     * invoking the RPC through RPC stub
+     *
+     * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
      */
     public void invokeRPC(RpcDefinitions.RpcProc0 rpcStubMethod) {
         rpcStubMethod.execute(null, null, null);
+    }
+
+    /**
+     * invoking the RPC through RPC stub
+     *
+     * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
+     */
+    public void invokeRPC(RpcDefinitions.RpcProc0NoPersistence rpcStubMethod) {
+        rpcStubMethod.execute(null, null);
     }
 
     /**
