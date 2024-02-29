@@ -100,75 +100,12 @@ public final class RpcDefinitions {
         void execute(Context context, Communication communication);
     }
 
-    public static final int PARAMETERS_WITH_INPUT = 4;
-    public static final int PARAMETERS_NO_INPUT = 3;
-
-    public static final int INDEX_OF_INPUT_PARAMETER = 1;
-
     public static final String ERROR_MESSAGE = "An RPC method must be in the form of one of {@link RpcDefinitions}";
 
-    public static final Map<Integer, Class<?>> RPC_INPUT_PERSISTENCE_PARAM_TYPES =
-            new ImmutableMap.Builder<Integer, Class<?>>()
-                    .put(0, Context.class)
-                    .put(2, Persistence.class)
-                    .put(3, Communication.class)
-                    .build();
-    public static final Map<Integer, Class<?>> RPC_INPUT_PARAM_TYPES =
-            new ImmutableMap.Builder<Integer, Class<?>>()
-                    .put(0, Context.class)
-                    .put(2, Communication.class)
-                    .build();
-    public static final Map<Integer, Class<?>> RPC_PERSISTENCE_PARAM_TYPES =
-            new ImmutableMap.Builder<Integer, Class<?>>()
-                    .put(0, Context.class)
-                    .put(1, Persistence.class)
-                    .put(2, Communication.class)
-                    .build();
-    public static final Map<Integer, Class<?>> RPC_PARAM_TYPES =
-            new ImmutableMap.Builder<Integer, Class<?>>()
-                    .put(0, Context.class)
-                    .put(1, Communication.class)
-                    .build();
-
     public static void validateRpcMethod(final Method method) {
-        final Class<?>[] paramTypes = method.getParameterTypes();
-        if (paramTypes.length < 2 || paramTypes.length > 4) {
+        RpcMethodMetadata methodMetadata = RpcMethodMatcher.match(method);
+        if (methodMetadata == null) {
             throw new WorkflowDefinitionException(ERROR_MESSAGE);
         }
-
-        switch (paramTypes.length) {
-            case 2:
-                if (!validateInputParameters(paramTypes, RPC_PARAM_TYPES)) {
-                    throw new WorkflowDefinitionException(ERROR_MESSAGE);
-                }
-                break;
-            case 3:
-                if (!validateInputParameters(paramTypes, RPC_PERSISTENCE_PARAM_TYPES)
-                        || !validateInputParameters(paramTypes, RPC_INPUT_PARAM_TYPES)) {
-                    throw new WorkflowDefinitionException(ERROR_MESSAGE);
-                }
-                break;
-            case 4:
-                if (!validateInputParameters(paramTypes, RPC_INPUT_PERSISTENCE_PARAM_TYPES)) {
-                    throw new WorkflowDefinitionException(ERROR_MESSAGE);
-                }
-                break;
-            default:
-                throw new WorkflowDefinitionException(ERROR_MESSAGE);
-        }
-    }
-
-    private static boolean validateInputParameters(Class<?>[] paramTypes, Map<Integer, Class<?>> expectedInputParamTypes) {
-        for (Map.Entry<Integer, Class<?>> entry: expectedInputParamTypes.entrySet()) {
-            if (entry.getKey() >= paramTypes.length) {
-                return false;
-            }
-
-            if (!paramTypes[entry.getKey()].equals(entry.getValue())) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
