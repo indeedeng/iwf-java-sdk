@@ -101,6 +101,21 @@ public class RpcTest {
     }
 
     @Test
+    public void testRpcNoPersistence() {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "testRpcWithNoPersistence" + System.currentTimeMillis() / 1000;
+        final String runId = client.startWorkflow(
+                RpcWorkflow.class, wfId, 10, 999);
+
+        final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "" );
+        client.invokeRPC(rpcStub::testRpcNoPersistence);
+
+        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        RpcWorkflowState2.resetCounter();
+        Assertions.assertEquals(2, output);
+    }
+
+    @Test
     public void testRPCWorkflowFunc1() throws InterruptedException {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "testRPCWorkflowFunc1" + System.currentTimeMillis() / 1000;

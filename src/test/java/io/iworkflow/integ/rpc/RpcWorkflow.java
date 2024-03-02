@@ -55,6 +55,15 @@ public class RpcWorkflow implements ObjectWorkflow {
     }
 
     @RPC
+    public void testRpcNoPersistence(Context context, Communication communication) {
+        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+            throw new RuntimeException("invalid context");
+        }
+        communication.publishInternalChannel(INTERNAL_CHANNEL_NAME, null);
+        communication.triggerStateMovements(StateMovement.create(RpcWorkflowState2.class));
+    }
+
+    @RPC
     public Long testRpcFunc1(Context context, String input, Persistence persistence, Communication communication) {
         if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
             throw new RuntimeException("invalid context");
