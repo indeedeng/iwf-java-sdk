@@ -662,7 +662,8 @@ public class UnregisteredClient {
                     .timeoutSeconds(timeoutSeconds)
                     .dataAttributesLoadingPolicy(dataAttributesLoadingPolicy)
                     .searchAttributesLoadingPolicy(searchAttributesLoadingPolicy)
-                    .useMemoForDataAttributes(usingMemoForDataAttributes);
+                    .useMemoForDataAttributes(usingMemoForDataAttributes)
+                    .searchAttributes(allSearchAttributes);
             this.outgoingWorkflowRpcRequest = request;
             final WorkflowRpcResponse response = defaultApi.apiV1WorkflowRpcPost(request);
             return this.clientOptions.getObjectEncoder().decode(response.getOutput(), valueClass);
