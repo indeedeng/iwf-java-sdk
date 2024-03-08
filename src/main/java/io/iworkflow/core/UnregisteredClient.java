@@ -49,7 +49,7 @@ public class UnregisteredClient {
     private WorkflowRpcRequest outgoingWorkflowRpcRequest;
 
     // for testing purpose
-    public WorkflowRpcRequest getOutgoingWorkflowRpcRequest() {
+    public WorkflowRpcRequest getLastOutgoingWorkflowRpcRequest() {
         return this.outgoingWorkflowRpcRequest;
     }
 

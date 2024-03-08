@@ -54,7 +54,7 @@ public class WorkerService {
 
         RpcMethodMetadata methodMetadata = RpcMethodMatcher.match(method);
         if (methodMetadata == null) {
-            throw new WorkflowDefinitionException("An RPC method must be annotated by RPC annotation");
+            throw new WorkflowDefinitionException("An RPC method must be annotated by RPC annotation and matches one of the RPC definitions");
         }
         Object input = null;
         if (methodMetadata.hasInput()) {

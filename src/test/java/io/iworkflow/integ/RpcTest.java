@@ -107,7 +107,7 @@ public class RpcTest {
 
         final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "" );
         client.invokeRPC(rpcStub::testRpcNoPersistence);
-        WorkflowRpcRequest request = client.getUnregisteredClient().getOutgoingWorkflowRpcRequest();
+        WorkflowRpcRequest request = client.getUnregisteredClient().getLastOutgoingWorkflowRpcRequest();
         Assertions.assertNotNull(request.getDataAttributesLoadingPolicy());
         Assertions.assertEquals(PersistenceLoadingType.NONE,
                 request.getDataAttributesLoadingPolicy().getPersistenceLoadingType());

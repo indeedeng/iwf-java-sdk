@@ -8,51 +8,50 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 class RpcMethodMatcher {
-    public static final Map<Integer, Class<?>> RPC_INPUT_PERSISTENCE_PARAM_TYPES =
+    public static final Map<Integer, Class<?>> RPC_WITH_INPUT_PERSISTENCE_PARAM_TYPES =
             new ImmutableMap.Builder<Integer, Class<?>>()
                     .put(0, Context.class)
                     .put(2, Persistence.class)
                     .put(3, Communication.class)
                     .build();
-    public static final RpcMethodMetadata INPUT_PERSISTENCE_RPC_METADATA =
+    public static final RpcMethodMetadata METADATA_RPC_WITH_INPUT_PERSISTENCE =
             ImmutableRpcMethodMetadata.builder()
                     .hasInput(true)
                     .inputIndex(1)
                     .usesPersistence(true)
                     .build();
 
-    public static final Map<Integer, Class<?>> RPC_INPUT_PARAM_TYPES =
+    public static final Map<Integer, Class<?>> RPC_WITH_INPUT_PARAM_TYPES =
             new ImmutableMap.Builder<Integer, Class<?>>()
                     .put(0, Context.class)
                     .put(2, Communication.class)
                     .build();
-    public static final RpcMethodMetadata INPUT_RPC_METADATA =
+    public static final RpcMethodMetadata METADATA_RPC_WITH_INPUT =
             ImmutableRpcMethodMetadata.builder()
                     .hasInput(true)
                     .inputIndex(1)
                     .usesPersistence(false)
                     .build();
 
-
-    public static final Map<Integer, Class<?>> RPC_PERSISTENCE_PARAM_TYPES =
+    public static final Map<Integer, Class<?>> RPC_WITH_PERSISTENCE_PARAM_TYPES =
             new ImmutableMap.Builder<Integer, Class<?>>()
                     .put(0, Context.class)
                     .put(1, Persistence.class)
                     .put(2, Communication.class)
                     .build();
-    public static final RpcMethodMetadata PERSISTENCE_RPC_METADATA =
+    public static final RpcMethodMetadata METADATA_RPC_WITH_PERSISTENCE =
             ImmutableRpcMethodMetadata.builder()
                     .hasInput(false)
                     .inputIndex(-1)
                     .usesPersistence(true)
                     .build();
 
-    public static final Map<Integer, Class<?>> RPC_PARAM_TYPES =
+    public static final Map<Integer, Class<?>> RPC_WITHOUT_INPUT_PERSISTENCE_PARAM_TYPES =
             new ImmutableMap.Builder<Integer, Class<?>>()
                     .put(0, Context.class)
                     .put(1, Communication.class)
                     .build();
-    public static final RpcMethodMetadata RPC_METADATA =
+    public static final RpcMethodMetadata METADATA_RPC_WITHOUT_INPUT_PERSISTENCE =
             ImmutableRpcMethodMetadata.builder()
                     .hasInput(false)
                     .inputIndex(-1)
@@ -70,22 +69,22 @@ class RpcMethodMatcher {
 
         switch (paramTypes.length) {
             case 2:
-                if (validateInputParameters(paramTypes, RPC_PARAM_TYPES)) {
-                    return RPC_METADATA;
+                if (validateInputParameters(paramTypes, RPC_WITHOUT_INPUT_PERSISTENCE_PARAM_TYPES)) {
+                    return METADATA_RPC_WITHOUT_INPUT_PERSISTENCE;
                 } else {
                     return null;
                 }
             case 3:
-                if (validateInputParameters(paramTypes, RPC_PERSISTENCE_PARAM_TYPES)) {
-                    return PERSISTENCE_RPC_METADATA;
-                } else if (validateInputParameters(paramTypes, RPC_INPUT_PARAM_TYPES)) {
-                    return INPUT_RPC_METADATA;
+                if (validateInputParameters(paramTypes, RPC_WITH_PERSISTENCE_PARAM_TYPES)) {
+                    return METADATA_RPC_WITH_PERSISTENCE;
+                } else if (validateInputParameters(paramTypes, RPC_WITH_INPUT_PARAM_TYPES)) {
+                    return METADATA_RPC_WITH_INPUT;
                 } else {
                     return null;
                 }
             case 4:
-                if (validateInputParameters(paramTypes, RPC_INPUT_PERSISTENCE_PARAM_TYPES)) {
-                    return INPUT_PERSISTENCE_RPC_METADATA;
+                if (validateInputParameters(paramTypes, RPC_WITH_INPUT_PERSISTENCE_PARAM_TYPES)) {
+                    return METADATA_RPC_WITH_INPUT_PERSISTENCE;
                 } else {
                     return null;
                 }
