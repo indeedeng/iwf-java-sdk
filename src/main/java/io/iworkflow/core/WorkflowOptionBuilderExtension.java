@@ -11,10 +11,23 @@ public class WorkflowOptionBuilderExtension {
 
     /**
      * Add a state to wait for completion. This only waiting for the first completion of the state
-     * @param states The states to wait for completion. O
+     * NOTE: this will not be needed/required once server implements <a href="https://github.com/indeedeng/iwf/issues/349">this</a>
+     * @param state The state to wait for completion.
      * @return The builder.
      */
-    public WorkflowOptionBuilderExtension waitForCompletionStates(Class<? extends WorkflowState> ...states) {
+    public WorkflowOptionBuilderExtension waitForCompletionState(Class<? extends WorkflowState> state) {
+        this.waitForCompletionStates(state);
+        return this;
+    }
+
+    /**
+     * Add states to wait for completion. This only waiting for the first completion of the state
+     * NOTE: this will not be needed/required once server implements <a href="https://github.com/indeedeng/iwf/issues/349">this</a>
+     * @param states The states to wait for completion.
+     * @return The builder.
+     */
+    @SafeVarargs
+    public final WorkflowOptionBuilderExtension waitForCompletionStates(Class<? extends WorkflowState>... states) {
         Arrays.stream(states).forEach(
                 state -> builder.addWaitForCompletionStateExecutionIds(
                         WorkflowState.getStateExecutionId(state,1)
