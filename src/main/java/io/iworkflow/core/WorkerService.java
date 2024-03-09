@@ -32,9 +32,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static io.iworkflow.core.RpcDefinitions.INDEX_OF_INPUT_PARAMETER;
-import static io.iworkflow.core.RpcDefinitions.PARAMETERS_WITH_INPUT;
-
 public class WorkerService {
 
     public static final String WORKFLOW_STATE_WAIT_UNTIL_API_PATH = "/api/v1/workflowState/start";
@@ -54,10 +51,15 @@ public class WorkerService {
     public WorkflowWorkerRpcResponse handleWorkflowWorkerRpc(final WorkflowWorkerRpcRequest req) {
         final ObjectWorkflow workflow = registry.getWorkflow(req.getWorkflowType());
         final Method method = registry.getWorkflowRpcMethod(req.getWorkflowType(), req.getRpcName());
+
+        RpcMethodMetadata methodMetadata = RpcMethodMatcher.match(method);
+        if (methodMetadata == null) {
+            throw new WorkflowDefinitionException("An RPC method must be annotated by RPC annotation and matches one of the RPC definitions");
+        }
         Object input = null;
-        if (method.getParameterTypes().length == PARAMETERS_WITH_INPUT) {
+        if (methodMetadata.hasInput()) {
             // the second one will be input
-            Class<?> inputType = method.getParameterTypes()[INDEX_OF_INPUT_PARAMETER];
+            Class<?> inputType = method.getParameterTypes()[methodMetadata.getInputIndex()];
             input = workerOptions.getObjectEncoder().decode(req.getInput(), inputType);
         }
 
@@ -78,20 +80,38 @@ public class WorkerService {
 
         Object output = null;
         try {
-            if (method.getParameterTypes().length == PARAMETERS_WITH_INPUT) {
-                output = method.invoke(
-                        workflow,
-                        context,
-                        input,
-                        persistence,
-                        communication);
+            if (methodMetadata.usesPersistence()) {
+                if (methodMetadata.hasInput()) {
+                    output = method.invoke(
+                            workflow,
+                            context,
+                            input,
+                            persistence,
+                            communication
+                    );
+                } else {
+                    output = method.invoke(
+                            workflow,
+                            context,
+                            persistence,
+                            communication
+                    );
+                }
             } else {
-                // without input
-                output = method.invoke(
-                        workflow,
-                        context,
-                        persistence,
-                        communication);
+                if (methodMetadata.hasInput()) {
+                    output = method.invoke(
+                            workflow,
+                            context,
+                            input,
+                            communication
+                    );
+                } else {
+                    output = method.invoke(
+                            workflow,
+                            context,
+                            communication
+                    );
+                }
             }
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);

@@ -46,6 +46,13 @@ public class UnregisteredClient {
 
     private final ClientOptions clientOptions;
 
+    private WorkflowRpcRequest outgoingWorkflowRpcRequest;
+
+    // for testing purpose
+    public WorkflowRpcRequest getLastOutgoingWorkflowRpcRequest() {
+        return this.outgoingWorkflowRpcRequest;
+    }
+
     public UnregisteredClient(final ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
 
@@ -647,18 +654,18 @@ public class UnregisteredClient {
             final List<SearchAttributeKeyAndType> allSearchAttributes) {
         try {
             final EncodedObject encodedInput = this.clientOptions.getObjectEncoder().encode(input);
-            final WorkflowRpcResponse response = defaultApi.apiV1WorkflowRpcPost(
-                    new WorkflowRpcRequest()
-                            .input(encodedInput)
-                            .workflowId(workflowId)
-                            .workflowRunId(workflowRunId)
-                            .rpcName(rpcName)
-                            .timeoutSeconds(timeoutSeconds)
-                            .dataAttributesLoadingPolicy(dataAttributesLoadingPolicy)
-                            .searchAttributesLoadingPolicy(searchAttributesLoadingPolicy)
-                            .useMemoForDataAttributes(usingMemoForDataAttributes)
-                            .searchAttributes(allSearchAttributes)
-            );
+            WorkflowRpcRequest request = new WorkflowRpcRequest()
+                    .input(encodedInput)
+                    .workflowId(workflowId)
+                    .workflowRunId(workflowRunId)
+                    .rpcName(rpcName)
+                    .timeoutSeconds(timeoutSeconds)
+                    .dataAttributesLoadingPolicy(dataAttributesLoadingPolicy)
+                    .searchAttributesLoadingPolicy(searchAttributesLoadingPolicy)
+                    .useMemoForDataAttributes(usingMemoForDataAttributes)
+                    .searchAttributes(allSearchAttributes);
+            this.outgoingWorkflowRpcRequest = request;
+            final WorkflowRpcResponse response = defaultApi.apiV1WorkflowRpcPost(request);
             return this.clientOptions.getObjectEncoder().decode(response.getOutput(), valueClass);
         } catch (FeignException.FeignClientException exp) {
             throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);

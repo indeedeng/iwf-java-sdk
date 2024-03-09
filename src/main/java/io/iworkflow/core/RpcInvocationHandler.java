@@ -2,6 +2,7 @@ package io.iworkflow.core;
 
 import io.iworkflow.core.persistence.PersistenceOptions;
 import io.iworkflow.gen.models.PersistenceLoadingPolicy;
+import io.iworkflow.gen.models.PersistenceLoadingType;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;
@@ -11,9 +12,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.iworkflow.core.RpcDefinitions.INDEX_OF_INPUT_PARAMETER;
-import static io.iworkflow.core.RpcDefinitions.PARAMETERS_WITH_INPUT;
-import static io.iworkflow.core.RpcDefinitions.validateRpcMethod;
+import static io.iworkflow.core.RpcDefinitions.*;
 
 public class RpcInvocationHandler {
 
@@ -41,11 +40,12 @@ public class RpcInvocationHandler {
         if (rpcAnno == null) {
             throw new WorkflowDefinitionException("An RPC method must be annotated by RPC annotation");
         }
-        validateRpcMethod(method);
-        Object input = null;
-        if (method.getParameterTypes().length == PARAMETERS_WITH_INPUT) {
-            input = allArguments[INDEX_OF_INPUT_PARAMETER];
+
+        RpcMethodMetadata metadata = RpcMethodMatcher.match(method);
+        if (metadata == null) {
+            throw new WorkflowDefinitionException("An RPC method must be annotated by RPC annotation");
         }
+        Object input = metadata.hasInput() ? allArguments[metadata.getInputIndex()] : null;
 
         final Class<?> outputType = method.getReturnType();
 
@@ -53,18 +53,41 @@ public class RpcInvocationHandler {
         if (rpcAnno.bypassCachingForStrongConsistency()) {
             useMemo = false;
         }
-        final Object output = unregisteredClient.invokeRpc(outputType, input, workflowId, workflowRunId, method.getName(), rpcAnno.timeoutSeconds(),
-                new PersistenceLoadingPolicy()
-                        .persistenceLoadingType(rpcAnno.dataAttributesLoadingType())
-                        .partialLoadingKeys(Arrays.asList(rpcAnno.dataAttributesPartialLoadingKeys()))
-                        .lockingKeys(Arrays.asList(rpcAnno.dataAttributesLockingKeys())),
-                new PersistenceLoadingPolicy()
-                        .persistenceLoadingType(rpcAnno.searchAttributesLoadingType())
-                        .lockingKeys(Arrays.asList(rpcAnno.searchAttributesLockingKeys()))
-                        .partialLoadingKeys(Arrays.asList(rpcAnno.searchAttributesPartialLoadingKeys())),
-                useMemo,
-                searchAttributeKeyAndTypes
-        );
-        return output;
+
+        if (metadata.usesPersistence()) {
+            return unregisteredClient.invokeRpc(
+                    outputType,
+                    input,
+                    workflowId,
+                    workflowRunId,
+                    method.getName(),
+                    rpcAnno.timeoutSeconds(),
+                    new PersistenceLoadingPolicy()
+                            .persistenceLoadingType(rpcAnno.dataAttributesLoadingType())
+                            .partialLoadingKeys(Arrays.asList(rpcAnno.dataAttributesPartialLoadingKeys()))
+                            .lockingKeys(Arrays.asList(rpcAnno.dataAttributesLockingKeys())),
+                    new PersistenceLoadingPolicy()
+                            .persistenceLoadingType(rpcAnno.searchAttributesLoadingType())
+                            .lockingKeys(Arrays.asList(rpcAnno.searchAttributesLockingKeys()))
+                            .partialLoadingKeys(Arrays.asList(rpcAnno.searchAttributesPartialLoadingKeys())),
+                    useMemo,
+                    searchAttributeKeyAndTypes
+            );
+        } else {
+            return unregisteredClient.invokeRpc(
+                    outputType,
+                    input,
+                    workflowId,
+                    workflowRunId,
+                    method.getName(),
+                    rpcAnno.timeoutSeconds(),
+                    new PersistenceLoadingPolicy()
+                            .persistenceLoadingType(PersistenceLoadingType.NONE),
+                    new PersistenceLoadingPolicy()
+                            .persistenceLoadingType(PersistenceLoadingType.NONE),
+                    useMemo,
+                    null);
+        }
+
     }
 }

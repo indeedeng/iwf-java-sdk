@@ -6,9 +6,7 @@ import io.iworkflow.core.ClientOptions;
 import io.iworkflow.core.ClientSideException;
 import io.iworkflow.core.ImmutableStopWorkflowOptions;
 import io.iworkflow.core.ImmutableWorkflowOptions;
-import io.iworkflow.gen.models.ErrorResponse;
-import io.iworkflow.gen.models.WorkflowConfig;
-import io.iworkflow.gen.models.WorkflowStopType;
+import io.iworkflow.gen.models.*;
 import io.iworkflow.integ.persistence.BasicPersistenceWorkflow;
 import io.iworkflow.integ.rpc.NoStateWorkflow;
 import io.iworkflow.integ.rpc.RpcWorkflow;
@@ -98,6 +96,28 @@ public class RpcTest {
         // https://github.com/indeedeng/iwf/issues/339
 
         client.stopWorkflow(wfId, null);
+    }
+
+    @Test
+    public void testRpcNoPersistence() {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "testRpcWithNoPersistence" + System.currentTimeMillis() / 1000;
+        final String runId = client.startWorkflow(
+                RpcWorkflow.class, wfId, 10, 999);
+
+        final RpcWorkflow rpcStub = client.newRpcStub(RpcWorkflow.class, wfId, "" );
+        client.invokeRPC(rpcStub::testRpcNoPersistence);
+        WorkflowRpcRequest request = client.getUnregisteredClient().getLastOutgoingWorkflowRpcRequest();
+        Assertions.assertNotNull(request.getDataAttributesLoadingPolicy());
+        Assertions.assertEquals(PersistenceLoadingType.NONE,
+                request.getDataAttributesLoadingPolicy().getPersistenceLoadingType());
+        Assertions.assertNotNull(request.getSearchAttributesLoadingPolicy());
+        Assertions.assertEquals(PersistenceLoadingType.NONE,
+                request.getSearchAttributesLoadingPolicy().getPersistenceLoadingType());
+
+        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        RpcWorkflowState2.resetCounter();
+        Assertions.assertEquals(2, output);
     }
 
     @Test
