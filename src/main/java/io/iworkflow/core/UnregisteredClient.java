@@ -141,6 +141,9 @@ public class UnregisteredClient {
             if (options.getCronSchedule().isPresent()) {
                 startOptions.cronSchedule(CronScheduleValidator.validate(options.getCronSchedule()));
             }
+            if (options.getWorkflowStartDelaySeconds().isPresent()) {
+                startOptions.workflowStartDelaySeconds(options.getWorkflowStartDelaySeconds().get());
+            }
             if (options.getWorkflowIdReusePolicy().isPresent()) {
                 startOptions.idReusePolicy(options.getWorkflowIdReusePolicy().get());
             }

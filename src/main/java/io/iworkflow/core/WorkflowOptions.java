@@ -15,6 +15,8 @@ public abstract class WorkflowOptions {
 
     public abstract Optional<String> getCronSchedule();
 
+    public abstract Optional<Integer> getWorkflowStartDelaySeconds();
+
     public abstract Optional<WorkflowRetryPolicy> getWorkflowRetryPolicy();
 
     public abstract Map<String, Object> getInitialSearchAttribute();
