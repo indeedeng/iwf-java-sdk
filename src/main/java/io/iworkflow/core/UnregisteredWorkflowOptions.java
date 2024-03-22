@@ -16,6 +16,8 @@ public abstract class UnregisteredWorkflowOptions {
 
     public abstract Optional<String> getCronSchedule();
 
+    public abstract Optional<Integer> getWorkflowStartDelaySeconds();
+
     public abstract Optional<WorkflowRetryPolicy> getWorkflowRetryPolicy();
 
     public abstract Optional<WorkflowStateOptions> getStartStateOptions();

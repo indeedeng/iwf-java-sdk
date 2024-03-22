@@ -134,6 +134,7 @@ public class Client {
         if (options != null) {
             unregisterWorkflowOptions.workflowIdReusePolicy(options.getWorkflowIdReusePolicy());
             unregisterWorkflowOptions.cronSchedule(options.getCronSchedule());
+            unregisterWorkflowOptions.workflowStartDelaySeconds(options.getWorkflowStartDelaySeconds());
             unregisterWorkflowOptions.workflowRetryPolicy(options.getWorkflowRetryPolicy());
             unregisterWorkflowOptions.workflowConfigOverride(options.getWorkflowConfigOverride());
             unregisterWorkflowOptions.waitForCompletionStateExecutionIds(options.getWaitForCompletionStateExecutionIds());

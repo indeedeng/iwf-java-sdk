@@ -9,7 +9,7 @@
 plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
-    id "org.openapi.generator" version "6.0.1"
+    id "org.openapi.generator" version "6.6.0"
     id 'org.springframework.boot' version '2.7.2'
     id 'io.spring.dependency-management' version '1.0.12.RELEASE'
     id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
