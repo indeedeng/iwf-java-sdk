@@ -107,7 +107,7 @@ public abstract class StateDecision {
                 .build();
     }
 
-    public static <I> StateDecision forceCompleteIfSignalChannelEmptyOrElse(final String signalChannelName, final Class<? extends WorkflowState<? extends  I>> orElseStateClass) {
+    public static <I> StateDecision forceCompleteIfSignalChannelEmptyOrElse(final String signalChannelName, final Class<? extends WorkflowState<? extends I>> orElseStateClass) {
         return forceCompleteIfSignalChannelEmptyOrElse(signalChannelName, orElseStateClass, null);
     }
 
@@ -147,6 +147,7 @@ public abstract class StateDecision {
     }
 
     /**
+     * @param <I>                  Class type of the WorkflowState input
      * @param stateClass           required
      * @param stateInput           optional, can be null
      * @param stateOptionsOverride optional, can be null. It is used to override the defined one in the State class
@@ -157,6 +158,7 @@ public abstract class StateDecision {
     }
 
     /**
+     * @param <I>        Class type of the WorkflowState input
      * @param stateClass required
      * @param stateInput optional, can be null
      * @return state decision
@@ -166,6 +168,7 @@ public abstract class StateDecision {
     }
 
     /**
+     * @param <I>        Class type of the WorkflowState input
      * @param stateClass required
      * @return state decision
      */
@@ -176,6 +179,7 @@ public abstract class StateDecision {
     /**
      * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
      *
+     * @param <I>                  Class type of the WorkflowState input
      * @param stateId              required. StateId of next state
      * @param stateInput           optional, can be null. Input for next state
      * @param stateOptionsOverride optional, can be null. It is used to override the defined one in the State class

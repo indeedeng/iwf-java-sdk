@@ -11,6 +11,7 @@ public abstract class StateMovement {
     public abstract String getStateId();
 
     public abstract Optional<Object> getStateInput();
+
     public abstract Optional<WorkflowStateOptions> getStateOptionsOverride();
 
     public final static String RESERVED_STATE_ID_PREFIX = "_SYS_";
@@ -53,10 +54,10 @@ public abstract class StateMovement {
     }
 
     /**
-     *
-     * @param stateClass            required
-     * @param stateInput            optional, can be null
-     * @param stateOptionsOverride  optional, can be null. It is used to override the defined one in the State class
+     * @param <I>                  Class type of the WorkflowState input
+     * @param stateClass           required
+     * @param stateInput           optional, can be null
+     * @param stateOptionsOverride optional, can be null. It is used to override the defined one in the State class
      * @return state movement
      */
     public static <I> StateMovement create(final Class<? extends WorkflowState<? extends I>> stateClass, final I stateInput, final WorkflowStateOptions stateOptionsOverride) {
@@ -64,9 +65,9 @@ public abstract class StateMovement {
     }
 
     /**
-     *
-     * @param stateClass    required
-     * @param stateInput    optional, can be null
+     * @param <I>        Class type of the WorkflowState input
+     * @param stateClass required
+     * @param stateInput optional, can be null
      * @return state movement
      */
     public static <I> StateMovement create(final Class<? extends WorkflowState<? extends I>> stateClass, final I stateInput) {
@@ -74,8 +75,8 @@ public abstract class StateMovement {
     }
 
     /**
-     *
-     * @param stateClass    required
+     * @param <I>        Class type of the WorkflowState input
+     * @param stateClass required
      * @return state movement
      */
     public static <I> StateMovement create(final Class<? extends WorkflowState<? extends I>> stateClass) {
@@ -84,9 +85,11 @@ public abstract class StateMovement {
 
     /**
      * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
-     * @param stateId               required
-     * @param stateInput            optional, can be null
-     * @param stateOptionsOverride  optional, can be null. It is used to override the defined one in the State class
+     *
+     * @param <I>                  Class type of the WorkflowState input
+     * @param stateId              required
+     * @param stateInput           optional, can be null
+     * @param stateOptionsOverride optional, can be null. It is used to override the defined one in the State class
      * @return state movement
      */
     public static <I> StateMovement create(final String stateId, final I stateInput, final WorkflowStateOptions stateOptionsOverride) {
@@ -110,7 +113,8 @@ public abstract class StateMovement {
 
     /**
      * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
-     * @param stateId               stateId
+     *
+     * @param stateId stateId
      * @return state movement
      */
     public static StateMovement create(final String stateId) {
