@@ -59,7 +59,7 @@ public abstract class StateMovement {
      * @param stateOptionsOverride  optional, can be null. It is used to override the defined one in the State class
      * @return state movement
      */
-    public static StateMovement create(final Class<? extends WorkflowState> stateClass, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
+    public static <I> StateMovement create(final Class<? extends WorkflowState<? extends I>> stateClass, final I stateInput, final WorkflowStateOptions stateOptionsOverride) {
         return create(stateClass.getSimpleName(), stateInput, stateOptionsOverride);
     }
 
@@ -69,7 +69,7 @@ public abstract class StateMovement {
      * @param stateInput    optional, can be null
      * @return state movement
      */
-    public static StateMovement create(final Class<? extends WorkflowState> stateClass, final Object stateInput) {
+    public static <I> StateMovement create(final Class<? extends WorkflowState<? extends I>> stateClass, final I stateInput) {
         return create(stateClass, stateInput, null);
     }
 
@@ -78,7 +78,7 @@ public abstract class StateMovement {
      * @param stateClass    required
      * @return state movement
      */
-    public static StateMovement create(final Class<? extends WorkflowState> stateClass) {
+    public static <I> StateMovement create(final Class<? extends WorkflowState<? extends I>> stateClass) {
         return create(stateClass, null, null);
     }
 
@@ -89,7 +89,7 @@ public abstract class StateMovement {
      * @param stateOptionsOverride  optional, can be null. It is used to override the defined one in the State class
      * @return state movement
      */
-    public static StateMovement create(final String stateId, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
+    public static <I> StateMovement create(final String stateId, final I stateInput, final WorkflowStateOptions stateOptionsOverride) {
         if (stateId.startsWith(RESERVED_STATE_ID_PREFIX)) {
             throw new WorkflowDefinitionException("Cannot use reserved stateId prefix for your stateId");
         }
