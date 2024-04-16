@@ -60,7 +60,7 @@ public abstract class StateMovement {
      * @param stateOptionsOverride optional, can be null. It is used to override the defined one in the State class
      * @return state movement
      */
-    public static <I> StateMovement create(final Class<? extends WorkflowState<? extends I>> stateClass, final I stateInput, final WorkflowStateOptions stateOptionsOverride) {
+    public static <I> StateMovement create(final Class<? extends WorkflowState<I>> stateClass, final I stateInput, final WorkflowStateOptions stateOptionsOverride) {
         return create(stateClass.getSimpleName(), stateInput, stateOptionsOverride);
     }
 
@@ -70,7 +70,7 @@ public abstract class StateMovement {
      * @param stateInput optional, can be null
      * @return state movement
      */
-    public static <I> StateMovement create(final Class<? extends WorkflowState<? extends I>> stateClass, final I stateInput) {
+    public static <I> StateMovement create(final Class<? extends WorkflowState<I>> stateClass, final I stateInput) {
         return create(stateClass, stateInput, null);
     }
 
@@ -79,7 +79,7 @@ public abstract class StateMovement {
      * @param stateClass required
      * @return state movement
      */
-    public static <I> StateMovement create(final Class<? extends WorkflowState<? extends I>> stateClass) {
+    public static <I> StateMovement create(final Class<? extends WorkflowState<I>> stateClass) {
         return create(stateClass, null, null);
     }
 

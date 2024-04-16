@@ -25,3 +25,4 @@ public class ModelInputWorkflowState1 implements WorkflowState<io.iworkflow.gen.
         return StateDecision.gracefulCompleteWorkflow(1);
     }
 }
+
