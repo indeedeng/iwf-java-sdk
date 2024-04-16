@@ -24,9 +24,5 @@ public class ModelInputWorkflowState1 implements WorkflowState<io.iworkflow.gen.
     public StateDecision execute(final Context context, final io.iworkflow.gen.models.Context input, final CommandResults commandResults, Persistence persistence, final Communication communication) {
         return StateDecision.gracefulCompleteWorkflow(1);
     }
-
-    static class MC extends io.iworkflow.gen.models.Context{
-        public int input;
-    }
 }
 
