@@ -86,13 +86,12 @@ public abstract class StateMovement {
     /**
      * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
      *
-     * @param <I>                  Class type of the WorkflowState input
      * @param stateId              required
      * @param stateInput           optional, can be null
      * @param stateOptionsOverride optional, can be null. It is used to override the defined one in the State class
      * @return state movement
      */
-    public static <I> StateMovement create(final String stateId, final I stateInput, final WorkflowStateOptions stateOptionsOverride) {
+    public static StateMovement create(final String stateId, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
         if (stateId.startsWith(RESERVED_STATE_ID_PREFIX)) {
             throw new WorkflowDefinitionException("Cannot use reserved stateId prefix for your stateId");
         }

@@ -168,6 +168,16 @@ public abstract class StateDecision {
     }
 
     /**
+     * singleNextState as non-strongly typing required for input
+     * @param stateClass required
+     * @param stateInput optional, can be null
+     * @return
+     */
+    public static StateDecision singleNextStateUntypedInput(final Class<? extends WorkflowState> stateClass, final Object stateInput) {
+        return singleNextState(stateClass.getSimpleName(), stateInput, null);
+    }
+
+    /**
      * @param <I>        Class type of the WorkflowState input
      * @param stateClass required
      * @return state decision
@@ -179,13 +189,12 @@ public abstract class StateDecision {
     /**
      * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
      *
-     * @param <I>                  Class type of the WorkflowState input
      * @param stateId              required. StateId of next state
      * @param stateInput           optional, can be null. Input for next state
      * @param stateOptionsOverride optional, can be null. It is used to override the defined one in the State class
      * @return state decision
      */
-    public static <I> StateDecision singleNextState(final String stateId, final I stateInput, final WorkflowStateOptions stateOptionsOverride) {
+    public static StateDecision singleNextState(final String stateId, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 StateMovement.create(stateId, stateInput, stateOptionsOverride)
         )).build();
