@@ -60,15 +60,31 @@ See more in https://github.com/indeedeng/iwf#what-is-iwf
 1. Check out the idl submodule by running the command: `git submodule update --init --recursive`
 2. In "Build, Execution, Deployment" -> "Gradle", choose "wrapper task in Gradle build script" for "Use gradle from".
 3. Open Gradle tab, click "build" under "build" to build the project
-4. In the same Gradle tab, click "bootRun" under "application to run the project"
-5. Go to "script/http/local" folder, use the http script to invoke a REST API (you may need to install the HttpClient
-   plugin for IntelliJ)
 
 ## Development Guide
 
 ### Update IDL
 
 Run the command `git submodule update --remote --merge` to update IDL to the latest commit
+
+### Repo structure
+* `.github/workflows/`: the GithubActions workflows
+* `iwf-idl/`: the idl submodule
+* `script/`: some scripts for GithubActions and testing
+* `src/`: Java source code
+  * `main/java/io/iworkflow/core/`: SDK code
+    * `command/`: the command implementation
+    * `communication/`: the communication implementation
+    * `mapper/`: the mapper with IDL
+    * `persistence/`: the persistence implementation
+    * `validator/`: some validators
+    * `Client.java`: the client implemntation
+    * `...java` ...
+  * `test/java/io/iworkflow/`: Java test code (currently only integ test)
+    * `spring/`: the integ test setup of using Spring as REST controller
+    * `integ/`: the integration tests
+      * `XyzTest.java`: a file for test cases
+      * `xyz/`: the iWF workflow implementation for the integration test cases
 
 # Development Plan
 
