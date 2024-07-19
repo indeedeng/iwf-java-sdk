@@ -260,13 +260,14 @@ public class Client {
      */
     public void waitForWorkflowCompletion(
             final String workflowId) {
-        this.getSimpleWorkflowResultWithWait(Void.class, workflowId);
+        getComplexWorkflowResultWithWait(workflowId);
     }
 
     /**
-     * A long poll API to wait for the workflow completion
-     * For most cases, a workflow only has one result(one completion state).
-     * Use this API to retrieve the output of the state with waiting for the workflow to complete.
+     * A long poll API to wait for the workflow completion and return single result
+     * This only works for a workflow only has one result(one completion state).
+     * If the workflow has multiple completion states, use getComplexWorkflowResultWithWait.
+     * This API to retrieve the output of the state with waiting for the workflow to complete.
      * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
      *
      * @param valueClass    required, the type class of the output
