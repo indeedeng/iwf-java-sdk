@@ -253,7 +253,9 @@ public class Client {
     }
 
     /**
-     * A long poll API to wait for the workflow completion
+     * A long poll API to wait for the workflow completion.
+     * Due to the limit of REST API, it will only wait for 30 seconds for the workflow to complete.
+     * (configurable in ClientOptions.LongPollApiMaxWaitTimeSeconds)
      * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
      *
      * @param workflowId    required, the workflowId
