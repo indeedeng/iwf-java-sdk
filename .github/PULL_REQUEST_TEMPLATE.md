@@ -8,3 +8,5 @@ Closes #<issue_number>
 - [ ] Code compiles correctly
 - [ ] Tests for the changes have been added
 - [ ] All tests passing
+
+:+1:
