@@ -9,6 +9,7 @@ import io.iworkflow.integ.forcefail.ForceFailWorkflow;
 import io.iworkflow.integ.signal.BasicSignalWorkflow;
 import io.iworkflow.integ.stateapifail.WorkflowBasicStateFail;
 import io.iworkflow.integ.stateapitimeout.StateApiTimeoutFailWorkflow;
+import io.iworkflow.integ.statedecision.EmptyStateDecisionWorkflow;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
 import org.junit.jupiter.api.Assertions;
@@ -238,6 +239,27 @@ public class WorkflowUncompletedTest {
                     e.getErrorMessage().contains("activity StartToClose timeout"),
                     e.getErrorMessage()
             );
+            Assertions.assertEquals(0, e.getStateResultsSize());
+            return;
+        }
+        Assertions.fail("no exception caught");
+    }
+
+    @Test
+    public void testEmptyStateDecisionTimeoutWorkflow() throws InterruptedException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final long startTs = System.currentTimeMillis();
+        final String wfId = "testEmptyStateDecisionTimeoutWorkflow" + startTs / 1000;
+
+        final String runId = client.startWorkflow(
+                EmptyStateDecisionWorkflow.class, wfId, 10, null);
+
+        try {
+            client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        } catch (WorkflowUncompletedException e) {
+            Assertions.assertEquals(runId, e.getRunId());
+            Assertions.assertEquals(WorkflowStatus.FAILED, e.getClosedStatus());
+            Assertions.assertEquals(WorkflowErrorType.STATE_API_FAIL_MAX_OUT_RETRY_ERROR_TYPE, e.getErrorSubType());
             Assertions.assertEquals(0, e.getStateResultsSize());
             return;
         }
