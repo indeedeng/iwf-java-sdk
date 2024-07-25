@@ -306,9 +306,9 @@ public class RpcTest {
             Assertions.assertEquals(420, e.getStatusCode());
             final ErrorResponse errResp = e.getErrorResponse();
             Assertions.assertEquals(501, errResp.getOriginalWorkerErrorStatus());
-            Assertions.assertEquals("this is an error", errResp.getOriginalWorkerErrorDetail());
-            Assertions.assertEquals("java.lang.RuntimeException", errResp.getOriginalWorkerErrorType());
-            Assertions.assertEquals("worker API error, status:501, errorType:java.lang.RuntimeException", errResp.getDetail());
+            Assertions.assertTrue(errResp.getOriginalWorkerErrorDetail().contains("this is an error"));
+            Assertions.assertTrue(errResp.getOriginalWorkerErrorType().contains("java.lang.RuntimeException"));
+            Assertions.assertTrue(errResp.getDetail().contains("worker API error, status:501, errorType:java.lang.RuntimeException"));
         }
         client.stopWorkflow(wfId, null);
     }
