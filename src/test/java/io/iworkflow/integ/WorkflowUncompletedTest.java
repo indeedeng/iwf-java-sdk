@@ -260,6 +260,9 @@ public class WorkflowUncompletedTest {
             Assertions.assertEquals(runId, e.getRunId());
             Assertions.assertEquals(WorkflowStatus.FAILED, e.getClosedStatus());
             Assertions.assertEquals(WorkflowErrorType.STATE_API_FAIL_MAX_OUT_RETRY_ERROR_TYPE, e.getErrorSubType());
+            Assertions.assertTrue(
+                    e.getErrorMessage().contains("State decision returned by execute method cannot be null or empty")
+            );
             Assertions.assertEquals(0, e.getStateResultsSize());
             return;
         }
