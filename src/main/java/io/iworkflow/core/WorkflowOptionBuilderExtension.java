@@ -10,7 +10,7 @@ public class WorkflowOptionBuilderExtension {
     private ImmutableWorkflowOptions.Builder builder = ImmutableWorkflowOptions.builder();
 
     /**
-     * Add a state to wait for completion. This only waiting for the first completion of the state
+     * Add a state to wait for completion. This only waiting for all the completion of the state executions
      * NOTE: this will not be needed/required once server implements <a href="https://github.com/indeedeng/iwf/issues/349">this</a>
      * @param state The state to wait for completion.
      * @return The builder.
@@ -21,7 +21,7 @@ public class WorkflowOptionBuilderExtension {
     }
 
     /**
-     * Add states to wait for completion. This only waiting for the first completion of the state
+     * Add states to wait for completion. This only waiting for all the completion of the state executions
      * NOTE: this will not be needed/required once server implements <a href="https://github.com/indeedeng/iwf/issues/349">this</a>
      * @param states The states to wait for completion.
      * @return The builder.
@@ -29,14 +29,14 @@ public class WorkflowOptionBuilderExtension {
     @SafeVarargs
     public final WorkflowOptionBuilderExtension waitForCompletionStates(Class<? extends WorkflowState>... states) {
         Arrays.stream(states).forEach(
-                state -> builder.addWaitForCompletionStateExecutionIds(
-                        WorkflowState.getStateExecutionId(state,1)
+                state -> builder.addWaitForCompletionStateIds(
+                        WorkflowState.getDefaultStateId(state)
                 ));
         return this;
     }
 
     /**
-     * Add a state to wait for completion. This can wait for any times completion of the state
+     * Add a state to wait for completion. This can wait for a certain completion of the state execution
      * @param state The state to wait for completion.
      * @param number The number of the state completion to wait for. E.g. when it's 2, it's waiting for the second completion of the state.
      * @return The builder.

@@ -78,7 +78,7 @@ public interface WorkflowState<I> {
      * @return the StateId of the state
      */
     default String getStateId() {
-        return this.getClass().getSimpleName();
+        return getDefaultStateId(this.getClass());
     }
 
     /**
@@ -115,6 +115,10 @@ public interface WorkflowState<I> {
 
     static String getStateExecutionId(Class<? extends WorkflowState> state, int number) {
         return String.format("%s-%d", state.getSimpleName(), number);
+    }
+
+    static String getDefaultStateId(Class<? extends WorkflowState> state) {
+        return state.getSimpleName();
     }
 }
 
