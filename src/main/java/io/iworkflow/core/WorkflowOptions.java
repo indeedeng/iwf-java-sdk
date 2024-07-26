@@ -23,6 +23,7 @@ public abstract class WorkflowOptions {
 
     public abstract Optional<WorkflowConfig> getWorkflowConfigOverride();
 
+    public abstract List<String> getWaitForCompletionStateIds();
     public abstract List<String> getWaitForCompletionStateExecutionIds();
 
     public static WorkflowOptionBuilderExtension extendedBuilder() {

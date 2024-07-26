@@ -174,6 +174,7 @@ public class UnregisteredClient {
             request.workflowStartOptions(startOptions);
 
             request.waitForCompletionStateExecutionIds(options.getWaitForCompletionStateExecutionIds());
+            request.waitForCompletionStateIds(options.getWaitForCompletionStateIds());
         }
 
         try {
