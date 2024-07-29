@@ -252,6 +252,10 @@ public class WorkerService {
                 persistence,
                 communication);
 
+        if (stateDecision == null || stateDecision.getNextStates().isEmpty()) {
+            throw new InvalidStateDecisionException("State decision returned by execute method cannot be null or empty");
+        }
+
         final WorkflowStateExecuteResponse response = new WorkflowStateExecuteResponse()
                 .stateDecision(StateDecisionMapper.toGenerated(stateDecision, req.getWorkflowType(), registry, workerOptions.getObjectEncoder()));
 
