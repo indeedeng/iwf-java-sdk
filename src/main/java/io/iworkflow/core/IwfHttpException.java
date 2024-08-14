@@ -1,6 +1,10 @@
 package io.iworkflow.core;
 
 import feign.FeignException;
+import io.iworkflow.core.exceptions.ClientSideException;
+import io.iworkflow.core.exceptions.LongPollTimeoutException;
+import io.iworkflow.core.exceptions.WorkflowAlreadyStartedException;
+import io.iworkflow.core.exceptions.WorkflowNotExistsOrOpenException;
 import io.iworkflow.gen.models.EncodedObject;
 import io.iworkflow.gen.models.ErrorResponse;
 import io.iworkflow.gen.models.ErrorSubStatus;
@@ -33,6 +37,11 @@ public abstract class IwfHttpException extends RuntimeException {
                 .subStatus(ErrorSubStatus.UNCATEGORIZED_SUB_STATUS);
     }
 
+    protected IwfHttpException(final IwfHttpException exception) {
+        statusCode = exception.getStatusCode();
+        errorResponse = exception.getErrorResponse();
+    }
+
     public IwfHttpException() {
         statusCode = 500;
     }
@@ -55,7 +64,18 @@ public abstract class IwfHttpException extends RuntimeException {
 
     public static IwfHttpException fromFeignException(final ObjectEncoder objectEncoder, final FeignException.FeignClientException exception) {
         if (exception.status() >= 400 && exception.status() < 500) {
-            return new ClientSideException(objectEncoder, exception);
+            final ClientSideException clientSideException = new ClientSideException(objectEncoder, exception);
+
+            switch (clientSideException.getErrorSubStatus()) {
+                case LONG_POLL_TIME_OUT_SUB_STATUS:
+                    return new LongPollTimeoutException(clientSideException);
+                case WORKFLOW_ALREADY_STARTED_SUB_STATUS:
+                    return new WorkflowAlreadyStartedException(clientSideException);
+                case WORKFLOW_NOT_EXISTS_SUB_STATUS:
+                    return new WorkflowNotExistsOrOpenException(clientSideException);
+                default:
+                    return clientSideException;
+            }
         } else {
             return new ServerSideException(objectEncoder, exception);
         }

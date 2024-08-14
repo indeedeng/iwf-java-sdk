@@ -3,7 +3,7 @@ package io.iworkflow.integ;
 import com.google.common.collect.ImmutableMap;
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
-import io.iworkflow.core.ClientSideException;
+import io.iworkflow.core.exceptions.ClientSideException;
 import io.iworkflow.core.ImmutableStopWorkflowOptions;
 import io.iworkflow.core.ImmutableWorkflowOptions;
 import io.iworkflow.gen.models.*;
