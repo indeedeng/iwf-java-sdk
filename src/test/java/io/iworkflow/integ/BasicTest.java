@@ -2,13 +2,14 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
-import io.iworkflow.core.ClientSideException;
 import io.iworkflow.core.ImmutableUnregisteredWorkflowOptions;
 import io.iworkflow.core.ImmutableWorkflowOptions;
 import io.iworkflow.core.UnregisteredWorkflowOptions;
 import io.iworkflow.core.WorkflowDefinitionException;
 import io.iworkflow.core.WorkflowInfo;
 import io.iworkflow.core.WorkflowOptions;
+import io.iworkflow.core.exceptions.WorkflowAlreadyStartedException;
+import io.iworkflow.core.exceptions.WorkflowNotExistsOrOpenException;
 import io.iworkflow.gen.models.Context;
 import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.gen.models.IDReusePolicy;
@@ -51,7 +52,7 @@ public class BasicTest {
         // start the same workflow again should fail
         try {
             client.startWorkflow(BasicWorkflow.class, wfId, 10, input, startOptions);
-        } catch (ClientSideException e) {
+        } catch (WorkflowAlreadyStartedException e) {
             Assertions.assertEquals(ErrorSubStatus.WORKFLOW_ALREADY_STARTED_SUB_STATUS, e.getErrorSubStatus());
             Assertions.assertEquals(400, e.getStatusCode());
             return;
@@ -76,7 +77,7 @@ public class BasicTest {
 
         try {
             client.getSimpleWorkflowResultWithWait(Integer.class, "a wrong workflowId");
-        } catch (ClientSideException e) {
+        } catch (WorkflowNotExistsOrOpenException e) {
             Assertions.assertEquals(ErrorSubStatus.WORKFLOW_NOT_EXISTS_SUB_STATUS, e.getErrorSubStatus());
             Assertions.assertEquals(400, e.getStatusCode());
             return;
@@ -158,7 +159,7 @@ public class BasicTest {
 
         try {
             client.describeWorkflow(wfId, "");
-        } catch (final ClientSideException e) {
+        } catch (final WorkflowNotExistsOrOpenException e) {
             Assertions.assertEquals(ErrorSubStatus.WORKFLOW_NOT_EXISTS_SUB_STATUS, e.getErrorSubStatus());
             Assertions.assertEquals(400, e.getStatusCode());
         }

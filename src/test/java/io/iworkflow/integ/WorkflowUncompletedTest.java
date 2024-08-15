@@ -1,6 +1,7 @@
 package io.iworkflow.integ;
 
 import io.iworkflow.core.*;
+import io.iworkflow.core.exceptions.LongPollTimeoutException;
 import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.gen.models.WorkflowErrorType;
 import io.iworkflow.gen.models.WorkflowStatus;
@@ -44,7 +45,7 @@ public class WorkflowUncompletedTest {
         long elapsedMs;
         try {
             client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
-        } catch (ClientSideException e) {
+        } catch (LongPollTimeoutException e) {
             Assertions.assertEquals(ErrorSubStatus.LONG_POLL_TIME_OUT_SUB_STATUS, e.getErrorSubStatus());
             Assertions.assertEquals(420, e.getStatusCode());
 
@@ -53,9 +54,9 @@ public class WorkflowUncompletedTest {
             Assertions.assertTrue(elapsedMs >= 55 && elapsedMs <= 62, "expect to poll for 58 seconds, actual is %d " + elapsedMs);
             return;
         } catch (Exception e) {
-            Assertions.fail("expected to catch ClientSideException");
+            Assertions.fail("expected to catch LongPollTimeoutException");
         }
-        Assertions.fail("expected to catch ClientSideException");
+        Assertions.fail("expected to catch LongPollTimeoutException");
     }
 
     @Test
