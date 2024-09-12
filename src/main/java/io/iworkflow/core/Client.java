@@ -1,6 +1,5 @@
 package io.iworkflow.core;
 
-import io.iworkflow.core.exceptions.ClientSideException;
 import io.iworkflow.core.mapper.StateMovementMapper;
 import io.iworkflow.core.persistence.PersistenceOptions;
 import io.iworkflow.gen.models.ErrorSubStatus;

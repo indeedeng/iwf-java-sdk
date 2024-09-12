@@ -1,7 +1,6 @@
 package io.iworkflow.core;
 
 import feign.FeignException;
-import io.iworkflow.core.exceptions.ClientSideException;
 import io.iworkflow.core.exceptions.LongPollTimeoutException;
 import io.iworkflow.core.exceptions.WorkflowAlreadyStartedException;
 import io.iworkflow.core.exceptions.WorkflowNotExistsOrOpenException;
