@@ -1,4 +1,4 @@
-package io.iworkflow.core.exceptions;
+package io.iworkflow.core;
 
 import feign.FeignException;
 import io.iworkflow.core.IwfHttpException;
