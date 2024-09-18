@@ -8,8 +8,8 @@ import io.iworkflow.core.UnregisteredWorkflowOptions;
 import io.iworkflow.core.WorkflowDefinitionException;
 import io.iworkflow.core.WorkflowInfo;
 import io.iworkflow.core.WorkflowOptions;
+import io.iworkflow.core.exceptions.NoRunningWorkflowException;
 import io.iworkflow.core.exceptions.WorkflowAlreadyStartedException;
-import io.iworkflow.core.exceptions.WorkflowNotExistsOrOpenException;
 import io.iworkflow.gen.models.Context;
 import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.gen.models.IDReusePolicy;
@@ -77,7 +77,7 @@ public class BasicTest {
 
         try {
             client.getSimpleWorkflowResultWithWait(Integer.class, "a wrong workflowId");
-        } catch (WorkflowNotExistsOrOpenException e) {
+        } catch (NoRunningWorkflowException e) {
             Assertions.assertEquals(ErrorSubStatus.WORKFLOW_NOT_EXISTS_SUB_STATUS, e.getErrorSubStatus());
             Assertions.assertEquals(400, e.getStatusCode());
             return;
@@ -159,7 +159,7 @@ public class BasicTest {
 
         try {
             client.describeWorkflow(wfId, "");
-        } catch (final WorkflowNotExistsOrOpenException e) {
+        } catch (final NoRunningWorkflowException e) {
             Assertions.assertEquals(ErrorSubStatus.WORKFLOW_NOT_EXISTS_SUB_STATUS, e.getErrorSubStatus());
             Assertions.assertEquals(400, e.getStatusCode());
         }

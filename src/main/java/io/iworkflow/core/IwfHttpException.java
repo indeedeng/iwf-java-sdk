@@ -2,8 +2,8 @@ package io.iworkflow.core;
 
 import feign.FeignException;
 import io.iworkflow.core.exceptions.LongPollTimeoutException;
+import io.iworkflow.core.exceptions.NoRunningWorkflowException;
 import io.iworkflow.core.exceptions.WorkflowAlreadyStartedException;
-import io.iworkflow.core.exceptions.WorkflowNotExistsOrOpenException;
 import io.iworkflow.gen.models.EncodedObject;
 import io.iworkflow.gen.models.ErrorResponse;
 import io.iworkflow.gen.models.ErrorSubStatus;
@@ -71,7 +71,7 @@ public abstract class IwfHttpException extends RuntimeException {
                 case WORKFLOW_ALREADY_STARTED_SUB_STATUS:
                     return new WorkflowAlreadyStartedException(clientSideException);
                 case WORKFLOW_NOT_EXISTS_SUB_STATUS:
-                    return new WorkflowNotExistsOrOpenException(clientSideException);
+                    return new NoRunningWorkflowException(clientSideException);
                 default:
                     return clientSideException;
             }
