@@ -2,7 +2,7 @@ package io.iworkflow.integ;
 
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
-import io.iworkflow.core.exceptions.WorkflowNotExistsOrOpenException;
+import io.iworkflow.core.exceptions.NoRunningWorkflowException;
 import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.integ.signal.BasicSignalWorkflow;
 import io.iworkflow.integ.signal.BasicSignalWorkflowState2;
@@ -61,7 +61,7 @@ public class SignalTest {
         try {
             client.signalWorkflow(
                     BasicSignalWorkflow.class, wfId, runId, SIGNAL_CHANNEL_NAME_1, Integer.valueOf(2));
-        } catch (WorkflowNotExistsOrOpenException e) {
+        } catch (NoRunningWorkflowException e) {
             Assertions.assertEquals(ErrorSubStatus.WORKFLOW_NOT_EXISTS_SUB_STATUS, e.getErrorSubStatus());
             Assertions.assertEquals(400, e.getStatusCode());
             return;
