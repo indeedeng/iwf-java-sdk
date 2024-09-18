@@ -170,7 +170,7 @@ public class BasicTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "wf-get-workflow-status-running-test-id" + System.currentTimeMillis() / 1000;
 
-        client.startWorkflow(BasicWorkflow.class, wfId, 10, null, null);
+        client.startWorkflow(BasicWorkflow.class, wfId, 10, 0, null);
         final WorkflowInfo workflowInfo = client.describeWorkflow(wfId);
         Assertions.assertEquals(WorkflowStatus.RUNNING, workflowInfo.getWorkflowStatus());
     }

@@ -73,6 +73,10 @@ public class ApiController {
             sStackTrace = sStackTrace.substring(0, 500) + "...(TRUNCATED)";
         }
         String msg = e.getMessage();
+        if(msg == null){
+            System.out.println("empty message for exception "+sw.toString());
+            msg = "empty message for exception "+e;
+        }
         if (msg.length() > 50) {
             msg = msg.substring(0, 50) + "...(TRUNCATED)";
         }
