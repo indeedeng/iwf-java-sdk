@@ -1,5 +1,6 @@
 package io.iworkflow.core.command;
 
+import io.iworkflow.core.exceptions.CommandNotFoundException;
 import io.iworkflow.gen.models.CommandCombination;
 import io.iworkflow.gen.models.CommandWaitingType;
 import org.immutables.value.Value;
@@ -7,6 +8,7 @@ import org.immutables.value.Value;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Value.Immutable
 public abstract class CommandRequest {
@@ -52,9 +54,20 @@ public abstract class CommandRequest {
      */
     public static CommandRequest forAnyCommandCombinationCompleted(final List<List<String>> commandCombinationLists, final BaseCommand... commands) {
         final List<BaseCommand> allSingleCommands = getAllSingleCommands(commands);
+        final List<String> allNonEmptyCommandsIds = allSingleCommands.stream()
+                .filter(command -> command.getCommandId().isPresent())
+                .map(command -> command.getCommandId().get())
+                .collect(Collectors.toList());
 
         final List<CommandCombination> combinations = new ArrayList<>();
-        commandCombinationLists.forEach(commandIds -> combinations.add(new CommandCombination().commandIds(commandIds)));
+        commandCombinationLists.forEach(commandIds -> {
+            commandIds.forEach(commandId -> {
+                if (!allNonEmptyCommandsIds.contains(commandId)) {
+                    throw new CommandNotFoundException(String.format("Found unknown commandId in the combination list: %s", commandId));
+                }
+            });
+            combinations.add(new CommandCombination().commandIds(commandIds));
+        });
         return ImmutableCommandRequest.builder()
                 .commandCombinations(combinations)
                 .addAllCommands(allSingleCommands)
