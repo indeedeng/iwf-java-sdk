@@ -6,6 +6,8 @@ import io.iworkflow.core.WorkflowState;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
+import io.iworkflow.gen.models.RetryPolicy;
+import io.iworkflow.gen.models.WorkflowStateOptions;
 
 public class AbnormalExitState1 implements WorkflowState<Integer> {
 
@@ -22,5 +24,14 @@ public class AbnormalExitState1 implements WorkflowState<Integer> {
             Persistence persistence,
             final Communication communication) {
         throw new RuntimeException("abnormal exit state");
+    }
+
+    @Override
+    public WorkflowStateOptions getStateOptions() {
+        return new WorkflowStateOptions().executeApiRetryPolicy(
+                new RetryPolicy()
+                        .maximumAttempts(1)
+                        .backoffCoefficient(2f)
+        );
     }
 }
