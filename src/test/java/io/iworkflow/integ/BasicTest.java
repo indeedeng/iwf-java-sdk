@@ -8,6 +8,7 @@ import io.iworkflow.core.UnregisteredWorkflowOptions;
 import io.iworkflow.core.WorkflowDefinitionException;
 import io.iworkflow.core.WorkflowInfo;
 import io.iworkflow.core.WorkflowOptions;
+import io.iworkflow.core.WorkflowUncompletedException;
 import io.iworkflow.core.exceptions.NoRunningWorkflowException;
 import io.iworkflow.core.exceptions.WorkflowAlreadyStartedException;
 import io.iworkflow.gen.models.Context;
@@ -15,6 +16,7 @@ import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.gen.models.IDReusePolicy;
 import io.iworkflow.gen.models.WorkflowConfig;
 import io.iworkflow.gen.models.WorkflowStatus;
+import io.iworkflow.integ.basic.AbnormalExitWorkflow;
 import io.iworkflow.integ.basic.BasicWorkflow;
 import io.iworkflow.integ.basic.EmptyInputWorkflow;
 import io.iworkflow.integ.basic.EmptyInputWorkflowState1;
@@ -58,6 +60,26 @@ public class BasicTest {
             return;
         }
         Assertions.fail("get results from closed workflow should fail");
+    }
+
+    @Test
+    public void testBasicWorkflowAbnormalExitReuse() {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "basic-abnormal-exit-reuse-test-id" + System.currentTimeMillis() / 1000;
+        final WorkflowOptions startOptions = ImmutableWorkflowOptions.builder()
+                .workflowIdReusePolicy(IDReusePolicy.ALLOW_IF_PREVIOUS_EXITS_ABNORMALLY)
+                .build();
+
+        final Integer input = 0;
+        client.startWorkflow(AbnormalExitWorkflow.class, wfId, 10, input, startOptions);
+        Assertions.assertThrows(WorkflowUncompletedException.class,
+                () -> client.getSimpleWorkflowResultWithWait(Integer.class, wfId));
+
+        // Starting a workflow with the same ID should be allowed since the previous failed abnormally
+        client.startWorkflow(BasicWorkflow.class, wfId, 10, input, startOptions);
+        // Wait for workflow to finish
+        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        Assertions.assertEquals(input + 2, output);
     }
 
     @Test
