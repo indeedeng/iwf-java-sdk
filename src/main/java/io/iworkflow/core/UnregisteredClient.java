@@ -368,8 +368,7 @@ public class UnregisteredClient {
         return results;
     }
 
-    public <T> T waitForStateExecutionCompletion(
-            final Class<T> valueClass,
+    public void waitForStateExecutionCompletion(
             final String workflowId,
             final String stateExecutionId) {
         final WorkflowWaitForStateCompletionRequest request = new WorkflowWaitForStateCompletionRequest()
@@ -382,15 +381,10 @@ public class UnregisteredClient {
 
         final WorkflowWaitForStateCompletionResponse response;
         try {
-            response = defaultApi.apiV1WorkflowWaitForStateCompletionPost(request);
+            defaultApi.apiV1WorkflowWaitForStateCompletionPost(request);
         } catch (final FeignException.FeignClientException exp) {
             throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
         }
-
-        if (response.getStateCompletionOutput() == null) {
-            return null;
-        }
-        return clientOptions.getObjectEncoder().decode(response.getStateCompletionOutput().getCompletedStateOutput(), valueClass);
     }
 
     private void throwUncompletedException(final WorkflowGetResponse workflowGetResponse) {
