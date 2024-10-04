@@ -1010,7 +1010,6 @@ public class Client {
      * @param workflowId the workflowId
      * @param stateClass the state class
      * @param stateExecutionNumber the state execution number. E.g. if it's 2, it means the 2nd execution of the state
-     * @return the result of the state completion
      */
     public void waitForStateExecutionCompletion(
             final String workflowId,
