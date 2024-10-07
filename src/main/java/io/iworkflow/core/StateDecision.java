@@ -164,7 +164,18 @@ public abstract class StateDecision {
      * @return state decision
      */
     public static <I> StateDecision singleNextState(final Class<? extends WorkflowState<I>> stateClass, final I stateInput) {
-        return singleNextState(stateClass, stateInput, null);
+        return singleNextState(stateClass.getSimpleName(), stateInput, null);
+    }
+
+    /**
+     * @param <I>        Class type of the WorkflowState input
+     * @param stateClass required
+     * @param stateInput optional, can be null
+     * @param waitForKey key awaited at state completion
+     * @return state decision
+     */
+    public static <I> StateDecision singleNextState(final Class<? extends WorkflowState<I>> stateClass, final I stateInput, final String waitForKey) {
+        return singleNextState(stateClass.getSimpleName(), stateInput, null, waitForKey);
     }
 
     /**
@@ -183,7 +194,7 @@ public abstract class StateDecision {
      * @return state decision
      */
     public static <I> StateDecision singleNextState(final Class<? extends WorkflowState<I>> stateClass) {
-        return singleNextState(stateClass, null, null);
+        return singleNextState(stateClass.getSimpleName(), null, null);
     }
 
     /**
@@ -197,6 +208,21 @@ public abstract class StateDecision {
     public static StateDecision singleNextState(final String stateId, final Object stateInput, final WorkflowStateOptions stateOptionsOverride) {
         return ImmutableStateDecision.builder().nextStates(Arrays.asList(
                 StateMovement.create(stateId, stateInput, stateOptionsOverride)
+        )).build();
+    }
+
+    /**
+     * use the other one with WorkflowState class param if the stateId is provided by default, to make your code cleaner
+     *
+     * @param stateId              required. StateId of next state
+     * @param stateInput           optional, can be null. Input for next state
+     * @param stateOptionsOverride optional, can be null. It is used to override the defined one in the State class
+     * @param waitForKey           key awaited at state completion
+     * @return state decision
+     */
+    public static StateDecision singleNextState(final String stateId, final Object stateInput, final WorkflowStateOptions stateOptionsOverride, final String waitForKey) {
+        return ImmutableStateDecision.builder().nextStates(Arrays.asList(
+                StateMovement.create(stateId, stateInput, stateOptionsOverride, waitForKey)
         )).build();
     }
 
