@@ -5,7 +5,8 @@
 - [ ] Code compiles correctly
 - [ ] Tests for the changes have been added
 - [ ] All tests passing
-- [ ] **This change is backwards-compatible**
+- [ ] **This PR change is backwards-compatible**
+- [ ] **This PR CONTAINS a (planned) breaking change** (it is NOT backwards-compatible)
 
 ### Related Issue
 Closes #<issue_number>
