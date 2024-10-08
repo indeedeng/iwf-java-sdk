@@ -43,6 +43,8 @@ public class StateMovementMapper {
             if (stateOptions != null) {
                 movement.stateOptions(stateOptions);
             }
+
+            stateMovement.getWaitForKey().ifPresent(movement::waitForKey);
         }
         return movement;
     }

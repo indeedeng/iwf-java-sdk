@@ -32,7 +32,6 @@ import io.iworkflow.gen.models.WorkflowStartResponse;
 import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.gen.models.WorkflowStopRequest;
 import io.iworkflow.gen.models.WorkflowWaitForStateCompletionRequest;
-import io.iworkflow.gen.models.WorkflowWaitForStateCompletionResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -379,7 +378,26 @@ public class UnregisteredClient {
             request.waitTimeSeconds(clientOptions.getLongPollApiMaxWaitTimeSeconds().get());
         }
 
-        final WorkflowWaitForStateCompletionResponse response;
+        try {
+            defaultApi.apiV1WorkflowWaitForStateCompletionPost(request);
+        } catch (final FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
+    }
+
+    public void waitForStateExecutionCompletion(
+            final String workflowId,
+            final String stateId,
+            final String waitForKey) {
+        final WorkflowWaitForStateCompletionRequest request = new WorkflowWaitForStateCompletionRequest()
+                .stateId(stateId)
+                .waitForKey(waitForKey)
+                .workflowId(workflowId);
+
+        if(clientOptions.getLongPollApiMaxWaitTimeSeconds().isPresent()) {
+            request.waitTimeSeconds(clientOptions.getLongPollApiMaxWaitTimeSeconds().get());
+        }
+
         try {
             defaultApi.apiV1WorkflowWaitForStateCompletionPost(request);
         } catch (final FeignException.FeignClientException exp) {

@@ -18,11 +18,15 @@ import io.iworkflow.gen.models.WorkflowConfig;
 import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.integ.basic.AbnormalExitWorkflow;
 import io.iworkflow.integ.basic.BasicWorkflow;
+import io.iworkflow.integ.basic.BasicWorkflowState1;
+import io.iworkflow.integ.basic.BasicWorkflowState2;
 import io.iworkflow.integ.basic.EmptyInputWorkflow;
 import io.iworkflow.integ.basic.EmptyInputWorkflowState1;
 import io.iworkflow.integ.basic.FakContextImpl;
 import io.iworkflow.integ.basic.ModelInputWorkflow;
 import io.iworkflow.integ.basic.ProceedOnStateStartFailWorkflow;
+import io.iworkflow.integ.timer.BasicTimerWorkflow;
+import io.iworkflow.integ.timer.BasicTimerWorkflowState1;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
 import org.junit.jupiter.api.Assertions;
@@ -195,5 +199,31 @@ public class BasicTest {
         client.startWorkflow(BasicWorkflow.class, wfId, 10, 0, null);
         final WorkflowInfo workflowInfo = client.describeWorkflow(wfId);
         Assertions.assertEquals(WorkflowStatus.RUNNING, workflowInfo.getWorkflowStatus());
+    }
+
+    @Test
+    public void testWorkflowWaitForStateCompletionWithWaitForKey() {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final long startTs = System.currentTimeMillis();
+        final String wfId = "wf-wait-for-state-completion-with-wait-for-key-test-id" + startTs / 1000;
+        final Integer input = 5;
+        final String waitForKey = "testKey";
+
+        client.startWorkflow(
+                BasicWorkflow.class, wfId, 10, input,
+                WorkflowOptions.extendedBuilder()
+                        .waitForCompletionStates(BasicWorkflowState2.class)
+                        .getBuilder().build());
+
+        client.waitForStateExecutionCompletion(wfId, BasicWorkflowState2.class, waitForKey);
+        client.waitForWorkflowCompletion(wfId);
+
+        final String childWfId = "__IwfSystem_" + wfId + "_" + "BasicWorkflowState2" + "_" + waitForKey;
+
+        final WorkflowInfo workflowInfo = client.describeWorkflow(wfId);
+        Assertions.assertEquals(WorkflowStatus.COMPLETED, workflowInfo.getWorkflowStatus());
+
+        final WorkflowInfo childWorkflowInfo = client.describeWorkflow(childWfId);
+        Assertions.assertEquals(WorkflowStatus.COMPLETED, childWorkflowInfo.getWorkflowStatus());
     }
 }

@@ -14,6 +14,8 @@ public abstract class StateMovement {
 
     public abstract Optional<WorkflowStateOptions> getStateOptionsOverride();
 
+    public abstract Optional<String> getWaitForKey();
+
     public final static String RESERVED_STATE_ID_PREFIX = "_SYS_";
     private final static String GRACEFUL_COMPLETING_WORKFLOW_STATE_ID = "_SYS_GRACEFUL_COMPLETING_WORKFLOW";
     private final static String FORCE_COMPLETING_WORKFLOW_STATE_ID = "_SYS_FORCE_COMPLETING_WORKFLOW";
@@ -105,6 +107,29 @@ public abstract class StateMovement {
 
         if (stateOptionsOverride != null) {
             builder.stateOptionsOverride(stateOptionsOverride);
+        }
+
+        return builder.build();
+    }
+
+    public static StateMovement create(final String stateId, final Object stateInput, final WorkflowStateOptions stateOptionsOverride, final String waitForKey) {
+        if (stateId.startsWith(RESERVED_STATE_ID_PREFIX)) {
+            throw new WorkflowDefinitionException("Cannot use reserved stateId prefix for your stateId");
+        }
+
+        final ImmutableStateMovement.Builder builder = ImmutableStateMovement.builder()
+                .stateId(stateId);
+
+        if (stateInput != null) {
+            builder.stateInput(stateInput);
+        }
+
+        if (stateOptionsOverride != null) {
+            builder.stateOptionsOverride(stateOptionsOverride);
+        }
+
+        if (waitForKey != null) {
+            builder.waitForKey(waitForKey);
         }
 
         return builder.build();
