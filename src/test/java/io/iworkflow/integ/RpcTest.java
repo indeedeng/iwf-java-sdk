@@ -46,13 +46,7 @@ public class RpcTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "testRPCLocking" + System.currentTimeMillis() / 1000;
         client.startWorkflow(
-                NoStateWorkflow.class, wfId, 1000, 999,
-                ImmutableWorkflowOptions.builder()
-                        .workflowConfigOverride(
-                                new WorkflowConfig()
-                                        .continueAsNewThreshold(1)
-                        )
-                        .build());
+                NoStateWorkflow.class, wfId, 1000, 999);
 
         final NoStateWorkflow rpcStub = client.newRpcStub(NoStateWorkflow.class, wfId, "");
 
