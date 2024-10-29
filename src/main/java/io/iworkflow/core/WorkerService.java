@@ -65,7 +65,7 @@ public class WorkerService {
 
         final DataAttributesRWImpl dataObjectsRW =
                 createDataObjectsRW(req.getWorkflowType(), req.getDataAttributes());
-        final Context context = fromIdlContext(req.getContext());
+        final Context context = fromIdlContext(req.getContext(), req.getWorkflowType());
 
         final Map<String, SearchAttributeValueType> searchAttrsTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(searchAttrsTypeMap, req.getSearchAttributes());
@@ -164,7 +164,7 @@ public class WorkerService {
         final Object input = workerOptions.getObjectEncoder().decode(stateInput, state.getWorkflowState().getInputType());
         final DataAttributesRWImpl dataObjectsRW =
                 createDataObjectsRW(req.getWorkflowType(), req.getDataObjects());
-        final Context context = fromIdlContext(req.getContext());
+        final Context context = fromIdlContext(req.getContext(), req.getWorkflowType());
 
         final Map<String, SearchAttributeValueType> searchAttrsTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(searchAttrsTypeMap, req.getSearchAttributes());
@@ -229,7 +229,7 @@ public class WorkerService {
         final DataAttributesRWImpl dataObjectsRW =
                 createDataObjectsRW(req.getWorkflowType(), req.getDataObjects());
 
-        final Context context = fromIdlContext(req.getContext());
+        final Context context = fromIdlContext(req.getContext(), req.getWorkflowType());
         final StateExecutionLocalsImpl stateExeLocals = new StateExecutionLocalsImpl(toMap(req.getStateLocals()), workerOptions.getObjectEncoder());
         final Map<String, SearchAttributeValueType> saTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(saTypeMap, req.getSearchAttributes());
@@ -372,7 +372,7 @@ public class WorkerService {
         return sas;
     }
 
-    private Context fromIdlContext(final io.iworkflow.gen.models.Context context) {
+    private Context fromIdlContext(final io.iworkflow.gen.models.Context context, final String workflowType) {
         int attempt = -1; //unsupported
         if (context.getAttempt() != null) {
             attempt = context.getAttempt();
@@ -384,6 +384,7 @@ public class WorkerService {
 
         return ImmutableContext.builder()
                 .workflowId(context.getWorkflowId())
+                .workflowType(workflowType)
                 .workflowRunId(context.getWorkflowRunId())
                 .workflowStartTimestampSeconds(context.getWorkflowStartedTimestamp())
                 .stateExecutionId(Optional.ofNullable(context.getStateExecutionId()))

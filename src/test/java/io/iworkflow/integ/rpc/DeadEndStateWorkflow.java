@@ -29,7 +29,8 @@ public class DeadEndStateWorkflow implements ObjectWorkflow {
 
     @RPC
     public Long testRpcFunc1(Context context, String input, Persistence persistence, Communication communication) {
-        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty()) {
+        if (context.getWorkflowId().isEmpty() || context.getWorkflowRunId().isEmpty() ||
+                context.getWorkflowType().isEmpty() || !context.getWorkflowType().equals("DeadEndStateWorkflow") ) {
             throw new RuntimeException("invalid context");
         }
         communication.triggerStateMovements(StateMovement.create(RpcWorkflowState2.class));
