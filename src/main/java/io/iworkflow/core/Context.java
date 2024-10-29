@@ -14,6 +14,8 @@ public abstract class Context {
 
     public abstract String getWorkflowId();
 
+    public abstract String getWorkflowType();
+
     // this is the start time of the first attempt of the API call. It's from ScheduledTimestamp of Cadence/Temporal activity.GetInfo
     // require server version 1.2.2+, return -1 if server version is lower
     public abstract Optional<Long> getFirstAttemptTimestampSeconds();
