@@ -89,7 +89,7 @@ public class Registry {
 
     private void registerWorkflowRPCs(final ObjectWorkflow wf) {
         String workflowType = getWorkflowType(wf);
-        final Method[] methods = wf.getClass().getDeclaredMethods();
+        final Method[] methods = wf.getClass().getMethods();
         if (methods.length == 0) {
             rpcMethodStore.put(workflowType, new HashMap<>());
             return;
