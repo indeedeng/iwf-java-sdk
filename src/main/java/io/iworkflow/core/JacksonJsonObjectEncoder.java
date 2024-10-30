@@ -49,7 +49,7 @@ public class JacksonJsonObjectEncoder implements ObjectEncoder {
     mapper.registerModule(new JavaTimeModule());
     mapper.registerModule(new Jdk8Module());
     mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-    encodingType = "BuiltinJacksonJson";
+    encodingType = "json";
   }
 
   public JacksonJsonObjectEncoder(ObjectMapper mapper, String encodingType) {
