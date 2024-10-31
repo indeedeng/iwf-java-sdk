@@ -12,6 +12,7 @@ import io.iworkflow.gen.models.EncodedObject;
 import io.iworkflow.gen.models.PersistenceLoadingPolicy;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
 import io.iworkflow.gen.models.StateCompletionOutput;
+import io.iworkflow.gen.models.WorkflowAlreadyStartedOptions;
 import io.iworkflow.gen.models.WorkflowGetDataObjectsRequest;
 import io.iworkflow.gen.models.WorkflowGetDataObjectsResponse;
 import io.iworkflow.gen.models.WorkflowGetRequest;
@@ -168,6 +169,10 @@ public class UnregisteredClient {
             }
             if (options.getUsingMemoForDataAttributes().isPresent()) {
                 startOptions.useMemoForDataAttributes(options.getUsingMemoForDataAttributes().get());
+            }
+
+            if (options.getWorkflowAlreadyStartedOptions().isPresent()) {
+                startOptions.workflowAlreadyStartedOptions(options.getWorkflowAlreadyStartedOptions().get());
             }
 
             request.workflowStartOptions(startOptions);
