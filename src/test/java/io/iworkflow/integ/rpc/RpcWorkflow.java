@@ -26,6 +26,16 @@ public class RpcWorkflow implements ObjectWorkflow {
 
     public static final String INTERNAL_CHANNEL_NAME = "test-channel-1";
 
+    // NOTE: this will break, unless move the default constructor to the top before this one
+    public RpcWorkflow(String p1){
+        if(p1==null){
+            throw new RuntimeException("cannot pass null");
+        }
+    }
+
+    public RpcWorkflow(){}
+
+
     @Override
     public List<CommunicationMethodDef> getCommunicationSchema() {
         return Arrays.asList(
