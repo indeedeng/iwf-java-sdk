@@ -1,6 +1,7 @@
 package io.iworkflow.core;
 
 import io.iworkflow.gen.models.IDReusePolicy;
+import io.iworkflow.gen.models.WorkflowAlreadyStartedOptions;
 import io.iworkflow.gen.models.WorkflowConfig;
 import io.iworkflow.gen.models.WorkflowRetryPolicy;
 import org.immutables.value.Value;
@@ -25,6 +26,8 @@ public abstract class WorkflowOptions {
 
     public abstract List<String> getWaitForCompletionStateIds();
     public abstract List<String> getWaitForCompletionStateExecutionIds();
+
+    public abstract Optional<WorkflowAlreadyStartedOptions> getWorkflowAlreadyStartedOptions();
 
     public static WorkflowOptionBuilderExtension extendedBuilder() {
         return new WorkflowOptionBuilderExtension();

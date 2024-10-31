@@ -2,6 +2,7 @@ package io.iworkflow.core;
 
 import io.iworkflow.gen.models.IDReusePolicy;
 import io.iworkflow.gen.models.SearchAttribute;
+import io.iworkflow.gen.models.WorkflowAlreadyStartedOptions;
 import io.iworkflow.gen.models.WorkflowConfig;
 import io.iworkflow.gen.models.WorkflowRetryPolicy;
 import io.iworkflow.gen.models.WorkflowStateOptions;
@@ -31,4 +32,6 @@ public abstract class UnregisteredWorkflowOptions {
     public abstract List<String> getWaitForCompletionStateExecutionIds();
 
     public abstract List<String> getWaitForCompletionStateIds();
+
+    public abstract Optional<WorkflowAlreadyStartedOptions> getWorkflowAlreadyStartedOptions();
 }
