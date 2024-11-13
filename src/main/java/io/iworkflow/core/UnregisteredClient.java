@@ -9,10 +9,11 @@ import io.iworkflow.core.validator.CronScheduleValidator;
 import io.iworkflow.gen.api.ApiClient;
 import io.iworkflow.gen.api.DefaultApi;
 import io.iworkflow.gen.models.EncodedObject;
+import io.iworkflow.gen.models.KeyValue;
 import io.iworkflow.gen.models.PersistenceLoadingPolicy;
+import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeKeyAndType;
 import io.iworkflow.gen.models.StateCompletionOutput;
-import io.iworkflow.gen.models.WorkflowAlreadyStartedOptions;
 import io.iworkflow.gen.models.WorkflowGetDataObjectsRequest;
 import io.iworkflow.gen.models.WorkflowGetDataObjectsResponse;
 import io.iworkflow.gen.models.WorkflowGetRequest;
@@ -25,6 +26,8 @@ import io.iworkflow.gen.models.WorkflowRpcRequest;
 import io.iworkflow.gen.models.WorkflowRpcResponse;
 import io.iworkflow.gen.models.WorkflowSearchRequest;
 import io.iworkflow.gen.models.WorkflowSearchResponse;
+import io.iworkflow.gen.models.WorkflowSetDataObjectsRequest;
+import io.iworkflow.gen.models.WorkflowSetSearchAttributesRequest;
 import io.iworkflow.gen.models.WorkflowSignalRequest;
 import io.iworkflow.gen.models.WorkflowSkipTimerRequest;
 import io.iworkflow.gen.models.WorkflowStartOptions;
@@ -35,6 +38,7 @@ import io.iworkflow.gen.models.WorkflowStopRequest;
 import io.iworkflow.gen.models.WorkflowWaitForStateCompletionRequest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -613,6 +617,28 @@ public class UnregisteredClient {
         }
     }
 
+    public void setAnyWorkflowDataObjects(
+            final String workflowId,
+            final String workflowRunId,
+            final Map<String, Object> dataObjects
+    ) {
+        final List<KeyValue> encodedObjects = dataObjects.entrySet().stream().map(entry -> new KeyValue()
+                        .key(entry.getKey())
+                        .value(clientOptions.getObjectEncoder().encode(entry.getValue())))
+                .collect(Collectors.toList());
+
+        try {
+            defaultApi.apiV1WorkflowDataobjectsSetPost(
+                    new WorkflowSetDataObjectsRequest()
+                            .workflowId(workflowId)
+                            .workflowRunId(workflowRunId)
+                            .objects(encodedObjects)
+            );
+        } catch (final FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
+    }
+
     public WorkflowSearchResponse searchWorkflow(final String query, final int pageSize) {
 
         try {
@@ -646,6 +672,23 @@ public class UnregisteredClient {
                             .keys(attributeKeys)
             );
         } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
+    }
+
+    public void setAnyWorkflowSearchAttributes(
+            final String workflowId,
+            final String workflowRunId,
+            final List<SearchAttribute> searchAttributes
+    ) {
+        try {
+            defaultApi.apiV1WorkflowSearchattributesSetPost(
+                    new WorkflowSetSearchAttributesRequest()
+                            .workflowId(workflowId)
+                            .workflowRunId(workflowRunId)
+                            .searchAttributes(searchAttributes)
+            );
+        } catch (final FeignException.FeignClientException exp) {
             throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
         }
     }

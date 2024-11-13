@@ -616,6 +616,68 @@ public class Client {
     }
 
     /**
+     * Set the value for data attributes aka objects for a workflow
+     *
+     * @param workflowClass  required
+     * @param workflowId     required
+     * @param workflowRunId  optional, can be empty
+     * @param dataAttributes required
+     * */
+    public void setWorkflowDataAttributes(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId,
+            final Map<String, Object> dataAttributes) {
+        doSetWorkflowDataAttributes(workflowClass, workflowId, workflowRunId, dataAttributes);
+    }
+
+    /**
+     * Set the value for data attributes aka objects for a workflow
+     *
+     * @param workflowClass  required
+     * @param workflowId     required
+     * @param dataAttributes required
+     * */
+    public void setWorkflowDataAttributes(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            final Map<String, Object> dataAttributes) {
+        doSetWorkflowDataAttributes(workflowClass, workflowId, "", dataAttributes);
+    }
+
+    private void doSetWorkflowDataAttributes(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId,
+            final Map<String, Object> dataAttributes
+    ) {
+        //check if workflow type exists
+        final String wfType = workflowClass.getSimpleName();
+        checkWorkflowTypeExists(wfType);
+
+        for (final Map.Entry<String, Object> entry : dataAttributes.entrySet()) {
+            final String key = entry.getKey();
+            //check that key exists in the store
+            if (!registry.getDataAttributeTypeStore(wfType).isValidNameOrPrefix(key)) {
+                throw new IllegalArgumentException(String.format("data attribute %s is not registered", key));
+            }
+
+            final Class<?> registeredType = registry.getDataAttributeTypeStore(wfType).getType(key);
+            final Class<?> requestedType = entry.getValue().getClass();
+            //check that type is registered in schema
+            if (!requestedType.isAssignableFrom(registeredType)) {
+                throw new IllegalArgumentException(
+                        String.format(
+                                "registered type %s is not assignable from %s",
+                                registeredType.getName(),
+                                requestedType.getName()));
+            }
+        }
+
+        unregisteredClient.setAnyWorkflowDataObjects(workflowId, workflowRunId, dataAttributes);
+    }
+
+    /**
      * This is a simplified API to search without pagination, use the other searchWorkflow API for pagination feature
      *
      * @param query    the query of the search, see Cadence/Temporal search attributes doc
@@ -834,6 +896,37 @@ public class Client {
         return doGetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, null);
     }
 
+
+    /**
+     * Set the value of search attributes for a workflow
+     *
+     * @param workflowClass    required
+     * @param workflowId       required
+     * @param searchAttributes required
+     * */
+    public void setWorkflowSearchAttributes(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            final List<SearchAttribute> searchAttributes) {
+        doSetWorkflowSearchAttributes(workflowClass, workflowId, "", searchAttributes);
+    }
+
+    /**
+     * Set the value of search attributes for a workflow
+     *
+     * @param workflowClass    required
+     * @param workflowId       required
+     * @param workflowRunId    optional, can be empty
+     * @param searchAttributes required
+     * */
+    public void setWorkflowSearchAttributes(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId,
+            final List<SearchAttribute> searchAttributes) {
+        doSetWorkflowSearchAttributes(workflowClass, workflowId, workflowRunId, searchAttributes);
+    }
+
     /**
      * Get all the search attributes of a workflow
      *
@@ -932,6 +1025,26 @@ public class Client {
             result.put(searchAttribute.getKey(), value);
         }
         return result;
+    }
+
+    private void doSetWorkflowSearchAttributes(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId,
+            final List<SearchAttribute> searchAttributes
+    ) {
+        final String wfType = workflowClass.getSimpleName();
+        checkWorkflowTypeExists(wfType);
+
+        final Map<String, SearchAttributeValueType> searchAttributeKeyToTypeMap = registry.getSearchAttributeKeyToTypeMap(wfType);
+        //Check that the requested sa type is registered to the key
+        searchAttributes.forEach(sa -> {
+            final SearchAttributeValueType registeredValueType = searchAttributeKeyToTypeMap.get(sa.getKey());
+            if (sa.getValueType() != null && registeredValueType != null && !registeredValueType.equals(sa.getValueType())) {
+                throw new IllegalArgumentException(String.format("Search attribute key, %s is registered to type %s, but tried to add search attribute type %s", sa.getKey(), registeredValueType.getValue(), sa.getValueType().getValue()));
+            }
+        });
+        unregisteredClient.setAnyWorkflowSearchAttributes(workflowId, workflowRunId, searchAttributes);
     }
 
     static Object getSearchAttributeValue(final SearchAttributeValueType saType, final SearchAttribute searchAttribute) {

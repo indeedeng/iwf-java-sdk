@@ -46,6 +46,8 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
                     case INT:
                         int64AttributeMap.put(sa.getKey(), sa.getIntegerValue());
                         break;
+                    case DOUBLE:
+                        doubleAttributeMap.put(sa.getKey(), sa.getDoubleValue());
                     case BOOL:
                         boolAttributeMap.put(sa.getKey(), sa.getBoolValue());
                         break;
@@ -53,7 +55,7 @@ public class SearchAttributeRWImpl implements SearchAttributesRW {
                         stringArrayAttributeMap.put(sa.getKey(), sa.getStringArrayValue());
                         break;
                     default:
-                        throw new IllegalStateException("empty search attribute value type shouldn't exist");
+                        throw new IllegalStateException(String.format("empty or not supported search attribute value type, %s", type));
                 }
             });
         }
