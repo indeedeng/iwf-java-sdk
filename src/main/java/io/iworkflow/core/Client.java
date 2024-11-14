@@ -1,5 +1,9 @@
 package io.iworkflow.core;
 
+import io.iworkflow.core.exceptions.LongPollTimeoutException;
+import io.iworkflow.core.exceptions.NoRunningWorkflowException;
+import io.iworkflow.core.exceptions.WorkflowAlreadyStartedException;
+import io.iworkflow.core.exceptions.WorkflowNotExistsException;
 import io.iworkflow.core.mapper.StateMovementMapper;
 import io.iworkflow.core.persistence.PersistenceOptions;
 import io.iworkflow.gen.models.ErrorSubStatus;
@@ -65,6 +69,7 @@ public class Client {
      * @param workflowId             is required
      * @param workflowTimeoutSeconds is required
      * @return runId
+     * @throws WorkflowAlreadyStartedException if the workflow is already started
      */
     public String startWorkflow(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -81,6 +86,7 @@ public class Client {
      * @param workflowTimeoutSeconds is required
      * @param input                  is optional, can be null
      * @return runId
+     * @throws WorkflowAlreadyStartedException if the workflow is already started
      */
     public String startWorkflow(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -99,6 +105,10 @@ public class Client {
      * @param input                  is optional, can be null
      * @param option                 is optional, can be null
      * @return runId
+     * @throws WorkflowAlreadyStartedException if the workflow is already started
+     * If using WorkflowAlreadyStartedOptions in WorkflowOptions, the error will be ignored if ignoreAlreadyStartedError is true.
+     * If ignoreAlreadyStartedError is true and also requestId is set, the requestId will be used to identify the request. The error
+     * will only be thrown if the requestId is different from the requestId of the existing workflow.
      */
     public String startWorkflow(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -119,6 +129,10 @@ public class Client {
      * @param input                  is optional, can be null
      * @param options                is optional, can be null
      * @return runId
+     * @throws WorkflowAlreadyStartedException if the workflow is already started
+     * If using WorkflowAlreadyStartedOptions in WorkflowOptions, the error will be ignored if ignoreAlreadyStartedError is true.
+     * If ignoreAlreadyStartedError is true and also requestId is set, the requestId will be used to identify the request. The error
+     * will only be thrown if the requestId is different from the requestId of the existing workflow.
      */
     public String startWorkflow(
             final String wfType,
@@ -257,9 +271,11 @@ public class Client {
      * A long poll API to wait for the workflow completion.
      * Due to the limit of REST API, it will only wait for 30 seconds for the workflow to complete.
      * (configurable in ClientOptions.LongPollApiMaxWaitTimeSeconds)
-     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
      *
      * @param workflowId    required, the workflowId
+     * @throws WorkflowUncompletedException if the workflow is not COMPLETED
+     * @throws WorkflowNotExistsException if the workflow is not existing
+     * @throws LongPollTimeoutException if the long poll timeout
      */
     public void waitForWorkflowCompletion(
             final String workflowId) {
@@ -277,6 +293,9 @@ public class Client {
      * @param workflowId    required, the workflowId
      * @param <T>           type of the output
      * @return the output result
+     * @throws WorkflowUncompletedException if the workflow is not COMPLETED
+     * @throws WorkflowNotExistsException if the workflow is not existing
+     * @throws LongPollTimeoutException if the long poll timeout
      */
     public <T> T waitForWorkflowCompletion(
             final Class<T> valueClass,
@@ -292,6 +311,9 @@ public class Client {
      * @param workflowId   required, the workflowId
      * @param workflowRunId optional, can be empty
      * @return the output result
+     * @throws WorkflowUncompletedException if the workflow is not COMPLETED
+     * @throws WorkflowNotExistsException if the workflow is not existing
+     * @throws LongPollTimeoutException if the long poll timeout
      */
     @Deprecated
     public <T> T getSimpleWorkflowResultWithWait(
@@ -308,6 +330,9 @@ public class Client {
      * @param valueClass   required, the type class of the output
      * @param workflowId   required, the workflowId
      * @return the output result
+     * @throws WorkflowUncompletedException if the workflow is not COMPLETED
+     * @throws WorkflowNotExistsException if the workflow is not existing
+     * @throws LongPollTimeoutException if the long poll timeout
      */
     @Deprecated
     public <T> T getSimpleWorkflowResultWithWait(
@@ -319,14 +344,14 @@ public class Client {
     /**
      * For most cases, a workflow only has one result(one completion state).
      * Use this API to retrieve the output of the state without waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
-     * Else, return the same result as {@link #getSimpleWorkflowResultWithWait(Class, String, String)}.
      *
      * @param valueClass    required, the type class of the output
      * @param workflowId    required, the workflowId
      * @param workflowRunId optional, can be empty
      * @param <T>           type of the output
      * @return the output result
+     * @throws WorkflowUncompletedException if the workflow is not COMPLETED
+     * @throws WorkflowNotExistsException if the workflow is not existing
      */
     public <T> T tryGettingSimpleWorkflowResult(
             final Class<T> valueClass,
@@ -338,13 +363,13 @@ public class Client {
     /**
      * For most cases, a workflow only has one result(one completion state).
      * Use this API to retrieve the output of the state without waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
-     * Else, return the same result as {@link #getSimpleWorkflowResultWithWait(Class, String)}.
      *
      * @param valueClass    required, the type class of the output
      * @param workflowId    required, the workflowId
      * @param <T>           type of the output
      * @return the output result
+     * @throws WorkflowUncompletedException if the workflow is not COMPLETED
+     * @throws WorkflowNotExistsException if the workflow is not existing
      */
     public <T> T tryGettingSimpleWorkflowResult(
             final Class<T> valueClass,
@@ -355,11 +380,13 @@ public class Client {
     /**
      * In some cases, a workflow may have more than one completion states.
      * Use this API to retrieve the output of the states with waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link feign.FeignException.FeignClientException}.
      *
      * @param workflowId    required, the workflowId
      * @param workflowRunId optional, can be empty
      * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
+     * @throws WorkflowUncompletedException if the workflow is not COMPLETED
+     * @throws WorkflowNotExistsException if the workflow is not existing
+     * @throws LongPollTimeoutException if the long poll timeout
      */
     public List<StateCompletionOutput> getComplexWorkflowResultWithWait(
             final String workflowId, final String workflowRunId) {
@@ -369,10 +396,12 @@ public class Client {
     /**
      * In some cases, a workflow may have more than one completion states.
      * Use this API to retrieve the output of the states with waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link feign.FeignException.FeignClientException}.
      *
      * @param workflowId    required, the workflowId
      * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
+     * @throws WorkflowUncompletedException if the workflow is not COMPLETED
+     * @throws WorkflowNotExistsException if the workflow is not existing
+     * @throws LongPollTimeoutException if the long poll timeout
      */
     public List<StateCompletionOutput> getComplexWorkflowResultWithWait(final String workflowId) {
         return getComplexWorkflowResultWithWait(workflowId, "");
@@ -381,12 +410,12 @@ public class Client {
     /**
      * In some cases, a workflow may have more than one completion states.
      * Use this API to retrieve the output of the states without waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
-     * Else, return the same result as {@link #getComplexWorkflowResultWithWait(String, String)}.
      *
      * @param workflowId    required, the workflowId
      * @param workflowRunId optional, can be empty
      * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
+     * @throws WorkflowUncompletedException if the workflow is not COMPLETED
+     * @throws WorkflowNotExistsException if the workflow is not existing
      */
     public List<StateCompletionOutput> tryGettingComplexWorkflowResult(
             final String workflowId, final String workflowRunId) {
@@ -396,11 +425,11 @@ public class Client {
     /**
      * In some cases, a workflow may have more than one completion states.
      * Use this API to retrieve the output of the states without waiting for the workflow to complete.
-     * If the workflow is not COMPLETED, throw the {@link WorkflowUncompletedException}.
-     * Else, return the same result as {@link #getComplexWorkflowResultWithWait(String)}.
      *
      * @param workflowId    required, the workflowId
      * @return a list of the state output for completion states. User code will figure how to use ObjectEncoder to decode the output
+     * @throws WorkflowUncompletedException if the workflow is not COMPLETED
+     * @throws WorkflowNotExistsException if the workflow is not existing
      */
     public List<StateCompletionOutput> tryGettingComplexWorkflowResult(final String workflowId) {
         return tryGettingComplexWorkflowResult(workflowId, "");
@@ -414,6 +443,7 @@ public class Client {
      * @param workflowRunId     optional, can be empty
      * @param signalChannelName required
      * @param signalValue       optional, can be null
+     * @throws NoRunningWorkflowException  if the workflow is not existing or not running
      */
     public void signalWorkflow(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -441,6 +471,7 @@ public class Client {
      * @param workflowId        required
      * @param signalChannelName required
      * @param signalValue       optional, can be null
+     * @throws NoRunningWorkflowException  if the workflow is not existing or not running
      */
     public void signalWorkflow(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -455,6 +486,7 @@ public class Client {
      * @param workflowRunId                 optional, can be empty
      * @param resetWorkflowTypeAndOptions   required, the combination parameter for reset
      * @return the new runId after reset
+     * @throws WorkflowNotExistsException  if the workflow is not existing
      */
     public String resetWorkflow(
             final String workflowId,
@@ -468,6 +500,7 @@ public class Client {
      * @param workflowId                    required
      * @param resetWorkflowTypeAndOptions   required, the combination parameter for reset
      * @return the new runId after reset
+     * @throws WorkflowNotExistsException  if the workflow is not existing
      */
     public String resetWorkflow(
             final String workflowId,
@@ -482,6 +515,7 @@ public class Client {
      * @param workflowId    required
      * @param workflowRunId optional, can be empty
      * @param options       optional, can be null. If not set, the workflow status will be CANCELED
+     * @throws NoRunningWorkflowException  if the workflow is not existing or not running
      */
     public void stopWorkflow(
             final String workflowId,
@@ -495,6 +529,7 @@ public class Client {
      *
      * @param workflowId    required
      * @param options       optional, can be null. If not set, the workflow status will be CANCELED
+     * @throws NoRunningWorkflowException  if the workflow is not existing or not running
      */
     public void stopWorkflow(
             final String workflowId,
@@ -507,6 +542,7 @@ public class Client {
      * The workflow status will be CANCELED
      *
      * @param workflowId    required
+     * @throws NoRunningWorkflowException  if the workflow is not existing or not running
      */
     public void stopWorkflow(final String workflowId) {
         stopWorkflow(workflowId, "", null);
@@ -520,6 +556,7 @@ public class Client {
      * @param workflowRunId     optional, can be empty
      * @param keys              required, cannot be empty or null
      * @return the data attributes
+     * @throws WorkflowNotExistsException  if the workflow is not existing
      */
     public Map<String, Object> getWorkflowDataAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -540,6 +577,7 @@ public class Client {
      * @param workflowId        required
      * @param keys              required, cannot be empty or null
      * @return the data attributes
+     * @throws WorkflowNotExistsException  if the workflow is not existing
      */
     public Map<String, Object> getWorkflowDataAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -555,6 +593,7 @@ public class Client {
      * @param workflowId        required
      * @param workflowRunId     optional, can be empty
      * @return the data attributes
+     * @throws WorkflowNotExistsException  if the workflow is not existing
      */
     public Map<String, Object> getAllDataAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -569,6 +608,7 @@ public class Client {
      * @param workflowClass     required
      * @param workflowId        required
      * @return the data attributes
+     * @throws WorkflowNotExistsException  if the workflow is not existing
      */
     public Map<String, Object> getAllDataAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -631,6 +671,7 @@ public class Client {
      * @param workflowId     required
      * @param workflowRunId  optional, can be empty
      * @param dataAttributes required
+     * @throws NoRunningWorkflowException  if the workflow is not existing or not running
      * */
     public void setWorkflowDataAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -646,6 +687,7 @@ public class Client {
      * @param workflowClass  required
      * @param workflowId     required
      * @param dataAttributes required
+     * @throws NoRunningWorkflowException  if the workflow is not existing or not running
      * */
     public void setWorkflowDataAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -775,6 +817,7 @@ public class Client {
      * @param <I>           the input type
      * @param <O>           the output type
      * @return output
+     * @throws WorkflowNotExistsException  if the workflow is not existing, or not running to accept a write operation in RPC
      */
     public <I, O> O invokeRPC(RpcDefinitions.RpcFunc1<I, O> rpcStubMethod, I input) {
         return rpcStubMethod.execute(null, input, null, null);
@@ -788,6 +831,7 @@ public class Client {
      * @param <I>           the input type
      * @param <O>           the output type
      * @return              output
+     * @throws WorkflowNotExistsException  if the workflow is not existing, or not running to accept a write operation in RPC
      */
     public <I, O> O invokeRPC(RpcDefinitions.RpcFunc1NoPersistence<I, O> rpcStubMethod, I input) {
         return rpcStubMethod.execute(null, input, null);
@@ -799,6 +843,7 @@ public class Client {
      * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
      * @param <O>           the output type
      * @return output
+     * @throws WorkflowNotExistsException  if the workflow is not existing, or not running to accept a write operation in RPC
      */
     public <O> O invokeRPC(RpcDefinitions.RpcFunc0<O> rpcStubMethod) {
         return rpcStubMethod.execute(null, null, null);
@@ -810,6 +855,7 @@ public class Client {
      * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
      * @param <O>           the output type
      * @return output
+     * @throws WorkflowNotExistsException  if the workflow is not existing, or not running to accept a write operation in RPC
      */
     public <O> O invokeRPC(RpcDefinitions.RpcFunc0NoPersistence<O> rpcStubMethod) {
         return rpcStubMethod.execute(null, null);
@@ -821,6 +867,7 @@ public class Client {
      * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
      * @param input         the input of the RPC method
      * @param <I>           the input type
+     * @throws WorkflowNotExistsException  if the workflow is not existing, or not running to accept a write operation in RPC
      */
     public <I> void invokeRPC(RpcDefinitions.RpcProc1<I> rpcStubMethod, I input) {
         rpcStubMethod.execute(null, input, null, null);
@@ -832,6 +879,7 @@ public class Client {
      * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
      * @param input         the input of the RPC method
      * @param <I>           the input type
+     * @throws WorkflowNotExistsException  if the workflow is not existing, or not running to accept a write operation in RPC
      */
     public <I> void invokeRPC(RpcDefinitions.RpcProc1NoPersistence<I> rpcStubMethod, I input) {
         rpcStubMethod.execute(null, input, null);
@@ -841,6 +889,7 @@ public class Client {
      * invoking the RPC through RPC stub
      *
      * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
+     * @throws WorkflowNotExistsException  if the workflow is not existing, or not running to accept a write operation in RPC
      */
     public void invokeRPC(RpcDefinitions.RpcProc0 rpcStubMethod) {
         rpcStubMethod.execute(null, null, null);
@@ -850,6 +899,7 @@ public class Client {
      * invoking the RPC through RPC stub
      *
      * @param rpcStubMethod the RPC method from stub created by {@link #newRpcStub(Class, String, String)}
+     * @throws WorkflowNotExistsException  if the workflow is not existing, or not running to accept a write operation in RPC
      */
     public void invokeRPC(RpcDefinitions.RpcProc0NoPersistence rpcStubMethod) {
         rpcStubMethod.execute(null, null);
@@ -863,6 +913,7 @@ public class Client {
      * @param workflowRunId     optional, can be empty
      * @param attributeKeys     required, cannot be empty or null
      * @return the search attributes
+     * @throws WorkflowNotExistsException  if the workflow is not existing
      */
     public Map<String, Object> getWorkflowSearchAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -882,6 +933,7 @@ public class Client {
      * @param workflowId        required
      * @param attributeKeys     required, cannot be empty or null
      * @return the search attributes
+     * @throws WorkflowNotExistsException  if the workflow is not existing
      */
     public Map<String, Object> getWorkflowSearchAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -897,6 +949,7 @@ public class Client {
      * @param workflowId        required
      * @param workflowRunId     optional, can be empty
      * @return the search attributes
+     * @throws WorkflowNotExistsException  if the workflow is not existing
      */
     public Map<String, Object> getAllSearchAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -912,6 +965,7 @@ public class Client {
      * @param workflowClass    required
      * @param workflowId       required
      * @param searchAttributes required
+     * @throws NoRunningWorkflowException if the workflow is not existing or not running
      * */
     public void setWorkflowSearchAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -927,6 +981,7 @@ public class Client {
      * @param workflowId       required
      * @param workflowRunId    optional, can be empty
      * @param searchAttributes required
+     * @throws NoRunningWorkflowException if the workflow is not existing or not running
      * */
     public void setWorkflowSearchAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -942,6 +997,7 @@ public class Client {
      * @param workflowClass     required
      * @param workflowId        required
      * @return the search attributes
+     * @throws WorkflowNotExistsException  if the workflow is not existing
      */
     public Map<String, Object> getAllSearchAttributes(
             final Class<? extends ObjectWorkflow> workflowClass,
@@ -956,6 +1012,7 @@ public class Client {
      * @param workflowId    required
      * @param workflowRunId optional, can be empty
      * @return the workflow's info
+     * @throws WorkflowNotExistsException  if the workflow is not existing
      */
     public WorkflowInfo describeWorkflow(
             final String workflowId,
@@ -972,6 +1029,7 @@ public class Client {
      *
      * @param workflowId    required
      * @return the workflow's info
+     * @throws WorkflowNotExistsException  if the workflow is not existing
      */
     public WorkflowInfo describeWorkflow(
             final String workflowId) {
@@ -1115,9 +1173,10 @@ public class Client {
      * A long poll API to wait for the completion of the state. This only waits for the first completion.
      * Note 1 The stateCompletion to wait for is needed to registered on starting workflow due to limitation in https://github.com/indeedeng/iwf/issues/349
      * Note 2 The max polling time is configured as clientOptions as the Feign client timeout(default to 10s)
-     * If the state is not COMPLETED, throw the {@link ClientSideException} with the sub status of {@link ErrorSubStatus#LONG_POLL_TIME_OUT_SUB_STATUS}
      * @param workflowId the workflowId
      * @param stateClass the state class.
+     * @throws LongPollTimeoutException if the long poll timeout
+     * @throws WorkflowNotExistsException if the workflow is not existing
      */
     public void waitForStateExecutionCompletion(
             final String workflowId,
@@ -1133,6 +1192,8 @@ public class Client {
      * @param workflowId the workflowId
      * @param stateClass the state class
      * @param waitForKey key provided by the client and to identity workflow
+     * @throws LongPollTimeoutException if the long poll timeout
+     * @throws WorkflowNotExistsException if the workflow is not existing
      */
     public void waitForStateExecutionCompletion(
             final String workflowId,
@@ -1150,6 +1211,8 @@ public class Client {
      * @param workflowId the workflowId
      * @param stateClass the state class
      * @param stateExecutionNumber the state execution number. E.g. if it's 2, it means the 2nd execution of the state
+     * @throws LongPollTimeoutException if the long poll timeout
+     * @throws WorkflowNotExistsException if the workflow is not existing
      */
     public void waitForStateExecutionCompletion(
             final String workflowId,
