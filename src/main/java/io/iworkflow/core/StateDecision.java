@@ -182,7 +182,7 @@ public abstract class StateDecision {
      * singleNextState as non-strongly typing required for input
      * @param stateClass required
      * @param stateInput optional, can be null
-     * @return
+     * @return state decision
      */
     public static StateDecision singleNextStateUntypedInput(final Class<? extends WorkflowState> stateClass, final Object stateInput) {
         return singleNextState(stateClass.getSimpleName(), stateInput, null);

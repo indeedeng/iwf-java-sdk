@@ -16,8 +16,7 @@ public interface Communication {
      * trigger new state movements as the RPC results
      * NOTE: closing workflows like completing/failing are not supported
      * NOTE: Only used in RPC -- cannot be used in state APIs
-     *
-     * @param stateMovements
+     * @param stateMovements the state movements to trigger
      */
     void triggerStateMovements(final StateMovement... stateMovements);
 }

@@ -287,6 +287,11 @@ public class Client {
     /**
      * Use {@link #waitForWorkflowCompletion(Class, String)} instead
      * It's just a renaming.
+     * @param <T> type of the output
+     * @param valueClass   required, the type class of the output
+     * @param workflowId   required, the workflowId
+     * @param workflowRunId optional, can be empty
+     * @return the output result
      */
     @Deprecated
     public <T> T getSimpleWorkflowResultWithWait(
@@ -299,6 +304,10 @@ public class Client {
     /**
      * Use {@link #waitForWorkflowCompletion(Class, String)} instead
      * It's just a renaming.
+     * @param <T> type of the output
+     * @param valueClass   required, the type class of the output
+     * @param workflowId   required, the workflowId
+     * @return the output result
      */
     @Deprecated
     public <T> T getSimpleWorkflowResultWithWait(
