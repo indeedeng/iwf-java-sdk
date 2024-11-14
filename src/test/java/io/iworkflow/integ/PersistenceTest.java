@@ -172,7 +172,7 @@ public class PersistenceTest {
                 SEARCH_ATTRIBUTE_INT, INTEGER_VALUE_1,
                 SEARCH_ATTRIBUTE_BOOL, BOOLEAN_VALUE_1,
                 SEARCH_ATTRIBUTE_KEYWORD_ARRAY, ARRAY_STRING_VALUE_1,
-                SEARCH_ATTRIBUTE_DATE_TIME, "2024-11-13T00:00:01.731455544Z" //This is a bug. The iwf-server always returns utc time. See https://github.com/indeedeng/iwf/issues/261
+                SEARCH_ATTRIBUTE_DATE_TIME, DATE_VALUE_1 //If the test fails on the date value use UTC : i.e. "2024-11-13T00:00:01.731455544Z" This is a bug. The iwf-server always returns utc time. See https://github.com/indeedeng/iwf/issues/261
         );
         Assertions.assertEquals(expectedSearchAttributes, returnedSearchAttributes);
     }
