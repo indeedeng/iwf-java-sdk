@@ -105,7 +105,7 @@ public class Client {
      * @param input                  is optional, can be null
      * @param option                 is optional, can be null
      * @return runId
-     * @throws WorkflowAlreadyStartedException if the workflow is already started
+     * @throws WorkflowAlreadyStartedException if the workflow is already started.
      * If using WorkflowAlreadyStartedOptions in WorkflowOptions, the error will be ignored if ignoreAlreadyStartedError is true.
      * If ignoreAlreadyStartedError is true and also requestId is set, the requestId will be used to identify the request. The error
      * will only be thrown if the requestId is different from the requestId of the existing workflow.
@@ -129,7 +129,7 @@ public class Client {
      * @param input                  is optional, can be null
      * @param options                is optional, can be null
      * @return runId
-     * @throws WorkflowAlreadyStartedException if the workflow is already started
+     * @throws WorkflowAlreadyStartedException if the workflow is already started.
      * If using WorkflowAlreadyStartedOptions in WorkflowOptions, the error will be ignored if ignoreAlreadyStartedError is true.
      * If ignoreAlreadyStartedError is true and also requestId is set, the requestId will be used to identify the request. The error
      * will only be thrown if the requestId is different from the requestId of the existing workflow.
