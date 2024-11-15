@@ -167,6 +167,14 @@ public class UnregisteredClient {
                 });
                 startOptions.searchAttributes(options.getInitialSearchAttribute());
             }
+            if(options.getInitialDataAttribute().size()>0){
+                List<KeyValue> dataAttributes = options.getInitialDataAttribute().entrySet().stream()
+                        .map(entry -> new KeyValue()
+                                .key(entry.getKey())
+                                .value(clientOptions.getObjectEncoder().encode(entry.getValue())))
+                        .collect(Collectors.toList());
+                startOptions.dataAttributes(dataAttributes);
+            }
 
             if (options.getStartStateOptions().isPresent()) {
                 request.stateOptions(options.getStartStateOptions().get());
