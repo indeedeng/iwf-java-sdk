@@ -143,6 +143,8 @@ public class Client {
             final Map<String, SearchAttributeValueType> saTypes = registry.getSearchAttributeKeyToTypeMap(wfType);
             final List<SearchAttribute> convertedSAs = convertToSearchAttributeList(saTypes, options.getInitialSearchAttribute());
             unregisterWorkflowOptions.initialSearchAttribute(convertedSAs);
+            checkInitialDataAttributes(registry.getDataAttributeTypeStore(wfType), options.getInitialDataAttribute());
+            unregisterWorkflowOptions.initialDataAttribute(options.getInitialDataAttribute());
         }
 
         final Optional<StateDef> stateDefOptional = registry.getWorkflowStartingState(wfType);
@@ -178,6 +180,25 @@ public class Client {
         }
 
         return unregisteredClient.startWorkflow(wfType, startStateId, workflowId, workflowTimeoutSeconds, input, unregisterWorkflowOptions.build());
+    }
+
+    private void checkInitialDataAttributes(final TypeStore dataAttributeTypeStore, final Map<String, Object> initialDataAttribute) {
+        if (initialDataAttribute.size() > 0) {
+            initialDataAttribute.forEach((key, val) -> {
+                if (!dataAttributeTypeStore.isValidNameOrPrefix(key)) {
+                    throw new IllegalArgumentException(String.format("data attribute %s is not registered", key));
+                }
+                final Class<?> registeredType = dataAttributeTypeStore.getType(key);
+                final Class<?> requestedType = val.getClass();
+                if (!requestedType.isAssignableFrom(registeredType)) {
+                    throw new IllegalArgumentException(
+                            String.format(
+                                    "registered type %s is not assignable from %s",
+                                    registeredType.getName(),
+                                    requestedType.getName()));
+                }
+            });
+        }
     }
 
     private void checkWorkflowTypeExists(String wfType) {

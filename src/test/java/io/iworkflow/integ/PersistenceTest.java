@@ -3,6 +3,7 @@ package io.iworkflow.integ;
 import com.google.common.collect.ImmutableMap;
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
+import io.iworkflow.core.WorkflowOptions;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeValueType;
 import io.iworkflow.integ.persistence.BasicPersistenceWorkflow;
@@ -52,18 +53,23 @@ public class PersistenceTest {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "basic-persistence-test-id" + System.currentTimeMillis() / 1000;
         final String runId = client.startWorkflow(
-                BasicPersistenceWorkflow.class, wfId, 10, "start");
+                BasicPersistenceWorkflow.class, wfId, 10, "start",
+                WorkflowOptions.basicBuilder().initialDataAttribute(
+                        ImmutableMap.of(BasicPersistenceWorkflow.TEST_INIT_DATA_OBJECT_KEY, "init-test-value"))
+                        .build());
         final String output = client.getSimpleWorkflowResultWithWait(String.class, wfId);
         Assertions.assertEquals("test-value-2", output);
 
         Map<String, Object> map =
                 client.getWorkflowDataAttributes(BasicPersistenceWorkflow.class, wfId, runId,
                         Arrays.asList(
+                                BasicPersistenceWorkflow.TEST_INIT_DATA_OBJECT_KEY,
                                 BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY,
                                 BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "1",
                                 BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "2"));
         Assertions.assertEquals(
                 "query-start-query-decide", map.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+        Assertions.assertEquals("init-test-value", map.get(BasicPersistenceWorkflow.TEST_INIT_DATA_OBJECT_KEY));
         Assertions.assertEquals(
                 11L, map.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "1"));
         Assertions.assertNull(map.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "2"));
@@ -75,13 +81,13 @@ public class PersistenceTest {
                 "query-start-query-decide", map2.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
 
         Map<String, Object> allDataObjects = client.getAllDataAttributes(BasicPersistenceWorkflow.class, wfId, runId);
-        Assertions.assertEquals(4, allDataObjects.size());
+        Assertions.assertEquals(5, allDataObjects.size());
         Assertions.assertEquals("query-start-query-decide", allDataObjects.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(11L, allDataObjects.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "1"));
 
         // test no runId
         Map<String, Object> allDataObjects2 = client.getAllDataAttributes(BasicPersistenceWorkflow.class, wfId);
-        Assertions.assertEquals(4, allDataObjects2.size());
+        Assertions.assertEquals(5, allDataObjects2.size());
         Assertions.assertEquals("query-start-query-decide", allDataObjects2.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
         Assertions.assertEquals(11L, allDataObjects.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "1"));
 

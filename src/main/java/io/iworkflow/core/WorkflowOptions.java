@@ -22,6 +22,8 @@ public abstract class WorkflowOptions {
 
     public abstract Map<String, Object> getInitialSearchAttribute();
 
+    public abstract Map<String, Object> getInitialDataAttribute();
+
     public abstract Optional<WorkflowConfig> getWorkflowConfigOverride();
 
     public abstract List<String> getWaitForCompletionStateIds();

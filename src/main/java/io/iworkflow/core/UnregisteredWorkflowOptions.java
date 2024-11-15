@@ -9,6 +9,7 @@ import io.iworkflow.gen.models.WorkflowStateOptions;
 import org.immutables.value.Value;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Value.Immutable
@@ -24,6 +25,8 @@ public abstract class UnregisteredWorkflowOptions {
     public abstract Optional<WorkflowStateOptions> getStartStateOptions();
 
     public abstract List<SearchAttribute> getInitialSearchAttribute();
+
+    public abstract Map<String, Object> getInitialDataAttribute();
 
     public abstract Optional<WorkflowConfig> getWorkflowConfigOverride();
 
