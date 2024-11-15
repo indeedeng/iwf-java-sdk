@@ -388,6 +388,7 @@ public class WorkerService {
                 .workflowRunId(context.getWorkflowRunId())
                 .workflowStartTimestampSeconds(context.getWorkflowStartedTimestamp())
                 .stateExecutionId(Optional.ofNullable(context.getStateExecutionId()))
+                .childWorkflowRequestId(context.getWorkflowRunId()+"-"+context.getStateExecutionId())
                 .attempt(attempt)
                 .firstAttemptTimestampSeconds(firstAttemptTimestamp)
                 .build();

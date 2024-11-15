@@ -38,6 +38,7 @@ public @interface RPC {
      * Only used when workflow has enabled {@link PersistenceOptions} CachingPersistenceByMemo
      * By default, it's false for high throughput support
      * flip to true to bypass the caching for strong consistent reads
+     * @return true if bypass caching for strong consistency
      */
     boolean bypassCachingForStrongConsistency() default false;
 }
