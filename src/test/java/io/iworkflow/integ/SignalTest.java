@@ -6,8 +6,6 @@ import io.iworkflow.core.exceptions.NoRunningWorkflowException;
 import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.integ.signal.BasicSignalWorkflow;
 import io.iworkflow.integ.signal.BasicSignalWorkflowState2;
-import io.iworkflow.integ.signal.MultipleSameSignalWorkflow;
-import static io.iworkflow.integ.signal.MultipleSameSignalWorkflow.SIGNAL_NAME_1;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
 import org.junit.jupiter.api.Assertions;
@@ -67,23 +65,6 @@ public class SignalTest {
             return;
         }
         Assertions.fail("signal closed workflow should fail");
-    }
-
-    @Test
-    public void testMultipleSameSignalWorkflow() {
-        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
-        final String wfId = "multiple-same-signal-test-id" + System.currentTimeMillis() / 1000;
-        final Integer input = 1;
-        final String runId = client.startWorkflow(
-                MultipleSameSignalWorkflow.class, wfId, 10, input);
-        client.signalWorkflow(
-                MultipleSameSignalWorkflow.class, wfId, runId, SIGNAL_NAME_1, Integer.valueOf(2));
-
-        client.signalWorkflow(
-                MultipleSameSignalWorkflow.class, wfId, runId, SIGNAL_NAME_1, Integer.valueOf(3));
-
-        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
-        Assertions.assertEquals(5, output);
     }
 
     private void checkWorkflowResultAfterComplete(final Client client, final String wfId, final String runId) {

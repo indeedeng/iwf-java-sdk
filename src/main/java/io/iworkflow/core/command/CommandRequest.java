@@ -29,8 +29,10 @@ public abstract class CommandRequest {
      * @return the command request
      */
     public static CommandRequest forAllCommandCompleted(final BaseCommand... commands) {
-        final List<BaseCommand> allSingleCommands = getAllSingleCommands(commands);
-        return ImmutableCommandRequest.builder().addAllCommands(allSingleCommands).commandWaitingType(CommandWaitingType.ALL_COMPLETED).build();
+        return ImmutableCommandRequest.builder()
+                .addAllCommands(Arrays.asList(commands))
+                .commandWaitingType(CommandWaitingType.ALL_COMPLETED)
+                .build();
     }
 
     /**
@@ -40,7 +42,10 @@ public abstract class CommandRequest {
      * @return the command request
      */
     public static CommandRequest forAnyCommandCompleted(final BaseCommand... commands) {
-        return ImmutableCommandRequest.builder().addAllCommands(Arrays.asList(commands)).commandWaitingType(CommandWaitingType.ANY_COMPLETED).build();
+        return ImmutableCommandRequest.builder()
+                .addAllCommands(Arrays.asList(commands))
+                .commandWaitingType(CommandWaitingType.ANY_COMPLETED)
+                .build();
     }
 
     /**
@@ -76,20 +81,7 @@ public abstract class CommandRequest {
     }
 
     private static List<BaseCommand> getAllSingleCommands(final BaseCommand... commands) {
-        final ArrayList<BaseCommand> allSingleCommands = new ArrayList<>();
-        Arrays.stream(commands).forEach(
-                command -> {
-                    if (command instanceof SuperCommand) {
-                        allSingleCommands.addAll(
-                                SuperCommand.toList((SuperCommand) command)
-                        );
-                        return;
-                    }
 
-                    allSingleCommands.add(command);
-                }
-        );
-
-        return allSingleCommands;
+        return new ArrayList<>(Arrays.asList(commands));
     }
 }
