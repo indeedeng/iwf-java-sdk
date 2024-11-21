@@ -475,6 +475,9 @@ public class UnregisteredClient {
         if (resetWorkflowTypeAndOptions.getSkipSignalReapply().isPresent()) {
             request.skipSignalReapply(resetWorkflowTypeAndOptions.getSkipSignalReapply().get());
         }
+        if (resetWorkflowTypeAndOptions.getSkipUpdateReapply().isPresent()) {
+            request.skipUpdateReapply(resetWorkflowTypeAndOptions.getSkipUpdateReapply().get());
+        }
         if (resetWorkflowTypeAndOptions.getStateId().isPresent()) {
             request.stateId(resetWorkflowTypeAndOptions.getStateId().get());
         }
