@@ -84,10 +84,6 @@ public abstract class StateDecision {
      * Atomically force complete the workflow if internal channel is empty, otherwise trigger the state movements from the current thread
      * This is important for use case that needs to ensure all the messages in the channel are processed before completing the workflow, otherwise messages will be lost.
      * Without this atomic API, if user just check the channel emptiness in the State APIs, the channel may receive new messages during the execution of state APIs
-     * <br>
-     * Note that today this doesn't cover the case that internal messages are published from other State APIs yet. It's only for internal messages published from RPCs.
-     * If you do want to use other State APIs to publish messages to the channel at the same time, you can use persistence locking to ensure only the State APIs are not executed
-     * in parallel. See more in TODO https://github.com/indeedeng/iwf/issues/289
      *
      * @param completionOutput     the output of workflow completion
      * @param internalChannelName  the internal channel name for checking emptiness
