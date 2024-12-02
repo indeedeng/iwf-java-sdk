@@ -22,6 +22,8 @@ public abstract class ResetWorkflowTypeAndOptions {
 
     public abstract Optional<Boolean> getSkipSignalReapply();
 
+    public abstract Optional<Boolean> getSkipUpdateReapply();
+
     public static ResetWorkflowTypeAndOptions resetToBeginning(final String reason) {
         return builder()
                 .resetType(WorkflowResetType.BEGINNING)
