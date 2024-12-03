@@ -29,8 +29,18 @@ public abstract class CommandRequest {
      * @return the command request
      */
     public static CommandRequest forAllCommandCompleted(final BaseCommand... commands) {
+        return forAllCommandCompleted(Arrays.asList(commands));
+    }
+
+    /**
+     * forAllCommandCompleted will wait for all the commands to complete
+     *
+     * @param commands all the commands
+     * @return the command request
+     */
+    public static CommandRequest forAllCommandCompleted(final List<BaseCommand> commands) {
         return ImmutableCommandRequest.builder()
-                .addAllCommands(Arrays.asList(commands))
+                .addAllCommands(commands)
                 .commandWaitingType(CommandWaitingType.ALL_COMPLETED)
                 .build();
     }
@@ -42,8 +52,18 @@ public abstract class CommandRequest {
      * @return the command request
      */
     public static CommandRequest forAnyCommandCompleted(final BaseCommand... commands) {
+        return forAnyCommandCompleted(Arrays.asList(commands));
+    }
+
+    /**
+     * forAnyCommandCompleted will wait for any the commands to complete
+     *
+     * @param commands all the commands
+     * @return the command request
+     */
+    public static CommandRequest forAnyCommandCompleted(final List<BaseCommand> commands) {
         return ImmutableCommandRequest.builder()
-                .addAllCommands(Arrays.asList(commands))
+                .addAllCommands(commands)
                 .commandWaitingType(CommandWaitingType.ANY_COMPLETED)
                 .build();
     }
@@ -58,8 +78,19 @@ public abstract class CommandRequest {
      * @return the command request
      */
     public static CommandRequest forAnyCommandCombinationCompleted(final List<List<String>> commandCombinationLists, final BaseCommand... commands) {
-        final List<BaseCommand> allSingleCommands = getAllSingleCommands(commands);
-        final List<String> allNonEmptyCommandsIds = allSingleCommands.stream()
+        return forAnyCommandCombinationCompleted(commandCombinationLists, Arrays.asList(commands));
+    }
+    /**
+     * This will wait for any combination to complete.
+     * Using this requires every command has a commandId when created.
+     * Functionally this one can cover both forAllCommandCompleted, forAnyCommandCompleted. So the other two are like "shortcuts" of it.
+     *
+     * @param commandCombinationLists a list of different combinations, each combination is a list of String as CommandIds
+     * @param commands                all the commands
+     * @return the command request
+     */
+    public static CommandRequest forAnyCommandCombinationCompleted(final List<List<String>> commandCombinationLists, final List<BaseCommand> commands) {
+        final List<String> allNonEmptyCommandsIds = commands.stream()
                 .filter(command -> command.getCommandId().isPresent())
                 .map(command -> command.getCommandId().get())
                 .collect(Collectors.toList());
@@ -75,13 +106,8 @@ public abstract class CommandRequest {
         });
         return ImmutableCommandRequest.builder()
                 .commandCombinations(combinations)
-                .addAllCommands(allSingleCommands)
+                .addAllCommands(commands)
                 .commandWaitingType(CommandWaitingType.ANY_COMBINATION_COMPLETED)
                 .build();
-    }
-
-    private static List<BaseCommand> getAllSingleCommands(final BaseCommand... commands) {
-
-        return new ArrayList<>(Arrays.asList(commands));
     }
 }
