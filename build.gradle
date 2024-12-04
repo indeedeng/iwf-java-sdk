@@ -79,6 +79,9 @@ dependencies {
     compileOnly 'org.immutables:value:2.9.2'
     annotationProcessor 'org.immutables:value:2.9.2'
 
+    testAnnotationProcessor 'org.immutables:value:2.9.2'
+    testCompileOnly 'org.immutables:value:2.9.2'
+
     // cron utils
     implementation 'com.cronutils:cron-utils:9.2.0'
 }

@@ -1,0 +1,53 @@
+POST http://localhost:8080/private/reset/workflow/start?workflowId=<workflowId>
+
+########
+POST http://localhost:8080/private/reset/workflow/locking/rpc?workflowId=<workflowId>
+
+#######
+POST http://localhost:8080/private/reset/workflow/nonlocking/rpc?workflowId=<workflowId>
+
+#######
+POST http://localhost:8080/private/reset/workflow/reset?workflowId=<workflowId>
+Content-Type: application/json
+
+{
+  "resetType": "BEGINNING",
+  "reason": "reset from the beginning",
+  "runId": "<runId>"
+}
+
+######
+POST http://localhost:8080/private/reset/workflow/reset?workflowId=<workflowId>
+Content-Type: application/json
+
+{
+  "resetType": "HISTORY_EVENT_ID",
+  "reason": "reset from history event",
+  "historyEventId": 4,
+  "runId": "<runId>"
+}
+
+######
+POST http://localhost:8080/private/reset/workflow/reset?workflowId=<workflowId>
+Content-Type: application/json
+
+{
+  "resetType": "STATE_ID",
+  "reason": "reset from state id",
+  "stateId": "<stateId>",
+  "runId": "<runId>"
+}
+
+######
+POST http://localhost:8080/private/reset/workflow/start?workflowId=<workflowId>&stateExecutionIdWf=true
+
+######
+POST http://localhost:8080/private/reset/workflow/reset?workflowId=<workflowId>
+Content-Type: application/json
+
+{
+  "resetType": "STATE_EXECUTION_ID",
+  "reason": "reset from state execution id",
+  "stateExecutionId": "<stateId-executionId>",
+  "runId": "<runId>"
+}

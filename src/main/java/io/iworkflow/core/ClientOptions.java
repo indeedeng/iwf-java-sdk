@@ -27,6 +27,7 @@ public abstract class ClientOptions {
                 .maximumAttempts(10)
                 .build();
     }
+    //Use "http://localhost:8080" when using iwf-java-sdk as the worker (src/test/java/io/iworkflow/spring/SpringMainApplication.java)
     public static final String defaultWorkerUrl = "http://localhost:8802";
 
     public static final String workerUrlFromDocker = "http://host.docker.internal:8802";
