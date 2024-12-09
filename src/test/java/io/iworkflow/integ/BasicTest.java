@@ -23,6 +23,7 @@ import io.iworkflow.integ.basic.BasicWorkflowState2;
 import io.iworkflow.integ.basic.EmptyInputWorkflow;
 import io.iworkflow.integ.basic.EmptyInputWorkflowState1;
 import io.iworkflow.integ.basic.FakContextImpl;
+import io.iworkflow.integ.basic.MixOfWithWaitUntilAndSkipWaitUntilWorkflow;
 import io.iworkflow.integ.basic.ModelInputWorkflow;
 import io.iworkflow.integ.basic.ProceedOnStateStartFailWorkflow;
 import io.iworkflow.integ.timer.BasicTimerWorkflow;
@@ -225,5 +226,17 @@ public class BasicTest {
 
         final WorkflowInfo childWorkflowInfo = client.describeWorkflow(childWfId);
         Assertions.assertEquals(WorkflowStatus.COMPLETED, childWorkflowInfo.getWorkflowStatus());
+    }
+
+    @Test
+    public void testMixOfWithWaitUntilAndSkipWaitUntilWorkflow() {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final long startTs = System.currentTimeMillis();
+        final String wfId = "wf-wait-for-state-completion-with-wait-for-key-test-id" + startTs / 1000;
+        final Integer input = 5;
+
+        client.startWorkflow(
+                MixOfWithWaitUntilAndSkipWaitUntilWorkflow.class, wfId, 10, input);
+        client.waitForWorkflowCompletion(wfId);
     }
 }
