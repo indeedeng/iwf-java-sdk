@@ -10,6 +10,15 @@ import io.iworkflow.gen.models.WorkflowStateOptions;
  * This is also because WorkflowState interface uses WorkflowStateOptions
  * directly instead of using a separate model.
  * See <a href="https://github.com/indeedeng/iwf-java-sdk/issues/200">TODO</a>
+ * Example usage in a state implementation:
+ *     public WorkflowStateOptions getStateOptions() {
+ *         return new WorkflowStateOptionsExtension()
+ *                 .setProceedAfterRetryExhaustedOnExecute(StateRecoverBasic.class)
+ *                 .executeApiRetryPolicy(
+ *                         new RetryPolicy()
+ *                                 .maximumAttempts(10)
+ *                 );
+ *     }
  */
 public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
 
