@@ -32,7 +32,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.iworkflow.core.WorkflowState.shouldSkipWaitUntil;
-import static io.iworkflow.core.WorkflowStateOptionsExtension.deepCopyStateOptions;
 
 public class Client {
     private final Registry registry;
@@ -174,7 +173,7 @@ public class Client {
             }
 
             // Always deep copy the state options so we don't modify the original
-            WorkflowStateOptions stateOptions = deepCopyStateOptions(StateMovementMapper.validateAndGetStateOptions(stateDef));
+            WorkflowStateOptions stateOptions = StateMovementMapper.validateAndGetStateOptions(stateDef);
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
                 if (stateOptions == null) {
                     stateOptions = new WorkflowStateOptions().skipWaitUntil(true);

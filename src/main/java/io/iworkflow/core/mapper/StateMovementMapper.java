@@ -29,9 +29,11 @@ public class StateMovementMapper {
             }
 
             // Try to get the overrode stateOptions, if it's null, get the stateOptions from stateDef
-            // Always deep copy the state options so we don't modify the original
-            WorkflowStateOptions stateOptions = deepCopyStateOptions(stateMovement.getStateOptionsOverride().orElse(null));
-            if (stateOptions == null) {
+            WorkflowStateOptions stateOptions;
+            if (stateMovement.getStateOptionsOverride().isPresent()) {
+                // Always deep copy the state options so we don't modify the original
+                stateOptions = deepCopyStateOptions(stateMovement.getStateOptionsOverride().get());
+            } else {
                 stateOptions = StateMovementMapper.validateAndGetStateOptions(stateDef);
             }
 
@@ -65,8 +67,7 @@ public class StateMovementMapper {
             String proceedStateId = stateOptions.getExecuteApiFailureProceedStateId();
             final StateDef proceedStatDef = registry.getWorkflowState(workflowType, proceedStateId);
 
-            // Always deep copy the state options so we don't modify the original
-            WorkflowStateOptions proceedStateOptions = deepCopyStateOptions(StateMovementMapper.validateAndGetStateOptions(proceedStatDef));
+            WorkflowStateOptions proceedStateOptions = StateMovementMapper.validateAndGetStateOptions(proceedStatDef);
             if (proceedStateOptions != null &&
                     proceedStateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE) {
                 throw new WorkflowDefinitionException("nested failure handling is not supported. You cannot set a failure proceeding state on top of another failure proceeding state.");
@@ -86,7 +87,8 @@ public class StateMovementMapper {
 
     public static WorkflowStateOptions validateAndGetStateOptions(final StateDef stateDef){
         final WorkflowState state = stateDef.getWorkflowState();
-        WorkflowStateOptions stateOptions = state.getStateOptions();
+        // Always deep copy the state options so we don't modify the original
+        WorkflowStateOptions stateOptions = deepCopyStateOptions(state.getStateOptions());
         if (stateOptions == null){
             return null;
         }
