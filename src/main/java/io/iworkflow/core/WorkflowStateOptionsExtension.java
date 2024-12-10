@@ -23,6 +23,7 @@ import io.iworkflow.gen.models.WorkflowStateOptions;
 public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
 
     /**
+     * By default, workflow would fail after execute API retry exhausted.
      * Set the state to proceed to the specified state after the execute API exhausted all retries
      * This is useful for some advanced use cases like SAGA pattern.
      * RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for execute API.
@@ -37,6 +38,7 @@ public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
     }
 
     /**
+     * By default, workflow would fail after execute API retry exhausted.
      * Set the state to proceed to the specified state after the execute API exhausted all retries
      * This is useful for some advanced use cases like SAGA pattern.
      * RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for execute API.
@@ -53,6 +55,7 @@ public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
     }
 
     /**
+     * By default, workflow would fail after waitUntil API retry exhausted.
      * If set to true, then after waitUntil API exhausted all retries, proceed to the execute API
      * This is useful for some advanced use cases like SAGA pattern.
      * RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for waitUntil API.
