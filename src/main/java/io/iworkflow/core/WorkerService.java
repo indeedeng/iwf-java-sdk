@@ -70,7 +70,10 @@ public class WorkerService {
         final Map<String, SearchAttributeValueType> searchAttrsTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(searchAttrsTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
+                req.getInternalChannelInfos(),
+                req.getSignalChannelInfos(),
                 registry.getInternalChannelTypeStore(req.getWorkflowType()),
+                registry.getSignalChannelTypeStore(req.getWorkflowType()),
                 workerOptions.getObjectEncoder(),
                 true
         );
@@ -169,7 +172,10 @@ public class WorkerService {
         final Map<String, SearchAttributeValueType> searchAttrsTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(searchAttrsTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
+                new HashMap<>(),
+                new HashMap<>(),
                 registry.getInternalChannelTypeStore(req.getWorkflowType()),
+                registry.getSignalChannelTypeStore(req.getWorkflowType()),
                 workerOptions.getObjectEncoder(),
                 false
         );
@@ -234,7 +240,10 @@ public class WorkerService {
         final Map<String, SearchAttributeValueType> saTypeMap = registry.getSearchAttributeKeyToTypeMap(req.getWorkflowType());
         final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(saTypeMap, req.getSearchAttributes());
         final CommunicationImpl communication = new CommunicationImpl(
+                new HashMap<>(),
+                new HashMap<>(),
                 registry.getInternalChannelTypeStore(req.getWorkflowType()),
+                registry.getSignalChannelTypeStore(req.getWorkflowType()),
                 workerOptions.getObjectEncoder(),
                 false
         );
