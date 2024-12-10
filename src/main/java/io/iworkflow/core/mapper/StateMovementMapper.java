@@ -4,8 +4,11 @@ import io.iworkflow.core.ObjectEncoder;
 import io.iworkflow.core.Registry;
 import io.iworkflow.core.StateDef;
 import io.iworkflow.core.WorkflowDefinitionException;
+import io.iworkflow.core.WorkflowState;
 import io.iworkflow.gen.models.ExecuteApiFailurePolicy;
+import io.iworkflow.gen.models.RetryPolicy;
 import io.iworkflow.gen.models.StateMovement;
+import io.iworkflow.gen.models.WaitUntilApiFailurePolicy;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 
 import static io.iworkflow.core.StateMovement.RESERVED_STATE_ID_PREFIX;
@@ -27,7 +30,7 @@ public class StateMovementMapper {
             // Try to get the overrode stateOptions, if it's null, get the stateOptions from stateDef
             WorkflowStateOptions stateOptions = stateMovement.getStateOptionsOverride().orElse(null);
             if (stateOptions == null) {
-                stateOptions = stateDef.getWorkflowState().getStateOptions();
+                stateOptions = StateMovementMapper.validateAndGetStateOptions(stateDef);
             }
 
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
@@ -59,7 +62,7 @@ public class StateMovementMapper {
             // fill the state options for the proceeding state
             String proceedStateId = stateOptions.getExecuteApiFailureProceedStateId();
             final StateDef proceedStatDef = registry.getWorkflowState(workflowType, proceedStateId);
-            WorkflowStateOptions proceedStateOptions = proceedStatDef.getWorkflowState().getStateOptions();
+            WorkflowStateOptions proceedStateOptions = StateMovementMapper.validateAndGetStateOptions(proceedStatDef);
             if (proceedStateOptions != null &&
                     proceedStateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE) {
                 throw new WorkflowDefinitionException("nested failure handling is not supported. You cannot set a failure proceeding state on top of another failure proceeding state.");
@@ -75,5 +78,36 @@ public class StateMovementMapper {
 
             stateOptions.executeApiFailureProceedStateOptions(proceedStateOptions);
         }
+    }
+
+    public static WorkflowStateOptions validateAndGetStateOptions(final StateDef stateDef){
+        final WorkflowState state = stateDef.getWorkflowState();
+        WorkflowStateOptions stateOptions = state.getStateOptions();
+        if (stateOptions == null){
+            return null;
+        }
+        if(stateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE){
+            // retry policy must be set
+            if(stateOptions.getExecuteApiRetryPolicy() == null){
+                throw new WorkflowDefinitionException("RetryPolicy must be set for the execute "+state.getStateId());
+            }
+            final RetryPolicy policy = stateOptions.getExecuteApiRetryPolicy();
+            // either maximumAttempts or maximumAttemptsDurationSeconds must be set and greater than zero
+            if(policy.getMaximumAttempts() == null && policy.getMaximumAttemptsDurationSeconds() == null){
+                throw new WorkflowDefinitionException("Either maximumAttempts or maximumAttemptsDurationSeconds must be set for the execute "+state.getStateId());
+            }
+        }
+        if(stateOptions.getWaitUntilApiFailurePolicy() == WaitUntilApiFailurePolicy.FAIL_WORKFLOW_ON_FAILURE){
+            // retry policy must be set
+            if(stateOptions.getWaitUntilApiRetryPolicy() == null){
+                throw new WorkflowDefinitionException("RetryPolicy must be set for the waitUntil "+state.getStateId());
+            }
+            final RetryPolicy policy = stateOptions.getWaitUntilApiRetryPolicy();
+            // either maximumAttempts or maximumAttemptsDurationSeconds must be set and greater than zero
+            if(policy.getMaximumAttempts() == null && policy.getMaximumAttemptsDurationSeconds() == null){
+                throw new WorkflowDefinitionException("Either maximumAttempts or maximumAttemptsDurationSeconds must be set for the waitUntil "+state.getStateId());
+            }
+        }
+        return stateOptions;
     }
 }

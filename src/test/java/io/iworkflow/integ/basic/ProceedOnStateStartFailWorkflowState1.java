@@ -3,12 +3,12 @@ package io.iworkflow.integ.basic;
 import io.iworkflow.core.Context;
 import io.iworkflow.core.StateDecision;
 import io.iworkflow.core.WorkflowState;
+import io.iworkflow.core.WorkflowStateOptionsExtension;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.gen.models.RetryPolicy;
-import io.iworkflow.gen.models.WaitUntilApiFailurePolicy;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 
 public class ProceedOnStateStartFailWorkflowState1 implements WorkflowState<String> {
@@ -40,8 +40,8 @@ public class ProceedOnStateStartFailWorkflowState1 implements WorkflowState<Stri
 
     @Override
     public WorkflowStateOptions getStateOptions() {
-        return new WorkflowStateOptions()
-                .waitUntilApiRetryPolicy(new RetryPolicy().maximumAttempts(2))
-                .waitUntilApiFailurePolicy(WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE);
+        return new WorkflowStateOptionsExtension()
+                .setProceedWhenWaitUntilRetryExhausted(true)
+                .waitUntilApiRetryPolicy(new RetryPolicy().maximumAttempts(2));
     }
 }
