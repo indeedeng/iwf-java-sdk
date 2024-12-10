@@ -30,7 +30,7 @@ public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
      * @param proceedingState the state to proceed to
      * @return this
      */
-    public WorkflowStateOptionsExtension setProceedAfterRetryExhaustedOnExecute(
+    public WorkflowStateOptionsExtension setProceedWhenExecuteRetryExhausted(
             final Class<? extends WorkflowState> proceedingState) {
         return this.setProceedOnExecuteFailure(proceedingState);
     }
@@ -45,7 +45,7 @@ public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
      *                             need to override the stateOptions returned from state instance.
      * @return this
      */
-    public WorkflowStateOptionsExtension setProceedAfterRetryExhaustedOnExecute(
+    public WorkflowStateOptionsExtension setProceedWhenExecuteRetryExhausted(
             final Class<? extends WorkflowState> proceedingState, WorkflowStateOptions stateOptionsOverride) {
         return this.setProceedOnExecuteFailure(proceedingState, stateOptionsOverride);
     }
@@ -58,7 +58,7 @@ public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
      * @param proceed true to proceed
      * @return this
      */
-    public WorkflowStateOptionsExtension setProceedAfterRetryExhaustedOnWaitUntil(boolean proceed){
+    public WorkflowStateOptionsExtension setProceedWhenWaitUntilRetryExhausted(boolean proceed){
         if(proceed){
             this.waitUntilApiFailurePolicy(WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE);
         }else{
