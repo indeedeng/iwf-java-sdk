@@ -75,10 +75,10 @@ public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
      * It's a renaming for better clarity.
      */
     @Deprecated
-    public WorkflowStateOptionsExtension setProceedOnExecuteFailure(final Class<? extends WorkflowState> proceedingState, WorkflowStateOptions stateOptions) {
+    public WorkflowStateOptionsExtension setProceedOnExecuteFailure(final Class<? extends WorkflowState> proceedingState, WorkflowStateOptions stateOptionsOverride) {
         this.executeApiFailurePolicy(ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE);
         this.executeApiFailureProceedStateId(proceedingState.getSimpleName());
-        this.executeApiFailureProceedStateOptions(stateOptions);
+        this.executeApiFailureProceedStateOptions(stateOptionsOverride);
         return this;
     }
 }
