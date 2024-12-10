@@ -13,6 +13,7 @@ import io.iworkflow.gen.models.WorkflowStateOptions;
 
 import static io.iworkflow.core.StateMovement.RESERVED_STATE_ID_PREFIX;
 import static io.iworkflow.core.WorkflowState.shouldSkipWaitUntil;
+import static io.iworkflow.core.WorkflowStateOptionsExtension.deepCopyStateOptions;
 
 public class StateMovementMapper {
 
@@ -28,7 +29,8 @@ public class StateMovementMapper {
             }
 
             // Try to get the overrode stateOptions, if it's null, get the stateOptions from stateDef
-            WorkflowStateOptions stateOptions = stateMovement.getStateOptionsOverride().orElse(null);
+            // Always deep copy the state options so we don't modify the original
+            WorkflowStateOptions stateOptions = deepCopyStateOptions(stateMovement.getStateOptionsOverride().orElse(null));
             if (stateOptions == null) {
                 stateOptions = StateMovementMapper.validateAndGetStateOptions(stateDef);
             }
@@ -62,7 +64,9 @@ public class StateMovementMapper {
             // fill the state options for the proceeding state
             String proceedStateId = stateOptions.getExecuteApiFailureProceedStateId();
             final StateDef proceedStatDef = registry.getWorkflowState(workflowType, proceedStateId);
-            WorkflowStateOptions proceedStateOptions = StateMovementMapper.validateAndGetStateOptions(proceedStatDef);
+
+            // Always deep copy the state options so we don't modify the original
+            WorkflowStateOptions proceedStateOptions = deepCopyStateOptions(StateMovementMapper.validateAndGetStateOptions(proceedStatDef));
             if (proceedStateOptions != null &&
                     proceedStateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE) {
                 throw new WorkflowDefinitionException("nested failure handling is not supported. You cannot set a failure proceeding state on top of another failure proceeding state.");
