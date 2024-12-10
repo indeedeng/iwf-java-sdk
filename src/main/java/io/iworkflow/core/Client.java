@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.iworkflow.core.WorkflowState.shouldSkipWaitUntil;
+import static io.iworkflow.core.WorkflowStateOptionsExtension.deepCopyStateOptions;
 
 public class Client {
     private final Registry registry;
@@ -172,7 +173,8 @@ public class Client {
                 throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType));
             }
 
-            WorkflowStateOptions stateOptions = stateDef.getWorkflowState().getStateOptions();
+            // Always deep copy the state options so we don't modify the original
+            WorkflowStateOptions stateOptions = deepCopyStateOptions(stateDef.getWorkflowState().getStateOptions());
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
                 if (stateOptions == null) {
                     stateOptions = new WorkflowStateOptions().skipWaitUntil(true);
