@@ -66,7 +66,6 @@ public class StateMovementMapper {
             // fill the state options for the proceeding state
             String proceedStateId = stateOptions.getExecuteApiFailureProceedStateId();
             final StateDef proceedStatDef = registry.getWorkflowState(workflowType, proceedStateId);
-
             WorkflowStateOptions proceedStateOptions = StateMovementMapper.validateAndGetStateOptions(proceedStatDef);
             if (proceedStateOptions != null &&
                     proceedStateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE) {

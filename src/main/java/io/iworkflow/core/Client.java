@@ -172,7 +172,6 @@ public class Client {
                 throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType));
             }
 
-            // Always deep copy the state options so we don't modify the original
             WorkflowStateOptions stateOptions = StateMovementMapper.validateAndGetStateOptions(stateDef);
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
                 if (stateOptions == null) {
