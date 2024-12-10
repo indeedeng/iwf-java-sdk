@@ -8,6 +8,7 @@ import io.iworkflow.core.ImmutableStopWorkflowOptions;
 import io.iworkflow.core.ImmutableWorkflowOptions;
 import io.iworkflow.gen.models.*;
 import io.iworkflow.integ.persistence.BasicPersistenceWorkflow;
+import io.iworkflow.integ.rpc.DeadEndStateWorkflow;
 import io.iworkflow.integ.rpc.NoStateWorkflow;
 import io.iworkflow.integ.rpc.RpcWorkflow;
 import io.iworkflow.integ.rpc.RpcWorkflowState2;
@@ -313,4 +314,23 @@ public class RpcTest {
         client.stopWorkflow(wfId, null);
     }
 
+
+    @Test
+    public void testSignalChannelSizeInfo(){
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "testSignalChannelSizeInfo" + System.currentTimeMillis() / 1000;
+        client.startWorkflow(
+                DeadEndStateWorkflow.class, wfId, 10);
+        final DeadEndStateWorkflow rpcStub = client.newRpcStub(DeadEndStateWorkflow.class, wfId, "");
+        client.invokeRPC(rpcStub::sendAndGetInternalChannelSize);
+        final Integer size1 = client.invokeRPC(rpcStub::sendAndGetInternalChannelSize);
+        Assertions.assertEquals(2, size1);
+
+        client.signalWorkflow(DeadEndStateWorkflow.class, wfId, DeadEndStateWorkflow.IDLE_SIGNAL_CHANNEL, null);
+        client.signalWorkflow(DeadEndStateWorkflow.class, wfId, DeadEndStateWorkflow.IDLE_SIGNAL_CHANNEL, null);
+        client.signalWorkflow(DeadEndStateWorkflow.class, wfId, DeadEndStateWorkflow.IDLE_SIGNAL_CHANNEL, null);
+        final Integer size2 = client.invokeRPC(rpcStub::getSignalChannelSize);
+        Assertions.assertEquals(3, size2);
+
+    }
 }
