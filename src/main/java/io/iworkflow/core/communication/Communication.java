@@ -5,6 +5,22 @@ import io.iworkflow.core.StateMovement;
 public interface Communication {
 
     /**
+     * Get the size of the internal channel(including the one being sent in the buffer)
+     * NOTE: currently only supported in RPC
+     * @param channelName the channel name to get size
+     * @return the size of the internal channel
+     */
+    int getInternalChannelSize(final String channelName);
+
+    /**
+     * Get the size of the signal channel(including the one being sent in the buffer)
+     * NOTE: currently only supported in RPC
+     * @param channelName the channel name to get size
+     * @return the size of the signal channel
+     */
+    int getSignalChannelSize(final String channelName);
+
+    /**
      * Publish a value to an internal Channel
      *
      * @param channelName the channel name to send value
