@@ -68,18 +68,20 @@ public class ApiController {
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         String sStackTrace = sw.toString(); // stack trace as a string
-        if(sStackTrace.length()>500){
+        if(sStackTrace.length()>1000){
             // make sure NOT exceeding 4K limit in Temporal https://github.com/indeedeng/iwf/issues/272
-            sStackTrace = sStackTrace.substring(0, 500) + "...(TRUNCATED)";
+            sStackTrace = sStackTrace.substring(0, 1000) + "...(TRUNCATED)";
         }
         String msg = e.getMessage();
         if(msg == null){
             System.out.println("empty message for exception "+sw.toString());
             msg = "empty message for exception "+e;
         }
-        if (msg.length() > 50) {
-            msg = msg.substring(0, 50) + "...(TRUNCATED)";
+        if (msg.length() > 500) {
+            msg = msg.substring(0, 500) + "...(TRUNCATED)";
         }
+
+        System.out.println("Exception in "+methodType+" for workflow "+workflowId+" : "+msg + "\n STACKTRACE: \n"+sStackTrace);
 
         final WorkerErrorResponse errResp = new WorkerErrorResponse()
                 .detail(msg+"\n STACKTRACE: \n"+sStackTrace)
