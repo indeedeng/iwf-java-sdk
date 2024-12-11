@@ -30,7 +30,7 @@ public class CommunicationImpl implements Communication {
 
     public CommunicationImpl(
             final Map<String, ChannelInfo> internalChannelInfos,
-    final Map<String, ChannelInfo> signalChannelInfos,
+            final Map<String, ChannelInfo> signalChannelInfos,
             final TypeStore internalChannelTypeStore,
             final TypeStore signalChannelTypeStore,
             final ObjectEncoder objectEncoder,
