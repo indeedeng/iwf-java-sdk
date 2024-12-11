@@ -4,6 +4,8 @@ import io.iworkflow.gen.models.ExecuteApiFailurePolicy;
 import io.iworkflow.gen.models.WaitUntilApiFailurePolicy;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 
+import java.util.Objects;
+
 /**
  * WorkflowStateOptionsExtension provides extension to WorkflowStateOptions
  * to make it easier to build some fields of the stateOptions.
@@ -21,6 +23,7 @@ import io.iworkflow.gen.models.WorkflowStateOptions;
  *     }
  */
 public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
+    private static final JacksonJsonObjectEncoder JSON_ENCODER = new JacksonJsonObjectEncoder();
 
     /**
      * By default, workflow would fail after execute API retry exhausted.
@@ -95,5 +98,21 @@ public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
         this.executeApiFailureProceedStateId(proceedingState.getSimpleName());
         this.executeApiFailureProceedStateOptions(stateOptionsOverride);
         return this;
+    }
+
+    /**
+     * Uses JSON serialization to deep copy WorkflowStateOptions
+     * @param stateOptions the state options to deep copy.
+     * @return the newly created copy.
+     */
+    public static WorkflowStateOptions deepCopyStateOptions(WorkflowStateOptions stateOptions) {
+        final WorkflowStateOptions deepCopy =
+                stateOptions == null ? null : JSON_ENCODER.decode(JSON_ENCODER.encode(stateOptions), stateOptions.getClass());
+
+        if (!Objects.deepEquals(stateOptions, deepCopy)) {
+            throw new ObjectEncoderException("Deep copy of WorkflowStateOptions did not match.");
+        }
+
+        return deepCopy;
     }
 }
