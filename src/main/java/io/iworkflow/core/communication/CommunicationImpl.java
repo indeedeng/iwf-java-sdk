@@ -59,11 +59,10 @@ public class CommunicationImpl implements Communication {
     @Override
     public int getSignalChannelSize(final String channelName) {
         checkSignalChannelNameValid(channelName, null);
-        int size = 0;
         if(signalChannelInfos.containsKey(channelName)){
-            size += signalChannelInfos.get(channelName).getSize();
+            return signalChannelInfos.get(channelName).getSize();
         }
-        return size;
+        return 0;
     }
 
     @Override
