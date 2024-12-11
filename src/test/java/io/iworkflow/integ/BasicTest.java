@@ -253,7 +253,12 @@ public class BasicTest {
         origOptions.setSearchAttributesLoadingPolicy(new PersistenceLoadingPolicy().persistenceLoadingType(
                         PersistenceLoadingType.PARTIAL_WITH_EXCLUSIVE_LOCK)
                 .partialLoadingKeys(Collections.singletonList(StateOptionsWorkflow.DA_WAIT_UNTIL)));
+
         final WorkflowStateOptions deepCopyOptions = deepCopyStateOptions(origOptions);
         Assertions.assertEquals(origOptions, deepCopyOptions);
+
+        // Verify changing a value in one object doesn't update both by reference
+        origOptions.setSkipWaitUntil(false);
+        Assertions.assertNotEquals(origOptions, deepCopyOptions);
     }
 }

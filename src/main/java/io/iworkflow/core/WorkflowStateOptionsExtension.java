@@ -1,10 +1,10 @@
 package io.iworkflow.core;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.iworkflow.gen.models.ExecuteApiFailurePolicy;
 import io.iworkflow.gen.models.WaitUntilApiFailurePolicy;
 import io.iworkflow.gen.models.WorkflowStateOptions;
+
+import java.util.Objects;
 
 /**
  * WorkflowStateOptionsExtension provides extension to WorkflowStateOptions
@@ -23,6 +23,7 @@ import io.iworkflow.gen.models.WorkflowStateOptions;
  *     }
  */
 public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
+    private static final JacksonJsonObjectEncoder JSON_ENCODER = new JacksonJsonObjectEncoder();
 
     /**
      * By default, workflow would fail after execute API retry exhausted.
@@ -105,15 +106,14 @@ public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
      * @return the newly created copy.
      */
     public static WorkflowStateOptions deepCopyStateOptions(WorkflowStateOptions stateOptions) {
-        if (stateOptions == null) {
-            return null;
+        final WorkflowStateOptions deepCopy = stateOptions == null
+                ? null
+                : JSON_ENCODER.decode(JSON_ENCODER.encode(stateOptions), WorkflowStateOptions.class);
+
+        if (!Objects.equals(stateOptions, deepCopy)) {
+            throw new ObjectEncoderException("Deep copy of WorkflowStateOptions did not match.");
         }
 
-        try {
-            final ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(objectMapper.writeValueAsString(stateOptions), WorkflowStateOptions.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return deepCopy;
     }
 }
