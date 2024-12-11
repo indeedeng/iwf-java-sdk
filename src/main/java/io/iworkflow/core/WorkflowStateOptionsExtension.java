@@ -106,11 +106,10 @@ public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
      * @return the newly created copy.
      */
     public static WorkflowStateOptions deepCopyStateOptions(WorkflowStateOptions stateOptions) {
-        final WorkflowStateOptions deepCopy = stateOptions == null
-                ? null
-                : JSON_ENCODER.decode(JSON_ENCODER.encode(stateOptions), WorkflowStateOptions.class);
+        final WorkflowStateOptions deepCopy =
+                stateOptions == null ? null : JSON_ENCODER.decode(JSON_ENCODER.encode(stateOptions), stateOptions.getClass());
 
-        if (!Objects.equals(stateOptions, deepCopy)) {
+        if (!Objects.deepEquals(stateOptions, deepCopy)) {
             throw new ObjectEncoderException("Deep copy of WorkflowStateOptions did not match.");
         }
 
