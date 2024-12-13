@@ -100,8 +100,11 @@ public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
         return this;
     }
 
+    // TODO: This is a workaround due to openapi-generator's "generateBuilders" config not working.
+    //  https://openapi-generator.tech/docs/generators/java/#config-options
+    //  I have opened a ticket with them (https://github.com/OpenAPITools/openapi-generator/issues/20320).
     /**
-     * Uses JSON serialization to deep copy WorkflowStateOptions
+     * Uses JSON serialization to deep copy WorkflowStateOptions.
      * @param stateOptions the state options to deep copy.
      * @return the newly created copy.
      */
