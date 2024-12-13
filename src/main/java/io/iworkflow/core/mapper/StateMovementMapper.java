@@ -13,6 +13,7 @@ import io.iworkflow.gen.models.WorkflowStateOptions;
 
 import static io.iworkflow.core.StateMovement.RESERVED_STATE_ID_PREFIX;
 import static io.iworkflow.core.WorkflowState.shouldSkipWaitUntil;
+import static io.iworkflow.core.WorkflowStateOptionsExtension.deepCopyStateOptions;
 
 public class StateMovementMapper {
 
@@ -28,9 +29,12 @@ public class StateMovementMapper {
             }
 
             // Try to get the overrode stateOptions, if it's null, get the stateOptions from stateDef
-            WorkflowStateOptions stateOptions = stateMovement.getStateOptionsOverride().orElse(null);
-            if (stateOptions == null) {
-                stateOptions = StateMovementMapper.validateAndGetStateOptions(stateDef);
+            WorkflowStateOptions stateOptions;
+            if (stateMovement.getStateOptionsOverride().isPresent()) {
+                // Always deep copy the state options so we don't modify the original
+                stateOptions = deepCopyStateOptions(stateMovement.getStateOptionsOverride().get());
+            } else {
+                stateOptions = StateMovementMapper.validateAndGetStateOptionsCopy(stateDef);
             }
 
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
@@ -62,7 +66,7 @@ public class StateMovementMapper {
             // fill the state options for the proceeding state
             String proceedStateId = stateOptions.getExecuteApiFailureProceedStateId();
             final StateDef proceedStatDef = registry.getWorkflowState(workflowType, proceedStateId);
-            WorkflowStateOptions proceedStateOptions = StateMovementMapper.validateAndGetStateOptions(proceedStatDef);
+            WorkflowStateOptions proceedStateOptions = StateMovementMapper.validateAndGetStateOptionsCopy(proceedStatDef);
             if (proceedStateOptions != null &&
                     proceedStateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE) {
                 throw new WorkflowDefinitionException("nested failure handling is not supported. You cannot set a failure proceeding state on top of another failure proceeding state.");
@@ -80,9 +84,10 @@ public class StateMovementMapper {
         }
     }
 
-    public static WorkflowStateOptions validateAndGetStateOptions(final StateDef stateDef){
+    public static WorkflowStateOptions validateAndGetStateOptionsCopy(final StateDef stateDef){
         final WorkflowState state = stateDef.getWorkflowState();
-        WorkflowStateOptions stateOptions = state.getStateOptions();
+        // Always deep copy the state options so we don't modify the original
+        WorkflowStateOptions stateOptions = deepCopyStateOptions(state.getStateOptions());
         if (stateOptions == null){
             return null;
         }

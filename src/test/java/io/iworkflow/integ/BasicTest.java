@@ -14,26 +14,32 @@ import io.iworkflow.core.exceptions.WorkflowAlreadyStartedException;
 import io.iworkflow.gen.models.Context;
 import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.gen.models.IDReusePolicy;
+import io.iworkflow.gen.models.PersistenceLoadingPolicy;
+import io.iworkflow.gen.models.PersistenceLoadingType;
+import io.iworkflow.gen.models.RetryPolicy;
 import io.iworkflow.gen.models.WorkflowConfig;
+import io.iworkflow.gen.models.WorkflowStateOptions;
 import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.integ.basic.AbnormalExitWorkflow;
 import io.iworkflow.integ.basic.BasicWorkflow;
-import io.iworkflow.integ.basic.BasicWorkflowState1;
 import io.iworkflow.integ.basic.BasicWorkflowState2;
 import io.iworkflow.integ.basic.EmptyInputWorkflow;
 import io.iworkflow.integ.basic.EmptyInputWorkflowState1;
 import io.iworkflow.integ.basic.FakContextImpl;
+import io.iworkflow.integ.basic.MixOfWithWaitUntilAndSkipWaitUntilWorkflow;
 import io.iworkflow.integ.basic.ModelInputWorkflow;
 import io.iworkflow.integ.basic.ProceedOnStateStartFailWorkflow;
-import io.iworkflow.integ.timer.BasicTimerWorkflow;
-import io.iworkflow.integ.timer.BasicTimerWorkflowState1;
+import io.iworkflow.integ.stateoptions.StateOptionsWorkflow;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
+
+import static io.iworkflow.core.WorkflowStateOptionsExtension.deepCopyStateOptions;
 
 public class BasicTest {
 
@@ -225,5 +231,34 @@ public class BasicTest {
 
         final WorkflowInfo childWorkflowInfo = client.describeWorkflow(childWfId);
         Assertions.assertEquals(WorkflowStatus.COMPLETED, childWorkflowInfo.getWorkflowStatus());
+    }
+
+    @Test
+    public void testMixOfWithWaitUntilAndSkipWaitUntilWorkflow() {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final long startTs = System.currentTimeMillis();
+        final String wfId = "wf-mix-of-with-wait-until-and-skip-wait-until-workflow-test-id" + startTs / 1000;
+        final Integer input = 5;
+
+        client.startWorkflow(MixOfWithWaitUntilAndSkipWaitUntilWorkflow.class, wfId, 10, input);
+        client.waitForWorkflowCompletion(wfId);
+    }
+
+    @Test
+    public void deepCopyWorkflowStateOptionsTest() {
+        final WorkflowStateOptions origOptions =
+                new WorkflowStateOptions().executeApiRetryPolicy(new RetryPolicy().maximumAttempts(3));
+        origOptions.setSkipWaitUntil(true);
+        origOptions.setExecuteApiFailureProceedStateId("execute-api-failure-proceed-state-id");
+        origOptions.setSearchAttributesLoadingPolicy(new PersistenceLoadingPolicy().persistenceLoadingType(
+                        PersistenceLoadingType.PARTIAL_WITH_EXCLUSIVE_LOCK)
+                .partialLoadingKeys(Collections.singletonList(StateOptionsWorkflow.DA_WAIT_UNTIL)));
+
+        final WorkflowStateOptions deepCopyOptions = deepCopyStateOptions(origOptions);
+        Assertions.assertEquals(origOptions, deepCopyOptions);
+
+        // Verify changing a value in one object doesn't update both by reference
+        origOptions.setSkipWaitUntil(false);
+        Assertions.assertNotEquals(origOptions, deepCopyOptions);
     }
 }
