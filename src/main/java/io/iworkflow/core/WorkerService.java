@@ -43,9 +43,12 @@ public class WorkerService {
 
     private final WorkerOptions workerOptions;
 
-    public WorkerService(Registry registry, WorkerOptions workerOptions) {
+    private final String urlOfSelfForStickyInvocation;
+
+    public WorkerService(Registry registry, WorkerOptions workerOptions, String urlOfSelfForStickyInvocation) {
         this.registry = registry;
         this.workerOptions = workerOptions;
+        this.urlOfSelfForStickyInvocation = urlOfSelfForStickyInvocation;
     }
 
     public WorkflowWorkerRpcResponse handleWorkflowWorkerRpc(final WorkflowWorkerRpcRequest req) {

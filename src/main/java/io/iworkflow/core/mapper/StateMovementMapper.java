@@ -37,6 +37,10 @@ public class StateMovementMapper {
                 stateOptions = StateMovementMapper.validateAndGetStateOptionsCopy(stateDef);
             }
 
+            if(stateOptions.usePreviousWorkerInstanceForStateExecution()){
+                stateOptions.urlOfSelfForStickyInvocation(urlOfSelfForStickyInvocation);// then iwf-server will use this URL to invoke the state
+            }
+
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
                 if (stateOptions == null) {
                     stateOptions = new WorkflowStateOptions();
