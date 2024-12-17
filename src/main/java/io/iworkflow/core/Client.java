@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.iworkflow.core.WorkflowState.shouldSkipWaitUntil;
+import static io.iworkflow.core.mapper.StateMovementMapper.autoFillFailureProceedingStateOptions;
 import static io.iworkflow.core.mapper.StateMovementMapper.validateAndGetIdlStateOptions;
 
 public class Client {
@@ -171,7 +172,7 @@ public class Client {
                 throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType));
             }
 
-            io.iworkflow.gen.models.WorkflowStateOptions stateOptions = validateAndGetIdlStateOptions(stateDef, wfType, registry);
+            io.iworkflow.gen.models.WorkflowStateOptions stateOptions = validateAndGetIdlStateOptions(stateDef);
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
                 if (stateOptions == null) {
                     stateOptions = new io.iworkflow.gen.models.WorkflowStateOptions().skipWaitUntil(true);
@@ -179,6 +180,8 @@ public class Client {
                     stateOptions.skipWaitUntil(true);
                 }
             }
+
+            autoFillFailureProceedingStateOptions(stateOptions, wfType, registry);
 
             if (stateOptions != null) {
                 unregisterWorkflowOptions.startStateOptions(stateOptions);
