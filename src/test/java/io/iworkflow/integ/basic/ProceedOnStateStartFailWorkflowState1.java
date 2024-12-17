@@ -3,13 +3,13 @@ package io.iworkflow.integ.basic;
 import io.iworkflow.core.Context;
 import io.iworkflow.core.StateDecision;
 import io.iworkflow.core.WorkflowState;
+import io.iworkflow.core.WorkflowStateOptions;
 import io.iworkflow.core.WorkflowStateOptionsExtension;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.gen.models.RetryPolicy;
-import io.iworkflow.gen.models.WorkflowStateOptions;
 
 public class ProceedOnStateStartFailWorkflowState1 implements WorkflowState<String> {
     private String output = "";

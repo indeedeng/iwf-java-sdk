@@ -4,7 +4,6 @@ import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
-import io.iworkflow.gen.models.WorkflowStateOptions;
 
 import java.lang.reflect.Method;
 

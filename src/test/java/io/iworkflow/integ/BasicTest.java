@@ -8,6 +8,7 @@ import io.iworkflow.core.UnregisteredWorkflowOptions;
 import io.iworkflow.core.WorkflowDefinitionException;
 import io.iworkflow.core.WorkflowInfo;
 import io.iworkflow.core.WorkflowOptions;
+import io.iworkflow.core.WorkflowStateOptions;
 import io.iworkflow.core.WorkflowUncompletedException;
 import io.iworkflow.core.exceptions.NoRunningWorkflowException;
 import io.iworkflow.core.exceptions.WorkflowAlreadyStartedException;
@@ -18,7 +19,6 @@ import io.iworkflow.gen.models.PersistenceLoadingPolicy;
 import io.iworkflow.gen.models.PersistenceLoadingType;
 import io.iworkflow.gen.models.RetryPolicy;
 import io.iworkflow.gen.models.WorkflowConfig;
-import io.iworkflow.gen.models.WorkflowStateOptions;
 import io.iworkflow.gen.models.WorkflowStatus;
 import io.iworkflow.integ.basic.AbnormalExitWorkflow;
 import io.iworkflow.integ.basic.BasicWorkflow;
@@ -248,17 +248,17 @@ public class BasicTest {
     public void deepCopyWorkflowStateOptionsTest() {
         final WorkflowStateOptions origOptions =
                 new WorkflowStateOptions().executeApiRetryPolicy(new RetryPolicy().maximumAttempts(3));
-        origOptions.setSkipWaitUntil(true);
-        origOptions.setExecuteApiFailureProceedStateId("execute-api-failure-proceed-state-id");
-        origOptions.setSearchAttributesLoadingPolicy(new PersistenceLoadingPolicy().persistenceLoadingType(
-                        PersistenceLoadingType.PARTIAL_WITH_EXCLUSIVE_LOCK)
-                .partialLoadingKeys(Collections.singletonList(StateOptionsWorkflow.DA_WAIT_UNTIL)));
+        origOptions.executeApiTimeoutSeconds(10)
+                .waitUntilApiTimeoutSeconds(8)
+                .searchAttributesLoadingPolicy(new PersistenceLoadingPolicy().persistenceLoadingType(PersistenceLoadingType.PARTIAL_WITH_EXCLUSIVE_LOCK)
+                        .partialLoadingKeys(Collections.singletonList(StateOptionsWorkflow.DA_WAIT_UNTIL)));
 
         final WorkflowStateOptions deepCopyOptions = deepCopyStateOptions(origOptions);
         Assertions.assertEquals(origOptions, deepCopyOptions);
 
         // Verify changing a value in one object doesn't update both by reference
-        origOptions.setSkipWaitUntil(false);
+        origOptions.setSearchAttributesLoadingPolicy(new PersistenceLoadingPolicy().persistenceLoadingType(
+                PersistenceLoadingType.NONE));
         Assertions.assertNotEquals(origOptions, deepCopyOptions);
     }
 }

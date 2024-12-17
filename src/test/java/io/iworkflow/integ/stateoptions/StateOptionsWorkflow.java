@@ -5,6 +5,7 @@ import io.iworkflow.core.ObjectWorkflow;
 import io.iworkflow.core.StateDecision;
 import io.iworkflow.core.StateDef;
 import io.iworkflow.core.WorkflowState;
+import io.iworkflow.core.WorkflowStateOptions;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
@@ -13,7 +14,6 @@ import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
 import io.iworkflow.gen.models.PersistenceLoadingPolicy;
 import io.iworkflow.gen.models.PersistenceLoadingType;
-import io.iworkflow.gen.models.WorkflowStateOptions;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;

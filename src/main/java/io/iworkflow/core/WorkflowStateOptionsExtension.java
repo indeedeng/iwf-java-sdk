@@ -2,7 +2,6 @@ package io.iworkflow.core;
 
 import io.iworkflow.gen.models.ExecuteApiFailurePolicy;
 import io.iworkflow.gen.models.WaitUntilApiFailurePolicy;
-import io.iworkflow.gen.models.WorkflowStateOptions;
 
 import java.util.Objects;
 
@@ -32,29 +31,15 @@ public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
      * RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for execute API.
      * NOTE: The proceeding state will take the same input as the failed state that proceeded from.
      * See more in <a href="https://github.com/indeedeng/iwf/wiki/WorkflowStateOptions">wiki</a>
-     * @param proceedingState the state to proceed to
+     * @param proceedingWorkflowStateOptions the state options to proceed to
      * @return this
      */
     public WorkflowStateOptionsExtension setProceedWhenExecuteRetryExhausted(
-            final Class<? extends WorkflowState> proceedingState) {
-        return this.setProceedOnExecuteFailure(proceedingState);
-    }
+            final WorkflowStateOptions proceedingWorkflowStateOptions) {
+        setExecuteApiFailurePolicy(ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE);
+        setExecuteApiFailureProceedStateOptions(proceedingWorkflowStateOptions);
 
-    /**
-     * By default, workflow would fail after execute API retry exhausted.
-     * Set the state to proceed to the specified state after the execute API exhausted all retries
-     * This is useful for some advanced use cases like SAGA pattern.
-     * RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for execute API.
-     * NOTE: The proceeding state will take the same input as the failed state that proceeded from.
-     * See more in <a href="https://github.com/indeedeng/iwf/wiki/WorkflowStateOptions">wiki</a>
-     * @param proceedingState the state to proceed to
-     * @param stateOptionsOverride the stateOptions for the proceeding state. This is for a rare case that you
-     *                             need to override the stateOptions returned from state instance.
-     * @return this
-     */
-    public WorkflowStateOptionsExtension setProceedWhenExecuteRetryExhausted(
-            final Class<? extends WorkflowState> proceedingState, WorkflowStateOptions stateOptionsOverride) {
-        return this.setProceedOnExecuteFailure(proceedingState, stateOptionsOverride);
+        return this;
     }
 
     /**
@@ -67,36 +52,11 @@ public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
      * @param proceed true to proceed
      * @return this
      */
-    public WorkflowStateOptionsExtension setProceedWhenWaitUntilRetryExhausted(boolean proceed){
-        if(proceed){
-            this.waitUntilApiFailurePolicy(WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE);
-        }else{
-            this.waitUntilApiFailurePolicy(WaitUntilApiFailurePolicy.FAIL_WORKFLOW_ON_FAILURE);
-        }
+    public WorkflowStateOptionsExtension setProceedWhenWaitUntilRetryExhausted(boolean proceed) {
+        setWaitUntilApiFailurePolicy(proceed
+                ? WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE
+                : WaitUntilApiFailurePolicy.FAIL_WORKFLOW_ON_FAILURE);
 
-        return this;
-    }
-
-    /**
-     * Use setProceedAfterRetryExhaustedOnExecuteFailure instead.
-     * It's a renaming for better clarity.
-     */
-    @Deprecated
-    public WorkflowStateOptionsExtension setProceedOnExecuteFailure(final Class<? extends WorkflowState> proceedingState) {
-        this.executeApiFailurePolicy(ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE);
-        this.executeApiFailureProceedStateId(proceedingState.getSimpleName());
-        return this;
-    }
-
-    /**
-     * Use setProceedAfterRetryExhaustedOnExecuteFailure instead
-     * It's a renaming for better clarity.
-     */
-    @Deprecated
-    public WorkflowStateOptionsExtension setProceedOnExecuteFailure(final Class<? extends WorkflowState> proceedingState, WorkflowStateOptions stateOptionsOverride) {
-        this.executeApiFailurePolicy(ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE);
-        this.executeApiFailureProceedStateId(proceedingState.getSimpleName());
-        this.executeApiFailureProceedStateOptions(stateOptionsOverride);
         return this;
     }
 

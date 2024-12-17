@@ -4,7 +4,6 @@ import io.iworkflow.core.exceptions.LongPollTimeoutException;
 import io.iworkflow.core.exceptions.NoRunningWorkflowException;
 import io.iworkflow.core.exceptions.WorkflowAlreadyStartedException;
 import io.iworkflow.core.exceptions.WorkflowNotExistsException;
-import io.iworkflow.core.mapper.StateMovementMapper;
 import io.iworkflow.core.persistence.PersistenceOptions;
 import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.gen.models.KeyValue;
@@ -17,7 +16,6 @@ import io.iworkflow.gen.models.WorkflowGetResponse;
 import io.iworkflow.gen.models.WorkflowGetSearchAttributesResponse;
 import io.iworkflow.gen.models.WorkflowSearchRequest;
 import io.iworkflow.gen.models.WorkflowSearchResponse;
-import io.iworkflow.gen.models.WorkflowStateOptions;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.matcher.ElementMatchers;
@@ -32,6 +30,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.iworkflow.core.WorkflowState.shouldSkipWaitUntil;
+import static io.iworkflow.core.mapper.StateMovementMapper.validateAndGetIdlStateOptions;
 
 public class Client {
     private final Registry registry;
@@ -172,16 +171,14 @@ public class Client {
                 throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType));
             }
 
-            WorkflowStateOptions stateOptions = StateMovementMapper.validateAndGetStateOptionsCopy(stateDef);
+            io.iworkflow.gen.models.WorkflowStateOptions stateOptions = validateAndGetIdlStateOptions(stateDef);
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
                 if (stateOptions == null) {
-                    stateOptions = new WorkflowStateOptions().skipWaitUntil(true);
+                    stateOptions = new io.iworkflow.gen.models.WorkflowStateOptions().skipWaitUntil(true);
                 } else {
                     stateOptions.skipWaitUntil(true);
                 }
             }
-
-            StateMovementMapper.autoFillFailureProceedingStateOptions(stateOptions, wfType, registry);
 
             if (stateOptions != null) {
                 unregisterWorkflowOptions.startStateOptions(stateOptions);
