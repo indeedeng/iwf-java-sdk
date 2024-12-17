@@ -31,13 +31,13 @@ public class WorkflowStateOptionsExtension extends WorkflowStateOptions {
      * RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for execute API.
      * NOTE: The proceeding state will take the same input as the failed state that proceeded from.
      * See more in <a href="https://github.com/indeedeng/iwf/wiki/WorkflowStateOptions">wiki</a>
-     * @param proceedingWorkflowState the state to proceed to
+     * @param proceedingState the state to proceed to
      * @return this
      */
     public WorkflowStateOptionsExtension setProceedWhenExecuteRetryExhausted(
-            Class<? extends WorkflowState> proceedingWorkflowState) {
+            final Class<? extends WorkflowState> proceedingState) {
         setExecuteApiFailurePolicy(ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE);
-        setExecuteApiFailureProceedState(proceedingWorkflowState);
+        setExecuteApiFailureProceedState(proceedingState);
 
         return this;
     }
