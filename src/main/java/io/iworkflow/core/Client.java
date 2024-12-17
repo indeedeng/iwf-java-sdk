@@ -16,6 +16,7 @@ import io.iworkflow.gen.models.WorkflowGetResponse;
 import io.iworkflow.gen.models.WorkflowGetSearchAttributesResponse;
 import io.iworkflow.gen.models.WorkflowSearchRequest;
 import io.iworkflow.gen.models.WorkflowSearchResponse;
+import io.iworkflow.gen.models.WorkflowStateOptions;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.matcher.ElementMatchers;
@@ -172,10 +173,10 @@ public class Client {
                 throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType));
             }
 
-            io.iworkflow.gen.models.WorkflowStateOptions stateOptions = validateAndGetIdlStateOptions(stateDef);
+            WorkflowStateOptions stateOptions = validateAndGetIdlStateOptions(stateDef);
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
                 if (stateOptions == null) {
-                    stateOptions = new io.iworkflow.gen.models.WorkflowStateOptions().skipWaitUntil(true);
+                    stateOptions = new WorkflowStateOptions().skipWaitUntil(true);
                 } else {
                     stateOptions.skipWaitUntil(true);
                 }
