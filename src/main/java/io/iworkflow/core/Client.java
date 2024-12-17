@@ -171,7 +171,7 @@ public class Client {
                 throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType));
             }
 
-            io.iworkflow.gen.models.WorkflowStateOptions stateOptions = validateAndGetIdlStateOptions(stateDef);
+            io.iworkflow.gen.models.WorkflowStateOptions stateOptions = validateAndGetIdlStateOptions(stateDef, wfType, registry);
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
                 if (stateOptions == null) {
                     stateOptions = new io.iworkflow.gen.models.WorkflowStateOptions().skipWaitUntil(true);

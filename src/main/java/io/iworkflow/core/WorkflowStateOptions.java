@@ -32,7 +32,7 @@ public class WorkflowStateOptions {
 
     private ExecuteApiFailurePolicy executeApiFailurePolicy;
 
-    private WorkflowStateOptions executeApiFailureProceedStateOptions;
+    private Class<? extends WorkflowState> executeApiFailureProceedState;
 
     public WorkflowStateOptions() {
     }
@@ -193,17 +193,17 @@ public class WorkflowStateOptions {
         this.executeApiFailurePolicy = executeApiFailurePolicy;
     }
 
-    public WorkflowStateOptions executeApiFailureProceedStateOptions(WorkflowStateOptions executeApiFailureProceedStateOptions) {
-        setExecuteApiFailureProceedStateOptions(executeApiFailureProceedStateOptions);
+    public WorkflowStateOptions executeApiFailureProceedState(Class<? extends WorkflowState> executeApiFailureProceedStateOptions) {
+        setExecuteApiFailureProceedState(executeApiFailureProceedStateOptions);
         return this;
     }
 
-    public WorkflowStateOptions getExecuteApiFailureProceedStateOptions() {
-        return executeApiFailureProceedStateOptions;
+    public Class<? extends WorkflowState> getExecuteApiFailureProceedState() {
+        return executeApiFailureProceedState;
     }
 
-    public void setExecuteApiFailureProceedStateOptions(WorkflowStateOptions executeApiFailureProceedStateOptions) {
-        this.executeApiFailureProceedStateOptions = executeApiFailureProceedStateOptions;
+    public void setExecuteApiFailureProceedState(Class<? extends WorkflowState> executeApiFailureProceedState) {
+        this.executeApiFailureProceedState = executeApiFailureProceedState;
     }
 
     @Override
@@ -235,9 +235,7 @@ public class WorkflowStateOptions {
                 && Objects.equals(this.executeApiRetryPolicy, workflowStateOptions.executeApiRetryPolicy)
                 && Objects.equals(this.waitUntilApiFailurePolicy, workflowStateOptions.waitUntilApiFailurePolicy)
                 && Objects.equals(this.executeApiFailurePolicy, workflowStateOptions.executeApiFailurePolicy)
-                && Objects.equals(
-                this.executeApiFailureProceedStateOptions,
-                workflowStateOptions.executeApiFailureProceedStateOptions);
+                && Objects.equals(this.executeApiFailureProceedState, workflowStateOptions.executeApiFailureProceedState);
     }
 
     @Override
@@ -255,7 +253,7 @@ public class WorkflowStateOptions {
                 executeApiRetryPolicy,
                 waitUntilApiFailurePolicy,
                 executeApiFailurePolicy,
-                executeApiFailureProceedStateOptions);
+                executeApiFailureProceedState);
     }
 
     @Override
@@ -283,7 +281,7 @@ public class WorkflowStateOptions {
         sb.append("    waitUntilApiFailurePolicy: ").append(toIndentedString(waitUntilApiFailurePolicy)).append("\n");
         sb.append("    executeApiFailurePolicy: ").append(toIndentedString(executeApiFailurePolicy)).append("\n");
         sb.append("    executeApiFailureProceedStateOptions: ")
-                .append(toIndentedString(executeApiFailureProceedStateOptions))
+                .append(toIndentedString(executeApiFailureProceedState))
                 .append("\n");
         sb.append("}");
         return sb.toString();
