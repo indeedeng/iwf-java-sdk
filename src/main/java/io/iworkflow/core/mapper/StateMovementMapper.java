@@ -57,38 +57,6 @@ public class StateMovementMapper {
         return movement;
     }
 
-    public static void autoFillFailureProceedingStateOptions(
-            WorkflowStateOptions stateOptions,
-            final String workflowType,
-            final Registry registry,
-            io.iworkflow.gen.models.WorkflowStateOptions idlStateOptions) {
-        if (stateOptions == null) {
-            return;
-        }
-        if (stateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE
-                && stateOptions.getExecuteApiFailureProceedState() != null) {
-
-            // fill the state options for the proceeding state
-            Class<? extends WorkflowState> proceedState = stateOptions.getExecuteApiFailureProceedState();
-            final StateDef proceedStatDef = registry.getWorkflowState(workflowType, proceedState.getSimpleName());
-            io.iworkflow.gen.models.WorkflowStateOptions proceedStateOptions = validateAndGetIdlStateOptions(proceedStatDef, workflowType, registry);
-            if (proceedStateOptions != null &&
-                    proceedStateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE) {
-                throw new WorkflowDefinitionException("nested failure handling is not supported. You cannot set a failure proceeding state on top of another failure proceeding state.");
-            }
-
-            if (shouldSkipWaitUntil(proceedStatDef.getWorkflowState())) {
-                if (proceedStateOptions == null) {
-                    proceedStateOptions = new io.iworkflow.gen.models.WorkflowStateOptions().skipWaitUntil(true);
-                } else {
-                    proceedStateOptions.skipWaitUntil(true);
-                }
-            }
-
-            idlStateOptions.executeApiFailureProceedStateOptions(proceedStateOptions);
-        }
-    }
-
     public static io.iworkflow.gen.models.WorkflowStateOptions validateAndGetIdlStateOptions(
             final StateDef stateDef,
             final String workflowType,
@@ -147,8 +115,44 @@ public class StateMovementMapper {
         idlWorkflowStateOptions.setExecuteApiRetryPolicy(workflowStateOptions.getExecuteApiRetryPolicy());
         idlWorkflowStateOptions.setWaitUntilApiFailurePolicy(workflowStateOptions.getWaitUntilApiFailurePolicy());
         idlWorkflowStateOptions.setExecuteApiFailurePolicy(workflowStateOptions.getExecuteApiFailurePolicy());
-        autoFillFailureProceedingStateOptions(workflowStateOptions, workflowType, registry, idlWorkflowStateOptions);
+        idlWorkflowStateOptions.executeApiFailureProceedStateOptions(toIdlExecuteApiFailureProceedState(
+                workflowStateOptions,
+                workflowType,
+                registry));
 
         return idlWorkflowStateOptions;
+    }
+
+    private static io.iworkflow.gen.models.WorkflowStateOptions toIdlExecuteApiFailureProceedState(
+            WorkflowStateOptions stateOptions,
+            final String workflowType,
+            final Registry registry) {
+        if (stateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE
+                && stateOptions.getExecuteApiFailureProceedState() != null) {
+            // fill the state options for the proceeding state
+            Class<? extends WorkflowState> proceedState = stateOptions.getExecuteApiFailureProceedState();
+            final StateDef proceedStatDef = registry.getWorkflowState(workflowType, proceedState.getSimpleName());
+            io.iworkflow.gen.models.WorkflowStateOptions proceedStateOptions =
+                    validateAndGetIdlStateOptions(proceedStatDef, workflowType, registry);
+            if (proceedStateOptions != null
+                    && proceedStateOptions.getExecuteApiFailurePolicy()
+                    == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE) {
+                throw new WorkflowDefinitionException(
+                        "nested failure handling is not supported. You cannot set a failure proceeding state on top of "
+                                + "another failure proceeding state.");
+            }
+
+            if (shouldSkipWaitUntil(proceedStatDef.getWorkflowState())) {
+                if (proceedStateOptions == null) {
+                    proceedStateOptions = new io.iworkflow.gen.models.WorkflowStateOptions().skipWaitUntil(true);
+                } else {
+                    proceedStateOptions.skipWaitUntil(true);
+                }
+            }
+
+            return proceedStateOptions;
+        }
+
+        return null;
     }
 }
