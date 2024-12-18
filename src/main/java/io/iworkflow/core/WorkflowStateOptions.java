@@ -28,7 +28,7 @@ public class WorkflowStateOptions {
 
     private RetryPolicy executeApiRetryPolicy;
 
-    private boolean proceedToExecuteWhenWaitUntilRetryExhausted;
+    private Boolean proceedToExecuteWhenWaitUntilRetryExhausted;
 
     private ExecuteApiFailurePolicy executeApiFailurePolicy;
 
@@ -171,11 +171,11 @@ public class WorkflowStateOptions {
         return this;
     }
 
-    public boolean getProceedToExecuteWhenWaitUntilRetryExhausted() {
+    public Boolean getProceedToExecuteWhenWaitUntilRetryExhausted() {
         return proceedToExecuteWhenWaitUntilRetryExhausted;
     }
 
-    public void setProceedToExecuteWhenWaitUntilRetryExhausted(boolean proceed) {
+    public void setProceedToExecuteWhenWaitUntilRetryExhausted(Boolean proceed) {
         this.proceedToExecuteWhenWaitUntilRetryExhausted =  proceed;
     }
 
@@ -243,7 +243,7 @@ public class WorkflowStateOptions {
                 && Objects.equals(this.executeApiTimeoutSeconds, workflowStateOptions.executeApiTimeoutSeconds)
                 && Objects.equals(this.waitUntilApiRetryPolicy, workflowStateOptions.waitUntilApiRetryPolicy)
                 && Objects.equals(this.executeApiRetryPolicy, workflowStateOptions.executeApiRetryPolicy)
-                && this.proceedToExecuteWhenWaitUntilRetryExhausted == workflowStateOptions.proceedToExecuteWhenWaitUntilRetryExhausted
+                && Objects.equals(this.proceedToExecuteWhenWaitUntilRetryExhausted, workflowStateOptions.proceedToExecuteWhenWaitUntilRetryExhausted)
                 && Objects.equals(this.executeApiFailurePolicy, workflowStateOptions.executeApiFailurePolicy)
                 && Objects.equals(this.proceedToStateWhenExecuteRetryExhausted, workflowStateOptions.proceedToStateWhenExecuteRetryExhausted)
                 && Objects.equals(this.proceedToStateWhenExecuteRetryExhaustedStateOptions, workflowStateOptions.proceedToStateWhenExecuteRetryExhaustedStateOptions);
@@ -290,7 +290,7 @@ public class WorkflowStateOptions {
         sb.append("    executeApiTimeoutSeconds: ").append(toIndentedString(executeApiTimeoutSeconds)).append("\n");
         sb.append("    waitUntilApiRetryPolicy: ").append(toIndentedString(waitUntilApiRetryPolicy)).append("\n");
         sb.append("    executeApiRetryPolicy: ").append(toIndentedString(executeApiRetryPolicy)).append("\n");
-        sb.append("    proceedToExecuteWhenWaitUntilRetryExhausted: ").append(proceedToExecuteWhenWaitUntilRetryExhausted).append("\n");
+        sb.append("    proceedToExecuteWhenWaitUntilRetryExhausted: ").append(toIndentedString(proceedToExecuteWhenWaitUntilRetryExhausted)).append("\n");
         sb.append("    executeApiFailurePolicy: ").append(toIndentedString(executeApiFailurePolicy)).append("\n");
         sb.append("    proceedToStateWhenExecuteRetryExhausted: ")
                 .append(toIndentedString(proceedToStateWhenExecuteRetryExhausted))

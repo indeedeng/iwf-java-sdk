@@ -86,11 +86,12 @@ public class StateMovementMapper {
     public static io.iworkflow.gen.models.WorkflowStateOptions validateAndGetIdlStateOptions(
             final StateDef stateDef) {
         final WorkflowState state = stateDef.getWorkflowState();
-        // Always deep copy the state options so we don't modify the original
-        WorkflowStateOptions stateOptions = state.getStateOptions().clone();
+        WorkflowStateOptions stateOptions = state.getStateOptions();
         if (stateOptions == null){
             return null;
         }
+        // Always deep copy the state options so we don't modify the original
+        stateOptions = stateOptions.clone();
         if(stateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE){
             // retry policy must be set
             if(stateOptions.getExecuteApiRetryPolicy() == null){
@@ -102,7 +103,7 @@ public class StateMovementMapper {
                 throw new WorkflowDefinitionException("Either maximumAttempts or maximumAttemptsDurationSeconds must be set for the execute "+state.getStateId());
             }
         }
-        if(!stateOptions.getProceedToExecuteWhenWaitUntilRetryExhausted()){
+        if(Boolean.FALSE.equals(stateOptions.getProceedToExecuteWhenWaitUntilRetryExhausted())){
             // retry policy must be set
             if(stateOptions.getWaitUntilApiRetryPolicy() == null){
                 throw new WorkflowDefinitionException("RetryPolicy must be set for the waitUntil "+state.getStateId());
@@ -135,7 +136,7 @@ public class StateMovementMapper {
         idlWorkflowStateOptions.setExecuteApiTimeoutSeconds(workflowStateOptions.getExecuteApiTimeoutSeconds());
         idlWorkflowStateOptions.setWaitUntilApiRetryPolicy(workflowStateOptions.getWaitUntilApiRetryPolicy());
         idlWorkflowStateOptions.setExecuteApiRetryPolicy(workflowStateOptions.getExecuteApiRetryPolicy());
-        idlWorkflowStateOptions.setWaitUntilApiFailurePolicy(workflowStateOptions.getProceedToExecuteWhenWaitUntilRetryExhausted()
+        idlWorkflowStateOptions.setWaitUntilApiFailurePolicy(Boolean.TRUE.equals(workflowStateOptions.getProceedToExecuteWhenWaitUntilRetryExhausted())
                 ? WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE
                 : WaitUntilApiFailurePolicy.FAIL_WORKFLOW_ON_FAILURE);
         idlWorkflowStateOptions.setExecuteApiFailurePolicy(workflowStateOptions.getExecuteApiFailurePolicy());
