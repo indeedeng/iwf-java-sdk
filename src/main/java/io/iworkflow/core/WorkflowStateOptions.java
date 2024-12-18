@@ -201,10 +201,6 @@ public class WorkflowStateOptions {
         return proceedToStateWhenExecuteRetryExhausted;
     }
 
-     public WorkflowStateOptions getProceedToStateWhenExecuteRetryExhaustedStateOptions() {
-        return proceedToStateWhenExecuteRetryExhaustedStateOptions;
-    }
-
     public void setProceedToStateWhenExecuteRetryExhausted(Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted) {
         setProceedToStateWhenExecuteRetryExhausted(proceedToStateWhenExecuteRetryExhausted, null);
     }
@@ -212,8 +208,13 @@ public class WorkflowStateOptions {
     public void setProceedToStateWhenExecuteRetryExhausted(
             Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted,
             WorkflowStateOptions stateOptionsOverride) {
+        this.executeApiFailurePolicy(ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE);
         this.proceedToStateWhenExecuteRetryExhausted = proceedToStateWhenExecuteRetryExhausted;
         this.proceedToStateWhenExecuteRetryExhaustedStateOptions = stateOptionsOverride;
+    }
+
+    public WorkflowStateOptions getProceedToStateWhenExecuteRetryExhaustedStateOptions() {
+        return proceedToStateWhenExecuteRetryExhaustedStateOptions;
     }
 
     @Override
