@@ -136,9 +136,11 @@ public class StateMovementMapper {
         idlWorkflowStateOptions.setExecuteApiTimeoutSeconds(workflowStateOptions.getExecuteApiTimeoutSeconds());
         idlWorkflowStateOptions.setWaitUntilApiRetryPolicy(workflowStateOptions.getWaitUntilApiRetryPolicy());
         idlWorkflowStateOptions.setExecuteApiRetryPolicy(workflowStateOptions.getExecuteApiRetryPolicy());
-        idlWorkflowStateOptions.setWaitUntilApiFailurePolicy(Boolean.TRUE.equals(workflowStateOptions.getProceedToExecuteWhenWaitUntilRetryExhausted())
-                ? WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE
-                : WaitUntilApiFailurePolicy.FAIL_WORKFLOW_ON_FAILURE);
+        if (workflowStateOptions.getProceedToExecuteWhenWaitUntilRetryExhausted() != null) {
+            idlWorkflowStateOptions.setWaitUntilApiFailurePolicy(Boolean.TRUE.equals(workflowStateOptions.getProceedToExecuteWhenWaitUntilRetryExhausted())
+                    ? WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE
+                    : WaitUntilApiFailurePolicy.FAIL_WORKFLOW_ON_FAILURE);
+        }
         idlWorkflowStateOptions.setExecuteApiFailurePolicy(workflowStateOptions.getExecuteApiFailurePolicy());
         if (workflowStateOptions.getProceedToStateWhenExecuteRetryExhausted() != null) {
             idlWorkflowStateOptions.setExecuteApiFailureProceedStateId(workflowStateOptions.getProceedToStateWhenExecuteRetryExhausted()
