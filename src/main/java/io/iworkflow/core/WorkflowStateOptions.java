@@ -208,7 +208,9 @@ public class WorkflowStateOptions {
     public void setProceedToStateWhenExecuteRetryExhausted(
             Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted,
             WorkflowStateOptions stateOptionsOverride) {
-        this.executeApiFailurePolicy(ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE);
+        if (proceedToStateWhenExecuteRetryExhausted != null) {
+            this.executeApiFailurePolicy(ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE);
+        }
         this.proceedToStateWhenExecuteRetryExhausted = proceedToStateWhenExecuteRetryExhausted;
         this.proceedToStateWhenExecuteRetryExhaustedStateOptions = stateOptionsOverride;
     }
@@ -329,10 +331,10 @@ public class WorkflowStateOptions {
         clone.setWaitUntilApiRetryPolicy(clone(waitUntilApiRetryPolicy));
         clone.setExecuteApiRetryPolicy(clone(executeApiRetryPolicy));
         clone.setProceedToExecuteWhenWaitUntilRetryExhausted(proceedToExecuteWhenWaitUntilRetryExhausted);
-        clone.setExecuteApiFailurePolicy(executeApiFailurePolicy);
         clone.setProceedToStateWhenExecuteRetryExhausted(
                 proceedToStateWhenExecuteRetryExhausted,
                 proceedToStateWhenExecuteRetryExhaustedStateOptions);
+        clone.setExecuteApiFailurePolicy(executeApiFailurePolicy);
 
         return clone;
     }
