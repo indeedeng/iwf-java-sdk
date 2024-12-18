@@ -39,8 +39,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
-import static io.iworkflow.core.WorkflowStateOptionsExtension.deepCopyStateOptions;
-
 public class BasicTest {
 
     @BeforeEach
@@ -253,12 +251,11 @@ public class BasicTest {
                 .searchAttributesLoadingPolicy(new PersistenceLoadingPolicy().persistenceLoadingType(PersistenceLoadingType.PARTIAL_WITH_EXCLUSIVE_LOCK)
                         .partialLoadingKeys(Collections.singletonList(StateOptionsWorkflow.DA_WAIT_UNTIL)));
 
-        final WorkflowStateOptions deepCopyOptions = deepCopyStateOptions(origOptions);
+        final WorkflowStateOptions deepCopyOptions = origOptions.clone();
         Assertions.assertEquals(origOptions, deepCopyOptions);
 
         // Verify changing a value in one object doesn't update both by reference
-        origOptions.setSearchAttributesLoadingPolicy(new PersistenceLoadingPolicy().persistenceLoadingType(
-                PersistenceLoadingType.NONE));
+        origOptions.getSearchAttributesLoadingPolicy().setPersistenceLoadingType(PersistenceLoadingType.NONE);
         Assertions.assertNotEquals(origOptions, deepCopyOptions);
     }
 }

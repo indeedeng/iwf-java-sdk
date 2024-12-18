@@ -4,7 +4,6 @@ import io.iworkflow.core.Context;
 import io.iworkflow.core.StateDecision;
 import io.iworkflow.core.WorkflowState;
 import io.iworkflow.core.WorkflowStateOptions;
-import io.iworkflow.core.WorkflowStateOptionsExtension;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
@@ -40,8 +39,8 @@ public class ProceedOnStateStartFailWorkflowState1 implements WorkflowState<Stri
 
     @Override
     public WorkflowStateOptions getStateOptions() {
-        return new WorkflowStateOptionsExtension()
-                .setProceedWhenWaitUntilRetryExhausted(true)
+        return new WorkflowStateOptions()
+                .proceedToExecuteWhenWaitUntilRetryExhausted(true)
                 .waitUntilApiRetryPolicy(new RetryPolicy().maximumAttempts(2));
     }
 }

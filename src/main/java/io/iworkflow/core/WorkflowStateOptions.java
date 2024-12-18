@@ -3,8 +3,8 @@ package io.iworkflow.core;
 import io.iworkflow.gen.models.ExecuteApiFailurePolicy;
 import io.iworkflow.gen.models.PersistenceLoadingPolicy;
 import io.iworkflow.gen.models.RetryPolicy;
-import io.iworkflow.gen.models.WaitUntilApiFailurePolicy;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class WorkflowStateOptions {
@@ -28,14 +28,13 @@ public class WorkflowStateOptions {
 
     private RetryPolicy executeApiRetryPolicy;
 
-    private WaitUntilApiFailurePolicy waitUntilApiFailurePolicy;
+    private boolean proceedToExecuteWhenWaitUntilRetryExhausted;
 
     private ExecuteApiFailurePolicy executeApiFailurePolicy;
 
-    private Class<? extends WorkflowState> executeApiFailureProceedState;
+    private Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted;
 
-    public WorkflowStateOptions() {
-    }
+    private WorkflowStateOptions proceedToStateWhenExecuteRetryExhaustedStateOptions;
 
     public WorkflowStateOptions searchAttributesLoadingPolicy(PersistenceLoadingPolicy searchAttributesLoadingPolicy) {
         setSearchAttributesLoadingPolicy(searchAttributesLoadingPolicy);
@@ -167,17 +166,17 @@ public class WorkflowStateOptions {
         this.executeApiRetryPolicy = executeApiRetryPolicy;
     }
 
-    public WorkflowStateOptions waitUntilApiFailurePolicy(WaitUntilApiFailurePolicy waitUntilApiFailurePolicy) {
-        setWaitUntilApiFailurePolicy(waitUntilApiFailurePolicy);
+    public WorkflowStateOptions proceedToExecuteWhenWaitUntilRetryExhausted(boolean proceed){
+        setProceedToExecuteWhenWaitUntilRetryExhausted(proceed);
         return this;
     }
 
-    public WaitUntilApiFailurePolicy getWaitUntilApiFailurePolicy() {
-        return waitUntilApiFailurePolicy;
+    public boolean getProceedToExecuteWhenWaitUntilRetryExhausted() {
+        return proceedToExecuteWhenWaitUntilRetryExhausted;
     }
 
-    public void setWaitUntilApiFailurePolicy(WaitUntilApiFailurePolicy waitUntilApiFailurePolicy) {
-        this.waitUntilApiFailurePolicy = waitUntilApiFailurePolicy;
+    public void setProceedToExecuteWhenWaitUntilRetryExhausted(boolean proceed) {
+        this.proceedToExecuteWhenWaitUntilRetryExhausted =  proceed;
     }
 
     public WorkflowStateOptions executeApiFailurePolicy(ExecuteApiFailurePolicy executeApiFailurePolicy) {
@@ -193,17 +192,28 @@ public class WorkflowStateOptions {
         this.executeApiFailurePolicy = executeApiFailurePolicy;
     }
 
-    public WorkflowStateOptions executeApiFailureProceedState(Class<? extends WorkflowState> executeApiFailureProceedStateOptions) {
-        setExecuteApiFailureProceedState(executeApiFailureProceedStateOptions);
+    public WorkflowStateOptions proceedToStateWhenExecuteRetryExhausted(Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted) {
+        setProceedToStateWhenExecuteRetryExhausted(proceedToStateWhenExecuteRetryExhausted);
         return this;
     }
 
-    public Class<? extends WorkflowState> getExecuteApiFailureProceedState() {
-        return executeApiFailureProceedState;
+    public Class<? extends WorkflowState> getProceedToStateWhenExecuteRetryExhausted() {
+        return proceedToStateWhenExecuteRetryExhausted;
     }
 
-    public void setExecuteApiFailureProceedState(Class<? extends WorkflowState> executeApiFailureProceedState) {
-        this.executeApiFailureProceedState = executeApiFailureProceedState;
+     public WorkflowStateOptions getProceedToStateWhenExecuteRetryExhaustedStateOptions() {
+        return proceedToStateWhenExecuteRetryExhaustedStateOptions;
+    }
+
+    public void setProceedToStateWhenExecuteRetryExhausted(Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted) {
+        setProceedToStateWhenExecuteRetryExhausted(proceedToStateWhenExecuteRetryExhausted, null);
+    }
+
+    public void setProceedToStateWhenExecuteRetryExhausted(
+            Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted,
+            WorkflowStateOptions stateOptionsOverride) {
+        this.proceedToStateWhenExecuteRetryExhausted = proceedToStateWhenExecuteRetryExhausted;
+        this.proceedToStateWhenExecuteRetryExhaustedStateOptions = stateOptionsOverride;
     }
 
     @Override
@@ -233,9 +243,10 @@ public class WorkflowStateOptions {
                 && Objects.equals(this.executeApiTimeoutSeconds, workflowStateOptions.executeApiTimeoutSeconds)
                 && Objects.equals(this.waitUntilApiRetryPolicy, workflowStateOptions.waitUntilApiRetryPolicy)
                 && Objects.equals(this.executeApiRetryPolicy, workflowStateOptions.executeApiRetryPolicy)
-                && Objects.equals(this.waitUntilApiFailurePolicy, workflowStateOptions.waitUntilApiFailurePolicy)
+                && this.proceedToExecuteWhenWaitUntilRetryExhausted == workflowStateOptions.proceedToExecuteWhenWaitUntilRetryExhausted
                 && Objects.equals(this.executeApiFailurePolicy, workflowStateOptions.executeApiFailurePolicy)
-                && Objects.equals(this.executeApiFailureProceedState, workflowStateOptions.executeApiFailureProceedState);
+                && Objects.equals(this.proceedToStateWhenExecuteRetryExhausted, workflowStateOptions.proceedToStateWhenExecuteRetryExhausted)
+                && Objects.equals(this.proceedToStateWhenExecuteRetryExhaustedStateOptions, workflowStateOptions.proceedToStateWhenExecuteRetryExhaustedStateOptions);
     }
 
     @Override
@@ -251,9 +262,10 @@ public class WorkflowStateOptions {
                 executeApiTimeoutSeconds,
                 waitUntilApiRetryPolicy,
                 executeApiRetryPolicy,
-                waitUntilApiFailurePolicy,
+                proceedToExecuteWhenWaitUntilRetryExhausted,
                 executeApiFailurePolicy,
-                executeApiFailureProceedState);
+                proceedToStateWhenExecuteRetryExhausted,
+                proceedToStateWhenExecuteRetryExhaustedStateOptions);
     }
 
     @Override
@@ -278,10 +290,13 @@ public class WorkflowStateOptions {
         sb.append("    executeApiTimeoutSeconds: ").append(toIndentedString(executeApiTimeoutSeconds)).append("\n");
         sb.append("    waitUntilApiRetryPolicy: ").append(toIndentedString(waitUntilApiRetryPolicy)).append("\n");
         sb.append("    executeApiRetryPolicy: ").append(toIndentedString(executeApiRetryPolicy)).append("\n");
-        sb.append("    waitUntilApiFailurePolicy: ").append(toIndentedString(waitUntilApiFailurePolicy)).append("\n");
+        sb.append("    proceedToExecuteWhenWaitUntilRetryExhausted: ").append(proceedToExecuteWhenWaitUntilRetryExhausted).append("\n");
         sb.append("    executeApiFailurePolicy: ").append(toIndentedString(executeApiFailurePolicy)).append("\n");
-        sb.append("    executeApiFailureProceedStateOptions: ")
-                .append(toIndentedString(executeApiFailureProceedState))
+        sb.append("    proceedToStateWhenExecuteRetryExhausted: ")
+                .append(toIndentedString(proceedToStateWhenExecuteRetryExhausted))
+                .append("\n");
+        sb.append("    proceedToStateWhenExecuteRetryExhaustedStateOptions: ")
+                .append(toIndentedString(proceedToStateWhenExecuteRetryExhaustedStateOptions))
                 .append("\n");
         sb.append("}");
         return sb.toString();
@@ -296,5 +311,59 @@ public class WorkflowStateOptions {
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
+    }
+
+    @Override
+    public WorkflowStateOptions clone() {
+        final WorkflowStateOptions clone = new WorkflowStateOptions();
+
+        clone.setSearchAttributesLoadingPolicy(clone(searchAttributesLoadingPolicy));
+        clone.setWaitUntilApiSearchAttributesLoadingPolicy(clone(waitUntilApiSearchAttributesLoadingPolicy));
+        clone.setExecuteApiDataAttributesLoadingPolicy(clone(executeApiSearchAttributesLoadingPolicy));
+        clone.setDataAttributesLoadingPolicy(clone(dataAttributesLoadingPolicy));
+        clone.setWaitUntilApiDataAttributesLoadingPolicy(clone(waitUntilApiDataAttributesLoadingPolicy));
+        clone.setExecuteApiDataAttributesLoadingPolicy(clone(executeApiDataAttributesLoadingPolicy));
+        clone.setWaitUntilApiTimeoutSeconds(waitUntilApiTimeoutSeconds);
+        clone.setExecuteApiTimeoutSeconds(executeApiTimeoutSeconds);
+        clone.setWaitUntilApiRetryPolicy(clone(waitUntilApiRetryPolicy));
+        clone.setExecuteApiRetryPolicy(clone(executeApiRetryPolicy));
+        clone.setProceedToExecuteWhenWaitUntilRetryExhausted(proceedToExecuteWhenWaitUntilRetryExhausted);
+        clone.setExecuteApiFailurePolicy(executeApiFailurePolicy);
+        clone.setProceedToStateWhenExecuteRetryExhausted(
+                proceedToStateWhenExecuteRetryExhausted,
+                proceedToStateWhenExecuteRetryExhaustedStateOptions);
+
+        return clone;
+    }
+
+    // Perform a deep copy of PersistenceLoadingPolicy
+    private PersistenceLoadingPolicy clone(PersistenceLoadingPolicy origPolicy) {
+        if (origPolicy == null) {
+            return null;
+        }
+        final PersistenceLoadingPolicy clone = new PersistenceLoadingPolicy();
+        clone.setPersistenceLoadingType(origPolicy.getPersistenceLoadingType());
+        clone.setPartialLoadingKeys(origPolicy.getPartialLoadingKeys() == null
+                ? null
+                : new ArrayList<>(origPolicy.getPartialLoadingKeys()));
+        clone.setLockingKeys(origPolicy.getLockingKeys() == null ? null : new ArrayList<>(origPolicy.getLockingKeys()));
+        clone.setUseKeyAsPrefix(origPolicy.getUseKeyAsPrefix());
+
+        return clone;
+    }
+
+    // Perform a deep copy of RetryPolicy
+    private RetryPolicy clone(RetryPolicy origPolicy) {
+        if (origPolicy == null) {
+            return null;
+        }
+        final RetryPolicy clone = new RetryPolicy();
+        clone.setInitialIntervalSeconds(origPolicy.getInitialIntervalSeconds());
+        clone.setBackoffCoefficient(origPolicy.getBackoffCoefficient());
+        clone.setMaximumIntervalSeconds(origPolicy.getMaximumIntervalSeconds());
+        clone.setMaximumAttempts(origPolicy.getMaximumAttempts());
+        clone.setMaximumAttemptsDurationSeconds(origPolicy.getMaximumAttemptsDurationSeconds());
+
+        return clone;
     }
 }

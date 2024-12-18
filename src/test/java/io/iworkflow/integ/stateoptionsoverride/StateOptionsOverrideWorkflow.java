@@ -50,7 +50,7 @@ class StateOptionsOverrideWorkflowState1 implements WorkflowState<String> {
                 StateOptionsOverrideWorkflowState2.class, output,
                 new WorkflowStateOptions()
                         .waitUntilApiRetryPolicy(new RetryPolicy().maximumAttempts(2))
-                        .waitUntilApiFailurePolicy(WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE)
+                        .proceedToExecuteWhenWaitUntilRetryExhausted(true)
         );
     }
 }
@@ -79,6 +79,6 @@ class StateOptionsOverrideWorkflowState2 implements WorkflowState<String> {
     public WorkflowStateOptions getStateOptions() {
         return new WorkflowStateOptions()
                 .waitUntilApiRetryPolicy(new RetryPolicy().maximumAttempts(1))
-                .waitUntilApiFailurePolicy(WaitUntilApiFailurePolicy.FAIL_WORKFLOW_ON_FAILURE);
+                .proceedToExecuteWhenWaitUntilRetryExhausted(false);
     }
 }
