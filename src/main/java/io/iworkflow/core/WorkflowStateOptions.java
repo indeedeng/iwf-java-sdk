@@ -7,7 +7,7 @@ import io.iworkflow.gen.models.RetryPolicy;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class WorkflowStateOptions {
+public class WorkflowStateOptions implements Cloneable {
     private PersistenceLoadingPolicy searchAttributesLoadingPolicy;
 
     private PersistenceLoadingPolicy waitUntilApiSearchAttributesLoadingPolicy;
