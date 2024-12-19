@@ -38,7 +38,7 @@ public class StateFailBasic implements WorkflowState<Integer> {
 
     @Override
     public WorkflowStateOptions getStateOptions() {
-        return new WorkflowStateOptions().executeApiRetryPolicy(
+        return new WorkflowStateOptions().setExecuteApiRetryPolicy(
                 new RetryPolicy()
                         .maximumAttempts(1)
                         .backoffCoefficient(2f)

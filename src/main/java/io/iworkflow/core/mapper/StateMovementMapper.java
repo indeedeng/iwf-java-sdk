@@ -30,10 +30,10 @@ public class StateMovementMapper {
             // Try to get the overrode stateOptions, if it's null, get the stateOptions from stateDef
             WorkflowStateOptions stateOptions;
             if (stateMovement.getStateOptionsOverride().isPresent()) {
-                // Always deep copy the state options so we don't modify the original
-                stateOptions = toIdlWorkflowStateOptions(stateMovement.getStateOptionsOverride().get());
+                stateOptions =
+                        toIdlWorkflowStateOptionsWithValidation(stateMovement.getStateOptionsOverride().get(), stateMovement.getStateId());
             } else {
-                stateOptions = validateAndGetIdlStateOptions(stateDef);
+                stateOptions = toIdlWorkflowStateOptionsWithValidation(stateDef);
             }
 
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
@@ -65,7 +65,7 @@ public class StateMovementMapper {
             // fill the state options for the proceeding state
             String proceedStateId = stateOptions.getExecuteApiFailureProceedStateId();
             final StateDef proceedStatDef = registry.getWorkflowState(workflowType, proceedStateId);
-            WorkflowStateOptions proceedStateOptions = validateAndGetIdlStateOptions(proceedStatDef);
+            WorkflowStateOptions proceedStateOptions = toIdlWorkflowStateOptionsWithValidation(proceedStatDef);
             if (proceedStateOptions != null &&
                     proceedStateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE) {
                 throw new WorkflowDefinitionException("nested failure handling is not supported. You cannot set a failure proceeding state on top of another failure proceeding state.");
@@ -83,45 +83,62 @@ public class StateMovementMapper {
         }
     }
 
-    public static WorkflowStateOptions validateAndGetIdlStateOptions(final StateDef stateDef) {
+    /**
+     * Validates if the required fields are present when the {@link WorkflowStateOptions} is configured to proceed on Execute
+     * API Failure.
+     * @param stateOptions the state options to validate.
+     * @param stateId the unique ID of the state
+     */
+    private static void validateExecuteApiFailurePolicy(WorkflowStateOptions stateOptions, String stateId) {
+        // Validate required fields if Execute failure policy is configured to proceed
+        if (stateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE) {
+            // retry policy must be set
+            if (stateOptions.getExecuteApiRetryPolicy() == null) {
+                throw new WorkflowDefinitionException("RetryPolicy must be set for the execute " + stateId);
+            }
+            final RetryPolicy policy = stateOptions.getExecuteApiRetryPolicy();
+            // either maximumAttempts or maximumAttemptsDurationSeconds must be set and greater than zero
+            if (policy.getMaximumAttempts() == null && policy.getMaximumAttemptsDurationSeconds() == null) {
+                throw new WorkflowDefinitionException(
+                        "Either maximumAttempts or maximumAttemptsDurationSeconds must be set for the execute " + stateId);
+            }
+        }
+    }
+
+    /**
+     * Validates if the required fields are present when the {@link WorkflowStateOptions} is configured to proceed on WaitUntil
+     * API Failure.
+     * @param stateOptions the state options to validate.
+     * @param stateId the unique ID of the state
+     */
+    private static void validateWaitUntilApiFailurePolicy(WorkflowStateOptions stateOptions, String stateId) {
+        // Validate required fields if Wait Until failure policy is configured to proceed
+        if (stateOptions.getWaitUntilApiFailurePolicy() == WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE) {
+            // retry policy must be set
+            if (stateOptions.getWaitUntilApiRetryPolicy() == null) {
+                throw new WorkflowDefinitionException("RetryPolicy must be set for the waitUntil " + stateId);
+            }
+            final RetryPolicy policy = stateOptions.getWaitUntilApiRetryPolicy();
+            // either maximumAttempts or maximumAttemptsDurationSeconds must be set and greater than zero
+            if (policy.getMaximumAttempts() == null && policy.getMaximumAttemptsDurationSeconds() == null) {
+                throw new WorkflowDefinitionException(
+                        "Either maximumAttempts or maximumAttemptsDurationSeconds must be set for the waitUntil " + stateId);
+            }
+        }
+    }
+
+    public static WorkflowStateOptions toIdlWorkflowStateOptionsWithValidation(final StateDef stateDef) {
         final WorkflowState state = stateDef.getWorkflowState();
         if (state.getStateOptions() == null) {
             return null;
         }
 
-        // Convert to IDL WorkflowStateOptions so we don't modify the original
-        final WorkflowStateOptions stateOptions = toIdlWorkflowStateOptions(state.getStateOptions());
-
-        // Validate required fields if Execute failure policy is configured to proceed
-        if(stateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE){
-            // retry policy must be set
-            if(stateOptions.getExecuteApiRetryPolicy() == null){
-                throw new WorkflowDefinitionException("RetryPolicy must be set for the execute "+state.getStateId());
-            }
-            final RetryPolicy policy = stateOptions.getExecuteApiRetryPolicy();
-            // either maximumAttempts or maximumAttemptsDurationSeconds must be set and greater than zero
-            if(policy.getMaximumAttempts() == null && policy.getMaximumAttemptsDurationSeconds() == null){
-                throw new WorkflowDefinitionException("Either maximumAttempts or maximumAttemptsDurationSeconds must be set for the execute "+state.getStateId());
-            }
-        }
-
-        // Validate required fields if Wait Until failure policy is configured to proceed
-        if(stateOptions.getWaitUntilApiFailurePolicy() == WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE){
-            // retry policy must be set
-            if(stateOptions.getWaitUntilApiRetryPolicy() == null){
-                throw new WorkflowDefinitionException("RetryPolicy must be set for the waitUntil "+state.getStateId());
-            }
-            final RetryPolicy policy = stateOptions.getWaitUntilApiRetryPolicy();
-            // either maximumAttempts or maximumAttemptsDurationSeconds must be set and greater than zero
-            if(policy.getMaximumAttempts() == null && policy.getMaximumAttemptsDurationSeconds() == null){
-                throw new WorkflowDefinitionException("Either maximumAttempts or maximumAttemptsDurationSeconds must be set for the waitUntil "+state.getStateId());
-            }
-        }
-
-        return stateOptions;
+        return toIdlWorkflowStateOptionsWithValidation(state.getStateOptions(), state.getStateId());
     }
 
-    public static WorkflowStateOptions toIdlWorkflowStateOptions(io.iworkflow.core.WorkflowStateOptions stateOptions) {
+    public static WorkflowStateOptions toIdlWorkflowStateOptionsWithValidation(
+            io.iworkflow.core.WorkflowStateOptions stateOptions,
+            String stateId) {
         if (stateOptions == null) {
             return null;
         }
@@ -152,8 +169,13 @@ public class StateMovementMapper {
                     .getSimpleName());
         }
         if (stateOptions.getProceedToStateWhenExecuteRetryExhaustedStateOptions() != null) {
-            idlWorkflowStateOptions.setExecuteApiFailureProceedStateOptions(toIdlWorkflowStateOptions(stateOptions.getProceedToStateWhenExecuteRetryExhaustedStateOptions()));
+            idlWorkflowStateOptions.setExecuteApiFailureProceedStateOptions(toIdlWorkflowStateOptionsWithValidation(
+                    stateOptions.getProceedToStateWhenExecuteRetryExhaustedStateOptions(),
+                    stateId));
         }
+
+        validateExecuteApiFailurePolicy(idlWorkflowStateOptions, stateId);
+        validateWaitUntilApiFailurePolicy(idlWorkflowStateOptions, stateId);
 
         return idlWorkflowStateOptions;
     }

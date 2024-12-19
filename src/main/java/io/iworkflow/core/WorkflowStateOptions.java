@@ -17,11 +17,13 @@ public class WorkflowStateOptions implements Cloneable {
     // Loading policy for search attributes, applies only to Execute API
     private PersistenceLoadingPolicy executeApiSearchAttributesLoadingPolicy;
 
-    // Loading policies for data attributes
+    // Loading policy for data attributes, applies to both Wait Until and Execute API
     private PersistenceLoadingPolicy dataAttributesLoadingPolicy;
 
+    // Loading policy for data attributes, applies only to Wait Until API
     private PersistenceLoadingPolicy waitUntilApiDataAttributesLoadingPolicy;
 
+    // Loading policy for data attributes, applies only to Execute API
     private PersistenceLoadingPolicy executeApiDataAttributesLoadingPolicy;
 
     // Wait Until API specific options
@@ -52,21 +54,12 @@ public class WorkflowStateOptions implements Cloneable {
     // The state options override to use when proceeding to the configured state after execute API retry is exhausted
     private WorkflowStateOptions proceedToStateWhenExecuteRetryExhaustedStateOptions;
 
-    public WorkflowStateOptions searchAttributesLoadingPolicy(PersistenceLoadingPolicy searchAttributesLoadingPolicy) {
-        setSearchAttributesLoadingPolicy(searchAttributesLoadingPolicy);
-        return this;
-    }
-
     public PersistenceLoadingPolicy getSearchAttributesLoadingPolicy() {
         return searchAttributesLoadingPolicy;
     }
 
-    public void setSearchAttributesLoadingPolicy(PersistenceLoadingPolicy searchAttributesLoadingPolicy) {
+    public WorkflowStateOptions setSearchAttributesLoadingPolicy(PersistenceLoadingPolicy searchAttributesLoadingPolicy) {
         this.searchAttributesLoadingPolicy = searchAttributesLoadingPolicy;
-    }
-
-    public WorkflowStateOptions waitUntilApiSearchAttributesLoadingPolicy(PersistenceLoadingPolicy waitUntilApiSearchAttributesLoadingPolicy) {
-        setWaitUntilApiSearchAttributesLoadingPolicy(waitUntilApiSearchAttributesLoadingPolicy);
         return this;
     }
 
@@ -74,12 +67,8 @@ public class WorkflowStateOptions implements Cloneable {
         return waitUntilApiSearchAttributesLoadingPolicy;
     }
 
-    public void setWaitUntilApiSearchAttributesLoadingPolicy(PersistenceLoadingPolicy waitUntilApiSearchAttributesLoadingPolicy) {
+    public WorkflowStateOptions setWaitUntilApiSearchAttributesLoadingPolicy(PersistenceLoadingPolicy waitUntilApiSearchAttributesLoadingPolicy) {
         this.waitUntilApiSearchAttributesLoadingPolicy = waitUntilApiSearchAttributesLoadingPolicy;
-    }
-
-    public WorkflowStateOptions executeApiSearchAttributesLoadingPolicy(PersistenceLoadingPolicy executeApiSearchAttributesLoadingPolicy) {
-        setExecuteApiSearchAttributesLoadingPolicy(executeApiSearchAttributesLoadingPolicy);
         return this;
     }
 
@@ -87,12 +76,8 @@ public class WorkflowStateOptions implements Cloneable {
         return executeApiSearchAttributesLoadingPolicy;
     }
 
-    public void setExecuteApiSearchAttributesLoadingPolicy(PersistenceLoadingPolicy executeApiSearchAttributesLoadingPolicy) {
+    public WorkflowStateOptions setExecuteApiSearchAttributesLoadingPolicy(PersistenceLoadingPolicy executeApiSearchAttributesLoadingPolicy) {
         this.executeApiSearchAttributesLoadingPolicy = executeApiSearchAttributesLoadingPolicy;
-    }
-
-    public WorkflowStateOptions dataAttributesLoadingPolicy(PersistenceLoadingPolicy dataAttributesLoadingPolicy) {
-        setDataAttributesLoadingPolicy(dataAttributesLoadingPolicy);
         return this;
     }
 
@@ -100,12 +85,8 @@ public class WorkflowStateOptions implements Cloneable {
         return dataAttributesLoadingPolicy;
     }
 
-    public void setDataAttributesLoadingPolicy(PersistenceLoadingPolicy dataAttributesLoadingPolicy) {
+    public WorkflowStateOptions setDataAttributesLoadingPolicy(PersistenceLoadingPolicy dataAttributesLoadingPolicy) {
         this.dataAttributesLoadingPolicy = dataAttributesLoadingPolicy;
-    }
-
-    public WorkflowStateOptions waitUntilApiDataAttributesLoadingPolicy(PersistenceLoadingPolicy waitUntilApiDataAttributesLoadingPolicy) {
-        setWaitUntilApiDataAttributesLoadingPolicy(waitUntilApiDataAttributesLoadingPolicy);
         return this;
     }
 
@@ -113,12 +94,8 @@ public class WorkflowStateOptions implements Cloneable {
         return waitUntilApiDataAttributesLoadingPolicy;
     }
 
-    public void setWaitUntilApiDataAttributesLoadingPolicy(PersistenceLoadingPolicy waitUntilApiDataAttributesLoadingPolicy) {
+    public WorkflowStateOptions setWaitUntilApiDataAttributesLoadingPolicy(PersistenceLoadingPolicy waitUntilApiDataAttributesLoadingPolicy) {
         this.waitUntilApiDataAttributesLoadingPolicy = waitUntilApiDataAttributesLoadingPolicy;
-    }
-
-    public WorkflowStateOptions executeApiDataAttributesLoadingPolicy(PersistenceLoadingPolicy executeApiDataAttributesLoadingPolicy) {
-        setExecuteApiDataAttributesLoadingPolicy(executeApiDataAttributesLoadingPolicy);
         return this;
     }
 
@@ -126,12 +103,8 @@ public class WorkflowStateOptions implements Cloneable {
         return executeApiDataAttributesLoadingPolicy;
     }
 
-    public void setExecuteApiDataAttributesLoadingPolicy(PersistenceLoadingPolicy executeApiDataAttributesLoadingPolicy) {
+    public WorkflowStateOptions setExecuteApiDataAttributesLoadingPolicy(PersistenceLoadingPolicy executeApiDataAttributesLoadingPolicy) {
         this.executeApiDataAttributesLoadingPolicy = executeApiDataAttributesLoadingPolicy;
-    }
-
-    public WorkflowStateOptions waitUntilApiTimeoutSeconds(Integer waitUntilApiTimeoutSeconds) {
-        setWaitUntilApiTimeoutSeconds(waitUntilApiTimeoutSeconds);
         return this;
     }
 
@@ -139,12 +112,8 @@ public class WorkflowStateOptions implements Cloneable {
         return waitUntilApiTimeoutSeconds;
     }
 
-    public void setWaitUntilApiTimeoutSeconds(Integer waitUntilApiTimeoutSeconds) {
+    public WorkflowStateOptions setWaitUntilApiTimeoutSeconds(Integer waitUntilApiTimeoutSeconds) {
         this.waitUntilApiTimeoutSeconds = waitUntilApiTimeoutSeconds;
-    }
-
-    public WorkflowStateOptions executeApiTimeoutSeconds(Integer executeApiTimeoutSeconds) {
-        setExecuteApiTimeoutSeconds(executeApiTimeoutSeconds);
         return this;
     }
 
@@ -152,12 +121,8 @@ public class WorkflowStateOptions implements Cloneable {
         return executeApiTimeoutSeconds;
     }
 
-    public void setExecuteApiTimeoutSeconds(Integer executeApiTimeoutSeconds) {
+    public WorkflowStateOptions setExecuteApiTimeoutSeconds(Integer executeApiTimeoutSeconds) {
         this.executeApiTimeoutSeconds = executeApiTimeoutSeconds;
-    }
-
-    public WorkflowStateOptions waitUntilApiRetryPolicy(RetryPolicy waitUntilApiRetryPolicy) {
-        setWaitUntilApiRetryPolicy(waitUntilApiRetryPolicy);
         return this;
     }
 
@@ -165,12 +130,8 @@ public class WorkflowStateOptions implements Cloneable {
         return waitUntilApiRetryPolicy;
     }
 
-    public void setWaitUntilApiRetryPolicy(RetryPolicy waitUntilApiRetryPolicy) {
+    public WorkflowStateOptions setWaitUntilApiRetryPolicy(RetryPolicy waitUntilApiRetryPolicy) {
         this.waitUntilApiRetryPolicy = waitUntilApiRetryPolicy;
-    }
-
-    public WorkflowStateOptions executeApiRetryPolicy(RetryPolicy executeApiRetryPolicy) {
-        setExecuteApiRetryPolicy(executeApiRetryPolicy);
         return this;
     }
 
@@ -178,12 +139,8 @@ public class WorkflowStateOptions implements Cloneable {
         return executeApiRetryPolicy;
     }
 
-    public void setExecuteApiRetryPolicy(RetryPolicy executeApiRetryPolicy) {
+    public WorkflowStateOptions setExecuteApiRetryPolicy(RetryPolicy executeApiRetryPolicy) {
         this.executeApiRetryPolicy = executeApiRetryPolicy;
-    }
-
-    public WorkflowStateOptions proceedToExecuteWhenWaitUntilRetryExhausted(boolean proceed){
-        setProceedToExecuteWhenWaitUntilRetryExhausted(proceed);
         return this;
     }
 
@@ -191,12 +148,8 @@ public class WorkflowStateOptions implements Cloneable {
         return proceedToExecuteWhenWaitUntilRetryExhausted;
     }
 
-    public void setProceedToExecuteWhenWaitUntilRetryExhausted(Boolean proceed) {
-        this.proceedToExecuteWhenWaitUntilRetryExhausted =  proceed;
-    }
-
-    public WorkflowStateOptions proceedToStateWhenExecuteRetryExhausted(Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted) {
-        setProceedToStateWhenExecuteRetryExhausted(proceedToStateWhenExecuteRetryExhausted);
+    public WorkflowStateOptions setProceedToExecuteWhenWaitUntilRetryExhausted(Boolean proceed) {
+        this.proceedToExecuteWhenWaitUntilRetryExhausted = proceed;
         return this;
     }
 
@@ -204,19 +157,20 @@ public class WorkflowStateOptions implements Cloneable {
         return proceedToStateWhenExecuteRetryExhausted;
     }
 
-    public void setProceedToStateWhenExecuteRetryExhausted(Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted) {
-        setProceedToStateWhenExecuteRetryExhausted(proceedToStateWhenExecuteRetryExhausted, null);
+    public WorkflowStateOptions getProceedToStateWhenExecuteRetryExhaustedStateOptions() {
+        return proceedToStateWhenExecuteRetryExhaustedStateOptions;
     }
 
-    public void setProceedToStateWhenExecuteRetryExhausted(
+    public WorkflowStateOptions setProceedToStateWhenExecuteRetryExhausted(Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted) {
+        return setProceedToStateWhenExecuteRetryExhausted(proceedToStateWhenExecuteRetryExhausted, null);
+    }
+
+    public WorkflowStateOptions setProceedToStateWhenExecuteRetryExhausted(
             Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted,
             WorkflowStateOptions stateOptionsOverride) {
         this.proceedToStateWhenExecuteRetryExhausted = proceedToStateWhenExecuteRetryExhausted;
         this.proceedToStateWhenExecuteRetryExhaustedStateOptions = stateOptionsOverride;
-    }
-
-    public WorkflowStateOptions getProceedToStateWhenExecuteRetryExhaustedStateOptions() {
-        return proceedToStateWhenExecuteRetryExhaustedStateOptions;
+        return this;
     }
 
     @Override
@@ -246,9 +200,15 @@ public class WorkflowStateOptions implements Cloneable {
                 && Objects.equals(this.executeApiTimeoutSeconds, workflowStateOptions.executeApiTimeoutSeconds)
                 && Objects.equals(this.waitUntilApiRetryPolicy, workflowStateOptions.waitUntilApiRetryPolicy)
                 && Objects.equals(this.executeApiRetryPolicy, workflowStateOptions.executeApiRetryPolicy)
-                && Objects.equals(this.proceedToExecuteWhenWaitUntilRetryExhausted, workflowStateOptions.proceedToExecuteWhenWaitUntilRetryExhausted)
-                && Objects.equals(this.proceedToStateWhenExecuteRetryExhausted, workflowStateOptions.proceedToStateWhenExecuteRetryExhausted)
-                && Objects.equals(this.proceedToStateWhenExecuteRetryExhaustedStateOptions, workflowStateOptions.proceedToStateWhenExecuteRetryExhaustedStateOptions);
+                && Objects.equals(
+                this.proceedToExecuteWhenWaitUntilRetryExhausted,
+                workflowStateOptions.proceedToExecuteWhenWaitUntilRetryExhausted)
+                && Objects.equals(
+                this.proceedToStateWhenExecuteRetryExhausted,
+                workflowStateOptions.proceedToStateWhenExecuteRetryExhausted)
+                && Objects.equals(
+                this.proceedToStateWhenExecuteRetryExhaustedStateOptions,
+                workflowStateOptions.proceedToStateWhenExecuteRetryExhaustedStateOptions);
     }
 
     @Override
@@ -291,7 +251,9 @@ public class WorkflowStateOptions implements Cloneable {
         sb.append("    executeApiTimeoutSeconds: ").append(toIndentedString(executeApiTimeoutSeconds)).append("\n");
         sb.append("    waitUntilApiRetryPolicy: ").append(toIndentedString(waitUntilApiRetryPolicy)).append("\n");
         sb.append("    executeApiRetryPolicy: ").append(toIndentedString(executeApiRetryPolicy)).append("\n");
-        sb.append("    proceedToExecuteWhenWaitUntilRetryExhausted: ").append(toIndentedString(proceedToExecuteWhenWaitUntilRetryExhausted)).append("\n");
+        sb.append("    proceedToExecuteWhenWaitUntilRetryExhausted: ")
+                .append(toIndentedString(proceedToExecuteWhenWaitUntilRetryExhausted))
+                .append("\n");
         sb.append("    proceedToStateWhenExecuteRetryExhausted: ")
                 .append(toIndentedString(proceedToStateWhenExecuteRetryExhausted))
                 .append("\n");

@@ -244,12 +244,13 @@ public class BasicTest {
 
     @Test
     public void deepCopyWorkflowStateOptionsTest() {
-        final WorkflowStateOptions origOptions =
-                new WorkflowStateOptions().executeApiRetryPolicy(new RetryPolicy().maximumAttempts(3));
-        origOptions.executeApiTimeoutSeconds(10)
-                .waitUntilApiTimeoutSeconds(8)
-                .searchAttributesLoadingPolicy(new PersistenceLoadingPolicy().persistenceLoadingType(PersistenceLoadingType.PARTIAL_WITH_EXCLUSIVE_LOCK)
-                        .partialLoadingKeys(Collections.singletonList(StateOptionsWorkflow.DA_WAIT_UNTIL)));
+        final WorkflowStateOptions origOptions = new WorkflowStateOptions();
+        origOptions.setExecuteApiRetryPolicy(new RetryPolicy().maximumAttempts(3));
+        origOptions.setExecuteApiTimeoutSeconds(10);
+        origOptions.setWaitUntilApiTimeoutSeconds(8);
+        origOptions.setSearchAttributesLoadingPolicy(new PersistenceLoadingPolicy().persistenceLoadingType(
+                        PersistenceLoadingType.PARTIAL_WITH_EXCLUSIVE_LOCK)
+                .partialLoadingKeys(Collections.singletonList(StateOptionsWorkflow.DA_WAIT_UNTIL)));
 
         final WorkflowStateOptions deepCopyOptions = origOptions.clone();
         Assertions.assertEquals(origOptions, deepCopyOptions);

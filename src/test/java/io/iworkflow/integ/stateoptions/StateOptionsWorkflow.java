@@ -107,12 +107,12 @@ class StateOptionsWorkflowState2 implements WorkflowState<Void> {
     @Override
     public WorkflowStateOptions getStateOptions() {
         return new WorkflowStateOptions()
-                .waitUntilApiDataAttributesLoadingPolicy(
+                .setWaitUntilApiDataAttributesLoadingPolicy(
                         new PersistenceLoadingPolicy()
                                 .persistenceLoadingType(PersistenceLoadingType.PARTIAL_WITH_EXCLUSIVE_LOCK)
                                 .partialLoadingKeys(Collections.singletonList(StateOptionsWorkflow.DA_WAIT_UNTIL))
                 )
-                .executeApiDataAttributesLoadingPolicy(
+                .setExecuteApiDataAttributesLoadingPolicy(
                         new PersistenceLoadingPolicy()
                                 .persistenceLoadingType(PersistenceLoadingType.PARTIAL_WITH_EXCLUSIVE_LOCK)
                                 .partialLoadingKeys(Collections.singletonList(StateOptionsWorkflow.DA_EXECUTE)));
@@ -150,7 +150,7 @@ class StateOptionsWorkflowState3 implements WorkflowState<Void> {
     @Override
     public WorkflowStateOptions getStateOptions() {
         return new WorkflowStateOptions()
-                .dataAttributesLoadingPolicy(
+                .setDataAttributesLoadingPolicy(
                         new PersistenceLoadingPolicy()
                                 .persistenceLoadingType(PersistenceLoadingType.PARTIAL_WITH_EXCLUSIVE_LOCK)
                                 .partialLoadingKeys(Collections.singletonList(StateOptionsWorkflow.DA_BOTH))

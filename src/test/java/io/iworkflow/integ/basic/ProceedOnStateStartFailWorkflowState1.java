@@ -40,7 +40,7 @@ public class ProceedOnStateStartFailWorkflowState1 implements WorkflowState<Stri
     @Override
     public WorkflowStateOptions getStateOptions() {
         return new WorkflowStateOptions()
-                .proceedToExecuteWhenWaitUntilRetryExhausted(true)
-                .waitUntilApiRetryPolicy(new RetryPolicy().maximumAttempts(2));
+                .setProceedToExecuteWhenWaitUntilRetryExhausted(true)
+                .setWaitUntilApiRetryPolicy(new RetryPolicy().maximumAttempts(2));
     }
 }

@@ -7,8 +7,8 @@ public class StateFailProceedToRecoverNoWaitUntil extends StateFailBasic {
     @Override
     public WorkflowStateOptions getStateOptions() {
         return new WorkflowStateOptions()
-                .proceedToStateWhenExecuteRetryExhausted(StateRecoverNoWaitUntil.class)
-                .executeApiRetryPolicy(
+                .setProceedToStateWhenExecuteRetryExhausted(StateRecoverNoWaitUntil.class)
+                .setExecuteApiRetryPolicy(
                         new RetryPolicy()
                                 .maximumAttempts(1)
                                 .backoffCoefficient(2f)

@@ -59,7 +59,7 @@ public class InvalidAnyCommandCombinationWorkflowState implements io.iworkflow.c
 
     @Override
     public WorkflowStateOptions getStateOptions() {
-        return new WorkflowStateOptions().executeApiRetryPolicy(
+        return new WorkflowStateOptions().setExecuteApiRetryPolicy(
                 new RetryPolicy()
                         .maximumAttempts(1)
                         .backoffCoefficient(2f)

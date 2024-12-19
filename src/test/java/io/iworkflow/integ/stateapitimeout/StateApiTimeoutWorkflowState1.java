@@ -44,8 +44,8 @@ public class StateApiTimeoutWorkflowState1 implements WorkflowState<Integer> {
     @Override
     public WorkflowStateOptions getStateOptions() {
         return new WorkflowStateOptions()
-                .executeApiTimeoutSeconds(1)
-                .executeApiRetryPolicy(
+                .setExecuteApiTimeoutSeconds(1)
+                .setExecuteApiRetryPolicy(
                         new RetryPolicy()
                                 .maximumAttempts(1)
                                 .backoffCoefficient(2f)

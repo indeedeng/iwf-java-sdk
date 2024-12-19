@@ -7,8 +7,8 @@ public class StateFailProceedToRecoverBasic extends StateFailBasic {
     @Override
     public WorkflowStateOptions getStateOptions() {
         return new WorkflowStateOptions()
-                .proceedToStateWhenExecuteRetryExhausted(StateRecoverBasic.class)
-                .executeApiRetryPolicy(
+                .setProceedToStateWhenExecuteRetryExhausted(StateRecoverBasic.class)
+                .setExecuteApiRetryPolicy(
                         new RetryPolicy()
                                 .maximumAttempts(1)
                                 .backoffCoefficient(2f)

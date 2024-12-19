@@ -13,7 +13,7 @@ import java.util.List;
 public class MixOfWithWaitUntilAndSkipWaitUntilWorkflow implements ObjectWorkflow {
 
     public static WorkflowStateOptions SHARED_STATE_OPTIONS =
-            new WorkflowStateOptions().executeApiRetryPolicy(new RetryPolicy().maximumAttempts(3));
+            new WorkflowStateOptions().setExecuteApiRetryPolicy(new RetryPolicy().maximumAttempts(3));
 
     @Override
     public List<StateDef> getWorkflowStates() {
