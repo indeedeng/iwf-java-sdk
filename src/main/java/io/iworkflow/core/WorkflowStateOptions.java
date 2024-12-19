@@ -144,8 +144,8 @@ public class WorkflowStateOptions implements Cloneable {
      * This policy is to allow proceeding to the execute API after waitUntil API exhausted all retries.
      * This is useful for some advanced use cases like SAGA pattern.
      * RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for waitUntil API.
-     * <br/>NOTE: execute API will use commandResults to check whether the waitUntil has succeeded or not.
-     * <br/>See more in <a href="https://github.com/indeedeng/iwf/wiki/WorkflowStateOptions">wiki</a>
+     * <br>NOTE: execute API will use commandResults to check whether the waitUntil has succeeded or not.
+     * <br>See more in <a href="https://github.com/indeedeng/iwf/wiki/WorkflowStateOptions">wiki</a>
      * @param proceed true to proceed to the execute API after waitUntil API exhausted all retries; false to fail.
      * @return this
      */
@@ -167,7 +167,7 @@ public class WorkflowStateOptions implements Cloneable {
      * Set the state to proceed to the specified state after the execute API exhausted all retries
      * This is useful for some advanced use cases like SAGA pattern.
      * RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for execute API.
-     * <br/>Note that the failure handling state will take the same input as the failed from state.
+     * <br>Note that the failure handling state will take the same input as the failed from state.
      * @param proceedToStateWhenExecuteRetryExhausted the state to proceed to after the execute API exhausted all retries
      * @return this
      */
@@ -180,7 +180,7 @@ public class WorkflowStateOptions implements Cloneable {
      * Set the state to proceed to the specified state after the execute API exhausted all retries
      * This is useful for some advanced use cases like SAGA pattern.
      * RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for execute API.
-     * <br/>Note that the failure handling state will take the same input as the failed from state.
+     * <br>Note that the failure handling state will take the same input as the failed from state.
      * @param proceedToStateWhenExecuteRetryExhausted the state to proceed to after the execute API exhausted all retries
      * @param stateOptionsOverride the state options override to use when proceeding to the configured state after execute
      * API retry is exhausted
