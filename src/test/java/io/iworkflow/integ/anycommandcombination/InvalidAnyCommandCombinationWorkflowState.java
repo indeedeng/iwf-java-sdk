@@ -2,6 +2,7 @@ package io.iworkflow.integ.anycommandcombination;
 
 import io.iworkflow.core.Context;
 import io.iworkflow.core.StateDecision;
+import io.iworkflow.core.WorkflowStateOptions;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.command.TimerCommand;
@@ -9,7 +10,6 @@ import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.communication.SignalCommand;
 import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.gen.models.RetryPolicy;
-import io.iworkflow.gen.models.WorkflowStateOptions;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -59,7 +59,7 @@ public class InvalidAnyCommandCombinationWorkflowState implements io.iworkflow.c
 
     @Override
     public WorkflowStateOptions getStateOptions() {
-        return new WorkflowStateOptions().executeApiRetryPolicy(
+        return new WorkflowStateOptions().setExecuteApiRetryPolicy(
                 new RetryPolicy()
                         .maximumAttempts(1)
                         .backoffCoefficient(2f)

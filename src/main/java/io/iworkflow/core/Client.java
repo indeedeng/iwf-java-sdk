@@ -4,7 +4,6 @@ import io.iworkflow.core.exceptions.LongPollTimeoutException;
 import io.iworkflow.core.exceptions.NoRunningWorkflowException;
 import io.iworkflow.core.exceptions.WorkflowAlreadyStartedException;
 import io.iworkflow.core.exceptions.WorkflowNotExistsException;
-import io.iworkflow.core.mapper.StateMovementMapper;
 import io.iworkflow.core.persistence.PersistenceOptions;
 import io.iworkflow.gen.models.ErrorSubStatus;
 import io.iworkflow.gen.models.KeyValue;
@@ -32,6 +31,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static io.iworkflow.core.WorkflowState.shouldSkipWaitUntil;
+import static io.iworkflow.core.mapper.StateMovementMapper.autoFillFailureProceedingStateOptions;
+import static io.iworkflow.core.mapper.StateMovementMapper.toIdlWorkflowStateOptionsWithValidation;
 
 public class Client {
     private final Registry registry;
@@ -172,7 +173,7 @@ public class Client {
                 throw new WorkflowDefinitionException(String.format("input cannot be assigned to the starting state, input type: %s, starting state input type: %s", input.getClass(), registeredInputType));
             }
 
-            WorkflowStateOptions stateOptions = StateMovementMapper.validateAndGetStateOptionsCopy(stateDef);
+            WorkflowStateOptions stateOptions = toIdlWorkflowStateOptionsWithValidation(stateDef);
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
                 if (stateOptions == null) {
                     stateOptions = new WorkflowStateOptions().skipWaitUntil(true);
@@ -181,7 +182,7 @@ public class Client {
                 }
             }
 
-            StateMovementMapper.autoFillFailureProceedingStateOptions(stateOptions, wfType, registry);
+            autoFillFailureProceedingStateOptions(stateOptions, wfType, registry);
 
             if (stateOptions != null) {
                 unregisterWorkflowOptions.startStateOptions(stateOptions);
