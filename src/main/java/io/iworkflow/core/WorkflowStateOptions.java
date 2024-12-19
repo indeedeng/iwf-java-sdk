@@ -36,22 +36,13 @@ public class WorkflowStateOptions implements Cloneable {
 
     private RetryPolicy executeApiRetryPolicy;
 
-    // By default, workflow would fail after waitUntil API retry exhausted.
-    //   This policy is to allow proceeding to the execute API after waitUntil API exhausted all retries.
-    //   This is useful for some advanced use cases like SAGA pattern.
-    //   RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for waitUntil API.
-    //   NOTE: execute API will use commandResults to check whether the waitUntil has succeeded or not.
-    //   See more in <a href="https://github.com/indeedeng/iwf/wiki/WorkflowStateOptions">wiki</a>
+    // To allow proceeding to the execute API after waitUntil API exhausted all retries.
     private Boolean proceedToExecuteWhenWaitUntilRetryExhausted;
 
-    // By default, workflow would fail after execute API retry exhausted.
-    //   Set the state to proceed to the specified state after the execute API exhausted all retries
-    //   This is useful for some advanced use cases like SAGA pattern.
-    //   RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for execute API.
-    //   Note that the failure handling state will take the same input as the failed from state.
+    // The state to proceed to the specified state after the execute API exhausted all retries
     private Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted;
 
-    // The state options override to use when proceeding to the configured state after execute API retry is exhausted
+    // The state options override to use when proceeding to the configured state after the execute API exhausted all retries
     private WorkflowStateOptions proceedToStateWhenExecuteRetryExhaustedStateOptions;
 
     public PersistenceLoadingPolicy getSearchAttributesLoadingPolicy() {
@@ -148,6 +139,16 @@ public class WorkflowStateOptions implements Cloneable {
         return proceedToExecuteWhenWaitUntilRetryExhausted;
     }
 
+    /**
+     * By default, workflow would fail after waitUntil API retry exhausted.
+     * This policy is to allow proceeding to the execute API after waitUntil API exhausted all retries.
+     * This is useful for some advanced use cases like SAGA pattern.
+     * RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for waitUntil API.
+     * <br/>NOTE: execute API will use commandResults to check whether the waitUntil has succeeded or not.
+     * <br/>See more in <a href="https://github.com/indeedeng/iwf/wiki/WorkflowStateOptions">wiki</a>
+     * @param proceed true to proceed to the execute API after waitUntil API exhausted all retries; false to fail.
+     * @return this
+     */
     public WorkflowStateOptions setProceedToExecuteWhenWaitUntilRetryExhausted(Boolean proceed) {
         this.proceedToExecuteWhenWaitUntilRetryExhausted = proceed;
         return this;
@@ -161,10 +162,30 @@ public class WorkflowStateOptions implements Cloneable {
         return proceedToStateWhenExecuteRetryExhaustedStateOptions;
     }
 
+    /**
+     * By default, workflow would fail after execute API retry exhausted.
+     * Set the state to proceed to the specified state after the execute API exhausted all retries
+     * This is useful for some advanced use cases like SAGA pattern.
+     * RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for execute API.
+     * <br/>Note that the failure handling state will take the same input as the failed from state.
+     * @param proceedToStateWhenExecuteRetryExhausted the state to proceed to after the execute API exhausted all retries
+     * @return this
+     */
     public WorkflowStateOptions setProceedToStateWhenExecuteRetryExhausted(Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted) {
         return setProceedToStateWhenExecuteRetryExhausted(proceedToStateWhenExecuteRetryExhausted, null);
     }
 
+    /**
+     * By default, workflow would fail after execute API retry exhausted.
+     * Set the state to proceed to the specified state after the execute API exhausted all retries
+     * This is useful for some advanced use cases like SAGA pattern.
+     * RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for execute API.
+     * <br/>Note that the failure handling state will take the same input as the failed from state.
+     * @param proceedToStateWhenExecuteRetryExhausted the state to proceed to after the execute API exhausted all retries
+     * @param stateOptionsOverride the state options override to use when proceeding to the configured state after execute
+     * API retry is exhausted
+     * @return this
+     */
     public WorkflowStateOptions setProceedToStateWhenExecuteRetryExhausted(
             Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted,
             WorkflowStateOptions stateOptionsOverride) {
