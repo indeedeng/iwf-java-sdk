@@ -5,6 +5,7 @@ import io.iworkflow.core.ObjectWorkflow;
 import io.iworkflow.core.StateDecision;
 import io.iworkflow.core.StateDef;
 import io.iworkflow.core.WorkflowState;
+import io.iworkflow.core.WorkflowStateOptions;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
@@ -13,7 +14,6 @@ import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
 import io.iworkflow.gen.models.PersistenceLoadingPolicy;
 import io.iworkflow.gen.models.PersistenceLoadingType;
-import io.iworkflow.gen.models.WorkflowStateOptions;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -107,12 +107,12 @@ class StateOptionsWorkflowState2 implements WorkflowState<Void> {
     @Override
     public WorkflowStateOptions getStateOptions() {
         return new WorkflowStateOptions()
-                .waitUntilApiDataAttributesLoadingPolicy(
+                .setWaitUntilApiDataAttributesLoadingPolicy(
                         new PersistenceLoadingPolicy()
                                 .persistenceLoadingType(PersistenceLoadingType.PARTIAL_WITH_EXCLUSIVE_LOCK)
                                 .partialLoadingKeys(Collections.singletonList(StateOptionsWorkflow.DA_WAIT_UNTIL))
                 )
-                .executeApiDataAttributesLoadingPolicy(
+                .setExecuteApiDataAttributesLoadingPolicy(
                         new PersistenceLoadingPolicy()
                                 .persistenceLoadingType(PersistenceLoadingType.PARTIAL_WITH_EXCLUSIVE_LOCK)
                                 .partialLoadingKeys(Collections.singletonList(StateOptionsWorkflow.DA_EXECUTE)));
@@ -150,7 +150,7 @@ class StateOptionsWorkflowState3 implements WorkflowState<Void> {
     @Override
     public WorkflowStateOptions getStateOptions() {
         return new WorkflowStateOptions()
-                .dataAttributesLoadingPolicy(
+                .setDataAttributesLoadingPolicy(
                         new PersistenceLoadingPolicy()
                                 .persistenceLoadingType(PersistenceLoadingType.PARTIAL_WITH_EXCLUSIVE_LOCK)
                                 .partialLoadingKeys(Collections.singletonList(StateOptionsWorkflow.DA_BOTH))
