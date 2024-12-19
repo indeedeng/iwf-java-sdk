@@ -3,13 +3,13 @@ package io.iworkflow.core.mapper;
 import io.iworkflow.core.ObjectEncoder;
 import io.iworkflow.core.Registry;
 import io.iworkflow.core.StateDef;
-import io.iworkflow.core.WorkflowStateOptions;
 import io.iworkflow.core.WorkflowDefinitionException;
 import io.iworkflow.core.WorkflowState;
 import io.iworkflow.gen.models.ExecuteApiFailurePolicy;
 import io.iworkflow.gen.models.RetryPolicy;
 import io.iworkflow.gen.models.StateMovement;
 import io.iworkflow.gen.models.WaitUntilApiFailurePolicy;
+import io.iworkflow.gen.models.WorkflowStateOptions;
 
 import static io.iworkflow.core.StateMovement.RESERVED_STATE_ID_PREFIX;
 import static io.iworkflow.core.WorkflowState.shouldSkipWaitUntil;
@@ -28,17 +28,17 @@ public class StateMovementMapper {
             }
 
             // Try to get the overrode stateOptions, if it's null, get the stateOptions from stateDef
-            io.iworkflow.gen.models.WorkflowStateOptions stateOptions;
+            WorkflowStateOptions stateOptions;
             if (stateMovement.getStateOptionsOverride().isPresent()) {
                 // Always deep copy the state options so we don't modify the original
-                stateOptions = toIdlWorkflowStateOptions(stateMovement.getStateOptionsOverride().get().clone());
+                stateOptions = toIdlWorkflowStateOptions(stateMovement.getStateOptionsOverride().get());
             } else {
                 stateOptions = validateAndGetIdlStateOptions(stateDef);
             }
 
             if (shouldSkipWaitUntil(stateDef.getWorkflowState())) {
                 if (stateOptions == null) {
-                    stateOptions = new io.iworkflow.gen.models.WorkflowStateOptions();
+                    stateOptions = new WorkflowStateOptions();
                 }
 
                 stateOptions.skipWaitUntil(true);
@@ -55,7 +55,7 @@ public class StateMovementMapper {
         return movement;
     }
 
-    public static void autoFillFailureProceedingStateOptions(io.iworkflow.gen.models.WorkflowStateOptions stateOptions, final String workflowType, final Registry registry) {
+    public static void autoFillFailureProceedingStateOptions(WorkflowStateOptions stateOptions, final String workflowType, final Registry registry) {
         if (stateOptions == null) {
             return;
         }
@@ -65,7 +65,7 @@ public class StateMovementMapper {
             // fill the state options for the proceeding state
             String proceedStateId = stateOptions.getExecuteApiFailureProceedStateId();
             final StateDef proceedStatDef = registry.getWorkflowState(workflowType, proceedStateId);
-            io.iworkflow.gen.models.WorkflowStateOptions proceedStateOptions = validateAndGetIdlStateOptions(proceedStatDef);
+            WorkflowStateOptions proceedStateOptions = validateAndGetIdlStateOptions(proceedStatDef);
             if (proceedStateOptions != null &&
                     proceedStateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE) {
                 throw new WorkflowDefinitionException("nested failure handling is not supported. You cannot set a failure proceeding state on top of another failure proceeding state.");
@@ -73,7 +73,7 @@ public class StateMovementMapper {
 
             if (shouldSkipWaitUntil(proceedStatDef.getWorkflowState())) {
                 if (proceedStateOptions == null) {
-                    proceedStateOptions = new io.iworkflow.gen.models.WorkflowStateOptions().skipWaitUntil(true);
+                    proceedStateOptions = new WorkflowStateOptions().skipWaitUntil(true);
                 } else {
                     proceedStateOptions.skipWaitUntil(true);
                 }
@@ -83,15 +83,16 @@ public class StateMovementMapper {
         }
     }
 
-    public static io.iworkflow.gen.models.WorkflowStateOptions validateAndGetIdlStateOptions(
-            final StateDef stateDef) {
+    public static WorkflowStateOptions validateAndGetIdlStateOptions(final StateDef stateDef) {
         final WorkflowState state = stateDef.getWorkflowState();
-        WorkflowStateOptions stateOptions = state.getStateOptions();
-        if (stateOptions == null){
+        if (state.getStateOptions() == null) {
             return null;
         }
-        // Always deep copy the state options so we don't modify the original
-        stateOptions = stateOptions.clone();
+
+        // Convert to IDL WorkflowStateOptions so we don't modify the original
+        final WorkflowStateOptions stateOptions = toIdlWorkflowStateOptions(state.getStateOptions());
+
+        // Validate required fields if Execute failure policy is configured to proceed
         if(stateOptions.getExecuteApiFailurePolicy() == ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE){
             // retry policy must be set
             if(stateOptions.getExecuteApiRetryPolicy() == null){
@@ -103,7 +104,9 @@ public class StateMovementMapper {
                 throw new WorkflowDefinitionException("Either maximumAttempts or maximumAttemptsDurationSeconds must be set for the execute "+state.getStateId());
             }
         }
-        if(Boolean.FALSE.equals(stateOptions.getProceedToExecuteWhenWaitUntilRetryExhausted())){
+
+        // Validate required fields if Wait Until failure policy is configured to proceed
+        if(stateOptions.getWaitUntilApiFailurePolicy() == WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE){
             // retry policy must be set
             if(stateOptions.getWaitUntilApiRetryPolicy() == null){
                 throw new WorkflowDefinitionException("RetryPolicy must be set for the waitUntil "+state.getStateId());
@@ -114,40 +117,42 @@ public class StateMovementMapper {
                 throw new WorkflowDefinitionException("Either maximumAttempts or maximumAttemptsDurationSeconds must be set for the waitUntil "+state.getStateId());
             }
         }
-        return toIdlWorkflowStateOptions(stateOptions);
+
+        return stateOptions;
     }
 
-    public static io.iworkflow.gen.models.WorkflowStateOptions toIdlWorkflowStateOptions(
-            WorkflowStateOptions workflowStateOptions) {
-        if (workflowStateOptions == null) {
+    public static WorkflowStateOptions toIdlWorkflowStateOptions(io.iworkflow.core.WorkflowStateOptions stateOptions) {
+        if (stateOptions == null) {
             return null;
         }
 
-        final io.iworkflow.gen.models.WorkflowStateOptions idlWorkflowStateOptions =
-                new io.iworkflow.gen.models.WorkflowStateOptions();
+        // Guarantee workflow state options copy is not holding references to the original by cloning object
+        stateOptions = stateOptions.clone();
 
-        idlWorkflowStateOptions.setSearchAttributesLoadingPolicy(workflowStateOptions.getSearchAttributesLoadingPolicy());
-        idlWorkflowStateOptions.setWaitUntilApiSearchAttributesLoadingPolicy(workflowStateOptions.getWaitUntilApiSearchAttributesLoadingPolicy());
-        idlWorkflowStateOptions.setExecuteApiSearchAttributesLoadingPolicy(workflowStateOptions.getExecuteApiSearchAttributesLoadingPolicy());
-        idlWorkflowStateOptions.setDataAttributesLoadingPolicy(workflowStateOptions.getDataAttributesLoadingPolicy());
-        idlWorkflowStateOptions.setWaitUntilApiDataAttributesLoadingPolicy(workflowStateOptions.getWaitUntilApiDataAttributesLoadingPolicy());
-        idlWorkflowStateOptions.setExecuteApiDataAttributesLoadingPolicy(workflowStateOptions.getExecuteApiDataAttributesLoadingPolicy());
-        idlWorkflowStateOptions.setWaitUntilApiTimeoutSeconds(workflowStateOptions.getWaitUntilApiTimeoutSeconds());
-        idlWorkflowStateOptions.setExecuteApiTimeoutSeconds(workflowStateOptions.getExecuteApiTimeoutSeconds());
-        idlWorkflowStateOptions.setWaitUntilApiRetryPolicy(workflowStateOptions.getWaitUntilApiRetryPolicy());
-        idlWorkflowStateOptions.setExecuteApiRetryPolicy(workflowStateOptions.getExecuteApiRetryPolicy());
-        if (workflowStateOptions.getProceedToExecuteWhenWaitUntilRetryExhausted() != null) {
-            idlWorkflowStateOptions.setWaitUntilApiFailurePolicy(Boolean.TRUE.equals(workflowStateOptions.getProceedToExecuteWhenWaitUntilRetryExhausted())
+        final WorkflowStateOptions idlWorkflowStateOptions = new WorkflowStateOptions();
+
+        idlWorkflowStateOptions.setSearchAttributesLoadingPolicy(stateOptions.getSearchAttributesLoadingPolicy());
+        idlWorkflowStateOptions.setWaitUntilApiSearchAttributesLoadingPolicy(stateOptions.getWaitUntilApiSearchAttributesLoadingPolicy());
+        idlWorkflowStateOptions.setExecuteApiSearchAttributesLoadingPolicy(stateOptions.getExecuteApiSearchAttributesLoadingPolicy());
+        idlWorkflowStateOptions.setDataAttributesLoadingPolicy(stateOptions.getDataAttributesLoadingPolicy());
+        idlWorkflowStateOptions.setWaitUntilApiDataAttributesLoadingPolicy(stateOptions.getWaitUntilApiDataAttributesLoadingPolicy());
+        idlWorkflowStateOptions.setExecuteApiDataAttributesLoadingPolicy(stateOptions.getExecuteApiDataAttributesLoadingPolicy());
+        idlWorkflowStateOptions.setWaitUntilApiTimeoutSeconds(stateOptions.getWaitUntilApiTimeoutSeconds());
+        idlWorkflowStateOptions.setExecuteApiTimeoutSeconds(stateOptions.getExecuteApiTimeoutSeconds());
+        idlWorkflowStateOptions.setWaitUntilApiRetryPolicy(stateOptions.getWaitUntilApiRetryPolicy());
+        idlWorkflowStateOptions.setExecuteApiRetryPolicy(stateOptions.getExecuteApiRetryPolicy());
+        if (stateOptions.getProceedToExecuteWhenWaitUntilRetryExhausted() != null) {
+            idlWorkflowStateOptions.setWaitUntilApiFailurePolicy(Boolean.TRUE.equals(stateOptions.getProceedToExecuteWhenWaitUntilRetryExhausted())
                     ? WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE
                     : WaitUntilApiFailurePolicy.FAIL_WORKFLOW_ON_FAILURE);
         }
-        idlWorkflowStateOptions.setExecuteApiFailurePolicy(workflowStateOptions.getExecuteApiFailurePolicy());
-        if (workflowStateOptions.getProceedToStateWhenExecuteRetryExhausted() != null) {
-            idlWorkflowStateOptions.setExecuteApiFailureProceedStateId(workflowStateOptions.getProceedToStateWhenExecuteRetryExhausted()
+        if (stateOptions.getProceedToStateWhenExecuteRetryExhausted() != null) {
+            idlWorkflowStateOptions.setExecuteApiFailurePolicy(ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE);
+            idlWorkflowStateOptions.setExecuteApiFailureProceedStateId(stateOptions.getProceedToStateWhenExecuteRetryExhausted()
                     .getSimpleName());
         }
-        if (workflowStateOptions.getProceedToStateWhenExecuteRetryExhaustedStateOptions() != null) {
-            idlWorkflowStateOptions.setExecuteApiFailureProceedStateOptions(toIdlWorkflowStateOptions(workflowStateOptions.getProceedToStateWhenExecuteRetryExhaustedStateOptions()));
+        if (stateOptions.getProceedToStateWhenExecuteRetryExhaustedStateOptions() != null) {
+            idlWorkflowStateOptions.setExecuteApiFailureProceedStateOptions(toIdlWorkflowStateOptions(stateOptions.getProceedToStateWhenExecuteRetryExhaustedStateOptions()));
         }
 
         return idlWorkflowStateOptions;

@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class WorkflowStateOptions implements Cloneable {
-    // Loading policies for search attributes
+    // Loading policy for search attributes, applies to both Wait Until and Execute API
     private PersistenceLoadingPolicy searchAttributesLoadingPolicy;
 
+    // Loading policy for search attributes, applies only to Wait Until API
     private PersistenceLoadingPolicy waitUntilApiSearchAttributesLoadingPolicy;
 
+    // Loading policy for search attributes, applies only to Execute API
     private PersistenceLoadingPolicy executeApiSearchAttributesLoadingPolicy;
 
     // Loading policies for data attributes
@@ -46,9 +48,6 @@ public class WorkflowStateOptions implements Cloneable {
     //   RetryPolicy is required to be set with maximumAttempts or maximumAttemptsDurationSeconds for execute API.
     //   Note that the failure handling state will take the same input as the failed from state.
     private Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted;
-
-    // Policy stating to continue or fail after execute API retry is exhausted
-    private ExecuteApiFailurePolicy executeApiFailurePolicy;
 
     // The state options override to use when proceeding to the configured state after execute API retry is exhausted
     private WorkflowStateOptions proceedToStateWhenExecuteRetryExhaustedStateOptions;
@@ -196,19 +195,6 @@ public class WorkflowStateOptions implements Cloneable {
         this.proceedToExecuteWhenWaitUntilRetryExhausted =  proceed;
     }
 
-    public WorkflowStateOptions executeApiFailurePolicy(ExecuteApiFailurePolicy executeApiFailurePolicy) {
-        setExecuteApiFailurePolicy(executeApiFailurePolicy);
-        return this;
-    }
-
-    public ExecuteApiFailurePolicy getExecuteApiFailurePolicy() {
-        return executeApiFailurePolicy;
-    }
-
-    public void setExecuteApiFailurePolicy(ExecuteApiFailurePolicy executeApiFailurePolicy) {
-        this.executeApiFailurePolicy = executeApiFailurePolicy;
-    }
-
     public WorkflowStateOptions proceedToStateWhenExecuteRetryExhausted(Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted) {
         setProceedToStateWhenExecuteRetryExhausted(proceedToStateWhenExecuteRetryExhausted);
         return this;
@@ -225,9 +211,6 @@ public class WorkflowStateOptions implements Cloneable {
     public void setProceedToStateWhenExecuteRetryExhausted(
             Class<? extends WorkflowState> proceedToStateWhenExecuteRetryExhausted,
             WorkflowStateOptions stateOptionsOverride) {
-        if (proceedToStateWhenExecuteRetryExhausted != null) {
-            this.executeApiFailurePolicy(ExecuteApiFailurePolicy.PROCEED_TO_CONFIGURED_STATE);
-        }
         this.proceedToStateWhenExecuteRetryExhausted = proceedToStateWhenExecuteRetryExhausted;
         this.proceedToStateWhenExecuteRetryExhaustedStateOptions = stateOptionsOverride;
     }
@@ -264,7 +247,6 @@ public class WorkflowStateOptions implements Cloneable {
                 && Objects.equals(this.waitUntilApiRetryPolicy, workflowStateOptions.waitUntilApiRetryPolicy)
                 && Objects.equals(this.executeApiRetryPolicy, workflowStateOptions.executeApiRetryPolicy)
                 && Objects.equals(this.proceedToExecuteWhenWaitUntilRetryExhausted, workflowStateOptions.proceedToExecuteWhenWaitUntilRetryExhausted)
-                && Objects.equals(this.executeApiFailurePolicy, workflowStateOptions.executeApiFailurePolicy)
                 && Objects.equals(this.proceedToStateWhenExecuteRetryExhausted, workflowStateOptions.proceedToStateWhenExecuteRetryExhausted)
                 && Objects.equals(this.proceedToStateWhenExecuteRetryExhaustedStateOptions, workflowStateOptions.proceedToStateWhenExecuteRetryExhaustedStateOptions);
     }
@@ -283,7 +265,6 @@ public class WorkflowStateOptions implements Cloneable {
                 waitUntilApiRetryPolicy,
                 executeApiRetryPolicy,
                 proceedToExecuteWhenWaitUntilRetryExhausted,
-                executeApiFailurePolicy,
                 proceedToStateWhenExecuteRetryExhausted,
                 proceedToStateWhenExecuteRetryExhaustedStateOptions);
     }
@@ -311,7 +292,6 @@ public class WorkflowStateOptions implements Cloneable {
         sb.append("    waitUntilApiRetryPolicy: ").append(toIndentedString(waitUntilApiRetryPolicy)).append("\n");
         sb.append("    executeApiRetryPolicy: ").append(toIndentedString(executeApiRetryPolicy)).append("\n");
         sb.append("    proceedToExecuteWhenWaitUntilRetryExhausted: ").append(toIndentedString(proceedToExecuteWhenWaitUntilRetryExhausted)).append("\n");
-        sb.append("    executeApiFailurePolicy: ").append(toIndentedString(executeApiFailurePolicy)).append("\n");
         sb.append("    proceedToStateWhenExecuteRetryExhausted: ")
                 .append(toIndentedString(proceedToStateWhenExecuteRetryExhausted))
                 .append("\n");
@@ -351,7 +331,6 @@ public class WorkflowStateOptions implements Cloneable {
         clone.setProceedToStateWhenExecuteRetryExhausted(
                 proceedToStateWhenExecuteRetryExhausted,
                 proceedToStateWhenExecuteRetryExhaustedStateOptions);
-        clone.setExecuteApiFailurePolicy(executeApiFailurePolicy);
 
         return clone;
     }
