@@ -5,13 +5,13 @@ import io.iworkflow.core.ObjectWorkflow;
 import io.iworkflow.core.StateDecision;
 import io.iworkflow.core.StateDef;
 import io.iworkflow.core.WorkflowState;
+import io.iworkflow.core.WorkflowStateOptions;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.gen.models.RetryPolicy;
 import io.iworkflow.gen.models.WaitUntilApiFailurePolicy;
-import io.iworkflow.gen.models.WorkflowStateOptions;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -50,7 +50,7 @@ class StateOptionsOverrideWorkflowState1 implements WorkflowState<String> {
                 StateOptionsOverrideWorkflowState2.class, output,
                 new WorkflowStateOptions()
                         .waitUntilApiRetryPolicy(new RetryPolicy().maximumAttempts(2))
-                        .waitUntilApiFailurePolicy(WaitUntilApiFailurePolicy.PROCEED_ON_FAILURE)
+                        .proceedToExecuteWhenWaitUntilRetryExhausted(true)
         );
     }
 }
@@ -79,6 +79,6 @@ class StateOptionsOverrideWorkflowState2 implements WorkflowState<String> {
     public WorkflowStateOptions getStateOptions() {
         return new WorkflowStateOptions()
                 .waitUntilApiRetryPolicy(new RetryPolicy().maximumAttempts(1))
-                .waitUntilApiFailurePolicy(WaitUntilApiFailurePolicy.FAIL_WORKFLOW_ON_FAILURE);
+                .proceedToExecuteWhenWaitUntilRetryExhausted(false);
     }
 }

@@ -1,7 +1,6 @@
 package io.iworkflow.core;
 
 import io.iworkflow.gen.models.WorkflowConditionalCloseType;
-import io.iworkflow.gen.models.WorkflowStateOptions;
 import org.immutables.value.Value;
 
 import java.util.ArrayList;

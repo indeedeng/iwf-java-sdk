@@ -1,14 +1,13 @@
 package io.iworkflow.integ.stateapifail;
 
-import io.iworkflow.core.WorkflowStateOptionsExtension;
+import io.iworkflow.core.WorkflowStateOptions;
 import io.iworkflow.gen.models.RetryPolicy;
-import io.iworkflow.gen.models.WorkflowStateOptions;
 
 public class StateFailProceedToRecoverBasic extends StateFailBasic {
     @Override
     public WorkflowStateOptions getStateOptions() {
-        return new WorkflowStateOptionsExtension()
-                .setProceedWhenExecuteRetryExhausted(StateRecoverBasic.class)
+        return new WorkflowStateOptions()
+                .proceedToStateWhenExecuteRetryExhausted(StateRecoverBasic.class)
                 .executeApiRetryPolicy(
                         new RetryPolicy()
                                 .maximumAttempts(1)

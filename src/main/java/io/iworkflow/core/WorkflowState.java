@@ -4,7 +4,6 @@ import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
-import io.iworkflow.gen.models.WorkflowStateOptions;
 
 import java.lang.reflect.Method;
 
@@ -92,7 +91,6 @@ public interface WorkflowState<I> {
      * -        MaxInternalSeconds:100
      * -        MaximumAttempts: 0
      * -        BackoffCoefficient: 2
-     * See {@link WorkflowStateOptionsExtension} for some helpers to build the options.
      * @return the optional options
      */
     default WorkflowStateOptions getStateOptions() {

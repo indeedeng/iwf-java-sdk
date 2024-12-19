@@ -3,12 +3,12 @@ package io.iworkflow.integ.basic;
 import io.iworkflow.core.Context;
 import io.iworkflow.core.StateDecision;
 import io.iworkflow.core.WorkflowState;
+import io.iworkflow.core.WorkflowStateOptions;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.command.TimerCommand;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
-import io.iworkflow.gen.models.WorkflowStateOptions;
 
 import java.time.Duration;
 
