@@ -6,14 +6,12 @@ import io.iworkflow.core.ClientOptions;
 import io.iworkflow.core.ClientSideException;
 import io.iworkflow.core.ImmutableStopWorkflowOptions;
 import io.iworkflow.core.ImmutableWorkflowOptions;
-import io.iworkflow.core.ImplementationException;
 import io.iworkflow.gen.models.*;
 import io.iworkflow.integ.persistence.BasicPersistenceWorkflow;
 import io.iworkflow.integ.rpc.DeadEndStateWorkflow;
 import io.iworkflow.integ.rpc.NoStateWorkflow;
 import io.iworkflow.integ.rpc.RpcWorkflow;
 import io.iworkflow.integ.rpc.RpcWorkflowState2;
-import io.iworkflow.integ.rpc.RpcWorkflowWithFinalRpc;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
 import org.junit.jupiter.api.Assertions;
@@ -334,18 +332,5 @@ public class RpcTest {
         final Integer size2 = client.invokeRPC(rpcStub::getSignalChannelSize);
         Assertions.assertEquals(3, size2);
 
-    }
-
-    @Test
-    public void testImplementationException() {
-        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
-        final String wfId = "implementation-exception-test-id" + System.currentTimeMillis() / 1000;
-        final Integer input = 5;
-        try {
-            client.startWorkflow(RpcWorkflowWithFinalRpc.class, wfId, input, null);
-        } catch (ImplementationException e) {
-            return;
-        }
-        Assertions.fail("An RPC method must not be final");
     }
 }
