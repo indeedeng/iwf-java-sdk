@@ -1,12 +1,11 @@
 package io.iworkflow.core;
 
-import com.google.common.collect.ImmutableMap;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.Map;
+import java.lang.reflect.Modifier;
 
 public final class RpcDefinitions {
     private RpcDefinitions() {
@@ -100,12 +99,20 @@ public final class RpcDefinitions {
         void execute(Context context, Communication communication);
     }
 
-    public static final String ERROR_MESSAGE = "An RPC method must be in the form of one of {@link RpcDefinitions}";
+    public static final String DEFINITION_ERROR_MESSAGE = "An RPC method must be in the form of one of {@link RpcDefinitions}";
+
+    public static final String FINAL_MODIFIER_ERROR_MESSAGE = "An RPC method must not be final";
 
     public static void validateRpcMethod(final Method method) {
         RpcMethodMetadata methodMetadata = RpcMethodMatcher.match(method);
+        final boolean isFinal = Modifier.isFinal(method.getModifiers());
+
+        if (isFinal) {
+            throw new ImplementationException(FINAL_MODIFIER_ERROR_MESSAGE);
+        }
+
         if (methodMetadata == null) {
-            throw new WorkflowDefinitionException(ERROR_MESSAGE);
+            throw new WorkflowDefinitionException(DEFINITION_ERROR_MESSAGE);
         }
     }
 }
