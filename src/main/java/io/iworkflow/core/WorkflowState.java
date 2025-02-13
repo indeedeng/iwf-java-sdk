@@ -5,6 +5,8 @@ import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
 import io.iworkflow.core.persistence.Persistence;
 
+import javax.annotation.Nullable;
+
 import java.lang.reflect.Method;
 
 public interface WorkflowState<I> {
@@ -93,6 +95,7 @@ public interface WorkflowState<I> {
      * -        BackoffCoefficient: 2
      * @return the optional options
      */
+    @Nullable
     default WorkflowStateOptions getStateOptions() {
         return null;
     }
