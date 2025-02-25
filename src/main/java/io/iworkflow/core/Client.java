@@ -20,6 +20,8 @@ import io.iworkflow.gen.models.WorkflowStateOptions;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.matcher.ElementMatchers;
+import org.objenesis.Objenesis;
+import org.objenesis.ObjenesisStd;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -802,21 +804,8 @@ public class Client {
                 .load(getClass().getClassLoader())
                 .getLoaded();
 
-        T result;
-        try {
-            if(dynamicType.getConstructors().length ==0){
-                throw new WorkflowDefinitionException("workflow must define at least a constructor");
-            }
-            final Constructor<?> constructor = dynamicType.getConstructors()[0];
-            final int parameterCount = constructor.getParameterCount();
-            final Object[] params = new Object[parameterCount];
-
-            result = (T) constructor.newInstance(params);
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        }
-
-        return result;
+        Objenesis objenesis = new ObjenesisStd();
+        return (T) objenesis.newInstance(dynamicType);
     }
 
     /**
