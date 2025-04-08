@@ -8,12 +8,11 @@ import io.iworkflow.core.WorkflowState;
 import io.iworkflow.core.command.CommandRequest;
 import io.iworkflow.core.command.CommandResults;
 import io.iworkflow.core.communication.Communication;
-import io.iworkflow.core.communication.SignalCommand;
 import io.iworkflow.core.persistence.Persistence;
 
 import java.util.Arrays;
 
-public class SetDataObjectWorkflowState1 implements WorkflowState<String> {
+public class SetDataAttributeWorkflowState1 implements WorkflowState<String> {
     public static final String STATE_ID = "setDataObject-s1";
 
     @Override
@@ -28,7 +27,7 @@ public class SetDataObjectWorkflowState1 implements WorkflowState<String> {
 
     @Override
     public CommandRequest waitUntil(Context context, String input, Persistence persistence, Communication communication) {
-        return CommandRequest.empty; // TODO fix by Katie
+        return CommandRequest.empty;
     }
 
     @Override
