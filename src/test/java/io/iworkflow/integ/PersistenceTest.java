@@ -7,7 +7,7 @@ import io.iworkflow.core.WorkflowOptions;
 import io.iworkflow.gen.models.SearchAttribute;
 import io.iworkflow.gen.models.SearchAttributeValueType;
 import io.iworkflow.integ.persistence.BasicPersistenceWorkflow;
-import io.iworkflow.integ.persistence.SetDataObjectWorkflow;
+import io.iworkflow.integ.persistence.SetDataAttributeWorkflow;
 import io.iworkflow.integ.persistence.SetSearchAttributeWorkflow;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
@@ -20,11 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_DATE_TIME;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_INT;
 import static io.iworkflow.integ.persistence.BasicPersistenceWorkflow.TEST_SEARCH_ATTRIBUTE_KEYWORD;
-import static io.iworkflow.integ.persistence.SetDataObjectWorkflow.DATA_OBJECT_KEY;
-import static io.iworkflow.integ.persistence.SetDataObjectWorkflow.DATA_OBJECT_KEY_PREFIX;
-import static io.iworkflow.integ.persistence.SetDataObjectWorkflow.DATA_OBJECT_MODEL_KEY;
+import static io.iworkflow.integ.persistence.SetDataAttributeWorkflow.DATA_OBJECT_KEY;
+import static io.iworkflow.integ.persistence.SetDataAttributeWorkflow.DATA_OBJECT_KEY_PREFIX;
+import static io.iworkflow.integ.persistence.SetDataAttributeWorkflow.DATA_OBJECT_MODEL_KEY;
 import static io.iworkflow.integ.persistence.SetSearchAttributeWorkflow.SEARCH_ATTRIBUTE_BOOL;
 import static io.iworkflow.integ.persistence.SetSearchAttributeWorkflow.SEARCH_ATTRIBUTE_DATE_TIME;
 import static io.iworkflow.integ.persistence.SetSearchAttributeWorkflow.SEARCH_ATTRIBUTE_DOUBLE;
@@ -80,16 +81,16 @@ public class PersistenceTest {
         Assertions.assertEquals(
                 "query-start-query-decide", map2.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
 
-        Map<String, Object> allDataObjects = client.getAllDataAttributes(BasicPersistenceWorkflow.class, wfId, runId);
-        Assertions.assertEquals(5, allDataObjects.size());
-        Assertions.assertEquals("query-start-query-decide", allDataObjects.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
-        Assertions.assertEquals(11L, allDataObjects.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "1"));
+        Map<String, Object> allDataAttributes = client.getAllDataAttributes(BasicPersistenceWorkflow.class, wfId, runId);
+        Assertions.assertEquals(5, allDataAttributes.size());
+        Assertions.assertEquals("query-start-query-decide", allDataAttributes.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+        Assertions.assertEquals(11L, allDataAttributes.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "1"));
 
         // test no runId
-        Map<String, Object> allDataObjects2 = client.getAllDataAttributes(BasicPersistenceWorkflow.class, wfId);
-        Assertions.assertEquals(5, allDataObjects2.size());
-        Assertions.assertEquals("query-start-query-decide", allDataObjects2.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
-        Assertions.assertEquals(11L, allDataObjects.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "1"));
+        Map<String, Object> allDataAttributes2 = client.getAllDataAttributes(BasicPersistenceWorkflow.class, wfId);
+        Assertions.assertEquals(5, allDataAttributes2.size());
+        Assertions.assertEquals("query-start-query-decide", allDataAttributes2.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_KEY));
+        Assertions.assertEquals(11L, allDataAttributes.get(BasicPersistenceWorkflow.TEST_DATA_OBJECT_PREFIX + "1"));
 
         final Map<String, Object> searchAttributes1 = client.getWorkflowSearchAttributes(BasicPersistenceWorkflow.class,
                 wfId, "", Arrays.asList(TEST_SEARCH_ATTRIBUTE_KEYWORD, TEST_SEARCH_ATTRIBUTE_INT));
@@ -106,14 +107,17 @@ public class PersistenceTest {
                 .put(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-2")
                 .build(), searchAttributes2);
 
-        // TODO fix
-        // Expected :{CustomIntField=2, CustomKeywordField=keyword-2, CustomDatetimeField=2023-04-17T21:17:49-00:00}
-        // Actual   :{CustomDatetimeField=2023-04-17T21:17:49Z, CustomIntField=2, CustomKeywordField=keyword-2}
-//        Assertions.assertEquals(ImmutableMap.builder()
-//                .put(TEST_SEARCH_ATTRIBUTE_INT, 2L)
-//                .put(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-2")
-//                .put(TEST_SEARCH_ATTRIBUTE_DATE_TIME, testDateTimeValue)
-//                .build(), searchAttributes2);
+        client.waitForWorkflowCompletion(wfId);
+
+        final Map<String, Object> finalSearchAttributes = client.getAllSearchAttributes(BasicPersistenceWorkflow.class,
+                wfId);
+
+        Assertions.assertEquals(ImmutableMap.builder()
+                .put(TEST_SEARCH_ATTRIBUTE_INT, 2L)
+                .put(TEST_SEARCH_ATTRIBUTE_KEYWORD, "keyword-2")
+                // .put(TEST_SEARCH_ATTRIBUTE_DATE_TIME, "2023-04-17T16:17:49-05:00") // This is a bug. The iwf-server always returns utc time. See https://github.com/indeedeng/iwf/issues/261
+                .put(TEST_SEARCH_ATTRIBUTE_DATE_TIME, "2023-04-17T21:17:49Z")
+                .build(), finalSearchAttributes);
     }
 
     @Test
@@ -178,39 +182,40 @@ public class PersistenceTest {
                 SEARCH_ATTRIBUTE_INT, INTEGER_VALUE_1,
                 SEARCH_ATTRIBUTE_BOOL, BOOLEAN_VALUE_1,
                 SEARCH_ATTRIBUTE_KEYWORD_ARRAY, ARRAY_STRING_VALUE_1,
-                SEARCH_ATTRIBUTE_DATE_TIME, "2024-11-13T00:00:01.731455544Z" //This is a bug. The iwf-server always returns utc time. See https://github.com/indeedeng/iwf/issues/261
+                // SEARCH_ATTRIBUTE_DATE_TIME, "2024-11-12T18:00:01.731455544-06:00" //This is a bug. The iwf-server always returns utc time. See https://github.com/indeedeng/iwf/issues/261
+                SEARCH_ATTRIBUTE_DATE_TIME, "2024-11-13T00:00:01.731455544Z"
         );
         Assertions.assertEquals(expectedSearchAttributes, returnedSearchAttributes);
     }
 
     @Test
-    public void testSetDataObjects() {
+    public void testSetDataAttributes() {
         final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
         final String wfId = "set-data-objects-test-id" + System.currentTimeMillis() / 1000;
         final String runId = client.startWorkflow(
-                SetDataObjectWorkflow.class, wfId, 10, "start");
+                SetDataAttributeWorkflow.class, wfId, 10, "start");
 
-        final String dataObjectKeyWithPrefix = DATA_OBJECT_KEY_PREFIX + "1";
-        final Map<String, Object> dataObjects = ImmutableMap.of(
+        final String dataAttributeKeyWithPrefix = DATA_OBJECT_KEY_PREFIX + "1";
+        final Map<String, Object> dataAttributes = ImmutableMap.of(
                 DATA_OBJECT_KEY, "query-start",
                 DATA_OBJECT_MODEL_KEY, new io.iworkflow.gen.models.Context(),
-                dataObjectKeyWithPrefix, 20L);
+                dataAttributeKeyWithPrefix, 20L);
 
         client.setWorkflowDataAttributes(
-                SetDataObjectWorkflow.class,
+                SetDataAttributeWorkflow.class,
                 wfId,
                 runId,
-                dataObjects);
+                dataAttributes);
 
         //Wait for workflow to complete to ensure data objects values were added
         final String result = client.waitForWorkflowCompletion(String.class, wfId);
         Assertions.assertEquals("test-result", result);
 
-        final Map<String, Object> actualDataObjects = client.getWorkflowDataAttributes(
-                SetDataObjectWorkflow.class,
+        final Map<String, Object> actualDataAttributes = client.getWorkflowDataAttributes(
+                SetDataAttributeWorkflow.class,
                 wfId,
-                Arrays.asList(DATA_OBJECT_KEY, DATA_OBJECT_MODEL_KEY, dataObjectKeyWithPrefix));
-        Assertions.assertEquals(dataObjects, actualDataObjects);
+                Arrays.asList(DATA_OBJECT_KEY, DATA_OBJECT_MODEL_KEY, dataAttributeKeyWithPrefix));
+        Assertions.assertEquals(dataAttributes, actualDataAttributes);
     }
 
 }

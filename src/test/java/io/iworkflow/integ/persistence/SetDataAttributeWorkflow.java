@@ -11,14 +11,14 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class SetDataObjectWorkflow implements ObjectWorkflow {
+public class SetDataAttributeWorkflow implements ObjectWorkflow {
     public static final String DATA_OBJECT_KEY = "data-obj-key-1";
     public static final String DATA_OBJECT_MODEL_KEY = "data-obj-1";
     public static final String DATA_OBJECT_KEY_PREFIX = "data-obj-key-prefix-";
 
     @Override
     public List<StateDef> getWorkflowStates() {
-        return Arrays.asList(StateDef.startingState(new SetDataObjectWorkflowState1()));
+        return Arrays.asList(StateDef.startingState(new SetDataAttributeWorkflowState1()));
     }
 
     @Override

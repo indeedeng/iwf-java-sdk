@@ -29,7 +29,7 @@ public class SetSearchAttributeWorkflowState1 implements WorkflowState<String> {
     @Override
     public CommandRequest waitUntil(Context context, String input, Persistence persistence, Communication communication) {
 
-        return CommandRequest.empty; // TODO fix by Katie
+        return CommandRequest.empty;
     }
 
     @Override
