@@ -51,7 +51,7 @@ public class RpcTest {
                 ImmutableWorkflowOptions.builder()
                         .workflowConfigOverride(
                                 new WorkflowConfig()
-                                        .continueAsNewThreshold(1)
+                                        .continueAsNewThreshold(2)
                         )
                         .build());
 
