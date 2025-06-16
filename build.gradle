@@ -122,6 +122,18 @@ compileJava.dependsOn tasks.openApiGenerate
 
 sourceSets.main.java.srcDirs += "$buildDir/generated/src/main/java"
 
+// Custom task to unpublish from local Maven repository
+// Usage: ./gradlew unpublishFromMavenLocal
+task unpublishFromMavenLocal(type: Delete) {
+    def groupPath = "io/iworkflow/iwf-java-sdk"
+    def version = project.version
+    def m2Repo = "${System.getProperty('user.home')}/.m2/repository"
+    delete "$m2Repo/$groupPath/$version"
+    doFirst {
+        println "Deleting $m2Repo/$groupPath/$version"
+    }
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
