@@ -67,6 +67,26 @@ See more in https://github.com/indeedeng/iwf#what-is-iwf
 
 Run the command `git submodule update --remote --merge` to update IDL to the latest commit
 
+### Local testing
+
+If you'd like to test your changes to the SDK with the workflows in the [samples](https://github.com/indeedeng/iwf-java-samples) repo, 
+use the local publishing command:
+
+1. Run:
+  ```
+  ./gradlew publishToMavenLocal -x signMavenJavaPublication
+  ```
+
+2. In the [samples](https://github.com/indeedeng/iwf-java-samples) repo, make sure your `build.gradle` depends on the same version you just published. To find which version you published, open the SDK's `build.gradle` file and look for the `version = "x.y.z"` line near the bottom of the file. Then run:
+  ```
+   ./gradlew --refresh-dependencies build
+  ```
+
+3. Once you're done, to remove the locally published version, run:
+  ```
+  ./gradlew unpublishFromMavenLocal
+  ```
+
 ### Repo structure
 * `.github/workflows/`: the GithubActions workflows
 * `iwf-idl/`: the idl submodule
