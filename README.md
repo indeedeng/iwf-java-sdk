@@ -76,10 +76,12 @@ use the local publishing command:
   ```
   ./gradlew publishToMavenLocal -x signMavenJavaPublication
   ```
-2. In the [samples](https://github.com/indeedeng/iwf-java-samples) repo, make sure your `build.gradle` depends on the same version you just published, then run:
+
+2. In the [samples](https://github.com/indeedeng/iwf-java-samples) repo, make sure your `build.gradle` depends on the same version you just published. To find which version you published, open the SDK's `build.gradle` file and look for the `version = "x.y.z"` line near the bottom of the file. Then run:
   ```
    ./gradlew --refresh-dependencies build
   ```
+
 3. Once you're done, to remove the locally published version, run:
   ```
   ./gradlew unpublishFromMavenLocal
