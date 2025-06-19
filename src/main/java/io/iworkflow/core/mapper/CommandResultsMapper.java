@@ -39,8 +39,13 @@ public class CommandResultsMapper {
                             objectEncoder))
                     .collect(Collectors.toList()));
         }
-        if(commandResults.getStateStartApiSucceeded() != null) {
-            builder.waitUntilApiSucceeded(commandResults.getStateStartApiSucceeded());
+
+        // The server will set stateWaitUntilFailed to true if the waitUntil API failed.
+        // Hence, flag inversion is needed here to indicate that the waitUntil API
+        // succeeded.
+        builder.waitUntilApiSucceeded(true);
+        if (Boolean.TRUE.equals(commandResults.getStateWaitUntilFailed())) {
+            builder.waitUntilApiSucceeded(false);
         }
         return builder.build();
     }
