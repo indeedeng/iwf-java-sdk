@@ -3,6 +3,7 @@ package io.iworkflow.integ;
 import io.iworkflow.core.Client;
 import io.iworkflow.core.ClientOptions;
 import io.iworkflow.integ.internalchannel.BasicInternalChannelWorkflow;
+import io.iworkflow.integ.internalchannel.WaitingInternalChannelWorkflow;
 import io.iworkflow.spring.TestSingletonWorkerService;
 import io.iworkflow.spring.controller.WorkflowRegistry;
 import org.junit.jupiter.api.Assertions;
@@ -27,5 +28,17 @@ public class InternalChannelTest {
                 BasicInternalChannelWorkflow.class, wfId, 10, input);
         final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(3, output);
+    }
+
+    @Test
+    public void testWaitingInternalWorkflow() throws InterruptedException {
+        final Client client = new Client(WorkflowRegistry.registry, ClientOptions.localDefault);
+        final String wfId = "waiting-internal-test-id" + System.currentTimeMillis() / 1000;
+        final Integer input = 1;
+        final String runId = client.startWorkflow(
+                WaitingInternalChannelWorkflow.class, wfId, 10, input);
+        client.publishToInternalChannelBatch(WaitingInternalChannelWorkflow.class, wfId,  "",  WaitingInternalChannelWorkflow.INTER_STATE_CHANNEL_NAME, 2, 3);
+        final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
+        Assertions.assertEquals(6, output);
     }
 }
