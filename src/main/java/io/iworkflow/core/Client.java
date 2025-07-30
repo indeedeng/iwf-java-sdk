@@ -539,7 +539,7 @@ public class Client {
      * @param workflowId        required
      * @param workflowRunId     optional, can be empty
      * @param internalChannelName required
-     * @param channelMessages       optional, can be null. messages in batch
+     * @param channelMessages       messages in batch
      * @throws NoRunningWorkflowException  if the workflow is not existing or not running
      */
     public void publishToInternalChannelBatch(
@@ -547,14 +547,14 @@ public class Client {
             final String workflowId,
             final String workflowRunId,
             final String internalChannelName,
-            final Object... channelMessages) {
+            final List<Object> channelMessages) {
         final String wfType = workflowClass.getSimpleName();
 
         checkWorkflowTypeExists(wfType);
 
         final Class<?> channelValueType = registry.getInternalChannelTypeStore(wfType).getType(internalChannelName);
 
-        List<InterStateChannelPublishing> rawMessages = new ArrayList<>(channelMessages.length);
+        List<InterStateChannelPublishing> rawMessages = new ArrayList<>(channelMessages.size());
         for (Object channelValue : channelMessages) {
             if (channelValue != null && !channelValueType.isInstance(channelValue)) {
                 throw new IllegalArgumentException(String.format("message value is not of channel type %s", channelValueType.getName()));

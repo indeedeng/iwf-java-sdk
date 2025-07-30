@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 public class InternalChannelTest {
@@ -37,7 +38,7 @@ public class InternalChannelTest {
         final Integer input = 1;
         final String runId = client.startWorkflow(
                 WaitingInternalChannelWorkflow.class, wfId, 10, input);
-        client.publishToInternalChannelBatch(WaitingInternalChannelWorkflow.class, wfId,  "",  WaitingInternalChannelWorkflow.INTER_STATE_CHANNEL_NAME, 2, 3);
+        client.publishToInternalChannelBatch(WaitingInternalChannelWorkflow.class, wfId,  runId,  WaitingInternalChannelWorkflow.INTER_STATE_CHANNEL_NAME, Arrays.asList(2, 3));
         final Integer output = client.getSimpleWorkflowResultWithWait(Integer.class, wfId);
         Assertions.assertEquals(6, output);
     }
