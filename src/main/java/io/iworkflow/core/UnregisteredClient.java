@@ -8,34 +8,7 @@ import feign.Retryer;
 import io.iworkflow.core.validator.CronScheduleValidator;
 import io.iworkflow.gen.api.ApiClient;
 import io.iworkflow.gen.api.DefaultApi;
-import io.iworkflow.gen.models.EncodedObject;
-import io.iworkflow.gen.models.KeyValue;
-import io.iworkflow.gen.models.PersistenceLoadingPolicy;
-import io.iworkflow.gen.models.SearchAttribute;
-import io.iworkflow.gen.models.SearchAttributeKeyAndType;
-import io.iworkflow.gen.models.StateCompletionOutput;
-import io.iworkflow.gen.models.WorkflowGetDataObjectsRequest;
-import io.iworkflow.gen.models.WorkflowGetDataObjectsResponse;
-import io.iworkflow.gen.models.WorkflowGetRequest;
-import io.iworkflow.gen.models.WorkflowGetResponse;
-import io.iworkflow.gen.models.WorkflowGetSearchAttributesRequest;
-import io.iworkflow.gen.models.WorkflowGetSearchAttributesResponse;
-import io.iworkflow.gen.models.WorkflowResetRequest;
-import io.iworkflow.gen.models.WorkflowResetResponse;
-import io.iworkflow.gen.models.WorkflowRpcRequest;
-import io.iworkflow.gen.models.WorkflowRpcResponse;
-import io.iworkflow.gen.models.WorkflowSearchRequest;
-import io.iworkflow.gen.models.WorkflowSearchResponse;
-import io.iworkflow.gen.models.WorkflowSetDataObjectsRequest;
-import io.iworkflow.gen.models.WorkflowSetSearchAttributesRequest;
-import io.iworkflow.gen.models.WorkflowSignalRequest;
-import io.iworkflow.gen.models.WorkflowSkipTimerRequest;
-import io.iworkflow.gen.models.WorkflowStartOptions;
-import io.iworkflow.gen.models.WorkflowStartRequest;
-import io.iworkflow.gen.models.WorkflowStartResponse;
-import io.iworkflow.gen.models.WorkflowStatus;
-import io.iworkflow.gen.models.WorkflowStopRequest;
-import io.iworkflow.gen.models.WorkflowWaitForStateCompletionRequest;
+import io.iworkflow.gen.models.*;
 
 import java.util.List;
 import java.util.Map;
@@ -444,6 +417,23 @@ public class UnregisteredClient {
                     .workflowRunId(workflowRunId)
                     .signalChannelName(signalChannelName)
                     .signalValue(clientOptions.getObjectEncoder().encode(signalValue)));
+        } catch (FeignException.FeignClientException exp) {
+            throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
+        }
+    }
+
+    public void publishToInternalChannel(
+            final String workflowId,
+            final String workflowRunId,
+            final List<InterStateChannelPublishing> messages){
+
+        try {
+            defaultApi.apiV1WorkflowPublishToInternalChannelPost(
+                    new PublishToInternalChannelRequest()
+                            .messages(messages)
+                            .workflowId(workflowId)
+                            .workflowRunId(workflowRunId)
+            );
         } catch (FeignException.FeignClientException exp) {
             throw IwfHttpException.fromFeignException(clientOptions.getObjectEncoder(), exp);
         }

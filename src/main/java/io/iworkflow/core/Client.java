@@ -5,17 +5,7 @@ import io.iworkflow.core.exceptions.NoRunningWorkflowException;
 import io.iworkflow.core.exceptions.WorkflowAlreadyStartedException;
 import io.iworkflow.core.exceptions.WorkflowNotExistsException;
 import io.iworkflow.core.persistence.PersistenceOptions;
-import io.iworkflow.gen.models.ErrorSubStatus;
-import io.iworkflow.gen.models.KeyValue;
-import io.iworkflow.gen.models.SearchAttribute;
-import io.iworkflow.gen.models.SearchAttributeKeyAndType;
-import io.iworkflow.gen.models.SearchAttributeValueType;
-import io.iworkflow.gen.models.StateCompletionOutput;
-import io.iworkflow.gen.models.WorkflowGetDataObjectsResponse;
-import io.iworkflow.gen.models.WorkflowGetResponse;
-import io.iworkflow.gen.models.WorkflowGetSearchAttributesResponse;
-import io.iworkflow.gen.models.WorkflowSearchRequest;
-import io.iworkflow.gen.models.WorkflowSearchResponse;
+import io.iworkflow.gen.models.*;
 import io.iworkflow.gen.models.WorkflowStateOptions;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodDelegation;
@@ -25,11 +15,7 @@ import org.objenesis.ObjenesisStd;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.iworkflow.core.WorkflowState.shouldSkipWaitUntil;
@@ -503,6 +489,94 @@ public class Client {
             final String signalChannelName,
             final Object signalValue) {
         signalWorkflow(workflowClass, workflowId, "", signalChannelName, signalValue);
+    }
+
+    /**
+     * Send a single empty message to internalChannel
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @param internalChannelName required
+     * @throws NoRunningWorkflowException  if the workflow is not existing or not running
+     */
+    public void publishToInternalChannel(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            final String internalChannelName) {
+        publishToInternalChannel(workflowClass, workflowId, "", internalChannelName, null);
+    }
+
+    /**
+     * Send a single message to internalChannel
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @param internalChannelName required
+     * @param channelMessage       optional, can be null.
+     * @throws NoRunningWorkflowException  if the workflow is not existing or not running
+     */
+    public void publishToInternalChannel(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            final String internalChannelName,
+            final Object channelMessage) {
+        publishToInternalChannel(workflowClass, workflowId, "", internalChannelName, channelMessage);
+    }
+
+    /**
+     * Send a single message to internalChannel
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @param workflowRunId     optional, can be empty
+     * @param internalChannelName required
+     * @param channelMessage       optional, can be null.
+     * @throws NoRunningWorkflowException  if the workflow is not existing or not running
+     */
+    public void publishToInternalChannel(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId,
+            final String internalChannelName,
+            final Object channelMessage) {
+        publishToInternalChannelBatch(workflowClass, workflowId, workflowRunId, internalChannelName, Arrays.asList(channelMessage));
+    }
+
+    /**
+     * Send a batch of messages to internalChannel
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @param workflowRunId     optional, can be empty
+     * @param internalChannelName required
+     * @param channelMessages       messages in batch
+     * @throws NoRunningWorkflowException  if the workflow is not existing or not running
+     */
+    public void publishToInternalChannelBatch(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            final String workflowRunId,
+            final String internalChannelName,
+            final List<Object> channelMessages) {
+        final String wfType = workflowClass.getSimpleName();
+
+        checkWorkflowTypeExists(wfType);
+
+        final Class<?> channelValueType = registry.getInternalChannelTypeStore(wfType).getType(internalChannelName);
+
+        List<InterStateChannelPublishing> rawMessages = new ArrayList<>(channelMessages.size());
+        for (Object channelValue : channelMessages) {
+            if (channelValue != null && !channelValueType.isInstance(channelValue)) {
+                throw new IllegalArgumentException(String.format("message value is not of channel type %s", channelValueType.getName()));
+            }
+            rawMessages.add(
+                    new InterStateChannelPublishing()
+                            .channelName(internalChannelName)
+                            .value(clientOptions.getObjectEncoder().encode(channelValue))
+            );
+        }
+
+        unregisteredClient.publishToInternalChannel(workflowId, workflowRunId, rawMessages);
     }
 
     /**
