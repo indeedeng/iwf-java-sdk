@@ -15,11 +15,7 @@ import org.objenesis.ObjenesisStd;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.iworkflow.core.WorkflowState.shouldSkipWaitUntil;
@@ -495,6 +491,20 @@ public class Client {
         signalWorkflow(workflowClass, workflowId, "", signalChannelName, signalValue);
     }
 
+    /**
+     * Send a single empty message to internalChannel
+     *
+     * @param workflowClass     required
+     * @param workflowId        required
+     * @param internalChannelName required
+     * @throws NoRunningWorkflowException  if the workflow is not existing or not running
+     */
+    public void publishToInternalChannel(
+            final Class<? extends ObjectWorkflow> workflowClass,
+            final String workflowId,
+            final String internalChannelName) {
+        publishToInternalChannel(workflowClass, workflowId, "", internalChannelName, null);
+    }
 
     /**
      * Send a single message to internalChannel
@@ -529,7 +539,7 @@ public class Client {
             final String workflowRunId,
             final String internalChannelName,
             final Object channelMessage) {
-        publishToInternalChannelBatch(workflowClass, workflowId, workflowRunId, internalChannelName, channelMessage);
+        publishToInternalChannelBatch(workflowClass, workflowId, workflowRunId, internalChannelName, Arrays.asList(channelMessage));
     }
 
     /**
