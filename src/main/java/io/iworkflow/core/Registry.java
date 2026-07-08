@@ -266,8 +266,8 @@ public class Registry {
     }
 
     /**
-     * @return the data-attribute-key -> DB sync mapping for the workflow type, or an empty map when
-     * the workflow has no DB-synced data attributes.
+     * @return the (data attribute key to DB sync mapping) map for the workflow type, or an empty map
+     * when the workflow has no DB-synced data attributes.
      */
     public Map<String, DbAttributeSync> getDbAttributeSyncs(final String workflowType) {
         return dbAttributeSyncStore.getOrDefault(workflowType, Collections.emptyMap());
