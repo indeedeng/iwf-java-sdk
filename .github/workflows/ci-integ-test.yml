@@ -20,6 +20,15 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.5
+      - name: "Wait for integ Postgres to be ready"
+        run: |
+          for i in $(seq 1 30); do
+            if docker exec iwf-integ-postgres pg_isready -U iwf -d iwf_integ; then
+              echo "postgres is ready"; exit 0
+            fi
+            echo "waiting for postgres... ($i)"; sleep 2
+          done
+          echo "postgres did not become ready in time" >&2; exit 1
       - run: git submodule update --init --recursive && sleep 30 && gradle build
       - name: Dump docker logs
         if: always()
