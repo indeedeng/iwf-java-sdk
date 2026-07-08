@@ -1,0 +1,68 @@
+src/test/java/io/iworkflow/integ/dbsync/DbSyncWorkflow.java
+  s_45558f5d010462::t_8bcfcdff44e637 30
+  s_45558f5d010462::t_9690d0d3d83023 1-29,31-62
+src/main/java/io/iworkflow/core/persistence/DbAttributeSync.java
+  s_45558f5d010462::t_5c44ac68c017da 1-81
+src/main/java/io/iworkflow/core/Registry.java
+  s_45558f5d010462::t_4b19d2a6d7332b 6,14
+  s_45558f5d010462::t_1aa9404a5c058b 32-33
+  s_45558f5d010462::t_1aa4bd58315456 160-170
+  s_45558f5d010462::t_100c79b28377fb 268-275
+.github/workflows/ci-integ-test.yml
+  s_45558f5d010462::t_70a2737be49f12 23-31
+src/test/java/io/iworkflow/integ/dbsync/DbSyncWorkflowState1.java
+  s_45558f5d010462::t_f72a13d895451a 1-37
+script/postgres-init/iwf-integ-init.sql
+  s_45558f5d010462::t_e1648e79d12793 1-14
+build.gradle
+  s_45558f5d010462::t_498b58f0897fd5 78-81
+src/main/java/io/iworkflow/core/WorkerService.java
+  s_45558f5d010462::t_92ca87c83bedb5 9-11,13
+  s_45558f5d010462::t_3e80cff0d9fbf8 46-52
+  s_45558f5d010462::t_ec00097679ed05 176-183
+  s_45558f5d010462::t_5cee4a7f55aa2e 250-258
+  s_45558f5d010462::t_394445d29b2253 296-320,322,324-325
+  s_45558f5d010462::t_7480fd7194e0eb 352-436
+README.md
+  s_45558f5d010462::t_920398ed7cc098 56-60
+src/test/java/io/iworkflow/integ/DbSyncTest.java
+  s_45558f5d010462::t_62730d16248174 1-5,7-68,80-81,83-87,89-98
+  s_45558f5d010462::t_8944ee6a47da03 88
+  s_45558f5d010462::t_c42f8b3261b842 69-79,82
+  s_45558f5d010462::t_dc84da21a1f612 6
+src/main/java/io/iworkflow/core/Client.java
+  s_45558f5d010462::t_a903029a5447fb 178-185
+script/docker-compose.yml
+  s_45558f5d010462::t_78d78d1f6d8c66 77-78
+  s_45558f5d010462::t_879c8e5747b76c 69-76,79-82
+src/main/java/io/iworkflow/core/db/DbSyncStatePayload.java
+  s_45558f5d010462::t_e61ea0c24d4ec6 1-45
+docs/data-attribute-db-sync-overview.md
+  s_45558f5d010462::t_1eb336902c6232 1-36
+docs/data-attribute-db-sync.md
+  s_45558f5d010462::t_30256993ac028b 1-164
+src/main/java/io/iworkflow/core/persistence/DataAttributeDef.java
+  s_45558f5d010462::t_3c38ffa8498c3e 37-55
+  s_45558f5d010462::t_b02e1bf2cd1889 5-6,12-18,36
+  s_45558f5d010462::t_b8059752b45ce6 19
+src/main/java/io/iworkflow/core/persistence/CellLocation.java
+  s_45558f5d010462::t_fac573ec7345bd 1-32
+src/main/java/io/iworkflow/core/db/PostgresDataAttributeSyncer.java
+  s_45558f5d010462::t_cf0a4c3a06ab08 1-121
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6e65d84957d10e47fb5f6b4e6de264a70c132746",
+  "prompts": {},
+  "sessions": {
+    "s_45558f5d010462": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "36125b31-be25-4953-a7e7-744e926f6dfd",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Quanzheng Long <long@langchain.dev>"
+    }
+  }
+}
