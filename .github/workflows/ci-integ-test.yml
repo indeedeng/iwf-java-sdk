@@ -29,7 +29,21 @@ jobs:
             echo "waiting for postgres... ($i)"; sleep 2
           done
           echo "postgres did not become ready in time" >&2; exit 1
-      - run: git submodule update --init --recursive && sleep 30 && gradle build
+      - name: "Wait for iWF server to be ready"
+        run: |
+          # actively wait until the iWF server serves (it depends on Temporal + Elasticsearch being up),
+          # instead of relying on a fixed sleep which is too short for the full stack to start.
+          for i in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:8801/api/v1/workflow/start || echo 000)
+            if [ "$code" = "400" ] || [ "$code" = "200" ]; then
+              echo "iwf-server is ready (http $code)"; exit 0
+            fi
+            echo "waiting for iwf-server... ($i, http $code)"; sleep 3
+          done
+          echo "iwf-server did not become ready in time" >&2
+          docker logs iwf-server 2>&1 | tail -50 || true
+          exit 1
+      - run: git submodule update --init --recursive && gradle build
       - name: Dump docker logs
         if: always()
         uses: jwalton/gh-docker-logs@v2
