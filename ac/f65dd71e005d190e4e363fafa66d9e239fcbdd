@@ -1,0 +1,19 @@
+src/main/java/io/iworkflow/core/Registry.java
+  s_45558f5d010462::t_23756901770708 269-270
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "acf65dd71e005d190e4e363fafa66d9e239fcbdd",
+  "prompts": {},
+  "sessions": {
+    "s_45558f5d010462": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "36125b31-be25-4953-a7e7-744e926f6dfd",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Quanzheng Long <long@langchain.dev>"
+    }
+  }
+}
