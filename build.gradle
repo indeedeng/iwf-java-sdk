@@ -75,6 +75,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "javax.validation:validation-api:2.0.1.Final"
 
+    // Postgres JDBC driver for the data-attribute DB-sync integration test (test-only; the core SDK
+    // stays driver-agnostic and depends only on javax.sql.DataSource).
+    testImplementation 'org.postgresql:postgresql:42.7.4'
+
 
     // immutable
     compileOnly 'org.immutables:value:2.9.2'

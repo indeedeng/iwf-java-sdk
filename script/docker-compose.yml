@@ -66,6 +66,20 @@ services:
     volumes:
      - ./docker-compose-init.sh:/etc/temporal/init.sh
     entrypoint: sh -c "/etc/temporal/init.sh"
+  iwf-integ-postgres:
+    container_name: iwf-integ-postgres
+    image: postgres:${POSTGRESQL_VERSION}
+    environment:
+      POSTGRES_DB: iwf_integ
+      POSTGRES_USER: iwf
+      POSTGRES_PASSWORD: iwf
+    ports:
+      # host port 5455 (5432 is often occupied by other local Postgres containers); container is 5432
+      - 5455:5432
+    volumes:
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    networks:
+      - temporal-network
   iwf-server:
     container_name: iwf-server
     image: iworkflowio/iwf-server:latest #NOTE: you can change to version tag like v1.0.0-RC6

@@ -2,10 +2,20 @@ package io.iworkflow.core.persistence;
 
 import org.immutables.value.Value;
 
+import javax.annotation.Nullable;
+
 @Value.Immutable
 public abstract class DataAttributeDef implements PersistenceFieldDef {
     public abstract Class getDataAttributeType();
     public abstract Boolean isPrefix();
+
+    /**
+     * @return optional configuration to automatically mirror this data attribute to a cell of a
+     * user-owned Postgres table (load on workflow start, sync on execute-mutation). Null when the
+     * data attribute is not DB-synced. Not supported together with prefix data attributes.
+     */
+    @Nullable
+    public abstract DbAttributeSync getDbSync();
 
     /**
      * iWF will verify if the key has been registered for the data attribute created using this method,
@@ -20,6 +30,26 @@ public abstract class DataAttributeDef implements PersistenceFieldDef {
                 .key(key)
                 .dataAttributeType(dataType)
                 .isPrefix(false)
+                .build();
+    }
+
+    /**
+     * Creates a data attribute that is automatically mirrored to a cell of a user-owned Postgres table:
+     * the value is loaded from the cell when the workflow starts, and written back to the cell whenever
+     * the data attribute is mutated in a state's execute method. The iWF data attribute remains the
+     * source of truth; the database cell is a mirror.
+     *
+     * @param dataType required.
+     * @param key      required. The unique key.
+     * @param dbSync   required. The table/column mapping and DataSource. See {@link DbAttributeSync}.
+     * @return a data attribute definition with DB sync enabled
+     */
+    public static DataAttributeDef create(final Class dataType, final String key, final DbAttributeSync dbSync) {
+        return ImmutableDataAttributeDef.builder()
+                .key(key)
+                .dataAttributeType(dataType)
+                .isPrefix(false)
+                .dbSync(dbSync)
                 .build();
     }
 

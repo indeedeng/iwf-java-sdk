@@ -3,6 +3,7 @@ package io.iworkflow.core;
 import io.iworkflow.core.communication.InternalChannelDef;
 import io.iworkflow.core.communication.SignalChannelDef;
 import io.iworkflow.core.persistence.DataAttributeDef;
+import io.iworkflow.core.persistence.DbAttributeSync;
 import io.iworkflow.core.persistence.PersistenceFieldDef;
 import io.iworkflow.core.persistence.PersistenceOptions;
 import io.iworkflow.core.persistence.SearchAttributeDef;
@@ -10,6 +11,7 @@ import io.iworkflow.gen.models.SearchAttributeValueType;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,8 @@ public class Registry {
     private final Map<String, TypeStore> signalTypeStore = new HashMap<>();
     private final Map<String, TypeStore> internalChannelTypeStore = new HashMap<>();
     private final Map<String, TypeStore> dataAttributeTypeStore = new HashMap<>();
+    // (workflow type) -> (data attribute key -> DB sync mapping)
+    private final Map<String, Map<String, DbAttributeSync>> dbAttributeSyncStore = new HashMap<>();
 
     private final Map<String, Map<String, SearchAttributeValueType>> searchAttributeTypeStore = new HashMap<>();
 
@@ -153,6 +157,17 @@ public class Registry {
 
         for (final DataAttributeDef dataAttributeField : fields) {
             typeStore.addToStore(dataAttributeField);
+
+            final DbAttributeSync dbSync = dataAttributeField.getDbSync();
+            if (dbSync != null) {
+                if (Boolean.TRUE.equals(dataAttributeField.isPrefix())) {
+                    throw new WorkflowDefinitionException(
+                            "DB sync is not supported for prefix data attributes: " + dataAttributeField.getKey());
+                }
+                dbAttributeSyncStore
+                        .computeIfAbsent(workflowType, s -> new HashMap<>())
+                        .put(dataAttributeField.getKey(), dbSync);
+            }
         }
     }
 
@@ -248,6 +263,14 @@ public class Registry {
 
     public TypeStore getDataAttributeTypeStore(final String workflowType) {
         return dataAttributeTypeStore.get(workflowType);
+    }
+
+    /**
+     * @return the (data attribute key to DB sync mapping) map for the workflow type, or an empty map
+     * when the workflow has no DB-synced data attributes.
+     */
+    public Map<String, DbAttributeSync> getDbAttributeSyncs(final String workflowType) {
+        return dbAttributeSyncStore.getOrDefault(workflowType, Collections.emptyMap());
     }
 
     public Map<String, SearchAttributeValueType> getSearchAttributeKeyToTypeMap(final String workflowType) {

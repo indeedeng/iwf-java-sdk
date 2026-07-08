@@ -53,6 +53,11 @@ A workflow can contain any number of WorkflowStates.
 
 See more in https://github.com/indeedeng/iwf#what-is-iwf
 
+## Features
+
+* [Data Attribute → Postgres sync](./docs/data-attribute-db-sync-overview.md) — automatically mirror a
+  data attribute to a cell of a user-owned Postgres table (load on start, sync on mutation).
+
 ## How to build & run
 
 ### Using IntelliJ

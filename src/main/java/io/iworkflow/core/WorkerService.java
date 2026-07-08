@@ -6,7 +6,11 @@ import io.iworkflow.core.communication.InternalChannelCommand;
 import io.iworkflow.core.mapper.CommandRequestMapper;
 import io.iworkflow.core.mapper.CommandResultsMapper;
 import io.iworkflow.core.mapper.StateDecisionMapper;
+import io.iworkflow.core.db.DbSyncStatePayload;
+import io.iworkflow.core.db.PostgresDataAttributeSyncer;
+import io.iworkflow.core.persistence.CellLocation;
 import io.iworkflow.core.persistence.DataAttributesRWImpl;
+import io.iworkflow.core.persistence.DbAttributeSync;
 import io.iworkflow.core.persistence.Persistence;
 import io.iworkflow.core.persistence.PersistenceImpl;
 import io.iworkflow.core.persistence.SearchAttributeRWImpl;
@@ -38,6 +42,13 @@ public class WorkerService {
     public static final String WORKFLOW_STATE_EXECUTE_API_PATH = "/api/v1/workflowState/decide";
 
     public static final String WORKFLOW_WORKER_RPC_API_PATH = "/api/v1/workflowWorker/rpc";
+
+    // Reserved stateIds for the data-attribute DB-sync system states. These are handled specially in
+    // this worker and are NOT registered in the Registry. They deliberately do not use the server-
+    // interpreted "_SYS_" prefix, and movements targeting them are always built directly in generated
+    // form (never routed through StateMovementMapper), so they need no registry validation.
+    public static final String LOAD_DATA_ATTRIBUTES_FROM_DB_STATE_ID = "_iwf_LoadDataAttributesFromDbState";
+    public static final String SYNC_DATA_ATTRIBUTES_TO_DB_STATE_ID = "_iwf_SyncDataAttributesToDbState";
 
     private final Registry registry;
 
@@ -162,6 +173,14 @@ public class WorkerService {
     }
 
     public WorkflowStateWaitUntilResponse handleWorkflowStateWaitUntil(final WorkflowStateWaitUntilRequest req) {
+        // The DB-sync system states skip waitUntil (they set skipWaitUntil=true). This is a defensive
+        // guard: they are not registered, so the registry lookup below would otherwise throw.
+        if (LOAD_DATA_ATTRIBUTES_FROM_DB_STATE_ID.equals(req.getWorkflowStateId())
+                || SYNC_DATA_ATTRIBUTES_TO_DB_STATE_ID.equals(req.getWorkflowStateId())) {
+            return new WorkflowStateWaitUntilResponse()
+                    .commandRequest(CommandRequestMapper.toGenerated(CommandRequest.empty));
+        }
+
         StateDef state = registry.getWorkflowState(req.getWorkflowType(), req.getWorkflowStateId());
         final EncodedObject stateInput = req.getStateInput();
         final Object input = workerOptions.getObjectEncoder().decode(stateInput, state.getWorkflowState().getInputType());
@@ -228,6 +247,15 @@ public class WorkerService {
     }
 
     public WorkflowStateExecuteResponse handleWorkflowStateExecute(final WorkflowStateExecuteRequest req) {
+        // The DB-sync system states are handled specially and are not registered in the Registry, so
+        // they must be intercepted before the registry lookup below (which would otherwise throw).
+        if (LOAD_DATA_ATTRIBUTES_FROM_DB_STATE_ID.equals(req.getWorkflowStateId())) {
+            return handleLoadDataAttributesFromDb(req);
+        }
+        if (SYNC_DATA_ATTRIBUTES_TO_DB_STATE_ID.equals(req.getWorkflowStateId())) {
+            return handleSyncDataAttributesToDb(req);
+        }
+
         StateDef state = registry.getWorkflowState(req.getWorkflowType(), req.getWorkflowStateId());
         final Object input;
         final EncodedObject stateInput = req.getStateInput();
@@ -265,11 +293,36 @@ public class WorkerService {
             throw new InvalidStateDecisionException("State decision returned by execute method cannot be null or empty");
         }
 
-        final WorkflowStateExecuteResponse response = new WorkflowStateExecuteResponse()
-                .stateDecision(StateDecisionMapper.toGenerated(stateDecision, req.getWorkflowType(), registry, workerOptions.getObjectEncoder()));
+        final List<KeyValue> toReturnToServer = dataObjectsRW.getToReturnToServer();
 
-        if (dataObjectsRW.getToReturnToServer().size() > 0) {
-            response.upsertDataObjects(dataObjectsRW.getToReturnToServer());
+        // If this state mutated any DB-synced data attribute, reroute the decision through the sync
+        // system state (carrying the captured original decision), so the DB write happens after the
+        // iWF server has persisted the mutations. See DbSyncStatePayload.
+        final Map<String, DbAttributeSync> dbSyncs = registry.getDbAttributeSyncs(req.getWorkflowType());
+        final List<String> mutatedMappedKeys = toReturnToServer.stream()
+                .map(KeyValue::getKey)
+                .filter(dbSyncs::containsKey)
+                .collect(Collectors.toList());
+
+        final io.iworkflow.gen.models.StateDecision generatedDecision;
+        if (mutatedMappedKeys.isEmpty()) {
+            generatedDecision = StateDecisionMapper.toGenerated(stateDecision, req.getWorkflowType(), registry, workerOptions.getObjectEncoder());
+        } else {
+            final io.iworkflow.gen.models.StateDecision original =
+                    StateDecisionMapper.toGenerated(stateDecision, req.getWorkflowType(), registry, workerOptions.getObjectEncoder());
+            final DbSyncStatePayload payload = new DbSyncStatePayload(original, mutatedMappedKeys);
+            generatedDecision = new io.iworkflow.gen.models.StateDecision()
+                    .addNextStatesItem(new io.iworkflow.gen.models.StateMovement()
+                            .stateId(SYNC_DATA_ATTRIBUTES_TO_DB_STATE_ID)
+                            .stateInput(workerOptions.getObjectEncoder().encode(payload))
+                            .stateOptions(new io.iworkflow.gen.models.WorkflowStateOptions().skipWaitUntil(true)));
+        }
+
+        final WorkflowStateExecuteResponse response = new WorkflowStateExecuteResponse()
+                .stateDecision(generatedDecision);
+
+        if (toReturnToServer.size() > 0) {
+            response.upsertDataObjects(toReturnToServer);
         }
         if (stateExeLocals.getUpsertStateExecutionLocalAttributes().size() > 0) {
             response.upsertStateLocals(stateExeLocals.getUpsertStateExecutionLocalAttributes());
@@ -294,6 +347,91 @@ public class WorkerService {
         }
 
         return response;
+    }
+
+    /**
+     * Handles the (unregistered, worker-only) load system state that runs as the workflow's first state
+     * when the workflow has DB-synced data attributes. It loads each mapped data attribute from its
+     * Postgres cell, then transitions to the real starting state, passing the original start input through.
+     */
+    private WorkflowStateExecuteResponse handleLoadDataAttributesFromDb(final WorkflowStateExecuteRequest req) {
+        final String workflowType = req.getWorkflowType();
+        final ObjectEncoder encoder = workerOptions.getObjectEncoder();
+
+        final DataAttributesRWImpl dataObjectsRW = createDataObjectsRW(workflowType, req.getDataObjects());
+        final Context context = fromIdlContext(req.getContext(), workflowType);
+        final Map<String, SearchAttributeValueType> saTypeMap = registry.getSearchAttributeKeyToTypeMap(workflowType);
+        final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(saTypeMap, req.getSearchAttributes());
+        final StateExecutionLocalsImpl stateExeLocals = new StateExecutionLocalsImpl(toMap(null), encoder);
+        final Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateExeLocals);
+
+        final TypeStore typeStore = registry.getDataAttributeTypeStore(workflowType);
+        final Map<String, DbAttributeSync> dbSyncs = registry.getDbAttributeSyncs(workflowType);
+        for (final Map.Entry<String, DbAttributeSync> entry : dbSyncs.entrySet()) {
+            final String key = entry.getKey();
+            final DbAttributeSync sync = entry.getValue();
+            final CellLocation loc = sync.getLocator().apply(context.getWorkflowId(), persistence);
+            final String columnText = PostgresDataAttributeSyncer.select(
+                    sync.getDataSource(), sync.getTableName(), sync.getPkColumnName(), loc.getColumnName(), loc.getPkValue());
+            if (columnText != null) {
+                final Class<?> registeredType = typeStore.getType(key);
+                final Object value = encoder.decode(
+                        new EncodedObject().encoding(encoder.getEncodingType()).data(columnText), registeredType);
+                persistence.setDataAttribute(key, value);
+            }
+        }
+
+        final Optional<StateDef> startStateOptional = registry.getWorkflowStartingState(workflowType);
+        if (!startStateOptional.isPresent()) {
+            throw new WorkflowDefinitionException(
+                    "the DB-sync load state requires a starting state in workflow " + workflowType);
+        }
+        final WorkflowState realStartState = startStateOptional.get().getWorkflowState();
+        final Object originalInput = encoder.decode(req.getStateInput(), realStartState.getInputType());
+        final StateDecision decision = StateDecision.singleNextState(realStartState.getStateId(), originalInput, null);
+
+        final WorkflowStateExecuteResponse response = new WorkflowStateExecuteResponse()
+                .stateDecision(StateDecisionMapper.toGenerated(decision, workflowType, registry, encoder));
+        final List<KeyValue> toReturnToServer = dataObjectsRW.getToReturnToServer();
+        if (toReturnToServer.size() > 0) {
+            response.upsertDataObjects(toReturnToServer);
+        }
+        return response;
+    }
+
+    /**
+     * Handles the (unregistered, worker-only) sync system state. It writes each carried data attribute's
+     * current value to its Postgres cell (the value has already been persisted by the iWF server), then
+     * replays the captured original decision verbatim so the workflow proceeds as intended.
+     */
+    private WorkflowStateExecuteResponse handleSyncDataAttributesToDb(final WorkflowStateExecuteRequest req) {
+        final String workflowType = req.getWorkflowType();
+        final ObjectEncoder encoder = workerOptions.getObjectEncoder();
+        final DbSyncStatePayload payload = encoder.decode(req.getStateInput(), DbSyncStatePayload.class);
+
+        final DataAttributesRWImpl dataObjectsRW = createDataObjectsRW(workflowType, req.getDataObjects());
+        final Context context = fromIdlContext(req.getContext(), workflowType);
+        final Map<String, SearchAttributeValueType> saTypeMap = registry.getSearchAttributeKeyToTypeMap(workflowType);
+        final SearchAttributeRWImpl searchAttributeRW = new SearchAttributeRWImpl(saTypeMap, req.getSearchAttributes());
+        final StateExecutionLocalsImpl stateExeLocals = new StateExecutionLocalsImpl(toMap(null), encoder);
+        final Persistence persistence = new PersistenceImpl(dataObjectsRW, searchAttributeRW, stateExeLocals);
+
+        final Map<String, EncodedObject> currentValues = toMap(req.getDataObjects());
+        final Map<String, DbAttributeSync> dbSyncs = registry.getDbAttributeSyncs(workflowType);
+        for (final String key : payload.getDataAttributeKeys()) {
+            final DbAttributeSync sync = dbSyncs.get(key);
+            if (sync == null) {
+                continue;
+            }
+            final CellLocation loc = sync.getLocator().apply(context.getWorkflowId(), persistence);
+            final EncodedObject current = currentValues.get(key);
+            final String columnText = current == null ? null : current.getData();
+            PostgresDataAttributeSyncer.update(
+                    sync.getDataSource(), sync.getTableName(), sync.getPkColumnName(),
+                    loc.getColumnName(), loc.getPkValue(), columnText);
+        }
+
+        return new WorkflowStateExecuteResponse().stateDecision(payload.getOriginalDecision());
     }
 
     private List<InterStateChannelPublishing> toInterStateChannelPublishing(final Map<String, List<EncodedObject>> toPublish) {

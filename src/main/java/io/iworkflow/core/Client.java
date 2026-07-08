@@ -175,6 +175,14 @@ public class Client {
             if (stateOptions != null) {
                 unregisterWorkflowOptions.startStateOptions(stateOptions);
             }
+
+            // If the workflow has DB-synced data attributes, start at the load system state instead of
+            // the real starting state. The load state reads the mapped columns and then transitions to
+            // the real starting state, passing the original input (sent as stateInput) through.
+            if (!registry.getDbAttributeSyncs(wfType).isEmpty()) {
+                startStateId = WorkerService.LOAD_DATA_ATTRIBUTES_FROM_DB_STATE_ID;
+                unregisterWorkflowOptions.startStateOptions(new WorkflowStateOptions().skipWaitUntil(true));
+            }
         }
 
         final PersistenceOptions schemaOptions = registry.getPersistenceOptions(wfType);
